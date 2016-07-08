@@ -20,7 +20,7 @@ ptsEx2 = [5+2*I,5/2+3/2*I,4-I,0,2+5/2*I,-1+3*I,-4+2*I];
 ptsHexa = [0,1,1/2+I,-1/2+I,-1,-1/2-I,1/2-I]; \\ hexagon with center
 \\ this does a nice tree
 {ptsTree= [-101/72 - 175/71*I, 116/51 + 35/19*I, -2/5 + 20/43*I, 2/13 +
-1/2*I, 19/23 + 67/79*I, 4/87 - 31/37*I , -11/36 + 82/39*I]};
+1/2*I, 19/23 + 67/79*I, 4/87 - 31/37*I , -11/36 + 82/39*I]}
 \\ and same curve with better tau
 ptsTreeMoeb=homog([1,1;1,-ptsTree[4]],ptsTree);
 
@@ -28,7 +28,7 @@ ptsTreeMoeb=homog([1,1;1,-ptsTree[4]],ptsTree);
 {ptsG7 = [-82/71 - 49/80*I, 409/32 - 7/15*I, 307/108 - 49/47*I, -159/145 -
 11/69*I, 13/157 + 175/146*I, 152/51 - 149/189*I, -149/51 - 59/152*I, 142/183 +
 5/13*I, -119/97 + 49/24*I, -94/109 + 34/73*I, -70/41 - 9/14*I, 149/169 +
-13/120*I, 79/77 + 7/65*I, -5/67 - 149/31*I, 250/167 + 7/23*I]};
+13/120*I, 79/77 + 7/65*I, -5/67 - 149/31*I, 250/167 + 7/23*I]}
 {ptsG15 = [-132/37 - 107/40*I, 40/37 - 20/57*I, -562/79 + 93/134*I, 7/152 +
 19/21*I, 147/20 - 182/29*I, 206/89 + 167/86*I, -179/147 - 29/150*I, -463/194 -
 43/48*I, 655/168 + 31/111*I, -59/160 + 48/115*I, -107/48 + 914/69*I, -178/149 +
@@ -36,7 +36,7 @@ ptsTreeMoeb=homog([1,1;1,-ptsTree[4]],ptsTree);
 23/75*I, 67/23 - 1433/74*I, 286/163 - 2553/127*I, -134/59 + 1/14*I, 68/97 +
 187/64*I, -121/141 + 24/85*I, 1/3 - 1013/71*I, -118/31 + 65/31*I, 13/146 +
 79/135*I, -309/110 + 14/51*I, -20/71 + 1/192*I, 529/131 - 12/85*I, 349/144 -
-230/81*I, -5/9 - 53/142*I, -275/179 + 141/103*I, 131/80 + 19/36*I]};
+230/81*I, -5/9 - 53/142*I, -275/179 + 141/103*I, 131/80 + 19/36*I]}
 {ptsG40 = [25/29 + 20/79*I, 342/157 - 961/162*I, -66/95 - 7/8*I, -348/65 -
 458/95*I, -14/29 + 98/33*I, -5/117 - 28/27*I, 34/71 - 134/177*I, 53/163 +
 229/16*I, 119/123 - 185/33*I, -5/9 + 311/138*I, 87/59 + 463/89*I, -32/99 -
@@ -57,31 +57,31 @@ ptsTreeMoeb=homog([1,1;1,-ptsTree[4]],ptsTree);
 41/35 - 483/95*I, 11/90 - 137/188*I, 587/104 + 107/64*I, 659/97 + 31/88*I,
 -137/162 - 575/122*I, -103/178 - 242/129*I, 169/121 - 25/48*I, -134/53 +
 363/47*I, -112/45 + 2/51*I, 191/138 - 41/104*I, 2 - 1004/53*I, -5/7 +
-281/101*I, 1601/200*I]};
+281/101*I, 1601/200*I]}
 
 
 \\ this one makes magma or me fail, seems to be magma
 {ptsBug= [139/45 - 35/12*I, -113/92 + 248/95*I, 199/100 + 185/18*I, 50/33 -
 213/74*I, 295/57 + 74/67*I, 60/47 + 99/100*I, -61/20 - 329/16*I, -27/98 +
 1613/78*I, -101/89 + 2/3*I, -46/63 - 101/8*I, 455/81 + 299/100*I, 1/3 -
-4/11*I, 208/45 + 179/11*I, -7/6 + 641/63*I, -617/58 - 227/69*I]};
+4/11*I, 208/45 + 179/11*I, -7/6 + 641/63*I, -617/58 - 227/69*I]}
 {ptsBug2=[1/14 + 257/33*I, 77/32 + 106/77*I, 38/13 - 73/42*I, -17/95 -
 233/27*I, 127/38 + 3/40*I, -1/5 - 7/58*I, -11/38 + 48/67*I, -73/54 -
 31/38*I, 381/85 + 38/53*I, -103/39 + 51/32*I, -3/10 + 6/13*I, 208/63 +
-70/43*I, -909/86 - 81/91*I, 16/27 + 5/22*I, -625/73 - 183/28*I]};
+70/43*I, -909/86 - 81/91*I, 16/27 + 5/22*I, -625/73 - 183/28*I]}
 \\these remain bad with tree
 {ptsBad=[195/47 - 79/9*I, 52/23 - 29/71*I, 16/17 - 1060/59*I, -1/100 + 19/66*I,
-43/20 -17/39*I]};
+43/20 -17/39*I]}
 {ptsBad2=[121/166 - 22/49*I, -10403/296 + 556/227*I, 97/429 + 9/128*I, 85/377 + 7/376*I, 973/379 + 5/42*I];}
-{ptsBad3=[1/7 - 99/97*I, 1/4 + 41/25*I, 799/100 + 562/81*I, 79/98 - 117/71*I, -517/67 + 11/21*I, -27/11 + 1/53*I, -49/20 + 1/33*I]};
+{ptsBad3=[1/7 - 99/97*I, 1/4 + 41/25*I, 799/100 + 562/81*I, 79/98 - 117/71*I, -517/67 + 11/21*I, -27/11 + 1/53*I, -49/20 + 1/33*I]}
 {ptsBad4=[7/12 + 3688/129*I, 133/180 - 265/274*I, 113/166 - 1/19*I, 123/158 +
-71/204*I, -70/277 + 152/97*I, -21/89 + 457/293*I, -162/299 - 3/16*I]};
+71/204*I, -70/277 + 152/97*I, -21/89 + 457/293*I, -162/299 - 3/16*I]}
 
 ptsRandom(g=2) = {
   vector(2*g+1,k,
    tan(3.1*(random(1.)-.5))+I*tan(3.1*(random(1.)-.5))
   );
-};
+}
 
 /* *************************************************************************
  * speed and quality tests
@@ -96,7 +96,7 @@ speed_sqrt(expand=0,n=3*10^4,size=0) = {
   z = ptsRandom(0)[1];
   sqrt_affinereduction(A,z,expand)
   );
-};
+}
 /* it is very surprising that limiting the number of square roots
    gains nothing until 100 digits, no matter the number of roots
  */
@@ -113,7 +113,7 @@ test_sqrt(n=10^6,size=0) = {
      );
    \\ test passed
    return(1);
-};
+}
 
 /* spanning tree */
 
@@ -124,12 +124,12 @@ speed_spanning(n=10^3,g=2,output_bad=1) = {
     A = ptsRandom(g);
     tree = max_spanning(A);
     if(tree[2]<inf,
-      inf=tree[2];bad=A;
-      if(output_bad,print("  tau="inf," for ",bad))
+      inf=tree[2];bad=bestappr(A,40);
+      if(output_bad,printf("tau=%1.2f for\n   A = %s\n",inf,bad))
       );
     );
-    print("min tau =",inf);
-};
+    printf("min tau = %1.3f\n",inf);
+}
 \\ 1.5ms for g=2
 \\ 10ms for g=4
 \\ 97ms for g=8
@@ -151,7 +151,7 @@ tau_max_nco(A) = {
         );
      );
   return(0.95*tau);
-};
+}
 speed_tau_chain(n=10^3,g=2) = {
   inf = 3;
   for(k=1,n,
@@ -159,9 +159,45 @@ speed_tau_chain(n=10^3,g=2) = {
     inf = min(inf,tau_max_nco(A));
     );
    print("min tau =",inf);
-};
+}
 
-/* graph tree and intersections */
+/** graph tree and intersections **/
+
+
+
+/* using gp */
+plot_tree(A,title=1) = {
+  my(X,Y,E,t);
+  [E,t] = max_spanning(A);
+  X = real(A); Y = imag(A);
+  my(w,s);
+  w=0; s = plothsizes();
+  plotinit(w, s[1]-1, s[2]-1);
+  my(a,ma); a = .1; ma = [1+a,-a;-a,1+a];
+  [xm,xM] = [vecmin(X),vecmax(X)]*ma;
+  [ym,yM] = [vecmin(Y),vecmax(Y)]*ma;
+  plotscale(w, xm,xM,ym,yM);
+  \\plotpointsize(w,10); \\ only for gnuplot...
+  for(i=1,#E,
+      my(a,b);
+      [a,b]=E[i];
+      \\plotpoints(w,X,Y);
+      plotlines(w,[X[a],X[b]],[Y[a],Y[b]]);
+      );
+  plotmove(w,(xm+xM)/2,yM);
+  if(title,plotstring(w,Strprintf("tau = %1.2f",t),9));
+  plotclip(w);
+  plotdraw([w,0,0]);
+  t;
+}
+
+/* good and bad trees */
+bad_trees(n=1000,d=5) = {
+    vecsort(vector(n,k,
+                A=vector(d,j,random(2.)-1+I*(random(2.)-1));
+                concat(max_spanning(A),[A])),2);
+}
+
 
 /* plot using gnuplot */
 writeedge(file,e,f) = {
@@ -170,7 +206,7 @@ writeedge(file,e,f) = {
     /* when plotting with vectors (plot "file" w vectors) */
     \\write1(file,Strprintf("%1.2f\t%1.2f\t%1.2f\t%1.2f\n",real(e),imag(e),real(f-e),imag(f-e)));
     write(file,"");
-};
+}
 write_gnuplot_tree(C,labels=1,edgesfile="edges.data",labelfile="labels.data") = {
   my(int,a,b,xmin,xmax,ymin,ymax);
   my(A=C[iRoots]);
@@ -201,7 +237,7 @@ write_gnuplot_tree(C,labels=1,edgesfile="edges.data",labelfile="labels.data") = 
           Strprintf("set label \"%i\" at %1.2f,%1.2f\n",i,(xa+xb)/2,(ya+yb)/2));
         );
      );
-};
+}
 
 hcShowTree(C,edgesfile="edges.data",labelfile="labels.data") = {
   system("rm -f gnuplottree");
@@ -209,7 +245,7 @@ hcShowTree(C,edgesfile="edges.data",labelfile="labels.data") = {
       Strprintf("load \"%s\"\nplot \"%s\" w lp\n",labelfile,edgesfile));
   write_gnuplot_tree(C);
   system("gnuplot -persist gnuplottree");
-};
+}
   
 
 /* graph of AbelJacobi Map */
@@ -228,7 +264,7 @@ AJgnuplot(C,xmin=-5,xmax=5,ymin=-5,ymax=5,n=50) = {
     write1(file,"\n");
   );
   system("gnuplot -persist AbJac.gnuplot");
-};
+}
   
 
 /* *************************************************************************
@@ -242,7 +278,7 @@ test_intersection_signs(n=100) = {
       tree = max_spanning(pts);
       intersection_spanning(A,tree[1]);
      );
-};
+}
 
 /* test if Omega is symetric to current prec */
 Riemann_symmetry(Omega) = {
@@ -253,7 +289,7 @@ Riemann_symmetry(Omega) = {
       return(0),
       return(1)
   );
-};
+}
 /* test whether Im(Omega) > 0 */
 /* this is true if and only if
    IOmega = M^t*M
@@ -285,7 +321,7 @@ Riemann_positivity(Omega,n=5) = {
       for(i=1,g,X[i] = tan(3.14*random(1.)-1.55););
      );
   return(1)
-}; 
+} 
 
 
 test_Riemannrelations(pts) = {
@@ -296,7 +332,7 @@ test_Riemannrelations(pts) = {
   if(!Riemann_symmetry(Omega),return(fail("symmetry : ",pts)));
   if(!Riemann_positivity(Omega),return(fail("positivity : ",pts)));
   return(1);
-};
+}
 
 
 test_Riemannrelations_random(n=100) = {
@@ -305,7 +341,7 @@ test_Riemannrelations_random(n=100) = {
     test_Riemannrelations(pts) || return(0);
     );
   return(1);
-};
+}
 
 
 /* *************************************************************************
@@ -349,7 +385,7 @@ integral_base_change(U,V,prec=10,line=1) = {
       );
     );
    return(res); \\ should be a matrix in Sl(2g,Z)
-};
+}
 
 matJ(g)=matrix(2*g,2*g,i,j,if(i+g==j,1,if(i==j+g,-1,0)));
 
@@ -365,14 +401,14 @@ intersection_from_change(change) = {
   Jg = matJ(g);
   res = matrix(2*g,2*g,i,j,M[i,]*Jg*(M[j,]~));
   res
-};
+}
 
  /* useful for reading magma results, output via
    PrintFile("tmp.magma",$1,"Magma":Overwrite:=true);
  */
 read_magma(file="tmp.magma") = {
   extern(Str("sed 's/.*\\[.*|/[/;' ../../magma/",file," | tr -d '\n\\\\'"))
-};
+}
 
 /* compute period matrix with magma */
 str_magmacommand(A,Dcalc=60,time=0,BigorSmall="Big",file="tmp.magma") = {
@@ -396,28 +432,28 @@ t := Cputime(t);
 PrintFile(\"%s\",X,\"Magma\":Overwrite:=true);
 %squit;
 ",Dcalc,BigorSmall,A,file,timestr);
-};
+}
 magma_run(command) = {
   if(!system("which -s magma"),error("cannot find magma"));
   system("rm -f ../../magma/inputmagma");
   write("../../magma/inputmagma",command);
   \\ -b removes junk output, no need to > /dev/null
     system("cd ../../magma && magma -b inputmagma");
-};
+}
 magma_Bigperiods(A,Dcalc=60,time=0) = {
   magma_run(str_magmacommand(A,Dcalc,time,"Big"));
   V = read_magma();
   g = floor((#A-1)/2);
   V = matrix(g,2*g,i,j,V[2*g*(i-1)+j]);
   return(V);
-};
+}
 magma_Smallperiods(A,Dcalc=60,time=0) = {
   magma_run(str_magmacommand(A,Dcalc,time,"Small"));
   V = read_magma();
   g = floor((#A-1)/2);
   V = matrix(g,g,i,j,V[g*(i-1)+j]);
   return(V);
-};
+}
 
 basechange_gp_magma(A,U=[]) = {
   V = magma_Bigperiods(A);
@@ -426,7 +462,7 @@ basechange_gp_magma(A,U=[]) = {
   );
   /* change of basis between me and magma */
   return(integral_base_change(U,V[1,]));
-};
+}
 
 test_intersection_matrix(A,returndiff=1) = {
   C = hcInit(A);
@@ -447,7 +483,7 @@ test_intersection_matrix(A,returndiff=1) = {
           ););
       return(1);
     );
-};
+}
 
 /* test_intersection_matrix(pts=bestappr(ptsRandom(1),100)) */
 
@@ -456,10 +492,10 @@ test_intersection_matrix_random(n=200) = {
   while(i++<=n&&test_intersection_matrix(pts=bestappr(ptsRandom(1+random(7)),100),0),);
   if(i<=n,print(pts);return(0));
   return(1);
-};
+}
 
 /* test accuracy */
-matrixnorm(X)={sqrt(trace(conj(mattranspose(X))*X))};
+matrixnorm(X)={sqrt(trace(conj(mattranspose(X))*X))}
 test_accuracy_magma(A) = {
   Dcalc=precision(1.);
   V = magma_Bigperiods(A,Dcalc,time=1);
@@ -467,7 +503,7 @@ test_accuracy_magma(A) = {
   P = integral_base_change(U,V[1,]);
   matrixnorm(V-U*P);
   \\V-U*mattranspose(P)
-  };
+  }
 
 /* test relations for magma implantation */
 test_Riemannrelations_magma(pts) = {
@@ -477,14 +513,14 @@ test_Riemannrelations_magma(pts) = {
   if(!Riemann_symmetry(Omega),return(fail("symmetry : ",pts)));
   if(!Riemann_positivity(Omega),return(fail("positivity : ",pts)));
   return(1);
-};
+}
 test_Riemannrelations_magma_random(n=100) = {
   for(i=1,n,
     pts = bestappr(ptsRandom(random(7)+1),100);
     test_Riemannrelations_magma(pts) || return(0);
     );
   return(1);
-};
+}
 
 /* *************************************************************************
  * compare with agm and Richelot 
@@ -497,7 +533,7 @@ test_Riemannrelations_magma_random(n=100) = {
 gauss_agm(P) = {
   a = P[1]; b = P[2] ; c = P[3];
   Pi/agm(sqrt(c-a),sqrt(c-b))
-};
+}
 
 /* Richelot's algorithm
    Iu=int_u^u' S(x)/sqrt(-P(x)) dx
@@ -533,7 +569,7 @@ richelot(P,S)= {
 			return(Pi*sqrt(D)*(S[1]*a+S[2])/((a-b)*(a-c)))
     )
   );
-};
+}
 
 
 /* period([a,b,c]) ~ agm()
@@ -563,7 +599,7 @@ compare(P) = {
     return(g)
     );
   return(period_old(P));
-};
+}
 
 /* *************************************************************************
  * automatic set of tests
@@ -580,21 +616,21 @@ do_tests(nrels=30,nmagma=10,nsqrt=1000) = {
  && test_intersection_matrix(ptsHexa,0)
  && test_intersection_matrix_random(nmagma)
  && !print("# intersection passed")
-};
+}
   
 doplot(m=1) = {
   C = hcInit(ptsEx2);
   \\ploth(x=-0.5,1.5,z=hcAbelJacobi(C,(5/2+3/2*I)*x);[z[1],1-z[1]],,50)
   ploth(x=-0.5,1.5,z=hcAbelJacobi(C,(5/2+3/2*I)*x);z[1],,50)
   \\ploth(x=-0.5,1.5,z=hcAbelJacobi(C,(5/2+3/2*I)*x);[z[1],z[2],z[3]],,50);
-};
+}
 domoebius(m=[1,2;2,3]) = {
   C1 = hcInit(ptsEx2);
   Omega1 = hcBigperiods(C1);
   C2 = hcInit(homog(m,ptsEx2));
   Omega2 = hcBigperiods(C2);
   alpha = moebius_matrix(m,C1[iGenus]);
-};
+}
 /* We have lost signs of loops between intersection matrices I1 and I2 : chose
  * signs such that P^t*I1*P=I2 */
 sign_changes(I1,I2) = {
@@ -628,4 +664,4 @@ sign_changes(I1,I2) = {
      \\if(!diag[i],diag[i]=1);
      );
    return(P);
-};
+}

@@ -14,10 +14,10 @@ The image of Abel-Jacobi is given in (\R/\Z)^2g.
 
 msgtimer(s,level=1) = {
   if(default(debug)>=level,printf("  Time %s : %ld\n",s,gettime()))
-};
+}
 msgdebug(s,header="  ",level=1) = {
   if(default(debug)>=level,printf("%s%s\n",header,s))
-};
+}
 
 /**
 
@@ -134,7 +134,7 @@ tau_3(ai,aj,ak,lambda=Pi/2,verbose=0) = {
   xItau = asinh(atanh(zk)/lambda);
   if(verbose,print("x+I*tau=",xItau));
   return(abs(imag(xItau)));
-};
+}
 tau_edge(A,i,j,lambda=Pi/2) = {
  tauij = 4; /* > Pi/2 */
   for(k=1,#A,
@@ -142,23 +142,23 @@ tau_edge(A,i,j,lambda=Pi/2) = {
       tauij = min(tauij,tau_3(A[i],A[j],A[k]));
       );
    return(tauij);
-};
+}
 tau_tree(A,edges) = {
   my(tau = 4);
   for(k=1,#edges,
     tau = min(tau,tau_edge(A,edges[k][1],edges[k][2]));
   );
   return(tau);
-};
+}
 
 /* bound M1 on g */
 dist_1(p) = {
   my(xp = abs(real(p)));
   if(xp>1,abs(xp-1+I*imag(p)),abs(imag(p)));
-};
+}
 bound_M1(Aprim) = {
   1/sqrt(prod(k=1,#Aprim,dist_1(Aprim[k])));
-};
+}
 t_opt(D,M1,lambda=Pi/2)=asinh((D+log(4*M1))/lambda);
 
 /* bound M2 on Δ_τ */
@@ -173,10 +173,10 @@ dist_thsh(p,tau,lambda=Pi/2) = {
   (argphi(x)=arg(p-phi(x)));
   x = solve(x=x0,x1, argphi(x)-argphip(x)-Pi/2);
   abs(p-phi(x));
-};
+}
 bound_M2(Aprim,tau) = {
   1/sqrt(prod(k=1,#Aprim,dist_thsh(Aprim[k],tau)));
-};
+}
 /* int_R lambda*cht/ch(lambda*sh t) < 4, 1/sqrt(g(phi)) < M */
 /* majoration de \int λ\ch(t)/\ch(λ\sh(t+iτ))^(2α) */
 phi_bound(tau,lambda=Pi/2,alpha=1/2) = {
@@ -187,7 +187,7 @@ phi_bound(tau,lambda=Pi/2,alpha=1/2) = {
   /* it is not very bad compared to the better value below */
   \\Ytau=solve(y=lambda*sin(tau),Pi/2.001,2/cos(y)-log(exp(sqrt(y^2-lambda^2*sin(tau)^2)/tan(tau))-1));
   \\return(4/cos(Ytau));
-};
+}
 h_opt(D,tau,M2,lambda=Pi/2)=2*Pi*tau/log(1+2*M2*phi_bound(tau,lambda,0.5)*exp(D));
 
 /* make Aprim vectors : remove one or two roots */
@@ -203,7 +203,7 @@ make_Aprim(A,ia,ib=0,p) = {
     for(i=1,#A,i==ia||Aprim[j++]=(2*A[i]-a-p)/(p-a));
     return(Aprim);
     );
-};
+}
 
 integration_parameters(A,tree,tau,D,provenbounds=0) = {
   if(provenbounds,
@@ -224,7 +224,7 @@ integration_parameters(A,tree,tau,D,provenbounds=0) = {
   h = h_opt(D,tau,M2);
   npoints = ceil(t_opt(D,M1)/h);
   return([h,npoints]);
-};
+}
 
 /**
 precompute integration points 
@@ -252,7 +252,7 @@ integration_points_thsh(h,npoints,lambda=Pi/2) = {
       res[k] = [thsh,ch2*chsh2_i];
      );
   return([h*lambda,res]);
-};
+}
 
 /**
   -- The problem of the square root --
@@ -267,7 +267,7 @@ integration_points_thsh(h,npoints,lambda=Pi/2) = {
 */
 
 /* sign of the imaginary part with positive zero */
-isign(x) = { my(s);s=sign(imag(x));if(s,s,1);};
+isign(x) = { my(s);s=sign(imag(x));if(s,s,1);}
 
 /* we want to compute sqrt(z-a1)*...sqrt(z-ai)
    with only one square root sqrt((z-a1)*...(z-ai)),
@@ -306,7 +306,7 @@ sqrt_affinereduction(Aprim,z,product=0) = {
         );
      );
   return(sqrt(z1)*sgn);
-};
+}
 
 
 /* compute the column of period integrals over [A[i1],A[i2]]
@@ -358,14 +358,14 @@ int_periods_affinereduction(C,i1,i2,decomp=0) = {
    vplus = sqrt_affinereduction(Aprim,1,decomp)*sqrt(geom_factor)^#Aprim/geom_factor;
    vmoins = sqrt_affinereduction(Aprim,-1,decomp)*sqrt(geom_factor)^#Aprim/geom_factor;
    return([res,vmoins,vplus]);
-};
+}
 
 /* integrate between a and p */
 newint_AbelJacobi_affinereduction(C,i1,p,decomp=0) = {
   my(A=C[iRoots]);
   my(g=C[iGenus]);
   return(intnum(x=[A[i1],0.5],p,vector(g,k,z=prod(i=1,#A,sqrt(x-A[i]));if(z,x^(k-1)/z,1))));
-};
+}
 /** partial integration from P to Pi.
 Assume that no branch point is on [P Pi]
 */
@@ -423,7 +423,7 @@ int_AbelJacobi_affinereduction(C,i1,p,y_p,decomp=0) = {
   sgn = sign(real(fiP/f0P));
   msgdebug(Strprintf("sheets : %+1.3f",real(fiP/f0P)));
   return(sgn*res);
-};
+}
 /* find point on the canonical upper sheet given its x-coordinate */
 hcUpperSheet(C,x,flag=0) = {
   my(A = C[iRoots]);
@@ -434,7 +434,7 @@ hcUpperSheet(C,x,flag=0) = {
     \\ global standard cut
     return([x,sqrt(prod(i=1,#A,x-A[i]))])
    ));
-  };
+  }
 /* return the intersection number of oriented [ab] and [cd] */
 intersection_intervals(A,ia,ib,ic,id) = {
   \\ check no double point
@@ -451,7 +451,7 @@ intersection_intervals(A,ia,ib,ic,id) = {
   if(abs(xp)>abs(fp),return(0)); \\ intersection at xp/fp in [-1,1] ?
   \\ result
   return(sign(fp));
-};
+}
 
 /* return the intersection number between the periods
    I_α and I_β computed with standard formula */
@@ -466,7 +466,7 @@ intersection(A,ia,ib,ic,id) = {
   if(ib==id,return(+intersection_abcb(A,ia,ib,ic,id)));
   \\ transverse case, cannot occur for a maximum tree
   return(intersection_inner(A,ia,ib,ic,id));
-};
+}
 
 /* end intersection I[ab].I[bd] */
 intersection_abbd(A,ia,ib,ic,id) = {
@@ -495,7 +495,7 @@ intersection_abbd(A,ia,ib,ic,id) = {
         );
     );
   if(imag(fbd/fab)<0,return(-1),return(1));
-};
+}
 intersection_abcb(A,ia,ib,ic,id) = {
   k = #A;
   a = A[ia]; b = A[ib]; c = A[ic];
@@ -523,7 +523,7 @@ intersection_abcb(A,ia,ib,ic,id) = {
         );
     );
   if(imag(fab/fcb)<0,return(-1),return(1));
-};
+}
 intersection_abad(A,ia,ib,ic,id) = {
   k = #A;
   a = A[ia]; b = A[ib]; d = A[id];
@@ -550,7 +550,7 @@ intersection_abad(A,ia,ib,ic,id) = {
         );
     );
   if(imag(fab/fad)<0,return(-1),return(1));
-};
+}
 
 
 /* inner intersection I[ab].I[cd] */
@@ -598,7 +598,7 @@ intersection_inner(A,ia,ib,ic,id) = {
   \\ result : sign(fp) gives intersection number [ab].[cd]
     \\ if sgn(fpab/fpcd)=+1
     return(2*sign(fp)*sign(real(fpab/fpcd)));
-};
+}
 
 /* *************************************************************************
  *  period matrix with maximal-flow spanning tree
@@ -646,7 +646,7 @@ max_spanning(A,nedges=0)= {
     taken[i] = taken[j] = 1;
     );
   return([tree,taumin]);
-};
+}
 
 /* step 2 : intersection matrix of selected edges */
 intersection_spanning(A,tree) = {
@@ -661,7 +661,7 @@ intersection_spanning(A,tree) = {
     );
   );
   return(res);
-};
+}
 
 /* step 3 : period matrix of edges + intersection matrix */
 /* suppose integration points precomputed */
@@ -684,13 +684,13 @@ periods_spanning(C) = {
   );
   Mat(res);
   );
-};
+}
 
 /* step 4 : retrieve symplectic basis */
 
 /* f[i] <- u*f[i]+v*f[j] */
 \\column_operation(i,j,u,v) = {
-\\  };
+\\  }
 
 /* assume M is invertible, antisymetric and of even dimension 2g */
 symplectic_reduction(M) = {
@@ -768,7 +768,7 @@ symplectic_reduction(M) = {
   res = Mat(vector(2*g,k,if(k<=g,P[2*k-1],P[2*(k-g)])));
   \\print(mattranspose(res)*M*res);
   return(res); 
-};
+}
 /* inverse of a symplectic matrix */
 symplectic_inverse(M) = {
   my(g = matsize(M)[1]/2);
@@ -787,7 +787,7 @@ symplectic_inverse(M) = {
    );
  );
 return(res);
-};
+}
 
 /* choose point such that tau is maximal */
 choose_integration_path(C,p) = {
@@ -810,14 +810,14 @@ choose_integration_path(C,p) = {
    \\ TODO
    msgdebug("bad accuracy : needs subdivision");
    return([besti,besttau]);
-};
+}
 hcModABlattice(C,z) = {
   my(g=C[iGenus]);
   my(Rproj=C[iReduce]);
   Rz = concat(real(z),imag(z));
   centerz=frac(Rproj*Rz);
   return(centerz);
-};
+}
 
 /** compute Abel-Jacobi map of the point P = (x,y)
 
@@ -858,7 +858,7 @@ hcAbelJacobi(C,p) = {
   \\  /* the path should be optimized and validated */
   \\  /* integrate */
   \\  int_AbelJacobi_affinereduction(C,imin,p);
-};
+}
 /* find the integrals between P0 and Pi using P */ 
 find_hcWeierstrass(C,p) = {
   my(g=C[iGenus]);
@@ -867,7 +867,7 @@ find_hcWeierstrass(C,p) = {
   round(2*Mat(vector(2*g+1,k,
   hcModABlattice(C,int_AbelJacobi_affinereduction(C,k,p)~)
     -P0P)))/2;
-}; 
+} 
 
 /* *************************************************************************
  *  put everything together
@@ -985,7 +985,7 @@ following the path given by the spanning tree.
   /* and in basis A,B */
   my(ABtoC=C[iABtoC]);
   return(frac(ABtoC^(-1)*Mat(P0Pi)));
-};
+}
 
 /** compute Abel-Jacobi map of Weierstrass points
    in the standard Mumford AB basis */
@@ -1017,7 +1017,7 @@ AJWeierstrass_Mumford(C) = {
       P0Pi[,j] = P0Pi[,j] - P0P0;
      );
   return(frac(P0Pi));
-};
+}
 /** homology base change from the computed symplectic basis into Mumford A,B
  basis defined with the ordered set of roots. 
  The change of basis is determined using the image of Weierstrass points
@@ -1046,11 +1046,11 @@ ABtoMumfordAB_mod(C) = {
   WinC_AB = vecextract(2*C[iAJRoots],strlin,strcol);
   WinMumfordAB = vecextract(2*AJWeierstrass_Mumford(C),strlin,strcol);
   return((WinMumfordAB*WinC_AB^(-1))%2)
-};
+}
 /* the real matrix */
 ABtoMumfordAB(C) = {
   return(MumfordABtoC(C)^(-1)*C[iABtoC]);
-};
+}
 /** express C basis in loops A_i, B'_i, modulo 2\Z... */
 CtoABp(C) = {
   g = C[iGenus];
@@ -1067,10 +1067,10 @@ CtoABp(C) = {
        );
     );
   return(M);
-};
+}
 CtoAB(C) = {
   return(ABptoAB(C[iGenus]) * CtoABp(C));
-};
+}
  
 /** intersection between A_i, B'_i and C_j as I would compute them */
 int_ABp_C(C) = {
@@ -1087,7 +1087,7 @@ int_ABp_C(C) = {
        );
      );
   return(M);
-};
+}
 /** intersection matrix of loops A_i, B_i' as I _would_ compute them */
 int_ABp(C) = {
   my(g = C[iGenus]);
@@ -1106,7 +1106,7 @@ int_ABp(C) = {
    );
   );
 return(M);
-};
+}
 /* if all signs were compatible the above would be equal to the following. It
  * must be equal mod 2\Z */
 int_ABp_ref(x) = {
@@ -1114,7 +1114,7 @@ int_ABp_ref(x) = {
   my(P = ABptoAB(g));
   return(P*matJ(g)*mattranspose(P));
   return(mattranspose(P)*matJ(g)*P);
-};
+}
 
 ABtoABp(g) = {
   my(P = matrix(2*g,2*g));
@@ -1125,7 +1125,7 @@ ABtoABp(g) = {
     for(i=j,g,P[g+i,g+j]=1)
     );
   return(P);
-};
+}
 ABptoAB(g) = {
     /* A_i = A_i */
     /* B_i' = B_i-B_{i+1} */
@@ -1134,7 +1134,7 @@ ABptoAB(g) = {
      P[g+i,g+i+1] = -1
      );
   return(P);
-};
+}
 /** test all signs on C until the A,B basis is symplectic */
 test_all_signs_C(C) = {
   my(g = C[iGenus]);
@@ -1161,7 +1161,7 @@ test_all_signs_C(C) = {
         );
   );
   return("no signs found");
-};
+}
 /** OK, this time this is correct, however VERY slow algorithm:
 The result P is the change of basis between C and Mumford A,B, and
 satisfies in particular
@@ -1172,7 +1172,7 @@ symplectic)
 MumfordABtoC(C) = {
   my(P_CtoABp = test_all_signs_C(C));
   return(P_CtoABp^(-1)*ABtoABp(C[iGenus]));
-};
+}
  
 /* intersection matrix of Mumford loops as I have computed them */
 int_AB(C) = {
@@ -1183,7 +1183,7 @@ int_AB(C) = {
   return(mattranspose(P)*M*P);
   my(P = ABptoAB(g));
   return(P*M*mattranspose(P));
-};
+}
 isSymplectic(M) = {
  my(g=matsize(M)[1]/2);
  my(a=vecextract(M,2^g-1,2^g-1));
@@ -1195,19 +1195,17 @@ isSymplectic(M) = {
  (mattranspose(a)*c==mattranspose(c)*a || print("a^tc non symmetric"))
  &&
  (mattranspose(b)*d==mattranspose(d)*b || print("b^td non symmetric"))
-};
+}
 
-/* A = [a_1,a_2,.. a_{2g-1}]
-   this allows to define standard loops A_i and B_i */
-/** the period matrix is computed in some symplectic homology basis
+/**
+the period matrix is computed in some symplectic homology basis
 determined during computations.
-One can put it in standard Mumfod basis right-multiplying by toMumford
-symplectic matrix.
 */
 hcInit(A,provenbounds=0) = {
   my(hcStruct = vector(iMax));
   my(Dcalc,g,tree,tau,h,npoints,IntFactor,IntPoints,AB,Intersection,P);
   my(Omega0,Omega1);
+  if(type(A)=="t_POL",A = polroots(pol));
   g = floor((#A-1)/2);
   hcStruct[iRoots] = A;
   hcStruct[iGenus] = g;  
@@ -1252,6 +1250,9 @@ hcInit(A,provenbounds=0) = {
   hcStruct[iOmega0] = Omega0; \\ on A basis
   hcStruct[iOmega1] = Omega1; \\ on B basis
   /* with dual basis for H^1 */
+  /* WARNING: should one use this van Wamelen convention instead
+     of Omega0^-1 Omega1 ?
+   */ 
   hcStruct[iTau] = tau = Omega1^(-1)*Omega0; \\ van Wamelen convention
   /* init Abel-Jacobi map */
   \\hcStruct[iP0] = P0 = tree[1][1]; /* choose central root */
@@ -1274,7 +1275,7 @@ hcInit(A,provenbounds=0) = {
   hcStruct[iReduce] = M^(-1);
   /* it's done */
   return(hcStruct);
-};
+}
 /* A = [a_1,a_2,.. a_{2g-1}]
    this allows to define standard loops A_i and B_i. Do not use a spanning tree
 but standard loops A_i, B_i' */
@@ -1353,27 +1354,27 @@ tree[i][1]=tree[i][2]; tree[i][2]=t));
   hcStruct[iReduce] = M^(-1);
   /* it's done */
   return(hcStruct);
-};
+}
 
 /* retrieve values */
 hcWeierstrassInt(C) = {
   return(C[iAJRoots])
-};
+}
 hcBigperiods(C) = {
   return(concat(C[iOmega0],C[iOmega1]));
-};
+}
 hcSmallperiods(C) = {
   return(C[iTau]);
   return(C[iOmega1]^(-1)*C[iOmega0]);
-};
+}
 /* intersection matrix of the tree */
 hcIntersection(C) = {
   return(C[iIntersection]);
-};
+}
 /* periods of the tree */
 hcTreeperiods(C) = {
   return(hcBigperiods(C)*C[iABtoC]^(-1));
-};
+}
 
 /* old conversion functions */
 ABtoA_B(AB) = {
@@ -1382,11 +1383,11 @@ ABtoA_B(AB) = {
   A = vecextract(AB,Str("1..",g),Str("1..",g));
   B = vecextract(AB,Str("1..",g),Str(g+1,".."));
   return([A,B]);
-};
+}
 BigtoSmall(AB) = {
   my(tmp = ABtoA_B(AB));
   return(tmp[2]^(-1)*tmp[1]);
-};
+}
 /**
 action of an Moebius transformation on x
 */
@@ -1401,7 +1402,7 @@ homog(H,pts) = {
   if(#pts%2,res=concat(res,0));
   return(res);
   \\return(vector(#pts,k,(H[1,1]*pts[k]+H[1,2])/(H[2,1]*pts[k]+H[2,2])));
-};
+}
 HS=[0,1;1,0];
 HT=[1,1;0,1];
 H1=[3,7;2,5];
@@ -1409,7 +1410,7 @@ H2=[8,-3;11,-4];
 H3=[13,892;5,343];
 H4=[1729,138; 213,17];
 
-/** GL(g) action af a SL(2) moebius transform :
+/** GL(g) action of a SL(2) moebius transform :
 we decompose
 (ax+b)/(cx+d) = (b-ad/c)/(cx+d) + a/c
 i.e.
@@ -1418,11 +1419,11 @@ i.e.
 /* left matrix corresponding to inversion [0,1;1,0] */
 invert_mat(g) = {
   matrix(g,g,i,j,if(i+j==g+1,-1,0));
-};
+}
 /* left matrix corresponding to homothety ax+b */
 homot_mat(g,a,b,degree) = {
   matrix(g,g,i,j,if(i>=j,binomial(i-1,j-1)*a^j*b^(i-j)))/sqrt(a^degree)
-};
+}
 moebius_matrix_old(m,g,degree) = {
   my(a = m[1,1]);
   my(b = m[1,2]);
@@ -1438,7 +1439,7 @@ homot_mat(g,b-a*d/c,a/c,degree)*invert_mat(g)*homot_mat(g,c,d,degree))
   return(homot_mat(g,a,b,degree))
   ));
   
-};
+}
 /* computed all at once */
 moebius_matrix(m,g) = {
   my(a = m[1,1]);
@@ -1455,7 +1456,7 @@ moebius_matrix(m,g) = {
 matrix(g,g,k,l,
   polcoeff(lines[k],l-1)
 );
-};
+}
 /** action on the curve */
 moebius_action(C,m) = {
   g = C[iGenus];
@@ -1466,4 +1467,4 @@ moebius_action(C,m) = {
   Omega2 = hcBigperiods(hcInit(homog(m,A)));
   print("Omega1=",Omega1);
   print("Omega2=",Omega2);
-};
+}
