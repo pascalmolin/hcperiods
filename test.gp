@@ -79,8 +79,28 @@ ptsTreeMoeb=homog([1,1;1,-ptsTree[4]],ptsTree);
 
 ptsRandom(g=2) = {
   vector(2*g+1,k,
-   tan(3.1*(random(1.)-.5))+I*tan(3.1*(random(1.)-.5))
+    tan(3.1*(random(1.)-.5))+I*tan(3.1*(random(1.)-.5))
   );
+}
+
+\\ moebius transform to improve tau
+random_mat(d=2)=matrix(d,d,i,j,random(1.));
+
+improve_tau(A,n=100,show=0)={
+  my(M, bestM, Tree, Tau, bestTree, bestTau);
+  [bestTree,bestTau] = max_spanning(A);
+  bestM = matid(2);
+  for(k=1,n,
+    M = random_mat(); M /= matdet(M); \\M[1,1]=1; \\M[1,2] = 0;
+    [Tree, Tau] = max_spanning(homog(M,A));
+    if(Tau > bestTau,
+      bestTau = Tau;
+      bestM = M;
+      printf(" tau = %1.3f for m = %1.3f\n", Tau, Col(M));
+      );
+      );
+    if(show,plot_tree(homog(bestM, A)));
+    bestM;
 }
 
 /* *************************************************************************
@@ -92,7 +112,7 @@ fail(descr,args) = return(print(descr,args)); \\ and return 0, thanks to gp !
 /* multi square root */
 speed_sqrt(expand=0,n=3*10^4,size=0) = {
   for(i=1,n,
-  A=ptsRandom(if(size,size,random(6)+1));
+  A=tsRandom(if(size,size,random(6)+1));
   z = ptsRandom(0)[1];
   sqrt_affinereduction(A,z,expand)
   );
@@ -163,8 +183,6 @@ speed_tau_chain(n=10^3,g=2) = {
 
 /** graph tree and intersections **/
 
-
-
 /* using gp */
 plot_tree(A,title=1) = {
   my(X,Y,E,t);
@@ -191,7 +209,7 @@ plot_tree(A,title=1) = {
   t;
 }
 
-/* good and bad trees */
+/* good and bad trees : use speed_spanning */
 bad_trees(n=1000,d=5) = {
     vecsort(vector(n,k,
                 A=vector(d,j,random(2.)-1+I*(random(2.)-1));
