@@ -9,6 +9,12 @@
 #include "acb.h"
 #include "acb_mat.h"
 
+/******************************************************************************
+
+  data structures
+
+ ******************************************************************************/
+
 typedef struct
 {
     double tau;
@@ -20,34 +26,58 @@ typedef struct
     arb_ptr * dx;
 }
 de_integration_struct;
-typedef struct de_integration_struct de_int_t[1];
+typedef de_integration_struct de_int_t[1];
 
-typedef struct tree_edge slong[2];
-typedef struct spanning_tree tree_edge[];
-/* represents the loop coeff * zeta^shift * tree[index] */
+typedef struct
+{
+    double tau;
+    slong a;
+    slong b;
+} edge_t;
+
+typedef struct
+{
+    slong n;
+    double tau;
+    edge_t * e;
+} tree_struct;
+typedef tree_struct tree_t[1];
+
+/* intersection between two edges of the tree */
+typedef struct
+{
+    slong coeff; /* intersection 0, 1 or -1 */
+    slong shift; /* number of sheets to move to */
+    slong dir;   /* up or down */
+} inter_t;
+
+typedef inter_t ** inter_mat;
+
+/* represents the loop_t(coeff * zeta^shift * tree[index]) */
 typedef struct
 {
     slong coeff;
     slong shift;
     slong index;
-} gamma_loop;
-typedef loop gamma_loop[]; /* length at most 2*g */
+} gamma_t;
 
-/* intersection between two edges of the tree */
 typedef struct
 {
-    slong coeff;
-    slong shift;
-} int_tree;
+    slong n; /* length at most 2*g */
+    gamma_t * l;
+} loop_t;
 
-/*
-typedef intersection slong;
-typedef shift slong;
-typedef struct edges_sum intersection[];
-typedef struct edges_shift intersection[];
-*/
+typedef loop_t * homol_t;
 
-typedef struct **slong slong_mat;
+typedef slong ** si_mat_t; /* integer matrix */
+
+typedef struct
+{
+    slong x; /* power of x */
+    slong y; /* power of y */
+} dform_t;
+
+typedef dform_t * cohom_t;
 
 typedef struct
 {
@@ -55,22 +85,23 @@ typedef struct
     slong n;             /* degree in y */
     slong d;             /* degree in x, odd */
     slong g;             /* genus, 2 g = (N-1)(d-1) */
-    acb_ptr * roots;     /* weierstrass points */
+    acb_ptr roots;     /* weierstrass points */
 
     /* differentials */
-    slong * dx;          /* power of x */
-    slong * dy;          /* power of x */
+    cohom_t dz;
 
     /* homology using tree */
-    spanning_tree tree;        /* choice of nice loops */
-    int_tree **inter;          /* intersections in tree, size d-1 * d-1 */
+    tree_t tree;        /* choice of best loops */
+    inter_mat inter;      /* intersections in tree, size d-1 * d-1 */
 
-    loop ABtoC[];              /* A,B symplectic basis as sums of shifted gamma loops */
+    /* A,B symplectic basis as sums of shifted gamma loops */
+    homol_t loop_a;
+    homol_t loop_b;
 
     /* periods  */
-    acb_mat_t bigperiods;  /* on A,B basis */
+    acb_mat_t omega0;
+    acb_mat_t omega1;      /* on A,B basis */
     acb_mat_t tau;         /* tau = Omega1^{-1}Omega0 */
-
 
     /* for Abel-Jacobi map, choice of a bse point */
     slong p0;            /* base point */
@@ -79,4 +110,46 @@ typedef struct
 }
 super_elliptic_curve_struct;
 
-typedef struct super_elliptic_curve_struct se_curve_t[1];
+typedef super_elliptic_curve_struct se_curve_t[1];
+
+/******************************************************************************
+
+  functions
+
+ ******************************************************************************/
+
+void se_curve_init(se_curve_t c, slong n, acb_ptr x, slong d);
+void se_curve_clear(se_curve_t c);
+
+void de_int_init(de_int_t de, double tau, slong prec);
+void de_int_clear(de_int_t de);
+
+void se_curve_compute(se_curve_t c, slong prec);
+
+/* compute maximum spanning tree */
+void tree_init(tree_t tree, slong d);
+void tree_clear(tree_t tree);
+void spanning_tree(tree_t tree, acb_srcptr x, slong d);
+
+/* compute local intersections between tree edges */
+/* -> (d-1)*(d-1) intersection matrix */
+void intersection_tree(inter_mat inter, tree_t tree, acb_srcptr x, slong d);
+
+/* find g+g symplectic homology basis from tree */
+/* two lists of g loops */
+void symplectic_basis(homol_t loop_a, homol_t loop_b, inter_mat inter, slong g, slong d);
+
+/* find basis of holomorphic differentials */
+/* g elementary differentials */
+void differentials(cohom_t dz, slong d, slong n);
+
+/* numerically compute d-1 periods along the tree */
+/* (d-1)*(g-1) matrix, tree edges on lines */
+void periods_tree(acb_mat_t periods, const tree_t tree, const cohom_t dz, slong g, acb_srcptr x, slong d, slong prec);
+
+/* get all periods on a, b basis */
+/* two g*g matrices */
+void period_matrix(acb_mat_t omega, homol_t loop, acb_mat_t periods, slong g, slong d, slong prec);
+
+/* get tau reduced matrix */
+void tau_matrix(acb_mat_t tau, const acb_mat_t omega0, const acb_mat_t omega1, slong prec);
