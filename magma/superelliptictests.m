@@ -1,6 +1,6 @@
 //Import global settings
 import "globalsettings.m": RS_Config;
-import "superelliptic.m": RS_ImSgn, RS_AffineReduction;
+import "superelliptic.m": RS_ImSgn, RS_NRootAC;
 import "comparefunctions.m": RS_CompareFldComElt;
 
 
@@ -184,12 +184,10 @@ intrinsic RS_TestConstants( t::FldReElt, Tau::FldReElt ) -> RngIntElt
 { - }
 	Pi := RS_GetGlobalPi();
 	C<i> := RS_GetGlobalComplexField_20();
-	assert &and[0 lt Tau, Tau lt Pi/2];
+	//assert &and[0 lt Tau, Tau lt Pi/2];
 	//LHS := (1 + Tanh(t - i*Tau)) * ( 1 - Tanh(t - i*Tau)); print "LHS:",LHS;
 	//RHS := (1 / (Cosh(t - i*Tau))^2); print "RHS:",RHS;
-
-	
-	N := Random([2..10]); print "N:",N; 
+	N := Random([2..100]); print "N:",N; 
 	j := Random([1..N-1]); print "j:",j;
 	c1 := Exp(-Pi*i/N); print "c1:",c1;
 	c2 := Exp(Pi*i/N); print "c2:",c2;
@@ -204,6 +202,87 @@ intrinsic RS_TestConstants( t::FldReElt, Tau::FldReElt ) -> RngIntElt
 	return 0;
 end intrinsic;
 
+
+intrinsic RS_TestSpeedNRoot( d::RngIntElt, N::RngIntElt : Prec := 20, Height := 100 ) -> RngIntElt
+{ Doesn't seem to work?!? }
+	Z := RS_RandomPts(d:Prec:=Prec, Height:=Height); Zeta := RS_GetGlobalZeta();
+	x := Random([-Height..Height])/Height;
+	print "x:",x;
+	print "Time (Long method):";
+	time A1 := RS_NRootAC(x,Z,Zeta,N:long:=true);
+	print "Time (Short method):";
+	time A2 := RS_NRootAC(x,Z,Zeta,N:long:=false);
+	print "A1:",A1;
+	print "A2:",A2;
+	print "Difference:",Abs(A1-A2);
+	return 0;
+end intrinsic;
+
+
+intrinsic RS_RandomPts( n::RngIntElt : Prec:= 20, Height := 100 ) -> SeqEnum[FldComElt]
+{ - }
+	Z := [];
+	C<i> := ComplexField(Prec);
+	for j in [1..n] do
+		z := Random([-Height..Height])/Height + Random([-Height..Height])/Height*i;
+		Append(~Z,z);
+	end for;
+	return Z;
+end intrinsic;
+
+
+
+intrinsic RS_SEPMTest( s::RngMPolElt : Prec := 20 ) -> BoolElt, Matrix
+{ Tests if period matrices of superelliptic curves are equivalent }
+	print "Computing PM1 with general algorithm:";
+	time PM1 := RS_PeriodMatrix(s:Prec:=Prec);
+	print "Computing PM1 with special case algorithm:";
+	time PM2 := RS_SEPM(s:Prec:=Prec);
+	print "Searching symplectic transformation...";
+	bool, S := IsIsomorphicSmallPeriodMatrices(PM1,PM2);
+	return bool, S;
+end intrinsic;
+
+
+intrinsic RS_SEPMLTTest( N::RngIntElt, d::RngIntElt, T::RngIntElt: Ht := 100, Prec := 20 ) -> BoolElt
+{ Tests if period matrices of superelliptic curves are equivalent }
+	assert T gt 0;
+	for t in [1..T] do
+		s := RS_RandomSuperellipticCurve(N,d:Ht:=Ht);
+		bool, S := RS_SEPMTest(s : Prec:= Prec);
+		print "Test successful:",bool;
+		print "Transformation:",S;
+		if bool eq false then
+			return s;
+		end if;
+	end for;
+	return true;
+end intrinsic;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
 
 
 

@@ -7,22 +7,13 @@ import "pathmethods.m":RS_FindSet;
 import "comparefunctions.m":RS_CompareFldComElt;
 
 declare verbose SE,3;
-
 declare verbose SEP,2;
-
-function RS_ImSgn( z )
-	if Im(z) eq 0 then
-		return 1;
-	else
-		return Sign(Im(z));
-	end if;
-end function;
-
 
 function RS_SETau3( P1,P2,P3 )
 // Computes the maximal area of holomorphy between P1,P2 and P3
+	Lambda := RS_GetGlobalPi()/2;
 	CC := (2*P3 - P2 - P1) / (P2 - P1); // Circumcenter of the triangle defined by P1, P2, P3
-	Tau_CC := Argsinh(Argtanh(CC));
+	Tau_CC := Argsinh(Argtanh(CC)/Lambda);
 	Tau_3 := Abs(Im(Tau_CC));
 	return Tau_3;
 end function;
@@ -36,33 +27,37 @@ procedure RS_SETau( Points, ~Edge )
 end procedure;
 function RS_SEMST( Points )
 // Computes a minimal spanning tree w.r.t holomorphicy
-	C_20 := ComplexField(20); d := #Points;
-	LowPrecPts := [ C_20!Pt : Pt in Points ]; Edges := [];
+	//C_20 := ComplexField(20); 
+	d := #Points;
+	//LowPrecPts := [ C_20!Pt : Pt in Points ]; 
+	Edges := [];
+	
 	for k in [1..d] do
 		for l in [k+1..d] do
-			if Re(LowPrecPts[k]) le Re(LowPrecPts[l]) then
-				Edge := <-2.0,k,l>;
+			if Re(Points[k]) le Re(Points[l]) then
+				Edge := <-4.0,k,l>;
 			else
-				Edge := <-2.0,l,k>;
+				Edge := <-4.0,l,k>;
 			end if;
-			RS_SETau( LowPrecPts, ~Edge );
+			RS_SETau( Points, ~Edge );
 			Append(~Edges,Edge);
 		end for;
 	end for;
-
+	
 	// Sort by first entry
 	Sort(~Edges);
-	Tau := -4;
+	Tau := -4.0;
 	
 	// Construct MST
 	Sets := [ {v} : v in [1..d] ];
 	MST_Edges := []; j := 1;
+	
 	while #MST_Edges lt d-1 do
 		S1, s1 := RS_FindSet(Edges[j][2],Sets);
 		S2, s2 := RS_FindSet(Edges[j][3],Sets);
 		if S1 ne S2 then
 			Append(~MST_Edges,<Edges[j][2],Edges[j][3]>);
-			print "Tau of edge nr.",j,":",Edges[j][1];
+			//print "Tau of edge nr.",j,":",Edges[j][1];
 			Tau := Max(Tau,Edges[j][1]);
 			Sets[s1] := Sets[s1] join Sets[s2];
 			Remove(~Sets,s2);
@@ -71,26 +66,30 @@ function RS_SEMST( Points )
 	end while;
 	assert #MST_Edges eq d-1;
 	// Set Tau for integration
-	RS_SetIntTau((19/20)*Abs(Tau));
-
-	return MST_Edges;
+	//RS_SetIntTau((19/20)*(-Tau));
+	//print "-Tau:",-Tau;
+	return MST_Edges, -Tau;
 end function;
 
 
-
-function RS_AffineReduction(x,PPP,Zeta,N)
-	C<i> := Parent(PPP[1]);
-	C_1 := One(C); long := true;
+function RS_ImSgn( z )
+	if Im(z) eq 0 then
+		return 1; // Need negative zero; example: g1
+		//return 1;
+	else
+		return Sign(Im(z));
+	end if;
+end function;
+function RS_NRootAC(x,PPP,Zeta,N:long:=false)
+// Analytic continuation of the y = f(x)^(1/N) on one sheet
+	CC<i> := RS_GetGlobalComplexField_Max();
+	Pi := RS_GetGlobalPi();
+	c := Exp(Pi*i/N);
+	//print "c:",c;
+	long := true;
 	if #PPP eq 1 or long then
 		prod := 1;
 		for k in [1..#PPP] do
-			/*
-			if Re(PPP[k]) gt 0 then
-				prod *:= (-C_1)^(1/N) * (PPP[k] - x)^(1/N);
-			else
-				prod *:= (x - PPP[k])^(1/N);
-			end if;
-			*/
 			prod *:= (x - PPP[k])^(1/N);
 		end for;
 		return prod;
@@ -98,23 +97,18 @@ function RS_AffineReduction(x,PPP,Zeta,N)
 	z := x - PPP[1]; 
 	Factor := 1;
 	if Im(z) eq 0  and Re(z) lt 0 then
-		"!!!!!!!!!!1";
 		z := -z;
-		//Factor *:= (-C_1)^(1/N);
-		Factor *:= -i;
+		Factor *:= c;
 	end if;
 	isgnz := RS_ImSgn(z);
 	for k in [2..#PPP] do
 		z_ := x - PPP[k];
 		if Im(z_) eq 0 and Re(z_) lt 0 then
-			"!!!!!!!!!!1";
-			z := -z;
-			//Factor *:= (-C_1)^(1/N);
-			Factor *:= -i;
+			z_ := -z_;
+			Factor *:= c;			
 		end if;
 		isgnz_ := RS_ImSgn(z_);
 		z *:= z_;
-		//print "Next z:",z;
 		if isgnz eq isgnz_ then
 			isgnz := RS_ImSgn(z);
 			if isgnz ne isgnz_ then
@@ -127,14 +121,19 @@ function RS_AffineReduction(x,PPP,Zeta,N)
 		else
 			isgnz := RS_ImSgn(z);
 		end if;
-		//print "WNr:",WNr;
 	end for;
 	z := Factor * z^(1/N);
-	print "Factor:",Factor;
+	/*
 	zz := &*[ (x - PPP[k])^(1/N) : k in [1..#PPP] ];
-	//print "z:",z;
-	//print "zz:",zz;
-	assert Abs(z-zz) lt 10^-15;
+	if Abs(z-zz) gt 10^-10 then
+		print "x:",x;
+		print "z:",z;
+		print "zz:",zz;
+		print "PPP:",PPP;
+		print "N:",N;
+		error Error("!!!!!!111");
+	end if;
+	*/
 	return z;
 end function;
 
@@ -210,7 +209,7 @@ intrinsic RS_SEIntegration( f::RngMPolElt, Gamma::RSPath, Points::SeqEnum[FldCom
 	for t in [1..#Abscissas] do
 		x := Abscissas[t];
 		Enum := (x + Fact2);
-		z := RS_AffineReduction(x,PPP,Zeta,N);
+		z := RS_NRootAC(x,PPP,Zeta,N);
 		for j in [1..g] do
 			w := DFF[j];
 			Denom := z^w[2];
@@ -225,9 +224,11 @@ intrinsic RS_SEIntegration( f::RngMPolElt, Gamma::RSPath, Points::SeqEnum[FldCom
 		//Integrals0[j] *:= (1 - Zeta^(-w[2])) * IntFact * Factor;
 		//Integrals0[j] *:= (1 - Zeta^(-w[2])) * Exp(Pi*i*w[2]/N) * StepLength * Factor;
 		//Integrals0[j] *:= (1 - Zeta) * Exp(Pi*i/N) * StepLength * Factor;
-		Integrals0[j] *:= (Exp(Pi*i*w[2]/N)-Exp(-Pi*i*w[2]/N)) * StepLength * Factor;
 		//Integrals0[j] *:= (1 - Zeta^(N-1)) * IntFact * Factor;
-		Append(~Integrals,[ -Zeta^(l*w[2]) * Integrals0[j] : l in [0..N-1]]);
+
+		Integrals0[j] *:= (Exp(-Pi*i*w[2]/N)-Exp(Pi*i*w[2]/N)) * StepLength * Factor;
+		
+		Append(~Integrals,[ Zeta^(l*w[2]) * Integrals0[j] : l in [0..N-1]]);
 		//Append(~Integrals,[ -Zeta^l * Integrals0[j] : l in [0..N-1]]);
 	end for;
 
@@ -259,15 +260,12 @@ function RS_SEIntegrate( Edge,Points,DFF,Abscissas,Weights,StepLength,d,N )
 	else
 		PP := Remove(Remove(Points,Edge[2]),Edge[1]-1);
 	end if;
-	
-	
-	// Make vector for affine reduction
+	// Make vector of centers of circumcircles
 	PPP := [ (2*PP[k]-b-a)/(b-a) : k in [1..#PP] ];
 	
 	// Factors due to change of variable
 	Fact1 := (b-a)/2;
 	Fact2 := (b+a)/(b-a);
-	//IntFact := Exp(Pi*i/N) * StepLength;
 	/*
 	print "PP:",PP;
 	print "PPP:",PPP;
@@ -275,11 +273,13 @@ function RS_SEIntegrate( Edge,Points,DFF,Abscissas,Weights,StepLength,d,N )
 	print "Fact2:",Fact2;
 	print "DFF:",DFF;
 	*/
-	"########### Next Integral ###################";
+	vprint SE,2 : "########### Next Integral ###################";
 	Integrals0 := [ CC_0 : j in [1..g] ];
 	for t in [1..#Abscissas] do
 		x := Abscissas[t];
-		z := RS_AffineReduction(x,PPP,Zeta,N);
+
+		// Analytic continuation
+		z := RS_NRootAC(x,PPP,Zeta,N);
 		//print "z:",z;
 		//print "Arg(z):",Arg(z);
 		Enum := (x + Fact2);
@@ -306,206 +306,240 @@ function RS_SEIntegrate( Edge,Points,DFF,Abscissas,Weights,StepLength,d,N )
 end function;
 
 
-intrinsic RS_SEPM( f::RngMPolElt : Prec := -1, Big := false ) -> RngIntElt
-{ - }
+intrinsic RS_SEPM( f::RngMPolElt : Prec := -1, Small := true ) -> Matrix
+{ Computes period matrices associated to the superelliptic curve defined by f to precision Prec }
 	// Precision management
 	GlobalPrec := RS_GetGlobalPrecision();
 	if Prec lt 20 then
 		Prec := GlobalPrec;
 	end if;
-	Adjusted := 10;
-
-	vprint SE, 1 : "Prescribed precision:",Prec;
-	vprint SE, 1 : "Adjusted precision:",Prec+Adjusted;
-
-	// Set precision
-	RS_SetGlobalPrecision( Prec : Adjusted := Adjusted );
-	N := Degree(f,2); d:= Degree(f,1);RS_SetGlobalZeta(N);
-	C_<i> := ComplexField(Prec); C_20<i> := RS_GetGlobalComplexField_20(); Zeta := RS_GetGlobalZeta(); vprint SE,1 : "Zeta:",C_20!Zeta;
-	CC<i> := RS_GetGlobalComplexField_Max(); CC_0 := Zero(CC); Pi := RS_GetGlobalPi();
+	vprint SE,1 : "Prescribed precision:",Prec;
+	
 
 	// Branch points
-	Points := Sort(RS_DiscriminantPoints(f,Parent(f).2),RS_CompareFldComElt);
+	Points := Sort(RS_DiscriminantPoints(f,Parent(f).2:Prec:=Prec),RS_CompareFldComElt);
 	vprint SE,3 : "Discriminant points:",Points;
-	vprint SEP, 1 : "Precision of discriminant points:",Precision(Points[1]);;
+	vprint SEP,1 : "Precision of discriminant points:",Precision(Points[1]);;
 
-	// Minimal spanning tree w.r.t holomorphicy
-	MST_Edges := RS_SEMST(Points);
+	// Degrees
+	N := Degree(f,2); d := Degree(f,1);
+	//assert &and[N ge 2, d ge 2, N*d ge 6]; // No Genus 0 curves
+	assert &and[N ge 2, d ge 3];
 
-	vprint SE,2 : "MST_Edges:",MST_Edges;
-	vprint SE,1 : "#MST_Edges:",#MST_Edges;
+	// Complex fields and constants
+	C_<i> := ComplexField(Prec); C_20<i> := RS_GetGlobalComplexField_20(); RS_SetGlobalZeta(N); Zeta := RS_GetGlobalZeta(); 
+	CC<i> := RS_GetGlobalComplexField_Max(); CC_0 := Zero(CC); Pi := RS_GetGlobalPi(); 
+	vprint SE,1 : "Zeta:",C_20!Zeta;
+	vprint SEP,1 : "Precision Zeta:",Precision(Zeta);
+	vprint SEP,1 : "Precision CC_0:",Precision(CC_0);
+	vprint SEP,1 : "Precision Pi:",Precision(Pi);
+
+
+	// Low precision branch points
+	LowPrecPoints := [ C_20!Pt : Pt in Points ];
+
+	// Maximal spanning tree w.r.t holomorphicy
+	vprint SE,1 : "Constructing maximal spanning tree...";
+	t := Cputime();
+	MST_Edges, MST_Tau := RS_SEMST(LowPrecPoints);
+	Cputime(t);
+	vprint SE,3 : "MST_Edges:",MST_Edges;
+	vprint SE,2 : "#MST_Edges:",#MST_Edges;
+	vprint SE,2 : "MST_Tau:",MST_Tau;
+
+	"Prec!!!!:",RS_GetGlobalPrecision();
 
 	// Holomorphic differentials
+	vprint SE,1 : "Computing holomorphic differentials...";
+	t := Cputime();
 	DFF := [];
 	for i in [0..d-2] do
 		for j in [1..N-1] do
-			if (-N*(i+1) + j*d - Gcd(N,d) ge 0) and (N*(i+1) - j - 1 ge 0) then
+			//if (-N*(i+1) + j*d - Gcd(N,d) ge 0) and (N*(i+1) - j - 1 ge 0) then
+			if (-N*(i+1) + j*d - Gcd(N,d) ge 0) then
 				Append(~DFF,<i,j>);
 			end if;
 		end for;
 	end for;
 	vprint SE,2 : "Holomorphic differentials:",DFF;
+	Cputime(t);
+
 	// Genus
 	g := #DFF;
+	assert 2*g eq (N-1)*(d-1) - Gcd(N,d) + 1; // Check Riemann-Hurwitz
 	vprint SE,1 : "Genus:",g;
 
 	// Integration parameters
-	Abscissas, Weights, StepLength := RS_SEIntegrationParameters(RS_GetIntTau(),N);
-	vprint SE,1 : "#Abscissas:",#Abscissas;
+	vprint SE,1 : "Computing Integration parameters...";
+	t := Cputime();
+	Abscissas, Weights, StepLength := RS_SEIntegrationParameters(Points,MST_Edges,MST_Tau,N);
+	vprint SE,2 : "#Abscissas:",#Abscissas;
 	vprint SE,3 : "Abscissas:",Abscissas;
-	vprint SE,1 : "#Weights:",#Weights;
+	vprint SE,2 : "#Weights:",#Weights;
 	vprint SE,3 : "Weights:",Weights;
-	vprint SE,2 : "StepLength:",StepLength;
+	vprint SE,2 : "StepLength:",C_20!StepLength;
 	vprint SEP,1 : "Precision Abscissas:",Precision(Abscissas[1]);
 	vprint SEP,1 : "Precision Weights:",Precision(Weights[1][1]);
 	vprint SEP,1 : "Precision StepLength:",Precision(StepLength);
-
+	Cputime(t);
+"Prec!!!!:",RS_GetGlobalPrecision();
 	// Integrals
+	vprint SE,1 : "Integrating...";
+	t := Cputime();
 	Integrals := [];
 	for k in [1..d-1] do
-		vprint SE,1: "Integrating edge nr.",k;
+		vprint SE,2 : "Integrating edge nr.",k;
 		I := RS_SEIntegrate( MST_Edges[k],Points,DFF,Abscissas,Weights,StepLength,d,N );
 		Append(~Integrals,I);
 	end for;
+	vprint SEP,1 : "Precision Integrals:",Precision(Integrals[Random([1..d-1])][Random([1..g])]);
+	Cputime(t);
 
 	// Matrix of periods
-	PM_ := ZeroMatrix(CC,g,2*g);
-	//PM_ := ZeroMatrix(CC,g,2*g+d-1);
+	//PM_ := ZeroMatrix(CC,g,2*g);
+	//PM_ := ZeroMatrix(CC,g,(d-1)*(N-1));
+	PM_ := ZeroMatrix(CC,(d-1)*(N-1),g);
 	for k in [1..d-1] do
 		for l in [1..N-1] do
 		//for l in [1..N] do
 			Ind2 := (N-1)*(k-1) + l;
 			//Ind2 := N*(k-1) + l;
 			for j in [1..g] do
-				//PM_[j][Ind2] := Zeta^(l-1) * (1 - Zeta^(N-1)) * Integrals[k][j];
-				//PM_[j][Ind2] := Zeta^(l-1) * (1 - Zeta) * Integrals[k][j];
-				PM_[j][Ind2] := Integrals[k][j][l];
+				//PM_[j][Ind2] := Integrals[k][j][l];
+				PM_[Ind2][j] := Integrals[k][j][l];
 			end for;
 		end for;
 	end for;
 	vprint SE,3: "Integrals:",PM_;
 
 	// Intersection matrix
-	sk_Matrix := [ [] : j in [1..d-1] ];
+	vprint SE,1 : "Computing skd-Matrix...";
+	t := Cputime();
+	skd_Matrix := [ [] : j in [1..d-1] ];
 	for j in [1..d-1] do
-		sk_Matrix[j][j] := <0,0,0>;
+		skd_Matrix[j][j] := <0,0,0>;
 		for l in [j+1..d-1] do
-			sk := RS_SEIntersection(MST_Edges[j],MST_Edges[l],Points,N);
-			vprint SE,2: "<s,k> pair of edges",MST_Edges[j],"and",MST_Edges[l],":",sk;
-			sk_Matrix[j][l] := <sk[1],sk[2] mod N,sk[3]>;
-			sk_Matrix[l][j] := <-sk[1],sk[2] mod N,sk[3]>;
+			skd := RS_SEIntersection(MST_Edges[j],MST_Edges[l],Points,N);
+			vprint SE,2: "<s,k,d>-triple of edges",MST_Edges[j],"and",MST_Edges[l],":",skd;
+			skd_Matrix[j][l] := <skd[1],skd[2] mod N,skd[3]>;
+			skd_Matrix[l][j] := <-skd[1],skd[2] mod N,skd[3]>;
 		end for;
 	end for;
-	vprint SE,1: "sk_matrix:",sk_Matrix;
+	Cputime(t);
+	vprint SE,2: "skd_matrix:",skd_Matrix;
 
 	// Building block matrices
-
-	
-		Blocks := [];
-		for j in [1..d-1] do
-			for l in [1..d-1] do
-				Block := ZeroMatrix(Integers(),N-1,N-1);
-				//Block := ZeroMatrix(Integers(),N,N);
-				
-				if j eq l then
-					// Intersection with self-lifts
-					
-					if N gt 2 then
-						for Ind1 in [1..N-1] do
-						//for Ind1 in [1..N] do
-							for Ind2 in [Ind1+1..N-1] do
-							//for Ind2 in [Ind1+1..N] do
-								if Ind1 + 1 eq Ind2 then
-									Block[Ind1][Ind2] := 1;
-									Block[Ind2][Ind1] := -1;
-								end if;
-							end for;
+	Blocks := [];
+	for j in [1..d-1] do
+		for l in [1..d-1] do
+			Block := ZeroMatrix(Integers(),N-1,N-1);
+			//Block := ZeroMatrix(Integers(),N,N);
+			if j eq l then
+				// Intersection with self-lifts
+				if N gt 2 then
+					for Ind1 in [1..N-1] do
+					//for Ind1 in [1..N] do
+						for Ind2 in [Ind1+1..N-1] do
+						//for Ind2 in [Ind1+1..N] do
+							if Ind1 + 1 eq Ind2 then
+								Block[Ind1][Ind2] := 1;
+								Block[Ind2][Ind1] := -1;
+							end if;
 						end for;
-						//Block[1][N] := -1;
-						//Block[N][1] := 1;
-					end if;
-				else
-					s := sk_Matrix[j][l][1];
-					if s ne 0 then
-						k := sk_Matrix[j][l][2];
-						for Ind1 in [1..N-1] do
-						//for Ind1 in [1..N] do
-							for Ind2 in [1..N-1] do
-							//for Ind2 in [1..N] do
-								
-								Shift := (Ind2 - Ind1 - k) mod N;
-								
-								/*		
-								if Shift eq 0 then
-									Block[Ind1][Ind2] := s;
-									Block[Ind2][Ind1] := s;
-								elif Shift in [1,N-1] then
-									Block[Ind1][Ind2] := -s;
-									Block[Ind2][Ind1] := -s;							
-								end if;
-								*/
-								if Shift eq 0 then
-									Block[Ind1][Ind2] := s;
-								elif Shift in [sk_Matrix[j][l][3]] then
-									Block[Ind1][Ind2] := -s;					
-								end if;
-								/*
-								print "######## Next Entry ######";
-								print "Ind1:",Ind1;
-								print "Ind2:",Ind2;
-								print "k:",k;
-								print "Shift:",Shift;
-								print "Intsectn:",Block[Ind1][Ind2];
-								*/
-							end for;
+					end for;
+					//Block[1][N] := -1;
+					//Block[N][1] := 1;
+				end if;
+			else
+				s := skd_Matrix[j][l][1];
+				if s ne 0 then
+					k := skd_Matrix[j][l][2];
+					dir := skd_Matrix[j][l][3];
+					for Ind1 in [1..N-1] do
+					//for Ind1 in [1..N] do
+						for Ind2 in [1..N-1] do
+						//for Ind2 in [1..N] do
+							Shift := (Ind2 - Ind1 - k) mod N;
+							if Shift eq 0 then
+								Block[Ind1][Ind2] := s;
+							elif Shift eq dir then
+								Block[Ind1][Ind2] := -s;					
+							end if;
 						end for;
-					end if;
+					end for;
 				end if;
-				if j gt l then
-					//Append(~Blocks,Block);
-					Append(~Blocks,Transpose(Block));
-				else
-					Append(~Blocks,Block);
-					//Append(~Blocks,Transpose(Block));
-				end if;
-			end for;
+			end if;
+			if j gt l then
+				Append(~Blocks,Transpose(Block));
+			else
+				Append(~Blocks,Block);
+			end if;
 		end for;
-		//print "Blocks:",Blocks;
+	end for;
+	//print "Blocks:",Blocks;
 	RealIntMatrix := BlockMatrix(d-1,d-1,Blocks);
 	
-	vprint SE,1: "(Real) Intersection matrix:",RealIntMatrix;
-	vprint SE,1: "Rank(IntersectionMatrix):",Rank(RealIntMatrix);
+	vprint SE,3: "(Real) Intersection matrix:",RealIntMatrix;
+	vprint SE,2: "Rank(IntersectionMatrix):",Rank(RealIntMatrix);
 	assert Rank(RealIntMatrix) eq 2*g;	
 	
 	// Symplectic reduction of intersection matrix
-	//CF, Alpha := RS_SymplecticBasis(IntMatrix);
-	CF, Alpha := RS_SymplecticBasis(RealIntMatrix);
-
-	//print "Transpose(Alpha) * RealIntMatrix * Alpha:",Transpose(Alpha) * RealIntMatrix * Alpha;
-	print "Alpha * RealIntMatrix * Transpose(Alpha):",Alpha * RealIntMatrix * Transpose(Alpha);
-	//Alpha := Transpose(Alpha);
-	vprint SE,1: "Alpha:",Alpha;
+	vprint SE,1 : "Performing symplectic reduction...";
+	t := Cputime();
+	//CF, Alpha := RS_SymplecticBasis(RealIntMatrix);
+	CF, Alpha := RS_SymplecticBasis(Transpose(RealIntMatrix));
+	Cputime(t);
+	vprint SE,2: "Alpha:",Alpha;
 	vprint SE,3: "CF:",CF;
 	
+	//Alpha_CC := ChangeRing(Transpose(Alpha),CC);
+	Alpha_CC := ChangeRing(Alpha,CC);
+	vprint SE,1 : "Matrix multiplication 1...";
+	t := Cputime();
+	//PMAPMB := PM_ * Alpha_CC;
+	PMAPMB := Alpha_CC * PM_;
+	Cputime(t);
 	
-	Alpha_CC := ChangeRing(Transpose(Alpha),CC);
-	//Alpha_CC := ChangeRing(Alpha,CC);
-	PMAPMB := PM_ * Alpha_CC;
+	//PM_A := ColumnSubmatrixRange(PMAPMB,1,g);
+	//PM_B := ColumnSubmatrixRange(PMAPMB,g+1,2*g);
+	PM_A := RowSubmatrixRange(PMAPMB,1,g);
+	PM_B := RowSubmatrixRange(PMAPMB,g+1,2*g);
 	
-	
-	PM_A := ColumnSubmatrixRange(PMAPMB,1,g);
-	PM_B := ColumnSubmatrixRange(PMAPMB,g+1,2*g);
 
-	vprint SE,2 : "Dependent columns:",ColumnSubmatrixRange(PMAPMB,2*g+1,Nrows(Alpha));
+	//vprint SE,3 : "Dependent columns:",ColumnSubmatrixRange(PMAPMB,2*g+1,Nrows(Alpha));
+	vprint SE,3 : "Dependent rows:",RowSubmatrixRange(PMAPMB,2*g+1,Nrows(Alpha));
 	vprint SE,3 : "PM_A:",PM_A;
 	vprint SE,3 : "PM_B:",PM_B;
-	vprint SE,2 : "Det(PM_A):",Determinant(PM_A);
-	vprint SE,2 : "Det(PM_B):",Determinant(PM_B);
-	vprint SE,3 : "PM_B^-1:",PM_B^-1;
-	PM := PM_B^-1 * PM_A;
-	//PM := PM_A^-1 * PM_B;
+	//vprint SE,2 : "Det(PM_A):",Determinant(PM_A);
+	//vprint SE,2 : "Det(PM_B):",Determinant(PM_B);
+	//vprint SE,3 : "PM_B^-1:",PM_B^-1;
+	
+
+	if Small eq false then
+		// Compute big period matrix
+		PM := HorizontalJoin(PM_B,PM_A) + ZeroMatrix(C_,g,2*g); // Dimensions???
+		vprint SE,1 : "Period matrix:";
+		RS_SetGlobalPrecision(GlobalPrec);
+		return PM;
+	end if;
+
+
+	vprint SE,1 : "Matrix inversion...";
+	t := Cputime();
+	//PM_BInv := PM_B^(-1);
+	PM_AInv := PM_A^(-1);
+	Cputime(t);
+	vprint SE,1 : "Matrix multiplication 2...";
+	t := Cputime();
+	//PM := PM_BInv * PM_A;
+	//PM := PM_A * PM_BInv;
+	PM := PM_B * PM_AInv;
+	Cputime(t);
 	
 	// Smoothing out entries
+	
+	vprint SE,1 : "Smoothing out entries...";
+	t := Cputime();
 	for j in [1..g] do
 		for k in [1..g] do
 			if Abs(Re(PM[j][k])) lt RS_GetGlobalError() then
@@ -516,22 +550,33 @@ intrinsic RS_SEPM( f::RngMPolElt : Prec := -1, Big := false ) -> RngIntElt
 			end if;
 		end for;
 	end for;
+	Cputime(t);
 	PM := ChangeRing(PM,C_);
-	vprint SE,2 : "PM:",PM;
+	vprint SE,3 : "PM:",PM;
+
+
+
 	// Testing for symmetry of the period matrix
+	vprint SE,1 : "Testing symmetry...";
+	t := Cputime();
 	MaxSymDiff := 0;
 	for j in [1..g] do
 		for k in [j+1..g] do
 			MaxSymDiff := Max(MaxSymDiff,Abs(PM[j][k] - PM[k][j]));
 		end for;
 	end for;
+	Cputime(t);
 	vprint SE,1 : "Maximal symmetry deviation:",MaxSymDiff;
 	
-	if MaxSymDiff ge RS_GetGlobalError() then
-		//error Error("Period matrix not symmetric: Computation failed.");
+	if MaxSymDiff ge 10^-10 then
+	//if MaxSymDiff ge RS_GetGlobalError() then
+		print "f:",f;
+		error Error("Period matrix not symmetric: Computation failed.");
 	end if;	
 		
 	// Testing positive definiteness of the imaginary part of the period matrix
+	vprint SE,1 : "Testing positive definite...";
+	t := Cputime();
 	PM_Im := ZeroMatrix(RealField(Prec),g,g);
 	for j in [1..g] do
 		for k in [j..g] do
@@ -540,240 +585,11 @@ intrinsic RS_SEPM( f::RngMPolElt : Prec := -1, Big := false ) -> RngIntElt
 		end for;
 	end for;
 	assert IsPositiveDefinite(PM_Im);
-		
+	Cputime(t);
+
 	RS_SetGlobalPrecision(GlobalPrec);
 
 	return PM;
-
-end intrinsic;
-
-intrinsic RS_SEPM3( f::RngMPolElt : Prec := -1, Basepoint := "Opt", Big := false ) -> RngIntElt
-{ - }
-
-	// Precision management
-	GlobalPrec := RS_GetGlobalPrecision();
-	if Prec lt 20 then
-		Prec := GlobalPrec;
-	end if;
-	Adjusted := 10;
-	// Set precision
-	RS_SetGlobalPrecision( Prec : Adjusted := Adjusted );
-	N := Degree(f,2); Sym_N := Sym(N); Id := Id(Sym_N);d:= Degree(f,1);RS_SetGlobalZeta(N);
-	C_<i> := ComplexField(Prec); C_20<i> := RS_GetGlobalComplexField_20();
-	CC<i> := RS_GetGlobalComplexField_Max(); CC_0 := Zero(CC); Err := RS_GetGlobalError();
-	Basepoint, DiscPts, PathPieces, IndexPathLists := RS_PathPieces(f:PathMethod:="EMST",Basepoint:=Basepoint);
-	print "IndexPathLists:",IndexPathLists;
-	RedDiscPts := [ RS_ReducePrecision(Pt,5) : Pt in DiscPts cat [Basepoint] ];
-	//LowPrecDiscPts := [ C_20!P : P in DiscPts ];
-	RS_TauPaths( RedDiscPts , PathPieces );
-	MinTau, Ind := Min( [ Gamma`Tau : Gamma in PathPieces ] );
-	RS_SetIntTau((19/20)*Real(CC!MinTau));
-	print "Tau:",RS_GetIntTau();
-	// Holomorphic differentials
-	DFF := [];
-	for i in [0..d-2] do
-		for j in [1..N-1] do
-			if (-N*(i+1) + j*d - Gcd(N,d) ge 0) and (N*(i+1) - j - 1 ge 0) then
-				//print "(x)^",i,"(y)^",-j,"d(x)";
-				//w := x^i * y^(-j) * dx;
-				Append(~DFF,<i,j>);
-			end if;
-		end for;
-	end for;
-	g := #DFF;
-	for l in [1..#PathPieces] do
-		Gamma := PathPieces[l];
-		Gamma`Permutation := [];
-		RS_SEIntegration(f,Gamma,RedDiscPts,DFF);
-		assert assigned Gamma`Integrals;
-		//print "Gamma`Integrals:",Gamma`Integrals;
-	end for;
-	
-	LocalMonodromy := [];
-	ChainIntegrals := [];
-	BranchPoints := <>;
-	for l in [1..#IndexPathLists] do
-		"'###########################################'";
-		print "l:",l;
-		IndexList := IndexPathLists[l];
-		LocMon := Id;
-		for k in [1..Ceiling(#IndexList/2)-1] do
-			Path1 := PathPieces[IndexList[k]];
-			//assert Path1`StartPt eq Basepoint;
-			Path2 := PathPieces[IndexList[k+1]];
-			print "Path1:",Path1;
-			print "Path2:",Path2;
-			ConnectionPt1 := RS_PathEvaluate(Path1,99/100);
-			Phi2 := RS_LineSegmentAngle( Path1, Path2 );
-			ConnectionPt2 := Abs(ConnectionPt1 - Path1`EndPt) * Exp(Phi2*i) + Path1`EndPt;
-			Arc12 := RS_Arc(ConnectionPt1,ConnectionPt2,Path1`EndPt);
-			RS_AnalyticContinuation(f,Arc12);
-			print "Path1:",Path1;
-			Intsect := RS_SEIntersection(f,Path1,Path2,RedDiscPts,N);
-			print "Intersection:",Intsect;
-			if Intsect eq 1 then
-				Arc12`Permutation := Id;
-			else
-				Arc12`Permutation := Sym_N![2,1];
-			end if;
-			Append(~Path1`Permutation,<Arc12`Permutation,l>);
-			print "Path1Perm:",Path1`Permutation;
-			LocMon *:= Arc12`Permutation;
-		end for;
-		EndPath := PathPieces[IndexList[Ceiling(#IndexList/2)]];
-		ConnectionPt := RS_PathEvaluate(EndPath,99/100);
-		EndFC := RS_FullCircle(ConnectionPt,EndPath`EndPt);
-		RS_AnalyticContinuation(f,EndFC);
-		print "EndPath:",EndPath;
-		Append(~EndPath`Permutation,<EndFC`Permutation,l>);
-		print "EndPathPerm:",EndPath`Permutation;
-		//Append(~LocalMonodromy,LocMon * EndFC`Permutation * LocMon^(-1));
-		Append(~LocalMonodromy,EndFC`Permutation);
-		Append(~BranchPoints,EndPath`EndPt);
-
-		// Now piece together integrals of closed paths
-		ChainIntegral := [ RS_ZeroVector(CC,N) : j in [1..g] ];
-		Sigma := Id;
-		for Index in IndexList do
-			Sgn := Sign(Index);
-			print "Index:",Index;
-			print "Sgn:",Sgn;
-			print "Sigma:",Sigma;
-			for j in [1..g] do
-				ChainIntegral[j] +:= Sgn * ( Sigma^Sgn * PathPieces[Sgn*Index]`Integrals[j] ) ;
-			end for;
-			assert PathPieces[Sgn*Index]`Permutation[#PathPieces[Sgn*Index]`Permutation][2] eq l;
-			Sigma *:= PathPieces[Sgn*Index]`Permutation[#PathPieces[Sgn*Index]`Permutation][1]^Sgn;
-		end for;
-		print "SigmaLoc:",Sigma;
-		//Append(~LocalMonodromy,Sigma);
-		Append(~ChainIntegrals,ChainIntegral);
-	end for;
-	assert &and[ assigned Gamma`Permutation : Gamma in PathPieces ];
-
-	// Compute permutation at infinity by relation
-	InfPerm := Inverse(&*LocalMonodromy);
-
-	// Chain around infinity
-	if InfPerm ne Id then
-		InfIntegral := [ RS_ZeroVector(CC,N) : j in [1..g] ];
-		Sigma := Id;
-		for k in [#BranchPoints..1 by -1] do
-			Sigma *:= LocalMonodromy[k]^(-1);
-			for j in [1..g] do
-				InfIntegral[j] -:= Sigma * ChainIntegrals[k][j];
-			end for;
-		end for;
-		Append(~LocalMonodromy,InfPerm);
-		Append(~BranchPoints,Infinity());
-		Append(~ChainIntegrals,InfIntegral);
-	end if;
-
-
-	return ChainIntegrals;
-
-	print "LocalMonodromy:",LocalMonodromy;
-	// Compute the homology
-	Alpha, Cycles, BranchPlaces := RS_Tretkoff( LocalMonodromy : Genus := g );
-	print "Alpha:",Alpha;
-	print "Cycles:",Cycles;
-	PM_A := ZeroMatrix(CC,g,g); NumberOfCycles := #Cycles;
-	PM_B := ZeroMatrix(CC,g,g);
-	for j in [1..g] do
-		CycleIntegralValues := [];
-		for k in [1..#Cycles] do
-			Cycle := Cycles[k];
-			Value := 0;
-			l := 1;
-			while l lt #Cycle do
-				Sheet1 := Cycle[l];
-				Sheet2 := Cycle[l+2];
-				PathNumber := BranchPlaces[Cycle[l+1]][1];
-				Perm := LocalMonodromy[PathNumber];	
-				while Sheet1 ne Sheet2 do
-					Value +:= ChainIntegrals[PathNumber][j]`Entries[Sheet1];
-					Sheet1 := Sheet1^Perm;
-				end while;
-				l +:= 2;
-			end while;
-			Append(~CycleIntegralValues,Value);
-		end for;
-		//print "CycleIntegralValues:",CycleIntegralValues;
-		for m in [1..g] do
-			PM_A[j][m] := &+[ Alpha[m][l] * CycleIntegralValues[l] : l in [1..NumberOfCycles] ];
-			PM_B[j][m] := &+[ Alpha[m+g][l] * CycleIntegralValues[l] : l in [1..NumberOfCycles] ];
-		end for;			
-	end for;
-
-
-	print "PM_A:",PM_A;
-	print "PM_B:",PM_B;
-
-	// Testing the dependence of the cycles 2g+1,...,2g+N-1
-	for k in [2*g+1..NumberOfCycles] do
-		CycleSum_k := &+[ Alpha[k][j] * CycleIntegralValues[j] : j in [1..NumberOfCycles] ];
-		print "CycleSum_k:",CycleSum_k;
-		if Abs(CycleSum_k) ge Err then
-			print "Cycles summed over row nr.",k,"do not add up to zero: Computation failed.";
-			print "DefiningPolynomial:",f;
-			RS_SetGlobalPrecision(GlobalPrec);
-			error Error("Cycles do not add up to zero: Homology test failed.");
-		end if;
-	end for;
-
-	if Big then
-		// Compute big period matrix
-		PM := HorizontalJoin(PM_A,PM_B) + ZeroMatrix(C_,g,2*g);
-		RS_SetGlobalPrecision(GlobalPrec);
-		return PM;
-	else
-		// Compute small period matrix
-		PM := PM_A^(-1) * PM_B;
-
-		// Prepare output
-		MaxEntry := 0;
-		for j in [1..g] do
-			for k in [1..g] do
-				if Abs(Re(PM[j][k])) lt RS_GetGlobalError() then
-					PM[j][k] := CC_0 + Im(PM[j][k])*i;
-				end if;
-				if Abs(Im(PM[j][k])) lt RS_GetGlobalError() then
-					PM[j][k] := Re(PM[j][k]) + CC_0*i;		
-				end if;
-				MaxEntry := Max(MaxEntry,Abs(PM[j][k]));
-			end for;
-		end for;
-		PM := ChangeRing(PM,C_);
-
-
-		// Testing for symmetry of the period matrix
-		MaxSymDiff := 0;
-		for j in [1..g] do
-			for k in [j+1..g] do
-				MaxSymDiff := Max(MaxSymDiff,Abs(PM[j][k] - PM[k][j]));
-			end for;
-		end for;
-		print "MaxSymDiff:",MaxSymDiff;
-		if MaxSymDiff ge Err then
-			print "Period matrix not symmetric: Computation failed.";
-			RS_SetGlobalPrecision(GlobalPrec);
-			print "DefiningPolynomial:",f;
-			error Error("Period matrix not symmetric: Computation failed.");
-			return PM;
-		end if;	
-		print "PM:",PM;
-		// Testing positive definiteness of the imaginary part of the period matrix
-		PM_Im := ZeroMatrix(RealField(Prec),g,g);
-		for j in [1..g] do
-			for k in [j..g] do
-				PM_Im[j][k] := Real(Im(PM[j][k]));
-				PM_Im[k][j] := PM_Im[j][k];
-			end for;
-		end for;
-		assert IsPositiveDefinite(PM_Im);
-		RS_SetGlobalPrecision(GlobalPrec);
-		return PM;
-	end if;
 
 end intrinsic;
 
@@ -781,34 +597,12 @@ end intrinsic;
 
 intrinsic RS_SuperellipticDifferentials( f::RngMPolElt ) -> SeqEnum[DiffFunElt]
 { Returns a basis of holomorphic differentials for superelliptic curves }
-	//print "Defining polynomial:",f;
 	N := Degree(f,2);
 	d := Degree(f,1);
-	/*
-	RFF<x,y> := RationalFunctionField(Rationals(),2);
-	DFF := [];
-
-	for i in [0..d-2] do
-		for j in [1..N-1] do
-			if (-N*(i+1) + j*d - Gcd(N,d) ge 0) and (N*(i+1) - j - 1 ge 0) then
-				//print "(x)^",i,"(y)^",-j,"d(x)";
-				//w := x^i * y^(-j) * dx;
-				w := x^i * y^(-j);
-				Append(~DFF,w);
-			end if;
-		end for;
-	end for;
-	*/
-	//print "DFF:",DFF;
-	//print "#DFF:",#DFF;
-	//print "Genus:",Genus(FF);
-	//assert #DFF eq Genus(FF);
 	DFF := [];
 	for i in [0..d-2] do
 		for j in [1..N-1] do
-			if (-N*(i+1) + j*d - Gcd(N,d) ge 0) and (N*(i+1) - j - 1 ge 0) then
-				//print "(x)^",i,"(y)^",-j,"d(x)";
-				//w := x^i * y^(-j) * dx;
+			if (-N*(i+1) + j*d - Gcd(N,d) ge 0) then
 				Append(~DFF,<i,j>);
 			end if;
 		end for;
@@ -851,54 +645,184 @@ function RS_SEIntegrationPoints( h, NrPoints, Lambda )
 	//return Abscissas, Weights, h;
 end function;
 
+function RS_Dist_1( P )
+// Strange distance function?!?
+	xP := Abs(Re(P));
+	i := Parent(P).1;
+	if xP gt 1 then
+		return Abs(xP-1+i*Im(P));
+	else
+		return Abs(Im(P));
+	end if;
+end function;
 
-intrinsic RS_SEIntegrationParameters( Tau::FldReElt, N::RngIntElt ) -> SeqEnum[FldReElt], SeqEnum[FldReElt], FldReElt
+function RS_M1Bound(PPP,N)
+// Compute the bound M1 on the integrand
+	B1 := 1/(&*[ RS_Dist_1(P) : P in PPP ])^(1/N);
+	//print "B1:",B1;
+	if B1 gt 1 then
+		return B1^(N-1);
+	else
+		return B1;
+	end if;
+end function;
+
+
+function RS_tOpt(D,M1)
+// Some value
+	Pi := RS_GetGlobalPi();
+	Lambda := Pi/2;
+	return Argsinh((D+Log(4*M1))/Lambda);
+end function;
+
+
+function RS_Dist_thsh( P, Tau )
+// Strange distance function?!?
+	Pi := RS_GetGlobalPi();
+	Lambda := Pi/2;
+	i := Parent(P).1;
+	P := Abs(Re(P)) + i*Abs(Im(P));
+	x0 := 0; x1 := Argcosh(Pi/(2*Lambda*Sin(Tau))); // s.t. \Lambda Cosh(x)Sin(\Tau)= Pi/2;
+	Phi := function(x)
+		return Tanh(Lambda*Sinh(x+i*Tau));
+	end function;
+	ArgPhiP := function(x)
+		return Arg(Cosh(x+i*Tau))-2*Arg(Cosh(Lambda*Sinh(x+i*Tau)));
+	end function;
+	ArgPhi := function(x)
+		return Arg(P - Phi(x));
+	end function;
+	// x := Solve(x := x0, x1, ArgPhi(x)-ArgPhiP(x)-Pi/2);
+	x := x0;
+	Val := ArgPhi(x)-ArgPhiP(x)-Pi/2;
+	//print "x0:",x;
+	//print "x1:",x1;
+	//print "Val:",Val;
+	n := 10;
+	for t in [0..n] do
+		x_new := (t/n)*x1 + (1-(t/n))*x0;
+		Val_new := ArgPhi(x_new)-ArgPhiP(x_new)-Pi/2;
+		if Abs(Val_new) lt Abs(Val) then
+			x := x_new;
+			Val := Val_new;
+			
+		end if;
+	end for;
+	//print "x_new:",x_new;
+	//print "Val_new:",Val_new;
+	return Abs(P-Phi(x));
+end function;
+
+
+function RS_M2Bound(PPP,Tau,N)
+// Compute the bound M2 on the integrand
+	B2 := 1/(&*[ RS_Dist_thsh(P,Tau) : P in PPP ])^(1/N);
+	//print "B2:",B2;
+	if B2 gt 1 then
+		return B2^(N-1);
+	else
+		return B2;
+	end if;
+end function;
+
+
+function RS_PhiBound(Tau,N)
+// .. 
+	Pi := RS_GetGlobalPi();
+	Lambda := Pi/2;
+	Alpha := (N-1)/N;
+	Y_Tau := Sqrt(Pi/2*Lambda*Sin(Tau));
+	X_Tau := Sqrt(Y_Tau^2 - Lambda^2 * Sin(Tau)^2 / Tan(Tau));
+	return ((1+2*Alpha)/(2*Alpha*Cos(Y_Tau)^(2*Alpha))+1/(2*Alpha*Sinh(X_Tau)^(2*Alpha)));
+	// something different...
+end function;
+
+
+function RS_hOpt(D,Tau,M2,N)
+	Pi := RS_GetGlobalPi();
+	Lambda := Pi/2;
+	return 2*Pi*Tau/Log(1+2*M2*RS_PhiBound(Tau,N)*Exp(D));
+end function;
+
+
+intrinsic RS_SEIntegrationParameters( Points::SeqEnum[FldComElt], MST::SeqEnum[Tup], Tau::FldReElt, N::RngIntElt ) -> SeqEnum[FldReElt], SeqEnum[FldReElt], FldReElt
 { Computes integration parameters for double exponential integration on the interval [-1,1] }
 	assert N ge 2;
+
 	// Get complex field for printing
 	C_20<i> := RS_GetGlobalComplexField_20();
 	// Get complex field of maximal precision
 	C<i> := RS_GetGlobalComplexField_Max(); 
-	
 	// Get Pi
 	Pi := RS_GetGlobalPi();
-	
+	// Compute D
+	D := Real(C!(Precision(RS_GetGlobalComplexField_Comp()) * Log(10)));"PD:",Precision(D);
+	"Prec!222!!:",RS_GetGlobalPrecision_Comp();
 	// Check Tau
 	if Tau ge Pi/2 then
-		Tau *:= (19/20);
+		//Tau *:= (19/20);
+		error Error("OKAY?!?!?");
 	end if;
-	assert Tau lt Pi/2;
-	assert Tau gt 0;
-	vprint Int,1 : "Tau:", Tau;
+	assert &and[Tau lt Pi/2, Tau gt 0];
 
-	// Compute D
-	D := Real(C!(Precision(RS_GetGlobalComplexField_Comp()) * Log(10)));
-	//print "D:",D;	
+	// Coerce into larger field make it precise
+	Tau *:= (19/20);
+	Tau := C!Tau;
+	vprint Int,1 : "Tau:",C_20!Tau;
 
-	// Strange scaling parameter lambda
-	//Lambda := C_1;
+	/*
+	// Compute bounds M1,M2
+	M1 := 0; M2 := 0;
+	for Edge in MST do
+		if Edge[1] lt Edge[2] then
+			PP := Remove(Remove(Points,Edge[1]),Edge[2]-1);
+		else
+			PP := Remove(Remove(Points,Edge[2]),Edge[1]-1);
+		end if;
+		// Make vector of centers of circumcircles
+		PPP := [ (2*PP[k]-Points[Edge[2]]-Points[Edge[1]])/(Points[Edge[2]]-Points[Edge[1]]) : k in [1..#PP] ];
+		M1 := Max(M1,RS_M1Bound(PPP,N));
+		M2 := Max(M2,RS_M2Bound(PPP,Tau,N));
+	end for;
+	M1 := Ceiling(M1); M2 := Ceiling(M2);
+	vprint Int,1 : "M1:",M1;
+	vprint Int,2 : "M2:",M2;
+
+	h := RS_hOpt(D,Tau,M2,N);
+	n := Ceiling(RS_tOpt(D,M1)/h);
+	*/
+	
+	// Strange parameter lambda -> Explained in Pascal's thesis
 	Lambda := Pi/2;
 
 	// Other parameters
-	I := 100; Alpha := (N-1)/N;
-	Tau := C!Tau;
-	f_Max := 10;
+	
+	I := 100000; // What is I?
+	//Alpha := (N-1)/N;
+	Alpha := 1/N;
+	f_Max := 1000000;
 	Y_Tau := (Pi/2) * Sin(Tau)^(7/8);
 	X_Tau := (1/Tan(Tau)) * Sqrt( Y_Tau^2 - ( Pi*Sin(Tau) / 2)^2 );
 	M_Tau := (2 * f_Max / Cos(Tau) ) * ( Tanh(X_Tau)/Cos(Y_Tau)^2  +  1/Tanh(X_Tau));
+
 	// Compute step length h
-	h := Real((2*Pi * Tau ) / ( D + Log( ((16*X_Tau * M_Tau * I)/Cos(Tau)) + 1) ));
+	h := Real(C!(2*Pi * Tau ) / ( D + Log( ((16*X_Tau * M_Tau * I)/Cos(Tau)) + 1) ));
 	vprint Int,2 : "f_Max:",C_20!f_Max;
 	vprint Int,2 : "X_Tau:",C_20!X_Tau;
 	vprint Int,2 : "Y_Max:",C_20!Y_Tau;
 	vprint Int,2 : "M_Max:",C_20!M_Tau;
-	vprint Int,1 : "h:", C_20!h;
-
-
 	// Compute #integration points = 2*n+1
+	print "...:",Argsinh( D+ Log((4^(1-Alpha) * M_Tau)/(2-2*Alpha))/(Lambda*(2-2*Alpha)) ) / h;
 	n := Ceiling(Argsinh( D+ Log((4^(1-Alpha) * M_Tau)/(2-2*Alpha))/(Lambda*(2-2*Alpha)) ) / h );
+	
+	"PH:",Precision(h);
+	"PH:",Precision(Pi);
+	"PH:",Precision(Tau);
+	"PH:",Precision(D);
+	vprint Int,1 : "h:",C!h;
 	vprint Int,1 : "n:",n;
 
+	// Compute integration points
 	Abscissas, Weights, StepLength := RS_SEIntegrationPoints(h,n,Lambda);
 	
 	return Abscissas, Weights, StepLength;
@@ -906,7 +830,9 @@ intrinsic RS_SEIntegrationParameters( Tau::FldReElt, N::RngIntElt ) -> SeqEnum[F
 end intrinsic;
 
 
-// OLD STUFF
+// ################################################################  !!! FROM HERE !!! ################################################################
+// ################################################################  !!! OLD  CODE !!! ################################################################
+
 function RS_SENewtonIteration(f,df,z,k )
 	if k gt 0 then
 		return RS_SENewtonIteration(f,df,z - (Evaluate(f,z)/Evaluate(df,z)) ,k-1);
