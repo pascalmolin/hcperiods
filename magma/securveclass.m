@@ -1,16 +1,18 @@
 // Import global settings
-import "superelliptic.m": RS_SEIntegrate, RS_NRootAC, RS_SEMST;
+import "superelliptic.m": RS_SEIntegrate, RS_NRootAC, RS_SEMST, RS_MakeCCVectors, RS_SETau3, RS_SEInfTau;
 import "comparefunctions.m": RS_CompareByFirstComplexEntry,RS_CompareFldComElt;
 import "globalprecision.m": RS_Config;
 import "pathmethods.m": RS_ChoiceOfPathStar;
+import "cvector.m": RS_Quotrem_I, RS_Quotrem_II;
 
-
+C_20<i> := ComplexField(20);
+C_Pi := Real(Pi(C_20));
 
 // Riemann surfaces as type RieSrf defined here 
 declare type SECurve;
 
-declare attributes SECurve: DefiningPolynomial, Genus, Degree, BranchPoints, MST,  MST_Tau, HomologyGroup, HolomorphicDifferentials, Prec, Theta, SmallPeriodMatrix, BigPeriodMatrix, AbelJacobi,
-			    skd_Matrix, IntersectionMatrix, SymplecticTransformation;
+declare attributes SECurve: DefiningPolynomial, Genus, Degree, BranchPoints, MST,  Tau, HomologyGroup, ComplexField, HolomorphicDifferentials, Prec, Theta, SmallPeriodMatrix, BigPeriodMatrix, Pi, PeriodMatrix, ReductionMatrix, Abscissas, Weights, StepLength, AJWeierstrass, AbelJacobi, TreeMatrix, Error,
+ElementaryIntegrals, skd_Matrix, IntersectionMatrix, ABtoC, Basepoint, Zetas;
 
 // Constructor
 intrinsic RS_SECurve( f::RngMPolElt : Prec := -1 ) -> SECurve
@@ -20,8 +22,6 @@ intrinsic RS_SECurve( f::RngMPolElt : Prec := -1 ) -> SECurve
 	N := Degree(f,2); d := Degree(f,1);
 	//require &and[N ge 2, d ge 2, N*d ge 6] : "Genus has to be greater than 0.";
 	require &and[N ge 2, d ge 3] : "Degrees not supported."; 
-	require Gcd(f,Derivative(f,1)) eq 1 : "Curve has to be non-singular.";
-	require BaseRing(Parent(f)) eq Rationals() : "Polynomial has to be defined over \Q.";
 
 	// Create object
 	SEC := New(SECurve);	
@@ -29,26 +29,52 @@ intrinsic RS_SECurve( f::RngMPolElt : Prec := -1 ) -> SECurve
 	// Defining polynomial
 	SEC`DefiningPolynomial := f;
 
-	// Degree of cover
-	SEC`Degree := N;
-
 	// Precision
 	if Prec lt 20 then
-		SEC`Prec := RS_GetGlobalPrecision();
+		SEC`Prec := 25;
 	else
-		SEC`Prec := Prec;
+		SEC`Prec := Prec+5;
 	end if;
 
+	// Error
+	SEC`Error := 10^-(SEC`Prec-4);
+
+	// Complex field
+	CC<i> := ComplexField(SEC`Prec+10);
+	SEC`ComplexField := CC; SEC`Pi := Real(Pi(CC));
+
+	// Degree of cover
+	SEC`Degree := [N,d];	
+
 	// Branch points
-	SEC`BranchPoints := Sort(RS_DiscriminantPoints(f,Parent(f).2:Prec:=SEC`Prec),RS_CompareFldComElt);
+	f_x := ChangeRing(UnivariatePolynomial(Evaluate(f,[Parent(f).1,0])),CC);
+	SEC`BranchPoints :=  RS_Roots(f_x);
 
 	// Holomorphic differentials and genus
 	SEC`HolomorphicDifferentials := RS_SuperellipticDifferentials(f);
 
 	// Genus
-	SEC`Genus := #SEC`HolomorphicDifferentials;
+	SEC`Genus := &+[ #DFF_i : DFF_i in SEC`HolomorphicDifferentials ];
 
 	assert 2*SEC`Genus eq (N-1)*(d-1) - Gcd(N,d) + 1; // Check Riemann-Hurwitz
+
+	// Root of unity powers
+	Zeta := RS_ReducePrecision(Exp(2*SEC`Pi*i/N),5); Zeta_ := 1;
+	ZetaSqrt := RS_ReducePrecision(Exp(SEC`Pi*i/N),5); ZetaSqrt_ := 1;
+	ZetaInv := 1/Zeta; ZetaInv_ := 1;
+	ZetaPows := []; ZetaSqrtPows := []; ZetaInvPows := [];
+	for j in [1..N-1] do
+		ZetaSqrt_ *:= ZetaSqrt;
+		Append(~ZetaSqrtPows,ZetaSqrt_);
+		ZetaInv_ *:= ZetaInv;
+		Append(~ZetaInvPows,ZetaInv_);
+		Zeta_ *:= Zeta;
+		Append(~ZetaPows,Zeta_);
+	end for;
+	SEC`Zetas := [ZetaPows,ZetaSqrtPows,ZetaInvPows];
+
+	// Choose branch point with smallest real part as base point
+	SEC`Basepoint := 1;
 
 	return SEC;
 end intrinsic;
@@ -59,93 +85,608 @@ intrinsic Print( SEC::SECurve )
 	print "Superelliptic curve of genus", SEC`Genus ,"defined by: 0 =",SEC`DefiningPolynomial,"and prescribed precision",SEC`Prec;
 	print "";
 	print "Computed data:";
+	print " Complex field:", SEC`ComplexField;
 	print " Branch points:", assigned SEC`BranchPoints;
+	print " Roots of unity:", assigned SEC`Zetas;
 	print " Maximal spanning tree:", assigned SEC`MST;
-	print " Tau for DE-integration:", assigned SEC`MST_Tau;
+	print " Tau for DE-integration:", assigned SEC`Tau;
 	print " skd_Matrix:", assigned SEC`skd_Matrix;
 	print " Intersection matrix:", assigned SEC`IntersectionMatrix;
 	print " Basis of holomorphic differentials:", assigned SEC`HolomorphicDifferentials;
-	print " Big period matrix:",assigned SEC`BigPeriodMatrix;
-	print " Small period matrix:",assigned SEC`SmallPeriodMatrix;
+	print " Period matrix (C):", assigned SEC`PeriodMatrix;
+	print " Big period matrix (A B):",assigned SEC`BigPeriodMatrix;
+	print " Small period matrix (B^-1 A):",assigned SEC`SmallPeriodMatrix;
 	print " Theta function:",assigned SEC`Theta;
 	print " Abel-Jacobi map:", assigned SEC`AbelJacobi;
+	print " Basepoint:", assigned SEC`Basepoint;
+	print " Elementary integrals:", assigned SEC`ElementaryIntegrals;
+	print " Tree matrix:", assigned SEC`TreeMatrix;
+	print " Reduction matrix:", assigned SEC`ReductionMatrix;
 end intrinsic;
 
-/*
-intrinsic RS_DeleteAll( X::RieSrf )
-{ Deletes all computed data }
 
-	delete X`DiscriminantPoints;
-	delete X`ExactDiscriminantPoints;
-	delete X`EmbeddingMap;
-	delete X`Basepoint;
-	//delete X`PathMethod;
-	delete X`PathPieces;
-	delete X`IndexPathLists;
-	delete X`FundamentalGroup;
-	delete X`BranchPoints;
-	delete X`LocalMonodromy;
-	delete X`MonodromyGroup;
-	delete X`HomologyGroup;
-	delete X`BasisOfDifferentialsFirstKind;
-	//delete X`IntMethod;
-	delete X`PeriodMatrix;
-	delete X`Theta;
-	delete X`AbelJacobi;
-	delete X`PuiseuxSeries;
-	
+intrinsic RS_ChooseAJPath( SEC::SECurve, P::FldComElt ) -> RngIntElt
+{ Choose path such that tau for integration is maximal }
+	BestTau := 0; BestInd := 0;
+	Tau := SEC`Tau; d := SEC`Degree[2]; Pts := SEC`BranchPoints;
+	for j in [1..d] do
+		Tau_k := 4.0; // > Pi/2
+		for k in [1..d] do
+			if k ne j then
+				Tau_k := Min(Tau_k,RS_SETau3(P,Pts[j],Pts[k]));
+			end if;
+		end for;
+		if Tau_k gt BestTau then
+			BestInd := j;
+			BestTau := Tau_k;
+		end if;
+	end for;
 
-end intrinsic;
-
-intrinsic RS_ComputeAll( X::RieSrf : Recompute := false )
-{ Computes all data }
-
-	if Recompute then
-		RS_DeleteAll(X);
+	if BestTau lt SEC`Tau then
+		// Update integration parameters
+		print "Old tau:",SEC`Tau;
+		SEC`Tau := BestTau;
+		print "New tau:",SEC`Tau;
+		SEC`Abscissas, SEC`Weights, SEC`StepLength := RS_SEIntegrationParameters(Pts,SEC`MST,BestTau,SEC`Degree[1],SEC`ComplexField);
 	end if;
 
-	RS_DiscriminantPoints(X : Exact);
-	RS_PathPieces(X);
-	RS_Monodromy(X);
-	RS_FundamentalGroup(X);
-	RS_HomologyGroup(X);
-	RS_BasisOfDifferentialsFirstKind(X);
-	RS_PeriodMatrix(X: IntMethod := X`IntMethod);
-	RS_Theta(X);
-	RS_AbelJacobi(X);
-	RS_PuiseuxSeries(X);
+	return BestInd;
+	
+end intrinsic;
+
+function taured(nz,tau);
+  g := NumberOfRows(tau);
+  C := BaseRing(tau);
+  Itau := Matrix(g,g,[Im(a) : a in ElementToSequence(tau)]);
+  dum := Itau^-1*Matrix(g,1,[Im(zi) : zi in ElementToSequence(nz)]);
+  v1 := Matrix(C,g,1,[Round(di) : di in ElementToSequence(dum)]);
+  nz := nz - tau*v1;
+  return nz - Matrix(C,g,1,[Round(Re(di)) : di in ElementToSequence(nz)]);
+end function;
+
+intrinsic RS_LatticeReduction( SEC::SECurve, Z::[FldComElt] ) -> RngIntElt
+{ Reduce z \in \C^g modulo period matrix (A B) // Really? }
+	R := RealField(SEC`Prec); g := SEC`Genus; 
+	if not assigned SEC`ReductionMatrix then
+		if not assigned SEC`BigPeriodMatrix then
+			RS_SEPM(SEC);
+		end if;
+		PM_AB := SEC`BigPeriodMatrix;
+		M := ZeroMatrix(R,2*g,2*g);
+		for j in [1..g] do
+			for k in [1..g] do
+				M[j,k] := Re(PM_AB[j,k]);
+				M[j+g,k] := Im(PM_AB[j,k]);
+				M[j,k+g] := Re(PM_AB[j,k+g]);	
+				M[j+g,k+g] := Im(PM_AB[j,k+g]);
+			end for;
+		end for;
+		SEC`ReductionMatrix := M^(-1);
+	end if;
+
+	RProj := SEC`ReductionMatrix;
+	Rz := Matrix(R,2*g,1,[ Re(z) : z in Z ] cat [ Im(z) : z in Z ]);
+	centerZ := RProj * Rz;
+	return centerZ;
+end intrinsic;
+intrinsic RS_ModPeriodLattice( SEC::SECurve, V::RSVector ) -> SeqEnum[FldComElt]
+{ Reduce the vector V \in \C^g / <1,PM> }
+
+	// Create complex field
+	C<i> := ComplexField(SEC`Prec); R_0 := Real(Zero(C));
+
+	// Compute period matrix
+	RS_SEPM(SEC);
+
+	ReducedVector := [];
+
+	assert SEC`Genus eq V`Dimension;
+
+	for j in [1..SEC`Genus] do
+		MinIm := Infinity();
+		Ind := 0;
+		for k in [1..SEC`Genus] do
+			if Im(SEC`SmallPeriodMatrix[j][k]) ne R_0 then
+				if Abs(Im(SEC`SmallPeriodMatrix[j][k])) lt MinIm then
+					Ind := k;
+				end if;
+			end if;
+		end for;
+		v_j := RS_Quotrem_II(RS_Quotrem_I(V`Entries[j],Sign(Im(SEC`SmallPeriodMatrix[j][Ind]))*SEC`SmallPeriodMatrix[j][Ind]));
+		Append(~ReducedVector,C!v_j);
+	end for;
+
+	return RS_Vector(ReducedVector);
+end intrinsic;	
+
+intrinsic RS_UpperSheet( SEC::SECurve, z::FldComElt : Global := true ) -> FldComElt
+{ - }
+	Pts := SEC`BranchPoints;
+	if Global then
+		return <z,(&*[ z-Pts[k] : k in [1..SEC`Degree[2]] ])^(1/SEC`Degree[1])>;
+	else
+		return <z,(&*[ (z-Pts[k])^(1/SEC`Degree[1]) : k in [1..SEC`Degree[2]] ])>;
+	end if;
+end intrinsic;
+					
+intrinsic RS_AJIntegrate( SEC::SECurve, P::Tup, Ind::RngIntElt ) -> SeqEnum[FldComElt]
+{ Integrate from P to P_i }
+	I := RS_AJIntegrate( SEC, Ind, P );
+	return [ -I[j] : j in [1..SEC`Genus] ];
+end intrinsic;
+intrinsic RS_AJIntegrate( SEC::SECurve, Ind::RngIntElt, P::Tup ) -> SeqEnum[FldComElt]
+{ Integrate from P_i to P }
+	CC<i> := SEC`ComplexField; Pi := SEC`Pi; CC_0 := Zero(CC); CC_1 := One(CC); g := SEC`Genus;
+	Zeta := SEC`Zetas[1][1]; d := SEC`Degree[2]; N := SEC`Degree[1]; Points := SEC`BranchPoints; DFF := &cat[ DFF_i : DFF_i in SEC`HolomorphicDifferentials ];
+
+	a := Points[Ind];
+	P_x := P[1];
+	P_y := P[2];
+	
+	// Integrate from left to right
+	// Not useful here?
+	//assert Re(a) le Re(p);
+	
+	// Make vector of centers of circumcircles
+	CCV := RS_MakeCCVectors(Ind,P_x,Points);
+	assert #CCV eq d-1;
+
+	// Factors due to change of variable
+	Fact1 := (P_x-a)/2;
+	Fact2 := (P_x+a)/(P_x-a);
+	
+	vprint SE,2 : "################### Next Integral ###################";
+	Integral := [ CC_0 : j in [1..g] ];
+	
+	// Initiate on x = 0, dx = 1
+	z := RS_NRootAC(0,CCV,Zeta,N);
+	for j in [1..g] do
+		w := DFF[j];
+		Denom := z^w[2];
+		Integral[j] +:= (Fact2^w[1]/Denom);
+	end for;
+
+	for t in [1..#SEC`Abscissas] do
+		x := SEC`Abscissas[t];
+
+		// Analytic continuation
+		z1 := RS_NRootAC(x,CCV,Zeta,N);
+		z2 := RS_NRootAC(-x,CCV,Zeta,N);
+		
+		// End point not a branch point
+		c1 := (1-x)^(1/N);
+		c2 := (1+x)^(1/N);
+
+		//print "c1:",c1; print "c2:",c2;
+
+		Enum1 := (x + Fact2);
+		Enum2 := (-x + Fact2);
+
+		for j in [1..g] do
+			w := DFF[j];
+			Denom1 := z1^w[2];
+			Denom2 := z2^w[2];
+			dx := SEC`Weights[t][1] * SEC`Weights[t][2]^(2-(2*w[2]/N));
+			Integral[j] +:= ( Enum1^w[1] * c1^w[2] / Denom1 + Enum2^w[1] * c2^w[2] / Denom2) * dx;
+		end for;
+	end for;
+
+	// Correct sheet?
+	
+	P_y_AC := ((P_x-a)/2)^(d/N) * RS_NRootAC(1,CCV,Zeta,N); // * Cosh( w(P_x) )^(2/N) * 2^(1/N)
+
+	//print "AJIntegrate0:",Integral;
+	//print "P_y:",P_y;
+	//print "P_y_AC:",P_y_AC;
+	ValArg := Arg(P_y_AC);
+	print "Arg(P_y_AC):",ValArg;
+	print "Arg P_y:",Arg(P_y);
+	k := (N/(2*SEC`Pi)) * ( Arg(P_y) - ValArg );
+	print "k:",k;
+	k_ := Round(k);
+	assert Abs(k - k_) lt 10^-10; // Check: k \in \Z ?
+	k := k_ mod N;
+	for j in [1..g] do
+		w := DFF[j];
+		Factor := Fact1^((w[1]+1)-(d*w[2]/N));
+		//Integral[j] *:= SEC`Zetas[1][w[2]]^k * SEC`Zetas[2][w[2]] * SEC`StepLength * Factor;
+		Integral[j] *:= SEC`Zetas[1][w[2]]^k * SEC`StepLength * Factor;
+	end for;
+	print "AJIntegrate:",Integral;
+	return Integral;
+end intrinsic;
+
+
+function RS_NRootACInfty(x,p,Pts,Zeta,N:long:=false)
+// Analytic continuation of y = f(x)^(1/N)  for x -> \infty on one sheet, avoiding branch cuts
+	long := true;
+	if #Pts eq 1 or long then
+		prod := 1;
+		for k in [1..#Pts] do
+			prod *:= ( 2*p + (x-1) * Pts[k]  )^(1/N);
+		end for;
+		return prod;
+	end if;
+end function;
+
+intrinsic RS_AJInfinity( SEC::SECurve ) -> SeqEnum[FldComElt]
+{ Integrate from \infty to P_0 }
+
+	RS_ComputeAll(SEC);
+
+	"################## Integrate \infty to P_0 ####################";
+
+	CC<i> := SEC`ComplexField;
+	CC_0 := Zero(CC);
+	Pts := SEC`BranchPoints;
+	Zeta := SEC`Zetas[1][1];	
+	N := SEC`Degree[1];
+	d := SEC`Degree[2];
+	g := SEC`Genus;
+	print "Pts:",Pts;
+
+	x_0 := Pts[SEC`Basepoint];
+
+	
+	print "x_0:",x_0;
+
+ 	MaxIm := Max( [Abs(Im(Pts[k])) : k in [1..d] ]);
+
+	print "MaxIm:",MaxIm;
+
+	p := 2*(Min(Re(x_0)-1,-1) + i * (MaxIm + 1));
+	//p := Re(x_0) + 1000*i*(MaxIm+1);
+	print "p:",p;
+
+	InfTau := RS_SEInfTau( p, Pts : Lambda := C_Pi/2 );
+	print "InfTau:",InfTau;
+	assert InfTau ge SEC`Tau;
+	// TODO Better Tau?
+
+	P := RS_UpperSheet(SEC,p);
+
+	print "P:",P;
+
+	// Integrate from P_0 to P
+	V1 := RS_AJIntegrate(SEC,1,P);
+
+	// Integrate from P to \infty
+	Fact := 2*p;
+	print "Fact:",Fact;
+	Integral := [ CC_0 : j in [1..g] ];
+	DFF := &cat[ DFF_i : DFF_i in SEC`HolomorphicDifferentials ];
+
+	// Initiate on x = 0, dx = 1
+	z := RS_NRootACInfty(0,p,Pts,Zeta,N);
+	for j in [1..g] do
+		w := DFF[j];
+		Denom := z^w[2];
+		Integral[j] +:= (1/Denom);
+	end for;
+
+	for t in [1..#SEC`Abscissas] do
+		x := SEC`Abscissas[t];
+
+		// Analytic continuation
+		z1 := RS_NRootACInfty(x,p,Pts,Zeta,N);
+		z2 := RS_NRootACInfty(-x,p,Pts,Zeta,N);
+		
+		Enum1 := (1 - x);
+		Enum2 := (1 + x);
+
+		for j in [1..g] do
+			w := DFF[j];
+			pow := d*w[2]/N - w[1] - 1;
+			assert pow ge 0;
+			Denom1 := z1^w[2];
+			Denom2 := z2^w[2];
+			dx := SEC`Weights[t][1];
+			//dx := SEC`Weights[t][1] * SEC`Weights[t][2]^2;
+			//Integral[j] +:= ( Enum1^w[1] * c1^w[2] / Denom1 + Enum2^w[1] * c2^w[2] / Denom2) * dx;
+			Integral[j] +:= ( (Enum1^pow * Enum2 / Denom1) + (Enum2^pow * Enum1 / Denom2) ) * dx;
+		end for;
+	end for;
+
+
+	P_y_AC := RS_NRootACInfty(-1,p,Pts,Zeta,N); // * 2^(d/N)
+	//print "P_y_AC:",P_y_AC;
+	print "Arg(P_y_AC):",Arg(P_y_AC);
+	//print "P_y:",P[2];
+	print "Arg(P_y):",Arg(P[2]);	
+
+	k := (N/(2*SEC`Pi)) * ( Arg(P[2]) - Arg(P_y_AC) );
+	print "k:",k;
+	k_ := Round(k);
+	assert Abs(k - k_) lt 10^-10; // Check: k \in \Z ?
+	k := k_ mod N;
+
+	for j in [1..g] do
+		w := DFF[j];
+		Integral[j] *:= SEC`Zetas[1][w[2]]^k * Fact^(w[1]+1);
+	end for;
+
+	print "Integral_x0toP",V1;
+	print "Integral_PtoInf:",Integral;
+
+	// I_{\infty} = (-1)(I_{P_0,P} + I_{P,\infty})
+	Integral_Inftox_0 := [ -(V1[j] + Integral[j]) : j in [1..g] ];
+
+	print "Integral_Inftox0:",Integral_Inftox_0;
+
+	// A-periods
+	PM_B_Inv := ColumnSubmatrix(SEC`BigPeriodMatrix,1,SEC`Genus)^(-1);
+
+	//V := PM_B_Inv * RS_Vector(Integral_Inftox_0);
+
+	//return RS_ModPeriodLattice(SEC,V);
+
+	ReducedIntegral := RS_LatticeReduction(SEC,Integral_Inftox_0);
+
+	RedInt2 := taured(Matrix(CC,g,1,Integral_Inftox_0),SEC`SmallPeriodMatrix);
+
+	
+
+	RedInt3 := RS_ModPeriodLattice(SEC,RS_Vector(Integral_Inftox_0));
+
+	return RedInt3;
+
+	print "RedInt3:",RedInt3;
+	print "RedInt2:",RedInt2;
+
+	print "ReducedIntegral:",ReducedIntegral;
+
+	Res := [ ReducedIntegral[j][1] : j in [1..2*g] ];
+
+	return Res;
+end intrinsic;
+
+
+intrinsic RS_SymplecticInverse( S::Mtrx ) -> Mtrx
+{ Computes the inverse of a symplectic matrix }
+	1 eq 1;
+end intrinsic;
+
+intrinsic RS_AbelJacobi( SEC::SECurve : Recompute := false )
+{ Compute the Abel-Jacobi map of the point P = (x,y) }
+
+	if Recompute or not assigned SEC`AbelJacobi then
+
+		// Complex Field
+		C<i> := SEC`ComplexField;
+
+		// Scaling periods to half-periods // False?	
+		DFF := SEC`HolomorphicDifferentials; SV := [];
+		for j in [1..#DFF] do
+			for k in [1..#DFF[j]] do
+				//Append(~SV,SEC`Zetas[2][DFF[j][k][2]]/(SEC`Zetas[2][DFF[j][k][2]]-SEC`Zetas[3][DFF[j][k][2]]));
+				Append(~SV,1/(1-(SEC`Zetas[3][DFF[j][k][2]])));
+			end for;
+		end for;
+		SV := RS_Vector(SV);
+	
+		// Compute period matrix
+		RS_SEPM(SEC:Recompute:=Recompute);
+		ABtoC_Inv := SEC`ABtoC^(-1);
+		// Compute 'map' of the tree
+		RS_TreeMatrix(SEC:Recompute:=Recompute);
+
+		// A-periods
+		PM_B_Inv := ColumnSubmatrix(SEC`BigPeriodMatrix,1,SEC`Genus)^(-1);
+
+		// Define Abel-Jacobi map
+		AbelJacobi := function ( P )
+		// Computes the vector of integrals of holomorphic differentials along a path from P_0 to P
+			"########### Start AJ #############";
+			
+
+			if #P eq 1 then
+				x_P := C!P[1];
+				y_P := RS_UpperSheet(SEC,C!x_P)[2];
+			elif #P eq 2 then
+				x_P := C!P[1];
+				y_P := C!P[2];
+			else
+				error Error(".");
+			end if;
+
+			// Check if P is a branch point
+			Dist, Ind := RS_Distance(x_P,SEC`BranchPoints);
+		
+			print "Dist:",Dist; print "Ind:",Ind;	
+			V := RS_ZeroVector(C,SEC`Genus);
+			if Dist lt SEC`Error then
+				TreePath := SEC`TreeMatrix[Ind];
+				print "TreePath:",TreePath;
+				print "SV:",SV;
+				W := RS_AJWeierstrass(SEC: Ind:=Ind);
+				print "W:",W;
+				for j in [1..SEC`Degree[2]-1] do
+					//V +:= TreePath[j] * RS_Vector(SEC`ElementaryIntegrals[j]);
+					V +:= TreePath[j] * SV;
+				end for;
+				print "V:",V;
+				//V := PM_B_Inv * V;
+				return V;
+				return RS_ModPeriodLattice(SEC,V);
+				print "V:",V;
+				print "N*V:",SEC`Degree[1]*V;
+				
+				//return ABtoC_Inv * V;
+				W := RS_AJWeierstrass(SEC: Ind:=Ind);
+				return W;
+			end if;
+
+			Ind := RS_ChooseAJPath( SEC, x_P );
+			
+
+			// Integrate from P_i to P
+			Integrals := RS_AJIntegrate(SEC,Ind,<x_P,y_P>);
+			
+			return Integrals;
+
+			ModIntegrals := RS_LatticeReduction(SEC,Integrals);
+
+			W := RS_AJWeierstrass(SEC: Ind:=Ind);
+
+			ResVec := [ ModIntegrals[j][1] + W[j][1] : j in [1..2*SEC`Genus] ];
+
+			print "ResVec:",ResVec;
+
+			return ResVec;
+			/*
+			V +:= RS_Vector(Integrals);
+
+			// Integrals from P_0 to P_i
+			TreePath := SEC`TreeMatrix[Ind];
+			print "TreePath:",TreePath;
+			for j in [1..SEC`Degree[2]-1] do
+				V +:= TreePath[j] * SV;
+				//V +:= TreePath[j] * RS_Vector(SEC`ElementaryIntegrals[j]);
+				//print "RS_Vector(SEC`ElementaryIntegrals[j]):",RS_Vector(SEC`ElementaryIntegrals[j]);
+			end for;
+			print "V before reduction:",V;
+			"########### END AJ #############";
+			
+			return RS_ModPeriodLattice(SEC,V);
+			*/
+		end function;
+
+		SEC`AbelJacobi := AbelJacobi;
+	end if;	
+	
+	
+
+
+	
+
+	
+end intrinsic;
+
+
+intrinsic RS_TreeMatrix( SEC::SECurve : Recompute := false  )
+{ Compute a matrix with paths from x_0 -> x_i for all branch points }
+
+	if not assigned SEC`TreeMatrix or Recompute then
+
+	// Compute period matrix
+	RS_SEPM(SEC);
+	
+  	Pts := SEC`BranchPoints;
+ 	g := SEC`Genus; N := SEC`Degree[1]; d := SEC`Degree[2];
+ 
+	TM := ZeroMatrix(Integers(),d,d-1);
+	
+	Taken := [ 0 : j in [1..d] ];
+	Tree := SEC`MST;
+	P_0 := Tree[1][1];
+	Taken[P_0] := 1;
+	
+	for j in [1..#Tree] do
+		if Taken[Tree[j][1]] eq 1 then
+			PStart := Tree[j][1];
+			PEnd := Tree[j][2];
+			Taken[Tree[j][2]] := 1;
+		else
+			PStart := Tree[j][2];
+			PEnd := Tree[j][1];
+			Taken[Tree[j][1]] := 1;
+		end if;
+		TM[PEnd] := TM[PStart];
+
+      		TM[PEnd,j] := 1;
+	end for;
+
+	P_0 := SEC`Basepoint; // Shift by real basepoint
+	P_0P_0 := TM[P_0];
+	for j in [1..d] do
+		TM[j] -:= P_0P_0;
+	end for;
+
+	SEC`TreeMatrix := TM;
+
+	end if;
 
 end intrinsic;
-*/
 
 
-intrinsic RS_SEPM( SEC::SECurve : Small := true )
+intrinsic RS_AJWeierstrass( SEC::SECurve : Ind := 0, C_Basis := false ) -> RngIntElt
+{ Compute image of branch points under Abel-Jacobi map }
+
+	// Compute period matrix
+	RS_SEPM(SEC); R := RealField(SEC`ComplexField);
+	
+  	Pts := SEC`BranchPoints;
+ 	g := SEC`Genus; N := SEC`Degree[1]; d := SEC`Degree[2];
+ 
+	P0Pi := ZeroMatrix(Rationals(),d,(N-1)*(d-1));
+	
+	Taken := [ 0 : j in [1..d] ];
+	Tree := SEC`MST;
+	P0 := Tree[1][1];
+	Taken[P0] := 1;
+	assert P0 eq SEC`Basepoint;
+	for j in [1..#Tree] do
+		if Taken[Tree[j][1]] eq 1 then
+			PStart := Tree[j][1];
+			PEnd := Tree[j][2];
+			Taken[Tree[j][2]] := 1;
+		else
+			PStart := Tree[j][2];
+			PEnd := Tree[j][1];
+			Taken[Tree[j][1]] := 1;
+		end if;
+		P0Pi[PEnd] := P0Pi[PStart];
+      		P0Pi[PEnd,(N-1)*(j-1)+1] := 1/N;
+	end for;
+
+	P0 := SEC`Basepoint; // Shift by real basepoint
+	P0P0 := P0Pi[P0];
+	for j in [1..d] do
+		P0Pi[j] -:= P0P0;
+	end for;
+
+	if C_Basis then
+		if Ind eq 0 then
+			return P0Pi;
+		else
+			ColumnSubmatrix(Transpose(P0Pi),Ind,1);
+		end if;
+	else
+		if Ind eq 0 then
+			return ChangeRing(SEC`ABtoC^(-1),Rationals()) * Transpose(P0Pi);
+		else
+			return ChangeRing(SEC`ABtoC^(-1),Rationals()) * ColumnSubmatrix(Transpose(P0Pi),Ind,1);
+		end if;
+	end if; 
+
+end intrinsic;
+
+
+
+intrinsic RS_SEPM( SEC::SECurve : Recompute := false, Small := true )
 { Computes period matrices associated to the superelliptic curve defined by f to precision of SEC }
+
+	if Recompute or &and[Small,not assigned SEC`SmallPeriodMatrix] or &and[not Small, not assigned SEC`BigPeriodMatrix] then 
 
 	// Branch points
 	Points := SEC`BranchPoints;
-
+	
 	// Degrees
-	N := SEC`Degree; d := #Points;
+	N := SEC`Degree[1]; d := SEC`Degree[2]; Err := 10^-(SEC`Prec+1);
 
 	// Complex fields and constants
-	C_<i> := ComplexField(SEC`Prec); C_20<i> := RS_GetGlobalComplexField_20(); RS_SetGlobalZeta(N); Zeta := RS_GetGlobalZeta(); vprint SE,1 : "Zeta:",C_20!Zeta;
-	CC<i> := RS_GetGlobalComplexField_Max(); CC_0 := Zero(CC); Pi := RS_GetGlobalPi(); 
+	C_<i> := ComplexField(SEC`Prec); Zeta := SEC`Zetas[1][1]; vprint SE,1 : "Zeta:",C_20!Zeta;
+	CC<i> := SEC`ComplexField; CC_0 := Zero(CC);
 
-	// Speial case for hyperelliptic curves of even degree
-	if N eq 2 and d mod 2 eq 0 then
-		Prune(~Points);
-		d -:= 1;
-	end if;
 	
 	// Maximal spanning tree w.r.t holomorphicy
 	vprint SE,1 : "Constructing maximal spanning tree...";
 	t := Cputime();
-	SEC`MST, SEC`MST_Tau := RS_SEMST(Points);
+	SEC`MST, SEC`Tau := RS_SEMST(Points);
 	Cputime(t);
-	vprint SE,3 : "MST_Edges:",SEC`MST_Edges;
-	vprint SE,2 : "#MST_Edges:",#SEC`MST_Edges;
-	vprint SE,2 : "MST_Tau:",SEC`MST_Tau;
+	vprint SE,2 : "MST_Edges:",SEC`MST;
+	vprint SE,2 : "#MST_Edges:",#SEC`MST;
+	vprint SE,2 : "MST_Tau:",SEC`Tau;
 
 	// Holomorphic differentials
 	DFF := SEC`HolomorphicDifferentials;
@@ -157,45 +698,43 @@ intrinsic RS_SEPM( SEC::SECurve : Small := true )
 	// Integration parameters
 	vprint SE,1 : "Computing Integration parameters...";
 	t := Cputime();
-	Abscissas, Weights, StepLength := RS_SEIntegrationParameters(Points,SEC`MST,SEC`MST_Tau,N);
-	vprint SE,2 : "#Abscissas:",#Abscissas;
-	vprint SE,3 : "Abscissas:",Abscissas;
-	vprint SE,2 : "#Weights:",#Weights;
-	vprint SE,3 : "Weights:",Weights;
-	vprint SE,2 : "StepLength:",StepLength;
-	vprint SEP,1 : "Precision Abscissas:",Precision(Abscissas[1]);
-	vprint SEP,1 : "Precision Weights:",Precision(Weights[1][1]);
-	vprint SEP,1 : "Precision StepLength:",Precision(StepLength);
+	SEC`Abscissas, SEC`Weights, SEC`StepLength := RS_SEIntegrationParameters(Points,SEC`MST,SEC`Tau,N,SEC`ComplexField);
+	vprint SE,2 : "#Abscissas:",#SEC`Abscissas;
+	vprint SE,3 : "Abscissas:",SEC`Abscissas;
+	vprint SE,2 : "#Weights:",#SEC`Weights;
+	vprint SE,3 : "Weights:",SEC`Weights;
+	vprint SE,2 : "StepLength:",SEC`StepLength;
+	vprint SEP,1 : "Precision Abscissas:",Precision(SEC`Abscissas[1]);
+	vprint SEP,1 : "Precision Weights:",Precision(SEC`Weights[1][1]);
+	vprint SEP,1 : "Precision StepLength:",Precision(SEC`StepLength);
 	Cputime(t);
 
 	// Integrals
 	vprint SE,1 : "Integrating...";
 	t := Cputime();
 	Integrals := [];
+	SEC`ElementaryIntegrals := [];
 	for k in [1..d-1] do
 		vprint SE,2 : "Integrating edge nr.",k;
-		I := RS_SEIntegrate( SEC`MST[k],Points,DFF,Abscissas,Weights,StepLength,d,N );
+		I, EI := RS_SEIntegrate( SEC`MST[k],Points,DFF,SEC`Abscissas,SEC`Weights,SEC`StepLength,d,N,SEC`Zetas );
+		Append(~SEC`ElementaryIntegrals,EI);
 		Append(~Integrals,I);
 	end for;
 	Cputime(t);
 
+
 	// Matrix of periods
-	//PM_ := ZeroMatrix(CC,g,2*g);
-	PM_ := ZeroMatrix(CC,g,(d-1)*(N-1));
-	//PM_ := ZeroMatrix(CC,g,2*g+d-1);
+	PM_C := ZeroMatrix(CC,g,(d-1)*(N-1));
 	for k in [1..d-1] do
 		for l in [1..N-1] do
-		//for l in [1..N] do
 			Ind2 := (N-1)*(k-1) + l;
-			//Ind2 := N*(k-1) + l;
 			for j in [1..g] do
-				//PM_[j][Ind2] := Zeta^(l-1) * (1 - Zeta^(N-1)) * Integrals[k][j];
-				//PM_[j][Ind2] := Zeta^(l-1) * (1 - Zeta) * Integrals[k][j];
-				PM_[j][Ind2] := Integrals[k][j][l];
+				PM_C[j][Ind2] := Integrals[k][j][l];
 			end for;
 		end for;
 	end for;
-	vprint SE,3: "Integrals:",PM_;
+	vprint SE,3: "Integrals:",PM_C;
+	SEC`PeriodMatrix := PM_C;
 
 	// Intersection matrix
 	vprint SE,1 : "Computing skd-Matrix...";
@@ -204,7 +743,7 @@ intrinsic RS_SEPM( SEC::SECurve : Small := true )
 	for j in [1..d-1] do
 		skd_Matrix[j][j] := <0,0,0>;
 		for l in [j+1..d-1] do
-			skd := RS_SEIntersection(SEC`MST[j],SEC`MST[l],Points,N);
+			skd := RS_SEIntersection(SEC`MST[j],SEC`MST[l],Points,N,Zeta);
 			vprint SE,2: "<s,k,d>-triple of edges",SEC`MST[j],"and",SEC`MST[l],":",skd;
 			skd_Matrix[j][l] := <skd[1],skd[2] mod N,skd[3]>;
 			skd_Matrix[l][j] := <-skd[1],skd[2] mod N,skd[3]>;
@@ -271,22 +810,24 @@ intrinsic RS_SEPM( SEC::SECurve : Small := true )
 	// Symplectic reduction of intersection matrix
 	vprint SE,1 : "Performing symplectic reduction...";
 	t := Cputime();
-	CF, SEC`SymplecticTransformation := RS_SymplecticBasis(SEC`IntersectionMatrix);
+	CF, ABtoC := RS_SymplecticBasis(SEC`IntersectionMatrix);
+	SEC`ABtoC := Transpose(ABtoC);
+	ABtoC_CC := ChangeRing(SEC`ABtoC,CC);
 	Cputime(t);
-	vprint SE,2: "ST:",SEC`SymplecticTransformation;
+	vprint SE,3: "ST:",SEC`ABtoC;
 	vprint SE,3: "CF:",CF;
 	
 	
-	ST_CC := ChangeRing(Transpose(SEC`SymplecticTransformation),CC);
+	
 	vprint SE,1 : "Matrix multiplication 1...";
 	t := Cputime();
-	PMAPMB := PM_ * ST_CC;
+	PMAPMB := PM_C * ABtoC_CC;
 	Cputime(t);
 	
 	PM_A := ColumnSubmatrixRange(PMAPMB,1,g);
 	PM_B := ColumnSubmatrixRange(PMAPMB,g+1,2*g);
 
-	vprint SE,3 : "Dependent columns:",ColumnSubmatrixRange(PMAPMB,2*g+1,Nrows(ST_CC));
+	vprint SE,3 : "Dependent columns:",ColumnSubmatrixRange(PMAPMB,2*g+1,Nrows(ABtoC_CC));
 	vprint SE,3 : "PM_A:",PM_A;
 	vprint SE,3 : "PM_B:",PM_B;
 	//vprint SE,2 : "Det(PM_A):",Determinant(PM_A);
@@ -315,10 +856,10 @@ intrinsic RS_SEPM( SEC::SECurve : Small := true )
 		t := Cputime();
 		for j in [1..g] do
 			for k in [1..g] do
-				if Abs(Re(PM[j][k])) lt RS_GetGlobalError() then
+				if Abs(Re(PM[j][k])) lt Err then
 					PM[j][k] := Zero(C_) + Im(PM[j][k])*i;
 				end if;
-				if Abs(Im(PM[j][k])) lt RS_GetGlobalError() then
+				if Abs(Im(PM[j][k])) lt Err then
 					PM[j][k] := Re(PM[j][k]) + Zero(C_)*i;		
 				end if;
 			end for;
@@ -341,7 +882,6 @@ intrinsic RS_SEPM( SEC::SECurve : Small := true )
 		vprint SE,1 : "Maximal symmetry deviation:",MaxSymDiff;
 	
 		if MaxSymDiff ge 10^-10 then
-		//if MaxSymDiff ge RS_GetGlobalError() then
 			error Error("Period matrix not symmetric: Computation failed.");
 		end if;	
 		
@@ -359,4 +899,38 @@ intrinsic RS_SEPM( SEC::SECurve : Small := true )
 		Cputime(t);
 		SEC`SmallPeriodMatrix := PM;
 	end if;
+
+	end if;
 end intrinsic;
+
+
+// Some functionality
+intrinsic RS_DeleteAll( SEC::SECurve )
+{ Deletes all computed data }
+
+	delete SEC`MST;
+	delete SEC`Tau;
+	delete SEC`HomologyGroup;
+	delete SEC`SmallPeriodMatrix;
+	delete SEC`BigPeriodMatrix;
+	delete SEC`AbelJacobi;
+	delete SEC`Theta;
+	delete SEC`skd_Matrix;
+	delete SEC`IntersectionMatrix;
+	delete SEC`ABtoC;
+	delete SEC`ElementaryIntegrals;
+
+end intrinsic;
+
+intrinsic RS_ComputeAll( SEC::SECurve : Recompute := false )
+{ Computes all data }
+
+	if Recompute then
+		RS_DeleteAll(SEC);
+	end if;
+
+	RS_AbelJacobi(SEC:Recompute:=Recompute);
+
+end intrinsic;
+
+
