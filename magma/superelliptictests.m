@@ -413,28 +413,27 @@ intrinsic RS_SEAJTest( SEC::SECurve : Ht := 100 ) -> RS_Vector
 	//print "Q:",Q;
 	V := [];
 	for j in [1..SEC`Degree[1]] do
-		Append(~V,(-1)*RS_Vector(SEC`AbelJacobi(Q[j])));
-		Append(~V,RS_Vector(SEC`AbelJacobi(P[j])));
+		Append(~V,(-1)*SEC`AbelJacobi(Q[j]));
+		Append(~V,SEC`AbelJacobi(P[j]));
 	end for;
 
-	// The sum has to be zero in \R^2g / \Z^2g
-	W := &+V;
+	W := RS_ModPeriodLattice( SEC, &+V );
+	
+	print "W:",W;
 
-	/*
-	R := RealField(SEC`Prec); R_0 := Zero(R);
-	for k in [1..2*SEC`Genus] do
-		r := W`Entries[k];
-		r_ := Round(r);
+	C_0 := Zero(C);
+	for k in [1..SEC`Genus] do
+		r := W[k][1];
+		r_ := C!Round(r);
 		if Abs(r-r_) lt SEC`Error then
-			W`Entries[k] := R_0;
+			W[k][1] := C_0;
 		else
-			W`Entries[k] := R!r;
+			W[k][1] := C!r;
 		end if;
 	end for;
-	*/
 
-	//W := RS_ModPeriodLattice( SEC, &+V );
 	return W;
+	
 end intrinsic;
 
 

@@ -103,14 +103,14 @@ intrinsic RS_SEIntersection( Edge1::Tup, Edge2::Tup, Points::[FldComElt], N::Rng
 			dir := 1;
 		end if;
 		*/
+		/*
 		LimArg := (C_Pi-phi)/2;
 		ints := -1;
 		dir := N-1;		
-		/*
+		*/
 		LimArg := -(C_Pi+phi)/2;
 		ints := 1;
-		dir := 1;
-		*/	
+		dir := 1;	
 	elif Edge1[1] eq Edge2[2] then
 		//"################################ Case3: a = d ################################";
 		AR1 := RS_NRootAC(-1,CCV1,Zeta,N);

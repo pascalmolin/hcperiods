@@ -12,7 +12,7 @@ C_Pi := Real(Pi(C_20));
 declare type SECurve;
 
 declare attributes SECurve: DefiningPolynomial, Genus, Degree, BranchPoints, MST,  Tau, HomologyGroup, ComplexField, HolomorphicDifferentials, Prec, Theta, SmallPeriodMatrix, BigPeriodMatrix, Pi, PeriodMatrix, ReductionMatrix, Abscissas, Weights, StepLength, AJWeierstrass, AbelJacobi, TreeMatrix, Error,
-ElementaryIntegrals, skd_Matrix, IntersectionMatrix, ABtoC, Basepoint, Zetas;
+ElementaryIntegrals, skd_Matrix, IntersectionMatrix, ABtoC, Basepoint, Zetas, PM_B_Inv;
 
 // Constructor
 intrinsic RS_SECurve( f::RngMPolElt : Prec := -1 ) -> SECurve
@@ -98,6 +98,7 @@ intrinsic Print( SEC::SECurve )
 	print " Small period matrix (B^-1 A):",assigned SEC`SmallPeriodMatrix;
 	print " Theta function:",assigned SEC`Theta;
 	print " Abel-Jacobi map:", assigned SEC`AbelJacobi;
+	print " AJWeierstrass:", assigned SEC`AJWeierstrass;
 	print " Basepoint:", assigned SEC`Basepoint;
 	print " Elementary integrals:", assigned SEC`ElementaryIntegrals;
 	print " Tree matrix:", assigned SEC`TreeMatrix;
@@ -134,15 +135,6 @@ intrinsic RS_ChooseAJPath( SEC::SECurve, P::FldComElt ) -> RngIntElt
 	
 end intrinsic;
 
-function taured(nz,tau);
-  g := NumberOfRows(tau);
-  C := BaseRing(tau);
-  Itau := Matrix(g,g,[Im(a) : a in ElementToSequence(tau)]);
-  dum := Itau^-1*Matrix(g,1,[Im(zi) : zi in ElementToSequence(nz)]);
-  v1 := Matrix(C,g,1,[Round(di) : di in ElementToSequence(dum)]);
-  nz := nz - tau*v1;
-  return nz - Matrix(C,g,1,[Round(Re(di)) : di in ElementToSequence(nz)]);
-end function;
 
 intrinsic RS_LatticeReduction( SEC::SECurve, Z::[FldComElt] ) -> RngIntElt
 { Reduce z \in \C^g modulo period matrix (A B) // Really? }
@@ -169,35 +161,30 @@ intrinsic RS_LatticeReduction( SEC::SECurve, Z::[FldComElt] ) -> RngIntElt
 	centerZ := RProj * Rz;
 	return centerZ;
 end intrinsic;
-intrinsic RS_ModPeriodLattice( SEC::SECurve, V::RSVector ) -> SeqEnum[FldComElt]
-{ Reduce the vector V \in \C^g / <1,PM> }
-
-	// Create complex field
-	C<i> := ComplexField(SEC`Prec); R_0 := Real(Zero(C));
-
-	// Compute period matrix
+intrinsic RS_ModPeriodLattice( SEC::SECurve, V::AlgMatElt[FldCom] ) -> SeqEnum[FldComElt]
+{ Reduce the vector V \in \C^g / <1,PM>, see van Wamelen's code }
 	RS_SEPM(SEC);
-
-	ReducedVector := [];
-
-	assert SEC`Genus eq V`Dimension;
-
-	for j in [1..SEC`Genus] do
-		MinIm := Infinity();
-		Ind := 0;
-		for k in [1..SEC`Genus] do
-			if Im(SEC`SmallPeriodMatrix[j][k]) ne R_0 then
-				if Abs(Im(SEC`SmallPeriodMatrix[j][k])) lt MinIm then
-					Ind := k;
-				end if;
-			end if;
-		end for;
-		v_j := RS_Quotrem_II(RS_Quotrem_I(V`Entries[j],Sign(Im(SEC`SmallPeriodMatrix[j][Ind]))*SEC`SmallPeriodMatrix[j][Ind]));
-		Append(~ReducedVector,C!v_j);
-	end for;
-
-	return RS_Vector(ReducedVector);
-end intrinsic;	
+	g := SEC`Genus;
+	PM := SEC`SmallPeriodMatrix;
+	C := BaseRing(PM);
+	I_PM := Matrix(g,g,[Im(a) : a in ElementToSequence(PM)]);
+	dum := I_PM^(-1)*Matrix(g,1,[Im(zi) : zi in ElementToSequence(V)]);
+	v1 := Matrix(C,g,1,[Round(di) : di in ElementToSequence(dum)]);
+	V := V - PM*v1;
+	return V - Matrix(C,g,1,[Round(Re(di)) : di in ElementToSequence(V)]);
+end intrinsic;
+intrinsic RS_ModPeriodLattice( SEC::SECurve, V::ModMatFldElt[FldCom] ) -> SeqEnum[FldComElt]
+{ Reduce the vector V \in \C^g / <1,PM>, see van Wamelen's code }
+	RS_SEPM(SEC);
+	g := SEC`Genus;
+	PM := SEC`SmallPeriodMatrix;
+	C := BaseRing(PM);
+	I_PM := Matrix(g,g,[Im(a) : a in ElementToSequence(PM)]);
+	dum := I_PM^(-1)*Matrix(g,1,[Im(zi) : zi in ElementToSequence(V)]);
+	v1 := Matrix(C,g,1,[Round(di) : di in ElementToSequence(dum)]);
+	V := V - PM*v1;
+	return V - Matrix(C,g,1,[Round(Re(di)) : di in ElementToSequence(V)]);
+end intrinsic;
 
 intrinsic RS_UpperSheet( SEC::SECurve, z::FldComElt : Global := true ) -> FldComElt
 { - }
@@ -293,7 +280,7 @@ intrinsic RS_AJIntegrate( SEC::SECurve, Ind::RngIntElt, P::Tup ) -> SeqEnum[FldC
 		Integral[j] *:= SEC`Zetas[1][w[2]]^k * SEC`StepLength * Factor;
 	end for;
 	print "AJIntegrate:",Integral;
-	return Integral;
+	return Matrix(CC,g,1,Integral);
 end intrinsic;
 
 
@@ -335,6 +322,7 @@ intrinsic RS_AJInfinity( SEC::SECurve ) -> SeqEnum[FldComElt]
 	print "MaxIm:",MaxIm;
 
 	p := 2*(Min(Re(x_0)-1,-1) + i * (MaxIm + 1));
+	//p := CC!(1.6666666666666666667 - 1.6665612762750131730*i);
 	//p := Re(x_0) + 1000*i*(MaxIm+1);
 	print "p:",p;
 
@@ -370,7 +358,7 @@ intrinsic RS_AJInfinity( SEC::SECurve ) -> SeqEnum[FldComElt]
 		// Analytic continuation
 		z1 := RS_NRootACInfty(x,p,Pts,Zeta,N);
 		z2 := RS_NRootACInfty(-x,p,Pts,Zeta,N);
-		
+		print "z1:",z1;
 		Enum1 := (1 - x);
 		Enum2 := (1 + x);
 
@@ -399,7 +387,7 @@ intrinsic RS_AJInfinity( SEC::SECurve ) -> SeqEnum[FldComElt]
 	k_ := Round(k);
 	assert Abs(k - k_) lt 10^-10; // Check: k \in \Z ?
 	k := k_ mod N;
-
+	
 	for j in [1..g] do
 		w := DFF[j];
 		Integral[j] *:= SEC`Zetas[1][w[2]]^k * Fact^(w[1]+1);
@@ -407,37 +395,15 @@ intrinsic RS_AJInfinity( SEC::SECurve ) -> SeqEnum[FldComElt]
 
 	print "Integral_x0toP",V1;
 	print "Integral_PtoInf:",Integral;
-
+	return Integral;
 	// I_{\infty} = (-1)(I_{P_0,P} + I_{P,\infty})
-	Integral_Inftox_0 := [ -(V1[j] + Integral[j]) : j in [1..g] ];
+	Integral_Inftox_0 := -(Matrix(BaseRing(SEC`SmallPeriodMatrix),g,1,Integral) + V1);
 
 	print "Integral_Inftox0:",Integral_Inftox_0;
 
-	// A-periods
-	PM_B_Inv := ColumnSubmatrix(SEC`BigPeriodMatrix,1,SEC`Genus)^(-1);
+	V := RS_ModPeriodLattice(SEC,ColumnSubmatrix(Integral_Inftox_0,1,1));
 
-	//V := PM_B_Inv * RS_Vector(Integral_Inftox_0);
-
-	//return RS_ModPeriodLattice(SEC,V);
-
-	ReducedIntegral := RS_LatticeReduction(SEC,Integral_Inftox_0);
-
-	RedInt2 := taured(Matrix(CC,g,1,Integral_Inftox_0),SEC`SmallPeriodMatrix);
-
-	
-
-	RedInt3 := RS_ModPeriodLattice(SEC,RS_Vector(Integral_Inftox_0));
-
-	return RedInt3;
-
-	print "RedInt3:",RedInt3;
-	print "RedInt2:",RedInt2;
-
-	print "ReducedIntegral:",ReducedIntegral;
-
-	Res := [ ReducedIntegral[j][1] : j in [1..2*g] ];
-
-	return Res;
+	return V;
 end intrinsic;
 
 
@@ -469,9 +435,12 @@ intrinsic RS_AbelJacobi( SEC::SECurve : Recompute := false )
 		ABtoC_Inv := SEC`ABtoC^(-1);
 		// Compute 'map' of the tree
 		RS_TreeMatrix(SEC:Recompute:=Recompute);
+		// 'A-periods'
+		SEC`PM_B_Inv := ColumnSubmatrix(SEC`BigPeriodMatrix,1,SEC`Genus)^(-1);
+		// AJ between Weierstrass point
+		RS_AJWeierstrass(SEC:Recompute:=Recompute);
 
-		// A-periods
-		PM_B_Inv := ColumnSubmatrix(SEC`BigPeriodMatrix,1,SEC`Genus)^(-1);
+		
 
 		// Define Abel-Jacobi map
 		AbelJacobi := function ( P )
@@ -491,10 +460,11 @@ intrinsic RS_AbelJacobi( SEC::SECurve : Recompute := false )
 
 			// Check if P is a branch point
 			Dist, Ind := RS_Distance(x_P,SEC`BranchPoints);
-		
+
 			print "Dist:",Dist; print "Ind:",Ind;	
-			V := RS_ZeroVector(C,SEC`Genus);
+			//V := RS_ZeroVector(C,SEC`Genus);
 			if Dist lt SEC`Error then
+				/*
 				TreePath := SEC`TreeMatrix[Ind];
 				print "TreePath:",TreePath;
 				print "SV:",SV;
@@ -510,56 +480,34 @@ intrinsic RS_AbelJacobi( SEC::SECurve : Recompute := false )
 				return RS_ModPeriodLattice(SEC,V);
 				print "V:",V;
 				print "N*V:",SEC`Degree[1]*V;
-				
+				*/
 				//return ABtoC_Inv * V;
-				W := RS_AJWeierstrass(SEC: Ind:=Ind);
-				return W;
+				
+				return ColumnSubmatrix(SEC`AJWeierstrass,Ind,1);
 			end if;
 
 			Ind := RS_ChooseAJPath( SEC, x_P );
 			
 
 			// Integrate from P_i to P
-			Integrals := RS_AJIntegrate(SEC,Ind,<x_P,y_P>);
-			
-			return Integrals;
+			I := RS_AJIntegrate(SEC,Ind,<x_P,y_P>);
 
-			ModIntegrals := RS_LatticeReduction(SEC,Integrals);
+			// AJM of Weierstrass points
+			W := ColumnSubmatrix(SEC`AJWeierstrass,Ind,1);
 
-			W := RS_AJWeierstrass(SEC: Ind:=Ind);
+			// Sum
+			V := I+W;
 
-			ResVec := [ ModIntegrals[j][1] + W[j][1] : j in [1..2*SEC`Genus] ];
-
-			print "ResVec:",ResVec;
-
-			return ResVec;
-			/*
-			V +:= RS_Vector(Integrals);
-
-			// Integrals from P_0 to P_i
-			TreePath := SEC`TreeMatrix[Ind];
-			print "TreePath:",TreePath;
-			for j in [1..SEC`Degree[2]-1] do
-				V +:= TreePath[j] * SV;
-				//V +:= TreePath[j] * RS_Vector(SEC`ElementaryIntegrals[j]);
-				//print "RS_Vector(SEC`ElementaryIntegrals[j]):",RS_Vector(SEC`ElementaryIntegrals[j]);
-			end for;
-			print "V before reduction:",V;
-			"########### END AJ #############";
-			
+			// Reduce mod lattice
 			return RS_ModPeriodLattice(SEC,V);
-			*/
+
+			// return RS_LatticeReduction(SEC,V);
+			
 		end function;
 
 		SEC`AbelJacobi := AbelJacobi;
 	end if;	
-	
-	
 
-
-	
-
-	
 end intrinsic;
 
 
@@ -609,16 +557,19 @@ intrinsic RS_TreeMatrix( SEC::SECurve : Recompute := false  )
 end intrinsic;
 
 
-intrinsic RS_AJWeierstrass( SEC::SECurve : Ind := 0, C_Basis := false ) -> RngIntElt
+intrinsic RS_AJWeierstrass( SEC::SECurve : Recompute := false )
 { Compute image of branch points under Abel-Jacobi map }
 
+	if not assigned SEC`AJWeierstrass or Recompute then
+
 	// Compute period matrix
-	RS_SEPM(SEC); R := RealField(SEC`ComplexField);
+	RS_SEPM(SEC); C<i> := CoefficientRing(SEC`BigPeriodMatrix);
 	
   	Pts := SEC`BranchPoints;
  	g := SEC`Genus; N := SEC`Degree[1]; d := SEC`Degree[2];
  
-	P0Pi := ZeroMatrix(Rationals(),d,(N-1)*(d-1));
+	//P0Pi := ZeroMatrix(Rationals(),d,(N-1)*(d-1));
+	P0Pi := Matrix(C,d,(N-1)*(d-1),[]);
 	
 	Taken := [ 0 : j in [1..d] ];
 	Tree := SEC`MST;
@@ -645,20 +596,17 @@ intrinsic RS_AJWeierstrass( SEC::SECurve : Ind := 0, C_Basis := false ) -> RngIn
 		P0Pi[j] -:= P0P0;
 	end for;
 
-	if C_Basis then
-		if Ind eq 0 then
-			return P0Pi;
-		else
-			ColumnSubmatrix(Transpose(P0Pi),Ind,1);
-		end if;
-	else
-		if Ind eq 0 then
-			return ChangeRing(SEC`ABtoC^(-1),Rationals()) * Transpose(P0Pi);
-		else
-			return ChangeRing(SEC`ABtoC^(-1),Rationals()) * ColumnSubmatrix(Transpose(P0Pi),Ind,1);
-		end if;
-	end if; 
+	// g x d Matrix with image of AJM between Weierstrass points
+	M1 := ChangeRing(SEC`ABtoC^(-1),C) * Transpose(P0Pi); // = (d-1)(N-1)x(d) = (d-1)(N-1)x(d-1)(N-1) x (d-1)(N-1)x(d)
+	M2 := Submatrix(M1,[1..2*g],[1..d]);
+	V := HorizontalJoin(DiagonalMatrix(C,[ One(C) : j in [1..g]]),SEC`SmallPeriodMatrix) * M2; // (g)x(d) = (g)x(2g) x (2g) x (d)
+	//V := SEC`PM_B_Inv * SEC`BigPeriodMatrix * ChangeRing(SEC`ABtoC^(-1),C) * Transpose(P0Pi);
+	
+	assert Nrows(V) eq SEC`Genus;
 
+	SEC`AJWeierstrass := V;
+	
+	end if;
 end intrinsic;
 
 

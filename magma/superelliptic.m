@@ -1141,7 +1141,7 @@ intrinsic RS_SEIntegrationParameters( Points::SeqEnum[FldComElt], MST::SeqEnum[T
 	
 	
 	// Compute #integration points = 2*n+1
-	x := 100;
+	x := 500;
 	//n := Ceiling(Argsinh( (1+Log(N-1))*D + Log((4^(1-Alpha) * M1 )/(2-2*Alpha))/(Lambda*(2-2*Alpha)) ) / h );
 	n := Ceiling(Argsinh( D+ Log((4^(1-Alpha) * M1)/(2-2*Alpha))/(Lambda*(2-2*Alpha)) ) / h ) + x;
 	//n := Ceiling(RS_tOpt(D,M1)/h);
