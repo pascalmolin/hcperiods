@@ -8,14 +8,14 @@
 
 void differentials(cohom_t dz, slong d, slong n)
 {
-    slong i, j, k, g;
-    g = n_gcd(n, d);
+    slong i, j, k, m;
+    m = n_gcd(n, d);
     k = 0;
     for (i = 1; i < d; i++)
     {
         for (j = 1; j < n; j++)
         {
-            if (j * d >= n * i + g && n * i > j)
+            if (j * d >= n * i + m && n * i > j)
             {
                 dz[k].x = i - 1;
                 dz[k].y = j;

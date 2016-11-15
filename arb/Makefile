@@ -6,14 +6,16 @@ MPFR_LIB_DIR      = $(INSTALL)/lib
 MPFR_INCLUDE_DIR  = $(INSTALL)/include
 FLINT_LIB_DIR     = $(INSTALL)/lib
 FLINT_INCLUDE_DIR = $(INSTALL)/include/flint
+ARB_LIB_DIR     = $(INSTALL)/lib
+ARB_INCLUDE_DIR = $(INSTALL)/include/
 
 CC=gcc
 CFLAGS:=-O2 -ggdb -ansi -std=c99 -pedantic -Wall -funroll-loops
 CFLAGS:=-ggdb -ansi -std=c99 -pedantic -Wall
 
-LIBS=-L$(FLINT_LIB_DIR) -L$(GMP_LIB_DIR) -L$(MPFR_LIB_DIR) -larb -lflint -lmpfr -lgmp -lpthread -lm
-INCS=-I$(CURDIR) -I$(GMP_INCLUDE_DIR) -I$(MPFR_INCLUDE_DIR) -I$(FLINT_INCLUDE_DIR)
-LINKLIBS=$(GMP_LIB_DIR)/libgmp.a $(MPFR_LIB_DIR)/libmpfr.a $(FLINT_LIB_DIR)/libflint.so
+LIBS=-L$(ARB_LIB_DIR) -L$(FLINT_LIB_DIR) -L$(GMP_LIB_DIR) -L$(MPFR_LIB_DIR) -larb -lflint -lmpfr -lgmp -lpthread -lm
+INCS=-I$(CURDIR) -I$(GMP_INCLUDE_DIR) -I$(MPFR_INCLUDE_DIR) -I$(FLINT_INCLUDE_DIR) -I$(ARB_INCLUDE_DIR)
+LINKLIBS=$(GMP_LIB_DIR)/libgmp.a $(MPFR_LIB_DIR)/libmpfr.a $(FLINT_LIB_DIR)/libflint.so -I$(ARB_INCLUDE_DIR)/libarb.a
 
 LD_LIBRARY_PATH:=${CURDIR}:${FLINT_LIB_DIR}:${MPFR_LIB_DIR}:${GMP_LIB_DIR}:${LD_LIBRARY_PATH}
 export LD_LIBRARY_PATH
@@ -22,9 +24,9 @@ export
 BUILD:=_build
 PROG   =
 ifeq ($(shell uname -s),Darwin)
-LIBRARY   = liblfunc.dylib
+LIBRARY   = libajsec.dylib
 else
-LIBRARY   = liblfunc.so
+LIBRARY   = libajsec.so
 endif
 
 SOURCES = $(wildcard *.c)

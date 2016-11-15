@@ -112,6 +112,7 @@ void tree_init(tree_t tree, slong n)
     tree->n = n;
     tree->e = malloc(n * sizeof(edge_t));
 }
+
 void tree_clear(tree_t tree)
 {
     free(tree->e);

@@ -843,7 +843,7 @@ hcAbelJacobi(C,p) = {
   /* is p one of the roots ? */
   my(A=C[iRoots]);
   my(res);
-  if(type(p)==t_Vec,
+  if(type(p)=="t_VEC",
     x_p = p[1];
     y_p = p[2]
   ,
@@ -1123,7 +1123,7 @@ return(M);
 /* if all signs were compatible the above would be equal to the following. It
  * must be equal mod 2\Z */
 int_ABp_ref(x) = {
-  my(g); if(type(x)==t_Vec, g = C[iGenus], g=x);
+  my(g); if(type(x)=="t_VEC", g = C[iGenus], g=x);
   my(P = ABptoAB(g));
   return(P*matJ(g)*mattranspose(P));
   return(mattranspose(P)*matJ(g)*P);
