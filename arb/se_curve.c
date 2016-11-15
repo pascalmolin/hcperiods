@@ -6,18 +6,18 @@
 
 #include "abel_jacobi.h"
 
-
 void
-se_curve_init(se_curve_t c, slong n, acb_ptr x, slong d)
+se_curve_init_roots(se_curve_t c, slong n, acb_srcptr x, slong d)
 {
     slong k, g;
 
-    g = (n-1)*(d-1) / 2;
+    g = ((n-1)*(d-1) - n_gcd(n,d) + 1)/ 2;
     c->n = n;
     c->d = d;
     c->g = g;
-    c->roots = x;
     c->roots = _acb_vec_init(d);
+    for (k = 0; k < d; k++)
+        acb_set(c->roots + k, x + k);
 
     tree_init(c->tree, d);
     c->dz = malloc(g * sizeof(dform_t));
@@ -41,6 +41,22 @@ se_curve_init(se_curve_t c, slong n, acb_ptr x, slong d)
     acb_mat_init(c->tau, g, g);
 
     arb_mat_init(c->proj, 2*g, 2*g);
+}
+
+void
+se_curve_init_poly(se_curve_t c, slong n, acb_srcptr f, slong len, slong prec)
+{
+    slong d = len - 1;
+    acb_ptr x;
+    x = _acb_vec_init(d);
+    /* isolate roots */
+    if (_acb_poly_find_roots(x, f, NULL, len, 0, prec) < d)
+    {
+        flint_printf("missing roots, abort.\n");
+        abort();
+    }
+    se_curve_init_roots(c, n, x, d);
+    _acb_vec_clear(x, d);
 }
 
 void
