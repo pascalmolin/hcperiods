@@ -1,0 +1,130 @@
+%%% Defined here (in order): mathematical macros, theorem style, colour of hyperlinks, spaces for indention and between lines,
+%%% tikz, reminder, fix for bigint package
+
+%% Mathematical macros %%
+
+% Logic
+\newcommand{\eq}{\Leftrightarrow}
+\newcommand{\imp}{\Rightarrow}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\inj}{\hookrightarrow}
+\newcommand{\surj}{\longrightarrow\!\!\!\!\to}
+\newcommand{\isom}{\cong}
+
+
+% Sets
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\K}{\mathbb{K}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\A}{\mathbb{A}}
+\renewcommand{\P}{\mathbb{P}}
+
+
+% Operators
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclareMathOperator{\End}{End}
+\DeclareMathOperator{\Gal}{\mathop{\rm Gal}\nolimits}
+\DeclareMathOperator{\id}{id}
+\DeclareMathOperator{\disc}{disc}
+\DeclareMathOperator{\arctanh}{arctanh}
+\DeclareMathOperator{\arcsinh}{arcsinh}
+\DeclareMathOperator{\rk}{rk}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\Jac}{Jac}
+\DeclareMathOperator{\GL}{GL}
+\renewcommand{\Im}{\operatorname{\mathfrak{Im}}}
+\renewcommand{\div}{\operatorname{div}}
+\renewcommand{\deg}{\operatorname{deg}}
+
+
+% Variables
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\w}{\omega}
+\newcommand{\CC}{\mathcal{C}}
+\newcommand{\CS}{\mathcal{S}}
+\newcommand{\J}{\mathcal{J}}
+\newcommand{\m}{\mathfrak{m}}
+\renewcommand{\L}{\mathcal{L}}
+\newcommand{\BD}{{\bf D}}
+\newcommand{\BE}{{\bf E}}
+\newcommand{\KC}{{\bar{K}}}
+\newcommand{\BP}{{\mathbb P}}
+\newcommand{\veps}{\varepsilon}
+\newcommand{\vphi}{\varphi}
+\newcommand{\frka}{\mathfrak{a}}
+\newcommand{\dx}{\mathrm d x}
+\newcommand{\dy}{\mathrm d y}
+\newcommand{\dt}{\mathrm d t}
+\newcommand{\du}{\mathrm d u}
+\newcommand{\BDF}{\mathcal{W}}
+\newcommand{\CO}{H^1_{\text{dR}}(\CC)}
+\newcommand{\COX}{H^1_{\text{dR}}(X)}
+\newcommand{\HO}{H_1(\CC,\Z)}
+\newcommand{\HOX}{H_1(X,\Z)}
+\newcommand{\IGT}{I_{\tilde{\gamma}}}
+\newcommand{\IA}{I_{\alpha}}
+\newcommand{\IAi}{I_{\alpha_i}}
+\newcommand{\IAP}{I_{\alpha'}}
+\newcommand{\cya}{\alpha(a,b)}
+\newcommand{\cyb}{\beta(c,d)}
+\newcommand{\cyta}{\tilde{\alpha}(a,b)}
+\newcommand{\cytb}{\tilde{\beta}(c,d)}
+
+
+%%  Theorem style %%
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{coro}[thm]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{ex}[thm]{Example}
+\newtheorem{alg}[thm]{Algorithm}
+
+\theoremstyle{remark}
+\newtheorem{rmk}[thm]{Remark}
+
+
+%% Colour of hyperlinks %%
+\hypersetup{linkbordercolor 	={1 1 1}}
+\hypersetup{citebordercolor 	={1 1 1}}
+\hypersetup{urlbordercolor 	={1 1 1}}
+
+
+%% Set spaces for indention and between lines %%
+\setlength{\parskip}{0.75\baselineskip}
+\setlength{\parindent}{0em}
+\newcommand{\abstand}{{\\[0.25\baselineskip]}}
+\newcommand{\abstandl}{{\\[0.5\baselineskip]}}
+\newcommand{\abstandll}{{\\[0.75\baselineskip]}}
+
+
+%% Tikz %%
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes.misc}
+\usetikzlibrary{decorations.markings}
+\tikzset{cross/.style={cross out, draw=black, minimum size=2*(#1-\pgflinewidth), inner sep=0pt, outer sep=0pt},cross/.default={1pt}}
+\tikzset{
+    halfarrow1/.style={postaction={decorate},
+        decoration={markings,mark=at position .5 with
+        {\arrow[line width=0.4mm]{>}}}} }
+\tikzset{
+    halfarrow2/.style={postaction={decorate},
+        decoration={markings,mark=at position .5 with
+        {\arrow[line width=0.4mm]{<}}}} }
+
+
+%% Reminder %%
+\newcommand{\todo}{{\color{red}\textbf{TODO}}:\;}
+        
+        
+%% Problem with lmodern and bitint packages %%
+\DeclareFontFamily{OMX}{lmex}{}
+\DeclareFontShape{OMX}{lmex}{m}{n}{<-> lmex10}{}
