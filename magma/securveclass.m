@@ -1,9 +1,4 @@
-// Import global settings
 import "superelliptic.m": RS_SEIntegrate, RS_NRootAC, RS_SEMST, RS_MakeCCVectors, RS_SETau3, RS_SEInfTau;
-import "comparefunctions.m": RS_CompareByFirstComplexEntry,RS_CompareFldComElt;
-import "globalprecision.m": RS_Config;
-import "pathmethods.m": RS_ChoiceOfPathStar;
-import "cvector.m": RS_Quotrem_I, RS_Quotrem_II;
 
 C_20<i> := ComplexField(20);
 C_Pi := Real(Pi(C_20));

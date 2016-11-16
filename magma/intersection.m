@@ -1,8 +1,4 @@
-//Import global settings
 import "superelliptic.m": RS_ImSgn, RS_NRootAC, RS_MakeCCVectors;
-import "comparefunctions.m": RS_CompareFldComElt;
-
-
 
 C_20<i> := ComplexField(20);
 C_Pi := Real(Pi(C_20));
