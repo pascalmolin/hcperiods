@@ -82,7 +82,7 @@ se_curve_compute(se_curve_t c, slong prec)
     /* homology */
     spanning_tree(c->tree, c->roots, c->d);
     intersection_tree(c->inter, c->tree, c->roots, c->d);
-    symplectic_basis(c->loop_a, c->loop_b, c->inter, c->g, c->d);
+    symplectic_basis(c->loop_a, c->loop_b, c->inter, c->g, c->d, c->n);
 
     /* cohomology */
     differentials(c->dz, c->d, c->n);

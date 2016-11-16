@@ -89,16 +89,16 @@ typedef struct
 {
     /* y^n = prod_{i=1}^d x - roots[i] */
     slong n;             /* degree in y */
-    slong d;             /* degree in x, odd */
+    slong d;             /* degree in x */
     slong g;             /* genus, 2g = (N-1)(d-1) - gcd(N,d) + 1 */
-    acb_ptr roots;      /* weierstrass points */
+    acb_ptr roots;       /* branch points */
 
     /* differentials */
     cohom_t dz;
 
     /* homology using tree */
-    tree_t tree;        /* choice of best loops */
-    inter_mat inter;      /* intersections in tree, size d-1 * d-1 */
+    tree_t tree;         /* choice of best loops */
+    inter_mat inter;     /* intersections in tree, size d-1 * d-1 */
 
     /* A,B symplectic basis as sums of shifted gamma loops */
     homol_t loop_a;
@@ -144,7 +144,8 @@ void intersection_tree(inter_mat inter, tree_t tree, acb_srcptr x, slong d);
 
 /* find g+g symplectic homology basis from tree */
 /* two lists of g loops */
-void symplectic_basis(homol_t loop_a, homol_t loop_b, inter_mat inter, slong g, slong d);
+void symplectic_reduction(si_mat_t p, si_mat_t m, slong g, slong len);
+void symplectic_basis(homol_t loop_a, homol_t loop_b, inter_mat inter, slong g, slong d, slong n);
 
 /* find basis of holomorphic differentials */
 /* g elementary differentials */
