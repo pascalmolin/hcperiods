@@ -1,9 +1,3 @@
-//Import global settings
-import "integration.m": RS_IntParameters;
-import "analyticcontinuation.m": RS_ACRecursion;
-import "pathmethods.m":RS_FindSet;
-import "comparefunctions.m":RS_CompareFldComElt;
-
 declare verbose SE,3;
 declare verbose SEP,2;
 declare verbose SAC,1;
@@ -11,6 +5,14 @@ declare verbose SAC,1;
 C_20<i> := ComplexField(20);
 C_Pi := Real(Pi(C_20));
 
+function RS_FindSet(x,Sets)
+// Used in RS_MinimalSpanningTree
+	for i in [1..#Sets] do
+		if x in Sets[i] then
+			return Sets[i],i;
+		end if;
+	end for;
+end function;
 function RS_MakeCCVectors( i1, i2, Points )
 	assert Type(i1) eq RngIntElt;
 	a := Points[i1];
@@ -1141,7 +1143,7 @@ intrinsic RS_SEIntegrationParameters( Points::SeqEnum[FldComElt], MST::SeqEnum[T
 	
 	
 	// Compute #integration points = 2*n+1
-	x := 500;
+	x := 0;
 	//n := Ceiling(Argsinh( (1+Log(N-1))*D + Log((4^(1-Alpha) * M1 )/(2-2*Alpha))/(Lambda*(2-2*Alpha)) ) / h );
 	n := Ceiling(Argsinh( D+ Log((4^(1-Alpha) * M1)/(2-2*Alpha))/(Lambda*(2-2*Alpha)) ) / h ) + x;
 	//n := Ceiling(RS_tOpt(D,M1)/h);
@@ -1171,612 +1173,156 @@ intrinsic RS_SEIntegrationParameters( Points::SeqEnum[FldComElt], MST::SeqEnum[T
 end intrinsic;
 
 
-// ################################################################  !!! FROM HERE !!! ################################################################
-// ################################################################  !!! OLD  CODE !!! ################################################################
+/// Symplectic reduction code below
+procedure RS_InplaceMoveToPositivePivot( Column, Row, Pivot, ~G, ~B )
+   
+	i := Column;
+	j := Row;
+    	v := G[i][j];
+	IsPivot := false;
 
-function RS_SENewtonIteration(f,df,z,k )
-	if k gt 0 then
-		return RS_SENewtonIteration(f,df,z - (Evaluate(f,z)/Evaluate(df,z)) ,k-1);
+	if [i,j] eq [Pivot+1,Pivot] and G[Pivot+1][Pivot] ne v then
+		IsPivot := true;
+        	SwapRows(~B,Pivot,Pivot+1);
+        	SwapRows(~G,Pivot,Pivot+1);
+        	SwapColumns(~G,Pivot,Pivot+1);
+    	elif [i,j] eq [Pivot,Pivot+1] then
+        	SwapRows(~B,Pivot,Pivot+1);
+        	SwapRows(~G,Pivot,Pivot+1);
+        	SwapColumns(~G,Pivot,Pivot+1);
+    	elif j ne Pivot and j ne Pivot+1 and i ne Pivot and i ne Pivot+1 then
+        	SwapRows(~B,Pivot,j);
+	        SwapRows(~B,Pivot+1,i);
+		SwapRows(~G,Pivot,j);
+        	SwapRows(~G,Pivot+1,i);
+        	SwapColumns(~G,Pivot,j);
+        	SwapColumns(~G,Pivot+1,i);
+    	elif j eq Pivot then
+        	SwapRows(~B,Pivot+1,i);
+        	SwapRows(~G,Pivot+1,i);
+        	SwapColumns(~G,Pivot+1,i);
+   	elif j eq Pivot+1 then
+        	SwapRows(~B,Pivot,i);
+        	SwapRows(~G,Pivot,i);
+        	SwapColumns(~G,Pivot,i);
+    	elif i eq Pivot then
+        	SwapRows(~B,Pivot+1,j);
+        	SwapRows(~G,Pivot+1,j);
+        	SwapColumns(~G,Pivot+1,j);
+    	elif i eq Pivot+1 then
+        	SwapRows(~B,Pivot,j);
+      		SwapRows(~G,Pivot,j);
+        	SwapColumns(~G,Pivot,j);
 	end if;
-	return z;
+
+    	// Fix possible change of sign in a row
+    	if G[Pivot+1][Pivot] ne v and not IsPivot then
+        	SwapRows(~B,Pivot,Pivot+1);
+        	SwapRows(~G,Pivot,Pivot+1);
+        	SwapColumns(~G,Pivot,Pivot+1);
+	end if;
+
+end procedure;
+
+
+function RS_FindSmallestElementPosition( K, Pivot )
+// Find the smallest positive entry of K above the pivot
+	//Min := Infinity();
+	//SmallestEltPos := [0,0];
+	n := NumberOfRows(K);
+	for i in [Pivot..n] do
+		for j in [Pivot..n] do
+			if K[i][j] eq 1 then
+				return [i,j];
+			end if;
+			/*
+			v := K[i][j];
+			if v lt Min and v gt 0 then
+				Min := v;
+				SmallestEltPos := [i,j];
+			end if;
+			*/
+		end for;
+	end for;
+	return [0,0];
+	//return SmallestEltPos;
 end function;
 
 
-intrinsic RS_SENewtonMethod( f::RngUPolElt, z::FldComElt ) -> FldComElt
-{ Approximate a zero of f=df[1] using newton's method starting with ApproxValues }
-	
-	// Compute upper bound on the size of the roots of f
-	Bound := RS_UpperBoundRoots(f);
-	vprint RA,1 :"Bound on roots:",Bound;
+intrinsic RS_SymplecticBasis( K::Mtrx ) -> Mtrx, Mtrx
+{ Computes a symplectic basis for a skew-symmetric matrix K as suggested by Theorem 18, Kuperberg, Greg.  Kasteleyn Cokernels.  Electr. J. Comb. 9(1), 2002. }
 
-	// Compute required # of extra digits
-	ExtraDigits := RS_ExtraDigits(Bound);
-	
-	// Adjusted complex field and polynomial ring for calculations
-	C_<i> := ComplexField(Precision(RS_GetGlobalComplexField_Comp())+ExtraDigits+10); C_y<y> := PolynomialRing(C_); R_1 := Real(One(C_));
+	// Checking for K to be skew-symmetric
+	assert RS_IsSkewsymmetric(K);
 
-	// Coercion of root approximation data
-	if Precision(z) lt Precision(C_) then
-		z := C_!z;
-	end if;
-	
-	if Precision(BaseRing(f)) lt Precision(C_) then
-		f := C_y!f;
-	end if;
-	
-	// Start root approximation
-	BetaValues := [];
-	N := Degree(f);
-	df := [f];
-	for k in [1..N] do
-		Append(~df,Derivative(df[#df]));
-	end for;
+	// Checking for K to be a square matrix
+	n := NumberOfRows(K);
+	assert n eq NumberOfColumns(K);
 
-	df := [f];
-	for k in [1..Degree(f)] do
-		Append(~df,Derivative(df[#df]));
-	end for;
+	E := K;
+	B := One(Parent(E));
+    	Zeros := [];
+    	PS := [];
+    	Pivot := 1;
 
-	// Check if z is an approximate zero of f(x_t2,y)
-	Okay, Beta_z_j := RS_AlphaTest(df,z);
-
-	if not Okay then
-		return 0;
-	end if;
-	
-	return RS_SENewtonIteration( df[1],df[2],z,RS_GetRAIterations() );
-end intrinsic
-
-
-
-
-function RS_SEAC(f,Gamma,t1,t2,y_t1)
-// Analytically continue the fiber above Gamma(t1) to the fiber above Gamma(t2)
-	// Evaluate the path Gamma at t1 and t2
-	x_t2 := RS_PathEvaluate(Gamma,(1/2)*(t2+1));
-	
-	// Evaluate y-derivatives of f at x_t2
-	f_x_t2 := RS_MPolEval(f,x_t2);
-
-	// Divide by leading coefficient
-	f_x_t2 *:= 1/LeadingCoefficient(f_x_t2);
-
-	
-	vprint AC,3 : "t1:",t1;
-	//vprint AC,2: "y_t1:",y_t1;
-	vprint AC,3 : "t2:",t2;
-	
-	y_t2 := RS_SENewtonMethod(f_x_t2,y_t1);
-
-	if y_t2 ne 0 then
-		return y_t2;
-	else
-		//vprint AC,2: "Deeper recursion: Not approximate or no convergence to different solutions.";
-		y_t2_1 := RS_SEAC(f,Gamma,t1,(t1+t2)/2,y_t1);
-		y_t2_2 := RS_SEAC(f,Gamma,(t1+t2)/2,t2,y_t2_1);
-		return y_t2_2;
-	end if;
-end function;
-
-function RS_SEACRecursion(f,Gamma,t1,t2,Fiber_t1)
-// Analytically continue the fiber above Gamma(t1) to the fiber above Gamma(t2)
-
-	vprint PAC,1 : "Precision(t1):",Precision(t1);
-	vprint PAC,1 : "Precision(t2):",Precision(t2);
-
-	// Evaluate the path Gamma at t1 and t2
-	//x_t1 := RS_PathEvaluate(Gamma,t1);
-	//x_t2 := RS_PathEvaluate(Gamma,t2);
-	x_t2 := RS_PathEvaluate(Gamma,(1/2)*(t2+1));
-	vprint PAC,1 : "Precision(x_t2):",Precision(x_t2);
-
-	// Evaluate f(x,y) at x = x_t2
-	//f_x_t2 := UnivariatePolynomial(Evaluate(f,1,x_t2));
-	//f_x_t2 := RS_MPolEval(f,x_t2);
-	f_x_t2 := Evaluate(f,x_t2);
-	vprint PAC,1 : "Precision(f_x_t2):",Precision(BaseRing(Parent(f_x_t2)));
-
-	vprint AC,2 : "Gamma:",Gamma;
-	vprint AC,2 : "x_t2:",x_t2;
-	vprint AC,3 :"f_x_t2:",f_x_t2;
-
-	// Divide by leading coefficient
-	f_x_t2 *:= 1/LeadingCoefficient(f_x_t2);
-	/*if LeadingCoefficient(f_x_t2) ne 1 then
-		RS_SetTmp(<f_x_t2,Fiber_t1,t1,t2>);
-		return "bla1";
-	end if;*/
-	vprint PAC,1 : "Precision fxt2:",Precision(LeadingCoefficient(f_x_t2));	
-
-	vprint AC,3 : "t1:",t1;
-	vprint AC,3 : "t2:",t2;
-	vprint AC,3 : "Difference:", t2-t1;
-	if t2-t1 eq 0 then
-		RS_SetTmp(<f_x_t2,Fiber_t1,t1,t2>);
-		//return "bla";
-	end if;
-
-	S := RS_GetRAMethod();
-	vprint PAC,1 : "Precision(RS_GetGlobalComplexField()):",Precision(RS_GetGlobalComplexField());
-	vprint PAC,1 : "Precision(RS_GetGlobalComplexField_Comp()):",Precision(RS_GetGlobalComplexField_Comp());
-	vprint PAC,1 : "Precision(RS_GetGlobalComplexField_Max()):",Precision(RS_GetGlobalComplexField_Max());
-	
-	if S eq "DKPEB" then
-		Fiber_t2 := RS_DurandKernerPEB(f_x_t2,Fiber_t1,Precision(RS_GetGlobalComplexField_Comp()));
-	elif S eq "BSWPEB" then
-		Fiber_t2 := RS_BoerschSupanWeierstrassPEB(f_x_t2,Fiber_t1,Precision(RS_GetGlobalComplexField_Comp()));
-	elif S eq "DK" then
-		Fiber_t2 := RS_DurandKerner(f_x_t2,Fiber_t1);
-	elif S eq "BSW" then
-		Fiber_t2 := RS_BoerschSupanWeierstrass(f_x_t2,Fiber_t1);
-	elif S eq "EAN" then
-		Fiber_t2 := RS_EhrlichAberthNewton(f_x_t2,Fiber_t1);
-	elif S eq "Newton" then
-		Fiber_t2 := RS_NewtonMethod(f_x_t2,Fiber_t1);
-	end if;
-
-	if #Fiber_t2 gt 0 then
-		return Fiber_t2;
-	else
-		vprint AC,2: "Deeper recursion: Not approximate or no convergence to different solutions.";
-		Fiber_t2_1 := RS_ACRecursion(f,Gamma,t1,(t1+t2)/2,Fiber_t1);
-		vprint AC,2: "Fiber_t2_1:",Fiber_t2_1;
-		Fiber_t2_2 := RS_ACRecursion(f,Gamma,(t1+t2)/2,t2,Fiber_t2_1);
-		vprint AC,2: "Fiber_t2_2:",Fiber_t2_2;
-		return Fiber_t2_2;
-	end if;
-end function;
-
-intrinsic RS_SEPM2( f::RngMPolElt : Prec := -1, Basepoint := "Opt", Big := false, PathMethod := RS_GetPathMethod(), RAMethod := "Newton", IntMethod := "DE" ) -> Mtrx
-{ Computes the period matrix of the Riemann surface associated to the superelliptic curve defined by the polynomial f(x,y) = y^N - g(x) }
-
-	vprint PM,1 : "Defining polynomial: ",f;
-
-	// Checking for special cases
-	f_y := UnivariatePolynomial(Evaluate(f,1,1));
-	f_y *:= 1/LeadingCoefficient(f_y);
-	if f_y - LeadingTerm(f_y) in BaseRing(f_y) then
-		f_x := UnivariatePolynomial(Evaluate(f,2,0)); 
-		if Gcd(f_x,Derivative(f_x)) eq One(Parent(f_x)) then
-			if Degree(f_y) eq 2 then
-				if Degree(f_x) eq 3 then
-					print "Special case: Curve is elliptic!";
-				else
-					print "Special case: Curve is hyperelliptic!";
-				end if;
-			else
-				print "Special case: Curve is superelliptic!";
-			end if;
-		else
-			print "Curve is not superelliptic!";
-			return 0;
+    	while Pivot le n do
+		//print "Pivot:",Pivot;
+        	SmallestEltPos := RS_FindSmallestElementPosition( E, Pivot );
+        	if SmallestEltPos eq [0,0] then
+            		Append(~Zeros,Pivot);
+           		Pivot := Pivot + 1;
+            		continue;
 		end if;
-	else
-		print "Curve is not superelliptic!";
-		return 0;
-	end if;
 
-	// Computing the a basis of homolomorphic differentials
-	
-	FF<x,y> := FunctionField(f);
-	//DFF := BasisOfDifferentialsFirstKind(FF);
-	DFF := RS_SuperellipticDifferentials(f);
-	vprint PM,3 : "Basis of homolormphic 1-forms: ",DFF;
+       		RS_InplaceMoveToPositivePivot(SmallestEltPos[2], SmallestEltPos[1], Pivot, ~E, ~B);
 
-	// Genus
-	g := #DFF;
-	vprint PM,1 : "Genus of the Riemann surface:",g;
+		AllZero := true;
 
-
-	// Dealing with genus 0 curves
-	if g eq 0 then
-		print "Genus of the Riemann surface is zero!";
-		return [];
-	end if;	
-
-
-	// Representatives of holomorphic differentials
-	//vprint PM,1 : "Computing representatives:";
-	//time DFF_Reps := [ RationalFunction( (DFF[j]/ Differential(FF!x)),Rationals() ) : j in [1..g] ];
-	//DFF_Reps := [ RationalFunction(DFF[j],Rationals() ) : j in [1..g] ];
-	DFF_Reps := DFF;
-	vprint PM,2 : "DFF_Reps:",DFF_Reps;	
-
-	// Discriminant Points
-	DiscriminantPoints := RS_DiscriminantPoints(f,Parent(f).2);
-
-	// #Sheets
-	N := Degree(f,2);
-	Sym := Sym(N);
-	Id := Id(Sym);
-	vprint PM,1 : "#Sheets:",N;
-
-
-	 N_x := Degree(f,2);
-	
-	// Precision management
-	GlobalPrec := RS_GetGlobalPrecision();
-	if Prec lt 20 then
-		Prec := GlobalPrec;
-	end if;
-
-	// Adjust Prec "somehow" (yet to be done!)
-	// Compute maximal loss of Prec after integrating
-	NumberOfCycles := 2*g + N -1;
-	Adjusted := 10;
-
-	// Set precision
-	RS_SetGlobalPrecision( Prec : Adjusted := Adjusted );
-
-	// Complex field for return
-	C_<i> := RS_GetGlobalComplexField();
-	vprint PM,1 : "Prescribed precision:",Precision(C_);
-
-	// Complex field used for computations
-	C<i> := RS_GetGlobalComplexField_Comp(); Cy<y> := PolynomialRing(C); Cxy<x,y> := PolynomialRing(C,2);
-	vprint PM,1 : "Adjusted precision:",Precision(C); 
-
-	// Complex field for printing
-	C_20<i> := RS_GetGlobalComplexField_20();
-
-	// Complex field of maximal precision
-	CC<i> := RS_GetGlobalComplexField_Max(); CC_0 := Zero(CC); CC_1 := One(CC); RR_0 := Real(CC_0); RR_1 := Real(CC_1); MaxPrec := Precision(CC); 
-	CCy<y> := PolynomialRing(CC); CCxy<x,y> := PolynomialRing(CC,2); f := CCxy!f;
-	vprint PM,1 : "Maximal precision:",MaxPrec;
-
-	// Error control
-	Err := RS_GetGlobalError();
-	vprint PM,1 : "GlobalError:",C_20!Err;
-
-	// Compute roots of unity
-	Zeta := RS_ReducePrecision(Exp(2*RS_GetGlobalPi()*CC.1/N),5); ZetaVec := [ Zeta^k : k in [0..N-1] ];
-	vprint PM,1 : "Primitve root of unity:",Zeta;
-	vprint PM,3 : "generates:",ZetaVec;
-	
-	// Compute fundamental group w.r.t PathMethod
-	vprint PM,1 :"Computing fundamental group using path method:",PathMethod;
-	if IntMethod eq "GQ" then
-		RS_SetMaxSafeRadius(1/1);
-	elif IntMethod eq "DE" then
-		RS_SetMaxSafeRadius(1/500);
-	end if;
-	Basepoint, OrdDiscPts, PathPieces, IndexPathLists := RS_PathPieces( DiscriminantPoints : Basepoint := Basepoint, PathMethod := PathMethod );
-	
-	assert Precision(Zeta) eq MaxPrec - 5;
-	assert Precision(PathPieces[1]`EndPt) eq MaxPrec - 10;
-	assert Precision(Basepoint) eq MaxPrec - 5;
-	assert Precision(DiscriminantPoints[1]) eq MaxPrec - 5;
-
-	// Compute length of paths
-	PathLengths := [ RS_PathLength(PathPieces[j]) : j in [1..#PathPieces] ];
-	TotalPathLength := &+PathLengths;
-	MinPathLength := Min(PathLengths);
-	MaxPathLength := Max(PathLengths);
-
-	vprint PM,1 : "Total pathlength:",C_20!TotalPathLength;	
-	vprint PM,1 : "Minimal path length:",C_20!MinPathLength;
-	vprint PM,1 : "Maximal path length:",C_20!MaxPathLength;
-
-	vprint PM,1 : "Basepoint:",C_20!Basepoint;
-	vprint PM,1 : "#Discriminant points:",#OrdDiscPts;
-	vprint PM,3 : "Discriminant points:",OrdDiscPts;
-	vprint PM,1 : "#Integrals:",#PathPieces;
-	vprint PM,3 : "PathPieces:",PathPieces;
-
-	// Compute Integration parameters
-	assert IntMethod in ["DE","GQ"];
-	vprint PM,1 :"Using integration method:",IntMethod;
-	if IntMethod eq "DE" then
-		// Compute Tau for integration
-		LowPrecOrdDiscPts := [ C_20!P : P in OrdDiscPts ];
-		RS_TauPaths( LowPrecOrdDiscPts , PathPieces );
-		vprint PM,3 : [ <Gamma`Tau,Gamma`Type> : Gamma in PathPieces ];
-		MinTau, Ind := Min( [ Gamma`Tau : Gamma in PathPieces ] );
-		vprint PM,1 : "Minimal Tau realized for path:",PathPieces[Ind],"of length:",C_20!RS_PathLength(PathPieces[Ind]);
-		RS_SetIntTau((19/20)*Real(CC!MinTau));
-		//RS_SetIntTau( RS_GetGlobalPi()/10);
-		"#######################################################";
-		vprint PM,1 : "Tau(integration):",C_20!RS_GetIntTau();
-		"#######################################################";
-		assert Precision(RS_GetIntTau()) eq Precision(CC_0);
-		vprint PM,1 :"Computing integration parameters:";
-		time Abscissas, Weights, StepLength := RS_IntegrationParameters(RS_GetIntTau());
-	elif IntMethod eq "GQ" then
-		vprint PM,1 :"Computing integration parameters:";
-		Steps := Ceiling((7/2)*Prec*Log(Prec));
-		//Steps := Ceiling((7/2)*Prec); //Steps := 1000;
-		StepLength := 1/Steps;
-		time Abscissas, Weights := RS_GaussQuadratureParameters(Steps); 
-	end if;
-	
-	vprint PM,1 : "Integrating in ",#Abscissas,"Steps and Steplength",C_20!StepLength;
-	vprint PM,3 : "Abscissas:",Abscissas; 	
-	vprint PM,3 : "Weights:",Weights;
-	assert Precision(Abscissas[1]) le MaxPrec;
-	assert Precision(Weights[1]) eq Precision(Abscissas[1]);
-	assert Precision(Abscissas[1]) ge Precision(C);
-
-
-	// Compute optimal constant and number of iterations for root approximation
-	/*
-	if N eq 2 then
-		RS_SetRAMethod("DKPEB",N);
-	else
-		RS_SetRAMethod(RAMethod,N);
-	end if;
-	*/
-	RS_SetRAMethod(RAMethod,N);
-	vprint PM,1 : "Using root approximation method:",RS_GetRAMethod();
-
-	// Analytically continue each path along each differential form
-	for l in [1..#PathPieces] do
-		
-		Gamma := PathPieces[l];
-		
-		vprint PM,2 : "#####################################################################";
-		vprint PM,2 : "Integrating path (#",l,"):",Gamma;
-
-		y_0 := RS_Fiber(f,Gamma`StartPt);
-		/*
-		Gamma_y_Values := [];
-		
-		//y_j := RS_ACRecursion(f,Gamma,R_0,Abscissas[1],y_0); 
-		y_j := RS_ACRecursion(f,Gamma,-R_1,Abscissas[1],y_0);
-
-		Append(~Gamma_y_Values,y_j);
-
-		//print "Prec(Absc):",Precision(Abscissas[1]);
-		for j in [2..#Abscissas] do
-			y_j := RS_ACRecursion(f,Gamma,Abscissas[j-1],Abscissas[j],y_j);
-			Append(~Gamma_y_Values,y_j);
-		end for;
-		
-
-		//print "Prec y_j:",Precision(y_j);	
-
-		y_j := RS_ACRecursion(f,Gamma,Abscissas[#Abscissas],R_1,y_j);
-		*/
-		
-		Gamma_y_Values := [];
-
-		y_0 := RS_Fiber(f,Gamma`StartPt);
-		y_0_RoU := [ y_0[1]*ZetaVec[j] : j in [1..N] ];
-
-		_, Perm_RoU := RS_Permutation(y_0,y_0_RoU,RS_GetGlobalError()); // Make this error = 0
-		
-		ZetaVec := [ ZetaVec[j^Inverse(Perm_RoU) ] : j in [1..N] ];
-		//y_0_RoU := [ y_0[1]*ZetaVec[j] : j in [1..N] ];
-		//_, Perm_RoU := RS_Permutation(y_0,y_0_RoU,RS_GetGlobalError()); // Make this error = 0
-		//assert Perm_RoU eq Id;
-
-		// Continue to first absciss
-		y_j_ := RS_SEAC(f,Gamma,-RR_1,Abscissas[1],y_0[1]); 
-		y_j := [ y_j_*ZetaVec[j] : j in [1..N] ];
-
-		Append(~Gamma_y_Values,y_j);
-
-		for j in [2..#Abscissas] do
-			y_j_ := RS_SEAC(f,Gamma,Abscissas[j-1],Abscissas[j],y_j[1]);
-			y_j := [ y_j_*ZetaVec[j] : j in [1..N] ];
-			Append(~Gamma_y_Values,y_j);
-		end for;	
-		
-		// Continue to next start point
-		y_j_ := RS_SEAC(f,Gamma,Abscissas[#Abscissas],RR_1,y_j[1]);
-		y_j := [ y_j_*ZetaVec[j] : j in [1..N] ];
-		
-
-
-		// Compute the local monodromy of the path...
-		Ok, Sigma := RS_Permutation(RS_Fiber(f,Gamma`EndPt),y_j,RS_GetGlobalError());
-
-		if not Ok then
-			print "DefiningPolynomial:",f;
-			RS_SetGlobalPrecision(GlobalPrec);
-			error Error("Sheets do not match after analytic continuation.");
-		end if;	
-		
-		vprint PM,2 : "Sigma:",Sigma;
-
-		if assigned Gamma`Permutation then
-			if Gamma`Permutation ne Sigma then
-				print "DefiningPolynomial:",f;
-				RS_SetGlobalPrecision(GlobalPrec);
-				error Error("Different local monodromies computed while integrating.");
-			end if;
-		else
-			// Assign the permutation
-			Gamma`Permutation := Sigma;
-		end if;	
-
-		// Now integrate
-		PathDiffIntegrals := [];
-		for Rep in DFF_Reps do
-			PathDiffValues := RS_ZeroVector(CC,N);
-			g_num := CCxy!Numerator(Rep);
-			g_den := CCxy!Denominator(Rep);
-			for j in [1..#Abscissas] do
-				x_j := RS_PathEvaluate(Gamma,(1/2)*(Abscissas[j]+1));
-				//x_j := RS_PathEvaluate(Gamma,Abscissas[j]);
-				y_j := Gamma_y_Values[j];
-				G_num := RS_MPolEval(g_num,x_j);
-				G_den := RS_MPolEval(g_den,x_j);
-				Const := RS_DerivativePathEvaluate(Gamma,(1/2)*(Abscissas[j]+1));
-				//Const := RS_DerivativePathEvaluate(Gamma,Abscissas[j]);
-				for Sheet in [1..N] do
-					Num_Sheet := Evaluate(G_num,y_j[Sheet]);  
-					Den_Sheet := Evaluate(G_den,y_j[Sheet]);
-					IntegrandValue_j_Sheet := Const * (Num_Sheet/Den_Sheet);
-					PathDiffValues`Entries[Sheet] +:= Weights[j]*IntegrandValue_j_Sheet;
-				end for;
-			end for;
-			if RS_SumEntries(PathDiffValues) ge Err then
-				print "RS_SumEntries(PathDiffValues):",RS_SumEntries(PathDiffValues);
-				error Error("Error while integrating.");
-			end if;
-			Append(~PathDiffIntegrals,PathDiffValues);
-		end for;
-		Gamma`Integrals := PathDiffIntegrals;
-	end for;
-
-
-	// Arrays		
-	ClosedChains := [];
-	LocalMonodromy := [];
-	BranchPoints := <>;
-
-	// Construct chains from path pieces
-	for l in [1..#IndexPathLists] do
-		IndexList := IndexPathLists[l];
-		NextPath := [];
-		for Index in IndexList do
-			if Sign(Index) eq 1 then
-				Append(~NextPath,PathPieces[Index]);
-			else
-				Append(~NextPath,RS_ReversePath(PathPieces[-Index]));
+		// Use non-zero element to clean row Pivot
+       	       	u := E[Pivot][Pivot+1];		
+       		for j in [Pivot+2..n] do
+        		v, r := Quotrem(-E[Pivot][j],u);
+			
+            		if v ne 0 then
+                		AllZero := false;
+                		AddRow(~E,v,Pivot+1,j);
+                		AddColumn(~E,v,Pivot+1,j);
+               			AddRow(~B,v,Pivot+1,j);
 			end if;
 		end for;
-		NextChain := RS_Chain(NextPath:Center:=DiscriminantPoints[l]);
-		if NextChain`Permutation ne Id then
-			Append(~ClosedChains,NextChain);
-			Append(~BranchPoints,NextChain`Center);
-		else
-			vprint PM,2 : "Singularity detected: Discriminant point nr.",l,"is not a branch point:";
-			vprint PM,2 : C_20!OrdDiscPts[l];
+		
+        	// Use non-zero element to clean row Pivot+1
+        	u := E[Pivot+1][Pivot];
+	     	for j in [Pivot+2..n] do
+        		v, r := Quotrem(-E[Pivot+1][j],u);
+			
+            		if v ne 0 then
+               			AllZero := false;
+				AddRow(~E,v,Pivot,j);
+				AddColumn(~E,v,Pivot,j);
+				AddRow(~B,v,Pivot,j);
+			end if;
+		end for;
+
+		// Record for basis reconstruction
+           	if AllZero then
+            		Append(~PS,[E[Pivot+1][Pivot], Pivot]);
+            		Pivot := Pivot +  2;
 		end if;
-	end for;
-
-	// Get local monodromy from chains 
-	LocalMonodromy := [ Ch`Permutation : Ch in ClosedChains ];
-		
-	// Compute permutation at infinity by relation
-	InfPerm := Inverse(&*LocalMonodromy);
-
-	// Chain around infinity
-	if InfPerm ne Id then
-		InfChain := (&*[ Ch : Ch in ClosedChains ])^-1;
-		InfChain`Center := Infinity();
-		Append(~ClosedChains,InfChain);
-		Append(~LocalMonodromy,InfPerm);
-		Append(~BranchPoints,Infinity());
-	end if;
-
-	vprint PM,2 : "Local monodromy:",LocalMonodromy;
-	vprint PM,2 : "Number of branch points:",#BranchPoints;
-
-	// Compute the homology
-	Alpha, Cycles, BranchPlaces := RS_Tretkoff( LocalMonodromy : Genus := g );
-
-	assert NumberOfCycles eq #Cycles;
-	vprint PM,2 : "Number of cycles:",NumberOfCycles;
-	vprint PM,2 : "Cycles:",Cycles;
-	vprint PM,2 : "Symplectic transformation:",Alpha;
-
-
-	PM_A := ZeroMatrix(CC,g,g);
-	PM_B := ZeroMatrix(CC,g,g);
+	end while;
 	
-	for j in [1..g] do
-		CycleIntegralValues := [];
-		for k in [1..NumberOfCycles] do
-			Cycle := Cycles[k];
-			Value := Zero(CC);
-			l := 1;
-			while l lt #Cycle do
-				Sheet1 := Cycle[l];
-				Sheet2 := Cycle[l+2];
-				PathNumber := BranchPlaces[Cycle[l+1]][1];
-				Perm := LocalMonodromy[PathNumber];	
-				while Sheet1 ne Sheet2 do
-					Value +:= ClosedChains[PathNumber]`Integrals[j]`Entries[Sheet1];
-					Sheet1 := Sheet1^Perm;
-				end while;
-				l +:= 2;
-			end while;
-			Append(~CycleIntegralValues,Value);
-		end for;
-		vprint PM,3 : "CycleIntegralValues:",CycleIntegralValues;	
-		for m in [1..g] do
-			PM_A[j][m] := &+[ Alpha[m][l] * CycleIntegralValues[l] : l in [1..NumberOfCycles] ];
-			PM_B[j][m] := &+[ Alpha[m+g][l] * CycleIntegralValues[l] : l in [1..NumberOfCycles] ];
-		end for;			
-	end for;
-
-
-	// Testing the dependence of the cycles 2g+1,...,2g+N-1
-	for k in [2*g+1..NumberOfCycles] do
-		CycleSum_k := &+[ Alpha[k][j] * CycleIntegralValues[j] : j in [1..NumberOfCycles] ];
-		vprint PM,2 : "Cycle sum nr.",k-2*g,":",CycleSum_k;
-		//if Abs(CycleSum_k) ge Err then
-		if Abs(CycleSum_k) ge 10^-10 then
-		//if Abs(CycleSum_k) ge 10^-(Prec+1) then
-			print "Cycles summed over row nr.",k,"do not add up to zero: Computation failed.";
-			print "DefiningPolynomial:",f;
-			RS_SetGlobalPrecision(GlobalPrec);
-			error Error("Cycles do not add up to zero: Homology test failed.");
-		end if;
-	end for;
+    	Sort(~PS);
+	Reverse(~PS);
 	
-
-	//vprint PM,3 : "PM_A:",PM_A;
-	//vprint PM,3 : "PM_B:",PM_B;
-
-	if Big then
-		// Compute big period matrix
-		PM := HorizontalJoin(PM_A,PM_B) + ZeroMatrix(C_,g,2*g);
-		vprint PM,1 : "Period matrix:";
-		RS_SetGlobalPrecision(GlobalPrec);
-		return PM;
-	else
-		
-		// Compute small period matrix
-		PM := PM_A^(-1) * PM_B;
-
-		// Prepare output
-		MaxEntry := 0;
-		for j in [1..g] do
-			for k in [1..g] do
-				if Abs(Re(PM[j][k])) lt RS_GetGlobalError() then
-					PM[j][k] := CC_0 + Im(PM[j][k])*i;
-				end if;
-				if Abs(Im(PM[j][k])) lt RS_GetGlobalError() then
-					PM[j][k] := Re(PM[j][k]) + CC_0*i;		
-				end if;
-				MaxEntry := Max(MaxEntry,Abs(PM[j][k]));
-			end for;
-		end for;
-		PM := ChangeRing(PM,C_);
-
-
-		// Testing for symmetry of the period matrix
-		MaxSymDiff := 0;
-		for j in [1..g] do
-			for k in [j+1..g] do
-				MaxSymDiff := Max(MaxSymDiff,Abs(PM[j][k] - PM[k][j]));
-			end for;
-		end for;
-		vprint PM,1 : "Maximal symmetry deviation:",MaxSymDiff;
+  	ES := [ p[2] : p in PS ];
+    	FS := [ p[2]+1 : p in PS ];
 	
-		if MaxSymDiff ge Err then
-			//print "Period matrix not symmetric: Computation failed.";
-			RS_SetGlobalPrecision(GlobalPrec);
-			print "DefiningPolynomial:",f;
-			error Error("Period matrix not symmetric: Computation failed.");
-			return PM;
-		end if;	
-		
-		// Testing positive definiteness of the imaginary part of the period matrix
-		PM_Im := ZeroMatrix(RealField(Prec),g,g);
-		for j in [1..g] do
-			for k in [j..g] do
-				PM_Im[j][k] := Real(Im(PM[j][k]));
-				PM_Im[k][j] := PM_Im[j][k];
-			end for;
-		end for;
-		assert IsPositiveDefinite(PM_Im);
-		RS_SetGlobalPrecision(GlobalPrec);
-		vprint PM,1 : "Period matrix:";
-		return PM;
-	end if;
+	NewRowsIndices := ES cat FS cat Zeros;
 	
+	NewRows := [ RowSubmatrix(B,i,1) : i in NewRowsIndices ];
+    	ST := Matrix(NewRows); 		// Symplectic transformation
+  	CF := ST * K * Transpose(ST);   // Canonical form
+
+    	return CF, ST;
+	//return CF, Transpose(ST);
 end intrinsic;

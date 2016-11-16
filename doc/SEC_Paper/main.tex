@@ -1,0 +1,40 @@
+\documentclass[11pt,a4paper]{article}
+
+% Import macros
+\input{packages.tex}
+% Import packages
+\input{macros.tex}
+
+\begin{document}
+
+% Table of contents
+\tableofcontents
+\newpage
+
+% Title page
+\begin{center}
+  {\bf \huge Computing the Abel-Jacobi map of superelliptic curves} \abstandl
+  Pascal Molin, Christian Neurohr
+\end{center}
+\newpage
+
+
+% Subfiles
+\subfile{Introduction.tex}
+
+\subfile{AbelJacobiMap.tex}
+
+\subfile{SuperellipticCurves.tex}
+
+\subfile{StrategyPeriodMatrix.tex}
+
+\subfile{Intersections.tex}
+
+\subfile{DoubleExponentialIntegration.tex}
+
+\subfile{ComputationalAspects.tex}
+
+\subfile{ComputingAbelJacobi.tex}
+
+
+\end{document}
