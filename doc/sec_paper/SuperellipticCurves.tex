@@ -1,0 +1,65 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+  \section{Superelliptic curves}
+
+  \subsection{Definition \& properties}
+    Content: Definition, affine model, branch points, genus, monic transform?, Riemann surface, pts at infinity
+    
+    \begin{defn}\label{def:SEDEF}
+       A superelliptic curve over a field $K$ is a smooth cyclic branched covering of the projective line 
+       $\cu \rightarrow \P^1_K$ of degree $m > 1$ such that $\text{char}(K)$ and $m$ are coprime.
+   \end{defn}
+   In this paper we consider superelliptic curves over $K = \C$ that have an affine model given by an equation of the form
+    \begin{align}\label{eq:aff_model}
+     \caff : \quad y^m = f(x) \;= \; c_f \cdot \prod_{k=1}^d (x-x_k)
+    \end{align}
+    where $f \in \C[x]$ is separable of degree $d \ge 3$.
+    Without loss of generality we may assume $c_f = 1$\,. (If not, apply the transformation $(x,y) \mapsto (x,\sqrt[N]{c_f}y)$.)
+    We denote by $X = \X$ the set of (finite) branch points all of which are totally ramified. By definition
+  the local monodromy at each finite branch point is equal and can be represented by a cyclic permutation of length $m$.
+  Let $\delta = \gcd(m,d)$. There are $\delta$ points above infinity $P_1^{(\infty)},\dots,P_{\delta}^{(\infty)}$. Therefore
+  the point at infinity is a branch point for $\delta \ne m$. For more details see \todo ref.
+  
+  \subsection{Roots and branches of the curve}
+    Content: - Complex N-th root, branches $\yab(x)$, analytic continuation, monodromy, sheets
+  
+  \subsection{Differential forms}
+    Content: Thm. of Holomorphic Differential, can be taken from CN-draft
+  
+  \subsection{Cycles and homology}
+    Content: - Definition of $\cyab$ and different representations, e.g. limit cycle
+	     - Generate $\homo\mr$
+  
+  \begin{thm}\label{thm:gen_set}
+   The cycles $C = \left\{ \gamma_{e}^{(l)} \, \mid \, 1 \le l \le m-1, \, e \in E\right\}$ generate $\homo$.
+  \end{thm}
+  \begin{proof}
+  \todo Include $\infty$.\\
+   Each cycle $\alpha \in \homo$ can be encoded as $\alpha = \sum_{k = 1}^d n_kx_k$ with $n_1 + \dots n_d = 0 \bmod m$.
+   Here $n_k \in \Z/m\Z$ indicates that $\alpha$ encircles the branch point $x_k$ $n_k$-times in positive orientation 
+   on neighbouring sheets and the
+   condition on the $n_k$ ensures that $\alpha$ is a closed path.
+   For $e = (a,b)$ we can now write $\gamma_e^{(l)} = a - b$ (Note: $n \cdot \gamma_e^{(l)} = a-b$) , which implies $\sum_{l = 1}^n \gamma_e^{(l-1)} = n(a-b)$, 
+   for $n = 1,\dots,m-1$. \\
+   Since $E$ is a spanning tree, every cycle $x_i - x_j$ involving only two branch points can be written as sum of elements in the spanning tree,
+   i.e. $x_i - x_j = \sum_{e \in E} c_{i,j,e} (x_{e_1}-x_{e_2})$ with $c_{i,j,e} \in \{ \pm 1, 0 \}$. Writing
+   $n_d = -(n_1 + \dots n_{d-1}$) and
+   combining the information, we obtain
+   \begin{align*}
+    \alpha \; & = \; n_1x_1 + \dots n_dx_d = n_1(x_1 - x_d) + \dots + n_{d-1}(x_{d-1} - x_d) \\
+   &  = \;  n_1 \sum_{e \in E} c_{1,d,e} (x_{e_1}-x_{e_2}) + \dots + n_{d-1} \sum_{e \in E} c_{d-1,d,e} (x_{e_1}-x_{e_2}) \\
+   & = \; \sum_{e \in E} c_{1,d,e} n_1 (x_{e_1}-x_{e_2}) + \dots + c_{d-1,d,e} n_{d-1} (x_{e_1}-x_{e_2}) \\
+  &  = \; \sum_{e \in E}  \left( c_{1,d,e} \sum_{l = 1}^{n_1} \gamma_e^{(l)} + \dots +  c_{d-1,d,e} \sum_{l = 1}^{n_{d-1}} 
+  \gamma_e^{(l)} \right) \in \; < C >\,.
+%   & = \sum_{e \in E}  \left( c_{1,d,e} \sum_{l = 1}^{n_1} + \dots + c_{d-1,d,e} \sum_{l = 1}^{n_{d-1}} \right)
+%  \gamma_e^{(l)} 
+   \end{align*}
+  \end{proof}
+
+
+  
+  
+  
+\end{document}
