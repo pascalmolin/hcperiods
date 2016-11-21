@@ -153,7 +153,7 @@ void differentials(cohom_t dz, slong d, slong n);
 
 /* numerically compute d-1 periods along the tree */
 /* (d-1)*(g-1) matrix, tree edges on lines */
-void periods_tree(acb_mat_t periods, const tree_t tree, const cohom_t dz, slong g, acb_srcptr x, slong d, slong prec);
+void integrals_tree(acb_mat_t periods, const tree_t tree, const cohom_t dz, slong g, acb_srcptr x, slong d, slong prec);
 
 /* get all periods on a, b basis */
 /* two g*g matrices */

@@ -71,7 +71,8 @@ edge_cmp(const edge_t * x, const edge_t * y)
         return (x->tau < y->tau) ? -1 : (x->tau > y->tau);
 }
 
-void spanning_tree(tree_t tree, acb_srcptr x, slong len)
+void
+spanning_tree(tree_t tree, acb_srcptr x, slong len)
 {
     slong k, n;
     cdouble * w;
@@ -107,13 +108,15 @@ void spanning_tree(tree_t tree, acb_srcptr x, slong len)
     free(t);
 }
 
-void tree_init(tree_t tree, slong n)
+void
+tree_init(tree_t tree, slong n)
 {
     tree->n = n;
     tree->e = malloc(n * sizeof(edge_t));
 }
 
-void tree_clear(tree_t tree)
+void
+tree_clear(tree_t tree)
 {
     free(tree->e);
 }

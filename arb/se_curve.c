@@ -77,7 +77,7 @@ se_curve_clear(se_curve_t c)
 void
 se_curve_compute(se_curve_t c, slong prec)
 {
-    acb_mat_t periods;
+    acb_mat_t integrals;
 
     /* homology */
     spanning_tree(c->tree, c->roots, c->d);
@@ -88,14 +88,14 @@ se_curve_compute(se_curve_t c, slong prec)
     differentials(c->dz, c->d, c->n);
 
     /* integration */
-    acb_mat_init(periods, c->d-1, c->g);
-    periods_tree(periods, c->tree, c->dz, c->g, c->roots, c->d, prec);
+    acb_mat_init(integrals, c->d-1, c->g);
+    integrals_tree(integrals, c->tree, c->dz, c->g, c->roots, c->d, prec);
 
     /* period matrices */
-    period_matrix(c->omega0, c->loop_a, periods, c->g, c->d, prec);
-    period_matrix(c->omega1, c->loop_b, periods, c->g, c->d, prec);
+    period_matrix(c->omega0, c->loop_a, integrals, c->g, c->d, prec);
+    period_matrix(c->omega1, c->loop_b, integrals, c->g, c->d, prec);
 
-    acb_mat_clear(periods);
+    acb_mat_clear(integrals);
 
     tau_matrix(c->tau, c->omega0, c->omega1, prec);
 
