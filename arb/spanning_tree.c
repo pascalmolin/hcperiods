@@ -1,7 +1,7 @@
 /******************************************************************************
- 
+
  Copyright (C) 2016 Pascal Molin
- 
+
  ******************************************************************************/
 
 #include "abel_jacobi.h"
@@ -89,7 +89,7 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
     free(w);
 
     qsort(e, n, sizeof(edge_t), (int(*)(const void*,const void*))edge_cmp);
-    
+
     t = malloc(len * sizeof(int));
     for (k = 0; k < len; k++)
         t[k] = 0;
