@@ -86,7 +86,7 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
     symplectic_basis(aj->loop_a, aj->loop_b, aj->inter, c);
 
     /* cohomology */
-    differentials(aj->dz, c.d, c.m);
+    holomorphic_differentials(aj->dz, c.d, c.m);
 
     /* integration */
     acb_mat_init(integrals, c.d-1, c.g);

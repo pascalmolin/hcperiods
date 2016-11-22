@@ -6,16 +6,17 @@
 
 #include "abel_jacobi.h"
 
-void differentials(cohom_t dz, slong d, slong m)
+void
+holomorphic_differentials(cohom_t dz, slong d, slong m)
 {
     slong i, j, k, delta;
     delta = n_gcd(m, d);
     k = 0;
-    for (i = 1; i < d; i++)
+    for (j = 1; j < m; j++)
     {
-        for (j = 1; j < m; j++)
+        for (i = 1; i < d; i++)
         {
-            if (j * d >= m * i + delta && m * i > j)
+            if (j * d >= m * i + delta)
             {
                 dz[k].x = i - 1;
                 dz[k].y = j;

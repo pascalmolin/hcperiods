@@ -134,14 +134,14 @@ typedef abel_jacobi_struct abel_jacobi_t[1];
 
  ******************************************************************************/
 
-void abel_jacobi_init_roots(abel_jacobi_t c, slong m, acb_srcptr x, slong d);
-void abel_jacobi_init_poly(abel_jacobi_t c, slong m, acb_srcptr f, slong len, slong prec);
-void abel_jacobi_compute(abel_jacobi_t c, slong prec);
-void abel_jacobi_clear(abel_jacobi_t c);
+void abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d);
+void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_srcptr f, slong len, slong prec);
+void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
+void abel_jacobi_clear(abel_jacobi_t aj);
 
+void de_int_params(double * h, ulong *n, double tau, double M1, double M2, slong prec);
 void de_int_init(de_int_t de, double h, ulong n, slong prec);
 void de_int_clear(de_int_t de);
-
 
 /* compute maximum spanning tree */
 void tree_init(tree_t tree, slong d);
@@ -159,19 +159,20 @@ void symplectic_basis(homol_t loop_a, homol_t loop_b, inter_mat inter, sec_t c);
 
 /* find basis of holomorphic differentials */
 /* g elementary differentials */
-void differentials(cohom_t dz, slong d, slong m);
+void holomorphic_differentials(cohom_t dz, slong d, slong m);
 
-/* numerically compute d-1 periods along the tree */
+/* numerically compute d-1 integrals along tree edges */
 /* (d-1)*(g-1) matrix, tree edges on lines */
-void integrals_tree(acb_mat_t periods, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
+void integrals_tree(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
 
 /* get all periods on a, b basis */
 /* two g*g matrices */
-void period_matrix(acb_mat_t omega, homol_t loop, acb_mat_t periods, slong g, slong d, slong prec);
+void period_matrix(acb_mat_t omega, const homol_t basis, const acb_mat_t integrals, slong g, slong d, slong prec);
 
 /* get tau reduced matrix */
 void tau_matrix(acb_mat_t tau, const acb_mat_t omega0, const acb_mat_t omega1, slong prec);
 
 /* core functions */
-void mth_root_pol_affine_product(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong prec);
+void nth_root_pol_def(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong prec);
+void nth_root_pol_prod(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong prec);
 

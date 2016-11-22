@@ -37,25 +37,6 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec)
     acb_clear(ba);
 }
 
-void
-mth_root_pol_affine_product(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong prec)
-{
-    slong k;
-    acb_t t;
-    acb_init(t);
-
-    acb_one(y);
-    for (k = 0; k < d; k++)
-    {
-        acb_set_arb(t, x);
-        acb_sub(t, t, u + k, prec);
-        acb_root_ui(t, t, m, prec);
-        acb_mul(y, y, t, prec);
-    }
-
-    acb_clear(t);
-}
-
 static void
 powers_inv_y(acb_ptr vy, const arb_t x, acb_srcptr u, const slong * yvec, slong n, slong m, slong prec)
 {
@@ -120,18 +101,22 @@ select_ypowers(const cohom_t dz, slong g, slong * len)
 }
 
 void
-integrals_tree(acb_mat_t periods, sec_t c, const tree_t tree, const cohom_t dz, slong prec)
+integrals_tree(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec)
 {
     slong k;
     slong * yvec, ny;
+    ulong n;
+    double h;
     de_int_t de;
 
-    /*de_int_init(de, tree->tau, prec);*/
+
+    de_int_params(&h, &n, tree->tau, 1., 1., prec);
+    de_int_init(de, h, n, prec);
 
     yvec = select_ypowers(dz, c.g, &ny);
 
     for (k = 0; k < c.d - 1; k++)
-        integrals_edge(periods->rows[k], c, tree->e[k], dz, yvec, ny, de, prec);
+        integrals_edge(integrals->rows[k], c, tree->e[k], dz, yvec, ny, de, prec);
 
     flint_free(yvec);
 

@@ -6,11 +6,12 @@
 
 #include "abel_jacobi.h"
 
-/*
 void
-
-de_params(double * h, ulong *n,
-*/
+de_int_params(double * h, ulong *n, double tau, double M1, double M2, slong prec)
+{
+    *h = .1;
+    *n = 100;
+}
 
 void
 de_int_init(de_int_t de, double h, ulong n, slong prec)
@@ -64,7 +65,7 @@ de_int_init(de_int_t de, double h, ulong n, slong prec)
 }
 
 void
-de_init_clear(de_int_t de)
+de_int_clear(de_int_t de)
 {
     _arb_vec_clear(de->x, de->n);
     _arb_vec_clear(de->dx, de->n);
