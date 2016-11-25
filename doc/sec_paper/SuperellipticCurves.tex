@@ -22,40 +22,195 @@
   Let $\delta = \gcd(m,d)$. There are $\delta$ points above infinity $P_1^{(\infty)},\dots,P_{\delta}^{(\infty)}$. Therefore
   the point at infinity is a branch point for $\delta \ne m$. For more details see \todo ref.
   
-  \subsection{Roots and branches of the curve}
+  \subsection{Complex roots and branches of the curve}
     Content: - Complex N-th root, branches $\yab(x)$, analytic continuation, monodromy, sheets
   
+  
+%   For complex numbers $0 \ne z = r e^{i\theta} \in \C$ with $r \in \R_{\ge 0}$ we choose its argument $\arg(z) = \theta$ to be in $(-\pi,\pi]$. 
+%   We fix a primitive $N$-th root of unity $\zeta = \zeta_N := e^{\frac{2\pi i}{N}}$ and its square root $\sqrt{\zeta} := e^{\frac{\pi i}{N}}$.
+%   The set of $N$-th roots of $z$ is then given by $\{ \, \zeta^k r^{\frac{1}{N}} e^{i\frac{\theta}{N}} \, \mid \, k = 0,\dots,N-1 \, \}$, where
+%   $r^{\frac{1}{N}}$ is the positve real $N$-th root of $r$\,.
+%   Thus, we can see the taking $N$-th roots of a complex number as a multi-valued complex function with $N$ branches. 
+%    
+%   We define the $N$-th root function by
+%     $$(\, \cdot \, )^{\frac{1}{N}} \, = \, \sqrt[N]{\cdot} \, : \, \C \rightarrow \C,\; z \mapsto \begin{cases}
+%                                                        \, r^{\frac{1}{N}} \, e^{i\frac{\theta}{N}}, \quad \text{if} \; z \ne 0\,, \\
+%                                                        \, 0, \quad \text{if} \; z = 0\,.
+%                                                      \end{cases}$$
+% 
+%   This function has a branch cut along the negative real axis $]-\infty,0]$ and is holomorphic everywhere else.
+%   
+%   For $z \in \C$ we call $\sqrt[N]{z}$ as defined above the \textit{standard determination/principal value} of the $N$-th root of $z$.
+  Working over the complex we encounter several multi-valued functions for which principal branches have to be specified. In order to avoid confusion we briefly discuss conventions here. 
+  For $z \in C$ we choose its argument $\arg(z) \in (-\pi,\pi]$ and its $m$-th root such that $\arg \sqrt[m]{z} \in$ ...
+  Closely related to a superelliptic curve over $\C$ is complex $m$-th root function.
+  
+  
+  For $a,b \in X$ consider the affine transformation $x \mapsto \frac{b-a}{2}\left(u+\frac{b+a}{b-a}\right)$, which maps $[a,b]$ to $[-1,1]$ and will appear in the double-exponential integration. \abstand
+  We define the following functions
+  \begin{align}\label{def: yab}
+  \begin{split}
+   \yab(x) & = \left(\frac{b-a}{2}\right)^{\frac{d}{m}} \sqrt{\zeta} \; (1 - u(x)^2)\mr \; \ft_{a,b}(x)\,, \quad \text{with} \\
+   \ft_{a,b}(x) & = \prod_{x_k \ne a,b} (u(x) - u(x_k))\mr \quad \text{and} \\
+   u_{a,b}(x) & = u(x) = \frac{2x-b-a}{b-a}\,.
+   \end{split}
+  \end{align}
+  where all roots are given by the principal value. Under the condition that $x_k \not\in [a,b]$, the function $u(x)-u(x_k)$ does not cross $]0,-\infty[$
+  for $x \in [a,b]$ and $x_k \ne a,b$. Hence,
+  $\ft_{a,b}$ is a function that is holomorphic and has no zeros in a neighbourhood $V_{a,b}$ of $[a,b]$. \abstand Therefore, locally
+ $y_{a,b}(x)$ is an analytic continuation of $y(x)$ to some sheet of $\cu$ and can be used for numerical integration of differential forms. \abstand
+  From our affine equation $\caff$ \eqref{eq:aff_model} it follows that other analytic branches above $V_{a,b}$ are given by
+  \begin{align}
+      \yab \mapsto \zeta^l \yab, \quad l = 0,\dots,m-1\,.
+  \end{align}
+  In our situation, we can assume that moving between sheets corresponds to multiplication of $\yab$ by $\zeta^{-1}$\,. 
+
+
+  
+  
+  
+  \newpage
+  
   \subsection{Differential forms}
-    Content: Thm. of Holomorphic Differential, can be taken from CN-draft
+    The computation of the period matrix and the Abel-Jacobi map requires a basis of $\hd$ as $\C$-vector space. In this section we provide a basis that only 
+   depends on $m$ and $d$ and
+   is suitable for double-exponential integration.
+%(see e.g. \cite{MM2009})
+ One can show that the classes of the differentials in
+	$$\WM = \left\{ \, \omega_{i,j}  \, \right\}_{\substack{1 \le i \le d-1, \\ 1 \le j \le m-1}} \quad \text{with} \quad \omega_{i,j} = \frac{ \dx^i}{i y^j}\,,$$
+   form a $\C$-basis of $\coho$.
+     
+     \begin{prop}\label{prop:SEDFF}
+	The differentials in
+	\begin{align*}
+	  \W =  \Big\{ \, \omega_{i,j} \in \WM \, \mid \, -Ni + jd - \gcd(m,d) \ge 0 \, \Big\}\,.
+	\end{align*}
+	form  a $\C$-basis of $\hd$.
+     \end{prop}
+     \begin{proof}
+      First we show that the differentials in $\W$ are holomorphic.
+      Let $\w_{i,j} = x^{i-1}y^{-j} \dx \in \WM$ and $\delta = \gcd(m,d)$. Then there are $\delta$ points  $P^{\infty}_1,\dots,P^{\infty}_{\delta} \in \cu$ above infinity. We write down the relevant divisors
+      \begin{align*}
+       \div(x) & = \sum_{k=1}^m \left(0,\zeta^k{f(0)}^{1/m}\right) - \frac{m}{\delta} \cdot \sum_{l = 1}^{\delta} P^{\infty}_l\,, \\
+       \div(y) & = \sum_{k = 1}^d (x_k,0) - \frac{d}{\delta} \cdot \sum_{l = 1}^{\delta}  P^{\infty}_l\,, \\
+       \div(\dx) & = (m-1)\sum_{k = 1}^d (x_k,0) - \left(\frac{m}{\delta} + 1\right)\cdot \sum_{l = 1}^{\delta}  P^{\infty}_l\,.
+      \end{align*}
+     Putting together the information, for $P \in \cu$ lying over $x_0 \in \P^1_{\C}$, we obtain
+     \begin{align}\label{eq:diff_cases}
+      v_P(\omega_{i,j}) & = (i-1) v_P(x) + v_P(\dx)  - j v_P(y) = 
+	\begin{cases}
+	 \ge 0\,, \hfill \text{if} \; x_0 \ne x_k,\infty \\
+	 \ge m-1-j \ge 0 \,, \hfill \text{if} \; x_0 = x_k \\
+	 = \frac{1}{\delta}(-mi-\delta+jd)\,,\hfill \text{if} \; x_0 = \infty
+	\end{cases}\,.
+     \end{align}
+     We conclude: $\omega_{i,j} \in \WM$ is holomorphic if and only if $\omega_{i,j} \in \W$. \abstand
+     Since the differentials in $\W$ are clearly $\C$-linearly independent, it remains to show that
+     there are enough of them, i.e. $\#\W = g$. \abstand
+     Counting the elements in $\W$ corresponds to counting lattice points $(i,j) \in \Z^2$ in the trapezoid given by the faces
+     \begin{align*}
+	1 \le i \le d-1\,,\\
+	1 \le j \le m-1\,, \\
+	i \le \frac{d}{m}j - \frac{\delta}{m}\,.
+     \end{align*}
+%      \subfile{images/ikz_pic_7}
+      \begin{figure}[H]
+      \begin{center}
+	  \input{images/tikz_pic_7.tex}
+      \end{center}
+    \caption{Counting points for $d =4$ and $m = 8$, we have $\delta = 4$ and therefore $g = 8$.} 
+    \label{fig:holom_diff}
+\end{figure}
+     Carefully analyzing the situation at the vertices of the trapezoid, we find the following formula that counts the points.
+     \begin{align}\label{eq:r_j}
+	\#\W & = \sum_{j = 1}^{m-1} \floor*{\frac{d}{m}j - \frac{\delta}{m}} = \sum_{j = 1}^{m-1} \frac{dj-\delta-r_j}{m} =
+	 \frac{d}{m} \sum_{j=1}^{m-1} j - \frac{m-1}{m}\delta - \frac{1}{m} \sum_{j=1}^{m-1} r_j\,,
+     \end{align}
+      where $r_j := dj - \delta \, \bmod m$. \abstand
+      We claim that
+      \begin{align}\label{eq:r_j2}
+       \sum_{j=1}^{m-1} r_j = \frac{1}{2}(m^2 - (\delta+2)m + 2\delta)\,.
+      \end{align}
+      In order to show this, let $l := \frac{m}{\delta}$. First we note that $r_j = r_{j+l}$:
+      $$r_{j+l} = d(j+l) - \delta \, \bmod m = dj + \frac{d}{\delta}m - \delta \, \bmod m =  dj - \delta \, \bmod m =  r_j$$
+      and hence 
+      \begin{align}\label{eq:r_j3}
+       \sum_{j=1}^{m-1} r_j = \delta \cdot \sum_{j=1}^{l} r_j - r_m = \delta \cdot \sum_{j=1}^{l} r_j - (-\delta + m)\,.
+      \end{align}
+      Furthermore, $r_j$ can be written as multiple of $\delta$:
+      $$r_j = \delta \left(\frac{d}{\delta}j - 1\right) \, \bmod m\,.$$
+      From $\gcd(\frac{d}{\delta},l) = 1$ we conclude $\left\{ \, \frac{d}{\delta}j - 1 \, \bmod l  \mid \, 1 \le j \le l \, \right\} = \{ \, 0,\dots,l-1 \, \}$.
+      Therefore,  
+      \begin{align}\label{eq:r_j4}
+       \sum_{j = 1}^l r_j = \sum_{j = 0}^{l-1} \delta j = \delta \cdot \frac{l(l-1)}{2}
+      \end{align}
+      and thus (\ref{eq:r_j3}) and (\ref{eq:r_j4}) imply
+      $$\sum_{j=1}^{m-1} r_j = \delta \cdot \sum_{j=1}^{l} r_j + \delta - m = \delta^2 \cdot \frac{l(l-1)}{2} + \delta - m = \frac{1}{2}(m^2 - (\delta+2)m + 2\delta)\,.$$
+      Plugging (\ref{eq:r_j2}) into (\ref{eq:r_j}) yields
+      \begin{align*}
+	\#\W & = \frac{d}{m}\frac{m(m-1)}{2} - \frac{m-1}{m}\delta - \frac{m^2 - (\delta+2)m + 2\delta}{2m} \\
+	       & = \frac{d(m-1)}{2} - \delta  - \frac{m}{2} + \frac{\delta}{2} + 1 =  \frac{d(m-1) - (m-1) - \delta + 1}{2} \\
+	       & = \frac{1}{2}((d-1)(m-1)-\delta+1) = g\,.
+      \end{align*}
+     \end{proof}
+
+     \begin{rmk}
+      Note that from \eqref{eq:diff_cases} it follows that the meromorphic differentials in $\WM$ are homolorphic at every finite place. 
+     \end{rmk}
   
   \subsection{Cycles and homology}
     Content: - Definition of $\cyab$ and different representations, e.g. limit cycle
-	     - Generate $\homo\mr$
+	     - Spanning tree
+  
+  \newpage
   
   \begin{thm}\label{thm:gen_set}
-   The cycles $C = \left\{ \gamma_{e}^{(l)} \, \mid \, 1 \le l \le m-1, \, e \in E\right\}$ generate $\homo$.
+   The cycles $C = \left\{ \, \gamma_{e}^{(l)} \, \mid \, l \in \Z/m\Z, \, e \in E \, \right\}$ generate $\homo$.
   \end{thm}
   \begin{proof}
-  \todo Include $\infty$.\\
-   Each cycle $\alpha \in \homo$ can be encoded as $\alpha = \sum_{k = 1}^d n_kx_k$ with $n_1 + \dots n_d = 0 \bmod m$.
-   Here $n_k \in \Z/m\Z$ indicates that $\alpha$ encircles the branch point $x_k$ $n_k$-times in positive orientation 
-   on neighbouring sheets and the
-   condition on the $n_k$ ensures that $\alpha$ is a closed path.
-   For $e = (a,b)$ we can now write $\gamma_e^{(l)} = a - b$ (Note: $n \cdot \gamma_e^{(l)} = a-b$) , which implies $\sum_{l = 1}^n \gamma_e^{(l-1)} = n(a-b)$, 
-   for $n = 1,\dots,m-1$. \\
-   Since $E$ is a spanning tree, every cycle $x_i - x_j$ involving only two branch points can be written as sum of elements in the spanning tree,
-   i.e. $x_i - x_j = \sum_{e \in E} c_{i,j,e} (x_{e_1}-x_{e_2})$ with $c_{i,j,e} \in \{ \pm 1, 0 \}$. Writing
-   $n_d = -(n_1 + \dots n_{d-1}$) and
-   combining the information, we obtain
-   \begin{align*}
-    \alpha \; & = \; n_1x_1 + \dots n_dx_d = n_1(x_1 - x_d) + \dots + n_{d-1}(x_{d-1} - x_d) \\
-   &  = \;  n_1 \sum_{e \in E} c_{1,d,e} (x_{e_1}-x_{e_2}) + \dots + n_{d-1} \sum_{e \in E} c_{d-1,d,e} (x_{e_1}-x_{e_2}) \\
-   & = \; \sum_{e \in E} c_{1,d,e} n_1 (x_{e_1}-x_{e_2}) + \dots + c_{d-1,d,e} n_{d-1} (x_{e_1}-x_{e_2}) \\
-  &  = \; \sum_{e \in E}  \left( c_{1,d,e} \sum_{l = 1}^{n_1} \gamma_e^{(l)} + \dots +  c_{d-1,d,e} \sum_{l = 1}^{n_{d-1}} 
-  \gamma_e^{(l)} \right) \in \; < C >\,.
-%   & = \sum_{e \in E}  \left( c_{1,d,e} \sum_{l = 1}^{n_1} + \dots + c_{d-1,d,e} \sum_{l = 1}^{n_{d-1}} \right)
-%  \gamma_e^{(l)} 
-   \end{align*}
+  Denote by $\alpha_x \in \pi(\P^1 \setminus X)$ a closed path that encircles the branch point $x \in X$ exactly once. Then,  due to the relation $1 = \prod_{x \in X} \alpha_x$,\,
+  $\pi(\P^1 \setminus X)$ is freely generateted by $\{ \alpha_x \}_{x \in X'}$, where $X' = X \setminus \{ x_0 \}$, for any $x_0 \in X$. If $m \nmid d$, we choose to omit $x_0 = \infty$. \abstand
+  Since our covering is cyclic, we have that $
+  \pi_1(\cu \setminus \pr^{-1}(X)) = \ker(\pi(\P^1 \setminus X) \overset{\Phi}{\To} \Aut(\cu \setminus \pr^{-1}(X)))$. Moreover, $\Aut(\cu \setminus \pr^{-1}(X)) = C_m 
+  \subset S_m$
+  and $\Phi(\alpha_x) = (1 \dots m)$ for all $x \in X'$. Hence, for every word $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} \in \pi_1(\P^1 \setminus X)$ we have that
+  $\alpha \in \ker(\Phi) \eq \sum_{i=1}^n s_i = 0 \bmod m$. \abstand
+  Claim: $\pi_1(\cu \setminus \pr^{-1}(X)) = < \alpha_x^{-s} \alpha_y^{s}, \, \alpha_x^m  \, \mid \, l \in \Z, x,y \in X' >$\,. \\
+  Proof: Induction on $n$\,. For $\alpha = \alpha_1^{s_1}$ $m$ divides $s_1$ and therefore $\alpha$ is generated by $\alpha_1^m$. For $n > 1$ we write
+  $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} = (\alpha_1^{s_1} \dots \alpha_{n-1}^{s_{n-1}+s_n})(\alpha_{n-1}^{-s_n}\alpha_n^{s_n})$. \abstand
+  We obtain the fundamental group of $\cu$ as
+  $\pi(\cu) = \pi_1(\cu \setminus \pr^{-1}(X)) / < \alpha_x^{e_x} \, \mid \, x \in X >$, which is generated by 
+  $< \alpha_x^{-s} \alpha_y^{s} \, \mid \, s \in \Z/m\Z, \, x,y \in X' >$. (In the case where $\delta \ne 1$, filling in the points above infinity will create additional relations among 
+  these generators:
+  $1 = (\prod_{x \in X'} \alpha_x)^{k \cdot e_{\infty}}$, $k = 1,\dots,\delta$\,.) \abstand
+  All branch points $x,y \in X'$ are connected by a path $(x,e_1,\dots,e_t,y)$ in the spanning tree, so we can write $\alpha_x^{-s} \alpha_y^{s} = (\alpha_x^{-s}\alpha_{e_1}^{s})
+  (\alpha_{e_1}^{-s}\alpha_{e_2}^{s})\dots(\alpha_{e_{t-1}}^{-s}\alpha_{e_t}^{s})(\alpha_{e_t}^{-s}\alpha_y^{s})$ and hence we have that 
+  $\pi_1(\cu) = < \alpha_x^{-s} \alpha_y^{s} \, \mid \, s \in \Z/m\Z, \, (x,y) \in E >$\,. \abstand
+    All that is left to see, is that for each $e = (x,y) \in E$ there exists a bijection $\varphi_e$ between
+  $\{ \, \gamma_e^{(l)} \, \mid \, l \in \Z/m\Z \, \} \overset{\varphi_e}{\longleftrightarrow} \{ \, \alpha_x^{-s} \alpha_y^{s} \, \mid \, s \in \Z/m\Z \, \}$\,: \abstand
+  If we choose basepoints $p_0 \in P^1 \setminus X$ for $\pi_1(P^1 \setminus X)$ and $P_0 \in \pr^{-1}(p_0)$ for $\pi_1(\cu \setminus \pr^{-1}(X))$ and $\pi_1(\cu)$ respectively.
+  Depending on the choice of $P_0$, there exist $l_0, s_0 \in \Z/m\Z$ such that $\gamma_e^{(l_0)}$ is homotopic to $\alpha_x^{-s_0} \alpha_y^{s_0}$ in $\pi_1(\cu,P_0)$. This induces the bijection
+  $\varphi_e(l_0+l) = s_0+s$\,. 
+%   \todo Include $\infty$.\\
+%    Each cycle $\alpha \in \homo$ can be encoded as $\alpha = \sum_{k = 1}^d n_kx_k$ with $n_1 + \dots n_d = 0 \bmod m$.
+%    Here $n_k \in \Z/m\Z$ indicates that $\alpha$ encircles the branch point $x_k$ $n_k$-times in positive orientation 
+%    on neighbouring sheets and the
+%    condition on the $n_k$ ensures that $\alpha$ is a closed path.
+%    For $e = (a,b)$ we can now write $\gamma_e^{(l)} = a - b$ (Note: $n \cdot \gamma_e^{(l)} = a-b$) , which implies $\sum_{l = 1}^n \gamma_e^{(l-1)} = n(a-b)$, 
+%    for $n = 1,\dots,m-1$. \\
+%    Since $E$ is a spanning tree, every cycle $x_i - x_j$ involving only two branch points can be written as sum of elements in the spanning tree,
+%    i.e. $x_i - x_j = \sum_{e \in E} c_{i,j,e} (x_{e_1}-x_{e_2})$ with $c_{i,j,e} \in \{ \pm 1, 0 \}$. Writing
+%    $n_d = -(n_1 + \dots n_{d-1}$) and
+%    combining the information, we obtain
+%    \begin{align*}
+%     \alpha \; & = \; n_1x_1 + \dots n_dx_d = n_1(x_1 - x_d) + \dots + n_{d-1}(x_{d-1} - x_d) \\
+%    &  = \;  n_1 \sum_{e \in E} c_{1,d,e} (x_{e_1}-x_{e_2}) + \dots + n_{d-1} \sum_{e \in E} c_{d-1,d,e} (x_{e_1}-x_{e_2}) \\
+%    & = \; \sum_{e \in E} c_{1,d,e} n_1 (x_{e_1}-x_{e_2}) + \dots + c_{d-1,d,e} n_{d-1} (x_{e_1}-x_{e_2}) \\
+%   &  = \; \sum_{e \in E}  \left( c_{1,d,e} \sum_{l = 1}^{n_1} \gamma_e^{(l)} + \dots +  c_{d-1,d,e} \sum_{l = 1}^{n_{d-1}} 
+%   \gamma_e^{(l)} \right) \in \; < C >\,.
+% %   & = \sum_{e \in E}  \left( c_{1,d,e} \sum_{l = 1}^{n_1} + \dots + c_{d-1,d,e} \sum_{l = 1}^{n_{d-1}} \right)
+% %  \gamma_e^{(l)} 
+%    \end{align*}
   \end{proof}
 
 
