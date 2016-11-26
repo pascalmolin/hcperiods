@@ -1,4 +1,4 @@
-%%% Defined here (in order): mathematical macros, theorem style, colour of hyperlinks, spaces for indention and between lines,
+%%% Defined here (in order): mathematical macros, theorem style, colour of hyperlinks, set spaces,
 %%% tikz, reminder, fix for bigint package
 
 %% Mathematical macros %%
@@ -54,8 +54,8 @@
 \newcommand{\hd}{\Omega^1_{\mathcal{C}}} % holomorphic differentials
 \newcommand{\coho}{H^1_{\text{dR}}(\cu)} % holomorphic differentials in deRham
 \newcommand{\homo}{H_1(\cu,\Z)} % first integral homology group
-\newcommand{\cyab}{\gamma(a,b)}
-\newcommand{\cycd}{\gamma(c,d)}
+\newcommand{\cyab}{\gamma_{a,b}}
+\newcommand{\cycd}{\gamma_{c,d}}
 \newcommand{\cyt}{\tilde{gamma}}
 \newcommand{\cytab}{\tilde{gamma}(a,b)}
 \newcommand{\cytcd}{\tilde{gamma}(c,d)}
@@ -93,12 +93,18 @@
 \hypersetup{urlbordercolor 	={1 1 1}}
 
 
-%% Set spaces for indention and between lines %%
-\setlength{\parskip}{0.75\baselineskip}
-\setlength{\parindent}{0em}
+%% Set spaces%%
+\setlength\abovedisplayshortskip{0pt}
+\setlength\belowdisplayshortskip{0pt}
+\setlength\abovedisplayskip{0pt}
+\setlength\belowdisplayskip{0pt}
+% \setlength{\parskip}{0.75\baselineskip}
+% \setlength{\parindent}{0em}
 \newcommand{\abstand}{{\\[0.25\baselineskip]}}
 \newcommand{\abstandl}{{\\[0.5\baselineskip]}}
 \newcommand{\abstandll}{{\\[0.75\baselineskip]}}
+
+
 
 
 %% Tikz %%
