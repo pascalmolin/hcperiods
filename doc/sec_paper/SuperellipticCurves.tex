@@ -5,45 +5,55 @@
   \section{Superelliptic curves}
 
   \subsection{Definition \& properties}
-    Content: Definition, affine model, branch points, genus, monic transform?, Riemann surface, pts at infinity
     
-    \begin{defn}\label{def:SEDEF}
-       A superelliptic curve over a field $K$ is a smooth cyclic branched covering of the projective line 
-       $\cu \rightarrow \P^1_K$ of degree $m > 1$ such that $\text{char}(K)$ and $m$ are coprime.
+    \begin{defn}\label{def:se_curve}
+%        A superelliptic curve over a field $K$ is a smooth cyclic branched covering of the projective line 
+%        $\cu \rightarrow \P^1_K$ of degree $m > 1$ such that $\text{char}(K)$ and $m$ are coprime.
+    In this paper, a superelliptic curve $\cu$ over $\C$ is a smooth plane projective curve that has an affine model given by an equation of the form 
+   \begin{align}\label{eq:aff_model}
+    \caff : \quad y^m = f(x) \;= \; c_f \cdot \prod_{k=1}^d (x-x_k)\,,
+   \end{align}
    \end{defn}
-   In this paper we consider superelliptic curves over $K = \C$ that have an affine model given by an equation of the form
-    \begin{align}\label{eq:aff_model}
-     \caff : \quad y^m = f(x) \;= \; c_f \cdot \prod_{k=1}^d (x-x_k)
-    \end{align}
-    where $f \in \C[x]$ is separable of degree $d \ge 3$.
-    Without loss of generality we may assume $c_f = 1$\,. (If not, apply the transformation $(x,y) \mapsto (x,\sqrt[N]{c_f}y)$.)
-    We denote by $X = \X$ the set of (finite) branch points all of which are totally ramified. By definition
-  the local monodromy at each finite branch point is equal and can be represented by a cyclic permutation of length $m$.
-  Let $\delta = \gcd(m,d)$. There are $\delta$ points above infinity $P_1^{(\infty)},\dots,P_{\delta}^{(\infty)}$. Therefore
-  the point at infinity is a branch point for $\delta \ne m$. For more details see \todo ref.
+   where $m > 1$ and $f \in \C[x]$ is separable of degree $d \ge 3$. 
+   Without loss of generality we may assume $c_f = 1$ (if not, apply the transformation $(x,y) \mapsto (x,\sqrt[m]{c_f}\,y)$\,).  \abstand
+   Over $\C$ we identify the curve $\cu$ with the Riemann surface $\cu(\hat{\C})$ and denote by $\pr : \cu \rightarrow \P^1_{\C}$ the corresponding smooth cyclic branched covering of the projective line
+   defined by the $x$-coordinate.
+   
+  There are $\delta = \gcd(m,d)$ points above infinity $P_1^{\infty},\dots,P_{\delta}^{\infty} \in \cu$, that behave differently depending on $m$ and $d$ (see \cite{CT1996}, \S 1 for details). 
+  Especially, $\infty \in \P^1_{\C}$ is a branch point for $\delta \ne m$. Thus, we introduce the set of finite branch points $X = \X$ as well as the set of all branch points
+  \vspace{-0.3cm}
+  \begin{align}\label{eq:branch_points}
+         \hat{X} = \begin{cases}   X \cup \{ \infty \}, \quad \text{if} \; m \, \nmid \, d\,,\\
+         X,\quad \text{otherwise.}
+     \end{cases}
+  \end{align} 
+  As we will see in \S \ref{subsec:roots_branches} the ramification indices at the branch points are given by $e_x = m$ for all $x \in X$ and $e_{\infty} = \frac{m}{\delta}$\,. Using the
+  Riemann-Hurwitz formula, we obtain the genus of $\cu$ as
+   \vspace{-0.3cm}
+  \begin{align}\label{eq:genus}
+    g = \frac{1}{2}( (d-1)(m-1) - \delta + 1)\,.
+  \end{align}
+
+   
+
   
-  \subsection{Complex roots and branches of the curve}
-    Content: - Complex N-th root, branches $\yab(x)$, analytic continuation, monodromy, sheets
-  
-  
-%   For complex numbers $0 \ne z = r e^{i\theta} \in \C$ with $r \in \R_{\ge 0}$ we choose its argument $\arg(z) = \theta$ to be in $(-\pi,\pi]$. 
-%   We fix a primitive $N$-th root of unity $\zeta = \zeta_N := e^{\frac{2\pi i}{N}}$ and its square root $\sqrt{\zeta} := e^{\frac{\pi i}{N}}$.
-%   The set of $N$-th roots of $z$ is then given by $\{ \, \zeta^k r^{\frac{1}{N}} e^{i\frac{\theta}{N}} \, \mid \, k = 0,\dots,N-1 \, \}$, where
-%   $r^{\frac{1}{N}}$ is the positve real $N$-th root of $r$\,.
-%   Thus, we can see the taking $N$-th roots of a complex number as a multi-valued complex function with $N$ branches. 
-%    
-%   We define the $N$-th root function by
-%     $$(\, \cdot \, )^{\frac{1}{N}} \, = \, \sqrt[N]{\cdot} \, : \, \C \rightarrow \C,\; z \mapsto \begin{cases}
-%                                                        \, r^{\frac{1}{N}} \, e^{i\frac{\theta}{N}}, \quad \text{if} \; z \ne 0\,, \\
-%                                                        \, 0, \quad \text{if} \; z = 0\,.
-%                                                      \end{cases}$$
-% 
-%   This function has a branch cut along the negative real axis $]-\infty,0]$ and is holomorphic everywhere else.
-%   
-%   For $z \in \C$ we call $\sqrt[N]{z}$ as defined above the \textit{standard determination/principal value} of the $N$-th root of $z$.
-  Working over the complex we encounter several multi-valued functions for which principal branches have to be specified. In order to avoid confusion we briefly discuss conventions here. 
-  For $z \in C$ we choose its argument $\arg(z) \in (-\pi,\pi]$ and its $m$-th root such that $\arg \sqrt[m]{z} \in$ ...
-  Closely related to a superelliptic curve over $\C$ is complex $m$-th root function.
+  \subsection{Complex roots and branches of the curve}\label{subsec:roots_branches}
+
+
+  Working over the complex we encounter several multi-valued functions which we will briefly discuss here.  Closely related to superelliptic curves over $\C$ is the complex $m$-th root. Before specifying
+  a branch it is a multi-valued function $y^m = x$ that defines an $m$-sheeted Riemann surface, whose only branch point is at $z = 0$ and it's totally ramified. The corresponding branch cut can 
+  be chosen
+  along the nonpositive real axis $]\!-\infty,0]$. Crossing the branch cut in positive orientation corresponds to multiplication by $\zeta^{-1}$, where $\zeta = \zeta_m
+  := e^{\frac{2\pi i }{m}}$ is a primitive $m$-th root of unity. Hence, the monodromy is given by a cyclic permutation $\sigma = (1 \dots m)$. \abstand
+  These properties carry over to superelliptic curves given by an affine model $\caff : y^m = \prod_{k = 1}^d (x - x_k)$. Encircling a finite branch point $x_k$ counterclockwise corresponds
+  to $y \mapsto \zeta^{-1}y$ and can be thought as moving one sheet up or applying $\sigma$ to the analytic branches of $\cu$, where a branch of $\cu$ on a set $V \subset \C$ is a function
+  $y(x)$ such that $y(x)^m = f(x)$ for all $x \in V$. Hence, all finite banch points are totally ramified and separate branches only differ by a power of $\zeta$. \abstand
+  In order to write down explicit and well-defined formulas for integration, we need to fix a \emph{principal value (or branch)} for the argument function and the $m$-th root function.
+  For $z \in \C$ we choose $\arg(z) \in \,]\!\!-\pi,\pi]$ and $\sqrt[m]{z} \;( = z\mr )$ such that $\arg(\sqrt[m]{z}) \in \, ]\!\!-\frac{\pi}{m},\frac{\pi}{m}]$\,.
+
+
+
+ 
   
   
   For $a,b \in X$ consider the affine transformation $x \mapsto \frac{b-a}{2}\left(u+\frac{b+a}{b-a}\right)$, which maps $[a,b]$ to $[-1,1]$ and will appear in the double-exponential integration. \abstand
@@ -55,41 +65,38 @@
    u_{a,b}(x) & = u(x) = \frac{2x-b-a}{b-a}\,.
    \end{split}
   \end{align}
-  where all roots are given by the principal value. Under the condition that $x_k \not\in [a,b]$, the function $u(x)-u(x_k)$ does not cross $]0,-\infty[$
+  where all roots are given by the principal value. Under the condition that $x_k \not\in [a,b]$, the function $u(x)-u(x_k)$ does not cross $]\!\!-\infty,0]$
   for $x \in [a,b]$ and $x_k \ne a,b$. Hence,
   $\ft_{a,b}$ is a function that is holomorphic and has no zeros in a neighbourhood $V_{a,b}$ of $[a,b]$. \abstand Therefore, locally
- $y_{a,b}(x)$ is an analytic continuation of $y(x)$ to some sheet of $\cu$ and can be used for numerical integration of differential forms. \abstand
+ $y_{a,b}(x)$ is an analytic branch of $\cu$ and can be used for numerical integration of differential forms.
   From our affine equation $\caff$ \eqref{eq:aff_model} it follows that other analytic branches above $V_{a,b}$ are given by
+  \vspace{-0.2cm}
   \begin{align}
       \yab \mapsto \zeta^l \yab, \quad l = 0,\dots,m-1\,.
   \end{align}
-  In our situation, we can assume that moving between sheets corresponds to multiplication of $\yab$ by $\zeta^{-1}$\,. 
+  In our situation, we can assume that moving up $s \in \Z/m\Z$ sheets corresponds to multiplication of $\yab$ by $\zeta^{-s}$\,. 
 
-
-  
-  
-  
-  \newpage
   
   \subsection{Differential forms}
+  
     The computation of the period matrix and the Abel-Jacobi map requires a basis of $\hd$ as $\C$-vector space. In this section we provide a basis that only 
-   depends on $m$ and $d$ and
-   is suitable for double-exponential integration.
-%(see e.g. \cite{MM2009})
- One can show that the classes of the differentials in
-	$$\WM = \left\{ \, \omega_{i,j}  \, \right\}_{\substack{1 \le i \le d-1, \\ 1 \le j \le m-1}} \quad \text{with} \quad \omega_{i,j} = \frac{ \dx^i}{i y^j}\,,$$
-   form a $\C$-basis of $\coho$.
-     
-     \begin{prop}\label{prop:SEDFF}
-	The differentials in
-	\begin{align*}
-	  \W =  \Big\{ \, \omega_{i,j} \in \WM \, \mid \, -Ni + jd - \gcd(m,d) \ge 0 \, \Big\}\,.
-	\end{align*}
-	form  a $\C$-basis of $\hd$.
+   depends on $m$ and $d$ and is suitable for double-exponential integration. \abstand
+  Among the meromorphic differentials in $\WM$  there are exactly $g$ that are holomorphic  and they can be found by imposing a simple combinatorial condition on $i$ and $j$.
+  \begin{align*}
+ \WM = \left\{ \, \omega_{i,j}  \, \right\}_{\substack{1 \le i \le d-1, \\ 1 \le j \le m-1}} \quad \text{with} \quad \omega_{i,j} = \frac{ \dx^i}{i y^j}\,,
+  \end{align*}
+
+   \bigskip
+   
+     \begin{prop}\label{prop:holom_diff}
+	Let $\delta = \gcd(m,d)$. The following differentials form  a $\C$-basis of $\hd$.
+	\begin{align}\label{eq:holm_diff}
+	  \W =  \left\{ \, \omega_{i,j} \in \WM \, \mid \, -mi + jd - \delta \ge 0 \, \right\}
+	\end{align}
      \end{prop}
      \begin{proof}
       First we show that the differentials in $\W$ are holomorphic.
-      Let $\w_{i,j} = x^{i-1}y^{-j} \dx \in \WM$ and $\delta = \gcd(m,d)$. Then there are $\delta$ points  $P^{\infty}_1,\dots,P^{\infty}_{\delta} \in \cu$ above infinity. We write down the relevant divisors
+      Let $\w_{i,j} = x^{i-1}y^{-j} \dx \in \WM$. We write down the relevant divisors
       \begin{align*}
        \div(x) & = \sum_{k=1}^m \left(0,\zeta^k{f(0)}^{1/m}\right) - \frac{m}{\delta} \cdot \sum_{l = 1}^{\delta} P^{\infty}_l\,, \\
        \div(y) & = \sum_{k = 1}^d (x_k,0) - \frac{d}{\delta} \cdot \sum_{l = 1}^{\delta}  P^{\infty}_l\,, \\
@@ -100,7 +107,7 @@
       v_P(\omega_{i,j}) & = (i-1) v_P(x) + v_P(\dx)  - j v_P(y) = 
 	\begin{cases}
 	 \ge 0\,, \hfill \text{if} \; x_0 \ne x_k,\infty \\
-	 \ge m-1-j \ge 0 \,, \hfill \text{if} \; x_0 = x_k \\
+	 = m-1-j \ge 0 \,, \hfill \text{if} \; x_0 = x_k \\
 	 = \frac{1}{\delta}(-mi-\delta+jd)\,,\hfill \text{if} \; x_0 = \infty
 	\end{cases}\,.
      \end{align}
@@ -113,7 +120,6 @@
 	1 \le j \le m-1\,, \\
 	i \le \frac{d}{m}j - \frac{\delta}{m}\,.
      \end{align*}
-%      \subfile{images/ikz_pic_7}
       \begin{figure}[H]
       \begin{center}
 	  \input{images/tikz_pic_7.tex}
@@ -159,8 +165,30 @@
      \end{rmk}
   
   \subsection{Cycles and homology}
-    Content: - Definition of $\cyab$ and different representations, e.g. limit cycle
-	     - Spanning tree
+    
+   
+   \begin{defn}
+   Let $a, b \in X$ be branch points such that $x_k \not\in [a,b]$ for all $x_k \ne a,b$. We define an \textit{elementary cycle} as
+   \begin{align}
+    \cyab = \{ \, (x,\yab(x)) \, \mid \, x \in [a,b] \, \} \cup \{ \,(x,\zeta^{-1} \yab(x)) \, \mid \, x \in [b,a] \, \} \in \pi_1(\cu)\,.
+   \end{align}
+   and, for $l \in \Z/m\Z$, its \textit{shifts}
+   \begin{align}
+    \cyab^{(l)} = \{ \, (x,\zeta^{-l}y) \, \mid \, (x,y) \in \cyab \, \}\,. 
+   \end{align}
+  \end{defn}
+ 
+ 
+    \begin{figure}[H]
+      \begin{center}
+	  \input{images/tikz_pic_13.tex}
+      \end{center}
+    \caption{Representations of the elementary cycle $\cyab$.} 
+    \label{fig:elem_cycle}
+\end{figure}
+
+ 
+    
   
   \newpage
   
@@ -168,29 +196,29 @@
    The cycles $C = \left\{ \, \gamma_{e}^{(l)} \, \mid \, l \in \Z/m\Z, \, e \in E \, \right\}$ generate $\homo$.
   \end{thm}
   \begin{proof}
-  Denote by $\alpha_x \in \pi(\P^1 \setminus X)$ a closed path that encircles the branch point $x \in X$ exactly once. Then,  due to the relation $1 = \prod_{x \in X} \alpha_x$,\,
-  $\pi(\P^1 \setminus X)$ is freely generateted by $\{ \alpha_x \}_{x \in X'}$, where $X' = X \setminus \{ x_0 \}$, for any $x_0 \in X$. If $m \nmid d$, we choose to omit $x_0 = \infty$. \abstand
+  Denote by $\alpha_x \in \pi(\P^1 \setminus \hat{X})$ a closed path that encircles the branch point $x \in \hat{X}$ exactly once. Then,  due to the relation $1 = \prod_{x \in \hat{X}} \alpha_x$,\,
+  $\pi(\P^1 \setminus \hat{X})$ is freely generateted by $\{ \alpha_x \}_{x \in X}$, i.e. in the case $\delta \ne m$ we can omit $\alpha_{\infty}$\,. \abstand
   Since our covering is cyclic, we have that $
-  \pi_1(\cu \setminus \pr^{-1}(X)) = \ker(\pi(\P^1 \setminus X) \overset{\Phi}{\To} \Aut(\cu \setminus \pr^{-1}(X)))$. Moreover, $\Aut(\cu \setminus \pr^{-1}(X)) = C_m 
+  \pi_1(\cu \setminus \pr^{-1}(\hat{X})) = \ker(\pi_1(\P^1 \setminus \hat{X}) \overset{\Phi}{\To} \Aut(\cu \setminus \pr^{-1}(\hat{X})))$. Moreover, $\Aut(\cu \setminus \pr^{-1}(\hat{X})) = C_m 
   \subset S_m$
-  and $\Phi(\alpha_x) = (1 \dots m)$ for all $x \in X'$. Hence, for every word $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} \in \pi_1(\P^1 \setminus X)$ we have that
+  and $\Phi(\alpha_x) = (1 \dots m)$ for all $x \in X$. Hence, for every word $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} \in \pi_1(\P^1 \setminus \hat{X})$ we have that
   $\alpha \in \ker(\Phi) \eq \sum_{i=1}^n s_i = 0 \bmod m$. \abstand
-  Claim: $\pi_1(\cu \setminus \pr^{-1}(X)) = < \alpha_x^{-s} \alpha_y^{s}, \, \alpha_x^m  \, \mid \, l \in \Z, x,y \in X' >$\,. \\
+  Claim: $\pi_1(\cu \setminus \pr^{-1}(\hat{X})) = < \alpha_x^{-s} \alpha_y^{s}, \, \alpha_x^m  \, \mid \, l \in \Z, x,y \in X >$\,. \\
   Proof: Induction on $n$\,. For $\alpha = \alpha_1^{s_1}$ $m$ divides $s_1$ and therefore $\alpha$ is generated by $\alpha_1^m$. For $n > 1$ we write
   $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} = (\alpha_1^{s_1} \dots \alpha_{n-1}^{s_{n-1}+s_n})(\alpha_{n-1}^{-s_n}\alpha_n^{s_n})$. \abstand
   We obtain the fundamental group of $\cu$ as
-  $\pi(\cu) = \pi_1(\cu \setminus \pr^{-1}(X)) / < \alpha_x^{e_x} \, \mid \, x \in X >$, which is generated by 
-  $< \alpha_x^{-s} \alpha_y^{s} \, \mid \, s \in \Z/m\Z, \, x,y \in X' >$. (In the case where $\delta \ne 1$, filling in the points above infinity will create additional relations among 
+  $\pi(\cu) = \pi_1(\cu \setminus \pr^{-1}(\hat{X})) / < \alpha_x^{e_x} \, \mid \, x \in \hat{X} >$, which is generated by 
+  $< \alpha_x^{-s} \alpha_y^{s} \, \mid \, s \in \Z/m\Z, \, x,y \in X >$. (In the case where $\delta \ne 1$, filling in the points above infinity will create additional relations among 
   these generators:
-  $1 = (\prod_{x \in X'} \alpha_x)^{k \cdot e_{\infty}}$, $k = 1,\dots,\delta$\,.) \abstand
-  All branch points $x,y \in X'$ are connected by a path $(x,e_1,\dots,e_t,y)$ in the spanning tree, so we can write $\alpha_x^{-s} \alpha_y^{s} = (\alpha_x^{-s}\alpha_{e_1}^{s})
-  (\alpha_{e_1}^{-s}\alpha_{e_2}^{s})\dots(\alpha_{e_{t-1}}^{-s}\alpha_{e_t}^{s})(\alpha_{e_t}^{-s}\alpha_y^{s})$ and hence we have that 
+  $1 = (\prod_{x \in X} \alpha_x)^{k \cdot e_{\infty}}$, $k = 1,\dots,\delta-1$\,.) \abstand
+  All branch points $x,y \in X$ are connected by a path $(x,v_1,\dots,v_t,y)$ in the spanning tree, so we can write $\alpha_x^{-s} \alpha_y^{s} = (\alpha_x^{-s}\alpha_{v_1}^{s})
+  (\alpha_{v_1}^{-s}\alpha_{v_2}^{s})\dots(\alpha_{v_{t-1}}^{-s}\alpha_{v_t}^{s})(\alpha_{v_t}^{-s}\alpha_y^{s})$ and hence we have that 
   $\pi_1(\cu) = < \alpha_x^{-s} \alpha_y^{s} \, \mid \, s \in \Z/m\Z, \, (x,y) \in E >$\,. \abstand
-    All that is left to see, is that for each $e = (x,y) \in E$ there exists a bijection $\varphi_e$ between
+    All that is left to see, is that for each edge $e = (x,y) \in E$ there exists a bijection $\varphi_e$ between
   $\{ \, \gamma_e^{(l)} \, \mid \, l \in \Z/m\Z \, \} \overset{\varphi_e}{\longleftrightarrow} \{ \, \alpha_x^{-s} \alpha_y^{s} \, \mid \, s \in \Z/m\Z \, \}$\,: \abstand
-  If we choose basepoints $p_0 \in P^1 \setminus X$ for $\pi_1(P^1 \setminus X)$ and $P_0 \in \pr^{-1}(p_0)$ for $\pi_1(\cu \setminus \pr^{-1}(X))$ and $\pi_1(\cu)$ respectively.
-  Depending on the choice of $P_0$, there exist $l_0, s_0 \in \Z/m\Z$ such that $\gamma_e^{(l_0)}$ is homotopic to $\alpha_x^{-s_0} \alpha_y^{s_0}$ in $\pi_1(\cu,P_0)$. This induces the bijection
-  $\varphi_e(l_0+l) = s_0+s$\,. 
+  If we choose basepoints $p_0 \in P^1 \setminus \hat{X}$ for $\pi_1(P^1 \setminus \hat{X})$ and $P_0 \in \pr^{-1}(p_0)$ for $\pi_1(\cu \setminus \pr^{-1}(\hat{X}))$ and $\pi_1(\cu)$ respectively, then,
+  depending on the choice of $P_0$, there exist $l_0, s_0 \in \Z/m\Z$ such that $\gamma_e^{(l_0)}$ is homotopic to $\alpha_x^{-s_0} \alpha_y^{s_0}$ in $\pi_1(\cu,P_0)$. This induces the bijection
+  $\varphi_e(l_0+l) = s_0+l$\,. 
 %   \todo Include $\infty$.\\
 %    Each cycle $\alpha \in \homo$ can be encoded as $\alpha = \sum_{k = 1}^d n_kx_k$ with $n_1 + \dots n_d = 0 \bmod m$.
 %    Here $n_k \in \Z/m\Z$ indicates that $\alpha$ encircles the branch point $x_k$ $n_k$-times in positive orientation 
@@ -213,8 +241,23 @@
 %    \end{align*}
   \end{proof}
 
+  \begin{coro}\label{coro:homo_basis}
+    \begin{itemize}
+     \item[(i)] Assume $\delta = 1$. Then $\tilde{C} = \left\{ \, \gamma_{e}^{(l)} \, \mid \, l \in \{ 0,\dots,m-2\} , \, e \in E \, \right\}$ is a basis of $\homo$.
+     \item[(ii)] Assume $\delta = m$ and let $e_0 \in E$ be an edge such that $E\setminus \{ e_0 \}$ is still connected.
+     Then $\tilde{C} = \left\{ \, \gamma_{e}^{(l)} \, \mid \, l \in \{ 0,\dots,m-2\} , \, e \in E\setminus \{e_0\} \, \right\}$, is a basis of $\homo$.
+    \end{itemize}
+
+  \end{coro}
 
   
-  
-  
+
+
+
+
+
+
+
+
+\biblio 
 \end{document}
