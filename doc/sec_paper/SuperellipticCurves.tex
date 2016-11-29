@@ -1,8 +1,10 @@
+\providecommand{\main}{.}
+
 \documentclass[main.tex]{subfiles}
 
 \begin{document}
 
-  \section{Superelliptic curves}
+  \section{Superelliptic curves}\label{sec:se_curves}
 
   \subsection{Definition \& properties}
     
@@ -41,13 +43,16 @@
 
 
   Working over the complex we encounter several multi-valued functions which we will briefly discuss here.  Closely related to superelliptic curves over $\C$ is the complex $m$-th root. Before specifying
-  a branch it is a multi-valued function $y^m = x$ that defines an $m$-sheeted Riemann surface, whose only branch point is at $z = 0$ and it's totally ramified. The corresponding branch cut can 
-  be chosen
-  along the nonpositive real axis $]\!-\infty,0]$. Crossing the branch cut in positive orientation corresponds to multiplication by $\zeta^{-1}$, where $\zeta = \zeta_m
-  := e^{\frac{2\pi i }{m}}$ is a primitive $m$-th root of unity. Hence, the monodromy is given by a cyclic permutation $\sigma = (1 \dots m)$. \abstand
-  These properties carry over to superelliptic curves given by an affine model $\caff : y^m = \prod_{k = 1}^d (x - x_k)$. Encircling a finite branch point $x_k$ counterclockwise corresponds
-  to $y \mapsto \zeta^{-1}y$ and can be thought as moving one sheet up or applying $\sigma$ to the analytic branches of $\cu$, where a branch of $\cu$ on a set $V \subset \C$ is a function
-  $y(x)$ such that $y(x)^m = f(x)$ for all $x \in V$. Hence, all finite banch points are totally ramified and separate branches only differ by a power of $\zeta$. \abstand
+  a branch it is a multi-valued function $y^m = x$ that defines an $m$-sheeted Riemann surface, whose only branch points are at $z = 0,\infty$ and they're totally ramified. The corresponding global
+  branch cut can be chosen along the negative real axis $]\!-\infty,0[$. Crossing the branch cut in positive orientation corresponds to multiplication by $\zeta^{-1}$, where $\zeta = \zeta_m
+  := e^{\frac{2\pi i }{m}}$ is a primitive $m$-th root of unity. Hence, the local monodromy at $z = 0$ is given by a cyclic permutation $\sigma = (1 \dots m)$. \abstand
+ In the case of superelliptic curves given by an affine model $\caff : y^m = \prod_{k = 1}^d (x - x_k)$, indepently of $d$ and $m$, every finite branch point $x_k$ is totally ramified, which
+ means the local monodromy is given by a cyclic permutation $\sigma_k \in S_m$. We define a 
+ \emph{branch of $\cu$} as a function
+  $y(x)$ such that $y(x)^m = f(x)$ for all $x \in \C$. Hence, at every $x$, the branches of $\cu$ only differ by multiplication by a power of $\zeta$. \abstand
+  In this paper, we will not impose a global ordering on the sheets of $\cu$. Instead we use locally analytic branches $\yab$ (see \ref{def:yab}) and order them such that moving one sheet up corresponds to the
+  transformation $\yab \mapsto \zeta^{-1}\yab$. For us, encircling a branch point in positive orientation means applying 
+  the local monodromy to the analytic branches of $\cu$, therefore we can therefore assume that $\sigma_k = \sigma$ for $k = 1,\dots,d$\,. \abstand
   In order to write down explicit and well-defined formulas for integration, we need to fix a \emph{principal value (or branch)} for the argument function and the $m$-th root function.
   For $z \in \C$ we choose $\arg(z) \in \,]\!\!-\pi,\pi]$ and $\sqrt[m]{z} \;( = z\mr )$ such that $\arg(\sqrt[m]{z}) \in \, ]\!\!-\frac{\pi}{m},\frac{\pi}{m}]$\,.
 
@@ -56,28 +61,133 @@
  
   
   
-  For $a,b \in X$ consider the affine transformation $x \mapsto \frac{b-a}{2}\left(u+\frac{b+a}{b-a}\right)$, which maps $[a,b]$ to $[-1,1]$ and will appear in the double-exponential integration. \abstand
-  We define the following functions
-  \begin{align}\label{def: yab}
+  For $a,b \in X$ denote by $[a,b]$ the oriented line segment connecting $a$ and $b$. Consider the affine transformation $x \mapsto \frac{b-a}{2}\left(u+\frac{b+a}{b-a}\right)$, which maps 
+  $[a,b]$ to $[-1,1]$ and will appear in the double-exponential integration. \abstand
+  We use it to implicitly  define local branches of $\cu$ using the following functions
+  \begin{align}\label{def:yab}
   \begin{split}
-   \yab(x) & = \left(\frac{b-a}{2}\right)^{\frac{d}{m}} \sqrt{\zeta} \; (1 - u(x)^2)\mr \; \ft_{a,b}(x)\,, \quad \text{with} \\
-   \ft_{a,b}(x) & = \prod_{x_k \ne a,b} (u(x) - u(x_k))\mr \quad \text{and} \\
+   \yab(x) & = \left(\frac{b-a}{2}\right)^{\frac{d}{m}} e^{\frac{\pi i}{m}} \; (1 - u(x)^2)\mr \; \ft_{a,b}(u(x))\,, \quad \text{with} \\
+   \ft_{a,b}(u(x)) & = \prod_{x_k \ne a,b} (u(x) - u(x_k))\mr \quad \text{and} \\
    u_{a,b}(x) & = u(x) = \frac{2x-b-a}{b-a}\,.
    \end{split}
   \end{align}
-  where all roots are given by the principal value. Under the condition that $x_k \not\in [a,b]$, the function $u(x)-u(x_k)$ does not cross $]\!\!-\infty,0]$
+  where all roots are given by the principal value. Under the condition that $x_k \not\in [a,b]$, the function $u(x)-u(x_k)$ does not cross $]\!\!-\infty,0[$
   for $x \in [a,b]$ and $x_k \ne a,b$. Hence,
-  $\ft_{a,b}$ is a function that is holomorphic and has no zeros in a neighbourhood $V_{a,b}$ of $[a,b]$. \abstand Therefore, locally
+  $\ft_{a,b}$ is a function that is holomorphic and has no zeros in a neighbourhood $V_{a,b}$ of $[a,b]$. \abstand 
+  Similary, $(1-u(x))^2$ does not cross $]\!\!-\infty,0[$ for $x \in [a,b]$. Therefore, locally
  $y_{a,b}(x)$ is an analytic branch of $\cu$ and can be used for numerical integration of differential forms.
   From our affine equation $\caff$ \eqref{eq:aff_model} it follows that other analytic branches above $V_{a,b}$ are given by
-  \vspace{-0.2cm}
   \begin{align}
       \yab \mapsto \zeta^l \yab, \quad l = 0,\dots,m-1\,.
   \end{align}
-  In our situation, we can assume that moving up $s \in \Z/m\Z$ sheets corresponds to multiplication of $\yab$ by $\zeta^{-s}$\,. 
+  In our situation, we can assume that moving up $l \in \Z/m\Z$ sheets corresponds to multiplication of $\yab$ by $\zeta^{-l}$\,. 
+
+  \bigskip
+  
+  
+  \subsection{Cycles and homology}\label{subsec:cyc_homo}
+    
+   In this paragraph we present an explicit generating set of $\homo$ that is obtained by connecting the locally analytic branches $\yab$\,, as defined in \eqref{def:yab}\,,
+   while also taking advantage of the superelliptic structure of $\cu$\,.
+   
+   \begin{defn}\label{def:elem_cycle}
+   Let $a, b \in X$ be branch points such that $x_k \not\in [a,b]$ for all $x_k \ne a,b$. We define the corresponding \textit{elementary cycle} 
+   \begin{align}
+    \cyab = \{ \, (x,\yab(x)) \, \mid \, x \in [a,b] \, \} \cup \{ \,(x,\zeta^{-1} \yab(x)) \, \mid \, x \in [b,a] \, \}
+   \end{align}
+   and, for $l \in \Z/m\Z$, its \textit{shifts}
+   \begin{align}
+    \cyab^{(l)} = \{ \, (x,\zeta^{-l}y) \, \mid \, (x,y) \in \cyab \, \}\,. 
+   \end{align}
+    \end{defn}
+    
+   By our discussion in \S \ref{subsec:roots_branches}, the $\cyab^{(l)}$ are smooth oriented closed paths in $\pi_1(\cu)$. Although these paths are given as lifts of the line segment $[a,b]$, in $\pi_1(\cu)$
+   they are homotopic to paths that encirlce  $a$ in negative and $b$ in positive orientation, once each.
+   Assuming the branch cuts are parallel to $[a,b]$, we have the following useful visualizations of $\cyab$ on $\cu$.
+   \begin{figure}[H]
+      \begin{center}
+	  \input{images/tikz_pic_13.tex}
+      \end{center}
+    \caption{Representations of the elementary cycle $\cyab$.} 
+    \label{fig:elem_cycle}
+\end{figure}
+ 
+ 
+  As it turns out, we do not need all elementary cycles and their shifts to generate $\homo$\,, but only those that correspond to edges in a \emph{maximal spanning tree}, which is constructed
+  as follows. \abstand
+   Consider the complete graph on the set of finite branch points $G = (X,E')$, i.e.\ $E' = \{ \, (a,b) \, \mid \, a,b \in X \}$\,.
+   Each edge $e = (a,b) \in E$ gets assigned a capacity $\tau_e$ that indicates the cost of numerical integration along the interval $[a,b]$\,. Here, the integration process ist most favourable
+   between branch points that are far away from the others, that is, according to the double-exponential integration scheme that will be employed.
+   We now apply a standard 'maximal-flow' algorithm from graph theory, based on a greedy approach, that results in a spanning tree $T = (X,E)$, where $E \subset E'$ contains the $d-1$ best edges
+   for integration that connect all vertices without producing cycles.
+  
+  For an edge $e = (a,b) \in E$, we denote by $y_e^{(l)}$ the shifts of the corresponding elementary cycle $\cyab$\,.
+  
+  \begin{thm}\label{thm:gen_set}
+   The cycles $C = \left\{ \, \gamma_{e}^{(l)} \, \mid \, 0 \le l <m-1, \, e \in E \, \right\}$ generate $\homo$.
+  \end{thm}
+  \begin{proof}
+  Denote by $\alpha_a \in \pi(\P^1 \setminus \hat{X})$ a closed path that encircles the branch point $a \in \hat{X}$ exactly once. Then,  due to the relation $1 = \prod_{a \in \hat{X}} \alpha_a$,\,
+  $\pi(\P^1 \setminus \hat{X})$ is freely generateted by $\{ \alpha_a \}_{a \in X}$, i.e. in the case $\delta \ne m$ we can omit $\alpha_{\infty}$\,. \abstand
+  Since our covering is cyclic, we have that $
+  \pi_1(\cu \setminus \pr^{-1}(\hat{X})) = \ker(\pi_1(\P^1 \setminus \hat{X}) \overset{\Phi}{\To} \Aut(\cu \setminus \pr^{-1}(\hat{X})))$. Moreover, $\Aut(\cu \setminus \pr^{-1}(\hat{X})) = C_m 
+  \subset S_m$
+  and $\Phi(\alpha_a) = (1 \dots m)$ for all $a \in X$. Hence, for every word $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} \in \pi_1(\P^1 \setminus \hat{X})$ we have that
+  $\alpha \in \ker(\Phi) \eq \sum_{i=1}^n s_i = 0 \bmod m$. \abstand
+  Claim: $\pi_1(\cu \setminus \pr^{-1}(\hat{X})) = < \alpha_a^{-s} \alpha_b^{s}, \, \alpha_a^m  \, \mid \, s \in \Z, a,b \in X >$\,. \\
+  Proof: Induction on $n$\,. For $\alpha = \alpha_1^{s_1}$ $m$ divides $s_1$ and therefore $\alpha$ is generated by $\alpha_1^m$. For $n > 1$ we write
+  $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} = (\alpha_1^{s_1} \dots \alpha_{n-1}^{s_{n-1}+s_n})(\alpha_{n-1}^{-s_n}\alpha_n^{s_n})$. \abstand
+  We obtain the fundamental group of $\cu$ as
+  $\pi(\cu) = \pi_1(\cu \setminus \pr^{-1}(\hat{X})) / < \alpha_a^{e_a} \, \mid \, a \in \hat{X} >$, which is generated by 
+  $< \alpha_a^{-s} \alpha_b^{s} \, \mid \, s \in \Z/m\Z, \, a,b \in X >$. (In the case where $\delta \ne 1$, filling in the points above infinity will create additional relations among 
+  these generators:
+  $1 = (\prod_{a \in X} \alpha_a)^{k \cdot e_{\infty}}$, $k = 1,\dots,\delta-1$\,.) \abstand
+  All branch points $a,b \in X$ are connected by a path $(a,v_1,\dots,v_t,b)$ in the spanning tree, so we can write $\alpha_a^{-s} \alpha_b^{s} = (\alpha_a^{-s}\alpha_{v_1}^{s})
+  (\alpha_{v_1}^{-s}\alpha_{v_2}^{s})\dots(\alpha_{v_{t-1}}^{-s}\alpha_{v_t}^{s})(\alpha_{v_t}^{-s}\alpha_b^{s})$ and hence we have that 
+  $\{ \alpha_a^{-s} \alpha_b^{s} \, \mid \, s \in \Z/m\Z, \, (a,b) \in E \}$ generates $\pi_1(\cu)$ and therefore $\homo$\,. \abstand
+%     All that is left to see, is that for each edge $e = (a,b) \in E$ there exists a bijection $\varphi_e$ between
+%   $\{ \, \gamma_e^{(l)} \, \mid \, l \in \Z/m\Z \, \} \overset{\varphi_e}{\longleftrightarrow} \{ \, \alpha_a^{-s} \alpha_b^{s} \, \mid \, s \in \Z/m\Z \, \}$\,: \abstand
+  If we choose basepoints $p_0 \in P^1 \setminus \hat{X}$ for $\pi_1(P^1 \setminus \hat{X})$ and $P_0 \in \pr^{-1}(p_0)$ for $\pi_1(\cu \setminus \pr^{-1}(\hat{X}))$ and $\pi_1(\cu)$ respectively, then,
+  depending on the choice of $P_0$, for all $e = (a,b) \in E$ there exists $l_0 \in \Z/m\Z$ such that $\gamma_e^{(l_0)}$ is homotopic to $\alpha_a^{-1} \alpha_b$ in $\pi_1(\cu,P_0)$. 
+   In $\homo$ we have that $\alpha_a^{-s}\alpha_b^{s} = ( \alpha_a^{-1}\alpha_b)^s$, so we obtain the other powers by concatenating
+  the shifts $\prod_{l = 0}^{s-1} \gamma_e^{(l_0+l)} = (\alpha_a^{-1}\alpha_b)^s$\,.
+  This implies $1 = \prod_{l = 0}^{m-1} \gamma_e^{(l_0+l)} = \prod_{l = 0}^{m-1} \gamma_e^{(l)}$ and 
+   $\{ \, \alpha_a^{-s} \alpha_b^{s} \, \mid \, s \in \Z/m\Z \, \} \subset < \gamma_e^{(l)} \,
+  \mid \, l = 0,\dots,m-1 >$ and therefore $\homo = < C >$\,.
+  
+%   \todo Include $\infty$.\\
+%    Each cycle $\alpha \in \homo$ can be encoded as $\alpha = \sum_{k = 1}^d n_kx_k$ with $n_1 + \dots n_d = 0 \bmod m$.
+%    Here $n_k \in \Z/m\Z$ indicates that $\alpha$ encircles the branch point $x_k$ $n_k$-times in positive orientation 
+%    on neighbouring sheets and the
+%    condition on the $n_k$ ensures that $\alpha$ is a closed path.
+%    For $e = (a,b)$ we can now write $\gamma_e^{(l)} = a - b$ (Note: $n \cdot \gamma_e^{(l)} = a-b$) , which implies $\sum_{l = 1}^n \gamma_e^{(l-1)} = n(a-b)$, 
+%    for $n = 1,\dots,m-1$. \\
+%    Since $E$ is a spanning tree, every cycle $x_i - x_j$ involving only two branch points can be written as sum of elements in the spanning tree,
+%    i.e. $x_i - x_j = \sum_{e \in E} c_{i,j,e} (x_{e_1}-x_{e_2})$ with $c_{i,j,e} \in \{ \pm 1, 0 \}$. Writing
+%    $n_d = -(n_1 + \dots n_{d-1}$) and
+%    combining the information, we obtain
+%    \begin{align*}
+%     \alpha \; & = \; n_1x_1 + \dots n_dx_d = n_1(x_1 - x_d) + \dots + n_{d-1}(x_{d-1} - x_d) \\
+%    &  = \;  n_1 \sum_{e \in E} c_{1,d,e} (x_{e_1}-x_{e_2}) + \dots + n_{d-1} \sum_{e \in E} c_{d-1,d,e} (x_{e_1}-x_{e_2}) \\
+%    & = \; \sum_{e \in E} c_{1,d,e} n_1 (x_{e_1}-x_{e_2}) + \dots + c_{d-1,d,e} n_{d-1} (x_{e_1}-x_{e_2}) \\
+%   &  = \; \sum_{e \in E}  \left( c_{1,d,e} \sum_{l = 1}^{n_1} \gamma_e^{(l)} + \dots +  c_{d-1,d,e} \sum_{l = 1}^{n_{d-1}} 
+%   \gamma_e^{(l)} \right) \in \; < C >\,.
+% %   & = \sum_{e \in E}  \left( c_{1,d,e} \sum_{l = 1}^{n_1} + \dots + c_{d-1,d,e} \sum_{l = 1}^{n_{d-1}} \right)
+% %  \gamma_e^{(l)} 
+%    \end{align*}
+  \end{proof}
+
+  \begin{rmk}
+  \begin{itemize}
+   \item[(i)] For $\delta = 1$, we have that $\# C = (d-1)(m-1) = 2g$. Therefore, $C$ is a basis for $\homo$ in that case.
+   \item[(ii)] In the case $\delta = m$, the point at infinity is not a branch point. Leaving out one finite branch point in the spanning tree, results in only $d-2$ edges. Hence,
+   $\#C = (d-2)(m-1) = 2g$ and $C$ is a basis for $\homo$\,.
+  \end{itemize}
+  \end{rmk}
+
 
   
-  \subsection{Differential forms}
+\subsection{Differential forms}
   
     The computation of the period matrix and the Abel-Jacobi map requires a basis of $\hd$ as $\C$-vector space. In this section we provide a basis that only 
    depends on $m$ and $d$ and is suitable for double-exponential integration. \abstand
@@ -163,96 +273,6 @@
      \begin{rmk}
       Note that from \eqref{eq:diff_cases} it follows that the meromorphic differentials in $\WM$ are homolorphic at every finite place. 
      \end{rmk}
-  
-  \subsection{Cycles and homology}
-    
-   
-   \begin{defn}
-   Let $a, b \in X$ be branch points such that $x_k \not\in [a,b]$ for all $x_k \ne a,b$. We define an \textit{elementary cycle} as
-   \begin{align}
-    \cyab = \{ \, (x,\yab(x)) \, \mid \, x \in [a,b] \, \} \cup \{ \,(x,\zeta^{-1} \yab(x)) \, \mid \, x \in [b,a] \, \} \in \pi_1(\cu)\,.
-   \end{align}
-   and, for $l \in \Z/m\Z$, its \textit{shifts}
-   \begin{align}
-    \cyab^{(l)} = \{ \, (x,\zeta^{-l}y) \, \mid \, (x,y) \in \cyab \, \}\,. 
-   \end{align}
-  \end{defn}
- 
- 
-    \begin{figure}[H]
-      \begin{center}
-	  \input{images/tikz_pic_13.tex}
-      \end{center}
-    \caption{Representations of the elementary cycle $\cyab$.} 
-    \label{fig:elem_cycle}
-\end{figure}
-
- 
-    
-  
-  \newpage
-  
-  \begin{thm}\label{thm:gen_set}
-   The cycles $C = \left\{ \, \gamma_{e}^{(l)} \, \mid \, l \in \Z/m\Z, \, e \in E \, \right\}$ generate $\homo$.
-  \end{thm}
-  \begin{proof}
-  Denote by $\alpha_x \in \pi(\P^1 \setminus \hat{X})$ a closed path that encircles the branch point $x \in \hat{X}$ exactly once. Then,  due to the relation $1 = \prod_{x \in \hat{X}} \alpha_x$,\,
-  $\pi(\P^1 \setminus \hat{X})$ is freely generateted by $\{ \alpha_x \}_{x \in X}$, i.e. in the case $\delta \ne m$ we can omit $\alpha_{\infty}$\,. \abstand
-  Since our covering is cyclic, we have that $
-  \pi_1(\cu \setminus \pr^{-1}(\hat{X})) = \ker(\pi_1(\P^1 \setminus \hat{X}) \overset{\Phi}{\To} \Aut(\cu \setminus \pr^{-1}(\hat{X})))$. Moreover, $\Aut(\cu \setminus \pr^{-1}(\hat{X})) = C_m 
-  \subset S_m$
-  and $\Phi(\alpha_x) = (1 \dots m)$ for all $x \in X$. Hence, for every word $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} \in \pi_1(\P^1 \setminus \hat{X})$ we have that
-  $\alpha \in \ker(\Phi) \eq \sum_{i=1}^n s_i = 0 \bmod m$. \abstand
-  Claim: $\pi_1(\cu \setminus \pr^{-1}(\hat{X})) = < \alpha_x^{-s} \alpha_y^{s}, \, \alpha_x^m  \, \mid \, l \in \Z, x,y \in X >$\,. \\
-  Proof: Induction on $n$\,. For $\alpha = \alpha_1^{s_1}$ $m$ divides $s_1$ and therefore $\alpha$ is generated by $\alpha_1^m$. For $n > 1$ we write
-  $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} = (\alpha_1^{s_1} \dots \alpha_{n-1}^{s_{n-1}+s_n})(\alpha_{n-1}^{-s_n}\alpha_n^{s_n})$. \abstand
-  We obtain the fundamental group of $\cu$ as
-  $\pi(\cu) = \pi_1(\cu \setminus \pr^{-1}(\hat{X})) / < \alpha_x^{e_x} \, \mid \, x \in \hat{X} >$, which is generated by 
-  $< \alpha_x^{-s} \alpha_y^{s} \, \mid \, s \in \Z/m\Z, \, x,y \in X >$. (In the case where $\delta \ne 1$, filling in the points above infinity will create additional relations among 
-  these generators:
-  $1 = (\prod_{x \in X} \alpha_x)^{k \cdot e_{\infty}}$, $k = 1,\dots,\delta-1$\,.) \abstand
-  All branch points $x,y \in X$ are connected by a path $(x,v_1,\dots,v_t,y)$ in the spanning tree, so we can write $\alpha_x^{-s} \alpha_y^{s} = (\alpha_x^{-s}\alpha_{v_1}^{s})
-  (\alpha_{v_1}^{-s}\alpha_{v_2}^{s})\dots(\alpha_{v_{t-1}}^{-s}\alpha_{v_t}^{s})(\alpha_{v_t}^{-s}\alpha_y^{s})$ and hence we have that 
-  $\pi_1(\cu) = < \alpha_x^{-s} \alpha_y^{s} \, \mid \, s \in \Z/m\Z, \, (x,y) \in E >$\,. \abstand
-    All that is left to see, is that for each edge $e = (x,y) \in E$ there exists a bijection $\varphi_e$ between
-  $\{ \, \gamma_e^{(l)} \, \mid \, l \in \Z/m\Z \, \} \overset{\varphi_e}{\longleftrightarrow} \{ \, \alpha_x^{-s} \alpha_y^{s} \, \mid \, s \in \Z/m\Z \, \}$\,: \abstand
-  If we choose basepoints $p_0 \in P^1 \setminus \hat{X}$ for $\pi_1(P^1 \setminus \hat{X})$ and $P_0 \in \pr^{-1}(p_0)$ for $\pi_1(\cu \setminus \pr^{-1}(\hat{X}))$ and $\pi_1(\cu)$ respectively, then,
-  depending on the choice of $P_0$, there exist $l_0, s_0 \in \Z/m\Z$ such that $\gamma_e^{(l_0)}$ is homotopic to $\alpha_x^{-s_0} \alpha_y^{s_0}$ in $\pi_1(\cu,P_0)$. This induces the bijection
-  $\varphi_e(l_0+l) = s_0+l$\,. 
-%   \todo Include $\infty$.\\
-%    Each cycle $\alpha \in \homo$ can be encoded as $\alpha = \sum_{k = 1}^d n_kx_k$ with $n_1 + \dots n_d = 0 \bmod m$.
-%    Here $n_k \in \Z/m\Z$ indicates that $\alpha$ encircles the branch point $x_k$ $n_k$-times in positive orientation 
-%    on neighbouring sheets and the
-%    condition on the $n_k$ ensures that $\alpha$ is a closed path.
-%    For $e = (a,b)$ we can now write $\gamma_e^{(l)} = a - b$ (Note: $n \cdot \gamma_e^{(l)} = a-b$) , which implies $\sum_{l = 1}^n \gamma_e^{(l-1)} = n(a-b)$, 
-%    for $n = 1,\dots,m-1$. \\
-%    Since $E$ is a spanning tree, every cycle $x_i - x_j$ involving only two branch points can be written as sum of elements in the spanning tree,
-%    i.e. $x_i - x_j = \sum_{e \in E} c_{i,j,e} (x_{e_1}-x_{e_2})$ with $c_{i,j,e} \in \{ \pm 1, 0 \}$. Writing
-%    $n_d = -(n_1 + \dots n_{d-1}$) and
-%    combining the information, we obtain
-%    \begin{align*}
-%     \alpha \; & = \; n_1x_1 + \dots n_dx_d = n_1(x_1 - x_d) + \dots + n_{d-1}(x_{d-1} - x_d) \\
-%    &  = \;  n_1 \sum_{e \in E} c_{1,d,e} (x_{e_1}-x_{e_2}) + \dots + n_{d-1} \sum_{e \in E} c_{d-1,d,e} (x_{e_1}-x_{e_2}) \\
-%    & = \; \sum_{e \in E} c_{1,d,e} n_1 (x_{e_1}-x_{e_2}) + \dots + c_{d-1,d,e} n_{d-1} (x_{e_1}-x_{e_2}) \\
-%   &  = \; \sum_{e \in E}  \left( c_{1,d,e} \sum_{l = 1}^{n_1} \gamma_e^{(l)} + \dots +  c_{d-1,d,e} \sum_{l = 1}^{n_{d-1}} 
-%   \gamma_e^{(l)} \right) \in \; < C >\,.
-% %   & = \sum_{e \in E}  \left( c_{1,d,e} \sum_{l = 1}^{n_1} + \dots + c_{d-1,d,e} \sum_{l = 1}^{n_{d-1}} \right)
-% %  \gamma_e^{(l)} 
-%    \end{align*}
-  \end{proof}
-
-  \begin{coro}\label{coro:homo_basis}
-    \begin{itemize}
-     \item[(i)] Assume $\delta = 1$. Then $\tilde{C} = \left\{ \, \gamma_{e}^{(l)} \, \mid \, l \in \{ 0,\dots,m-2\} , \, e \in E \, \right\}$ is a basis of $\homo$.
-     \item[(ii)] Assume $\delta = m$ and let $e_0 \in E$ be an edge such that $E\setminus \{ e_0 \}$ is still connected.
-     Then $\tilde{C} = \left\{ \, \gamma_{e}^{(l)} \, \mid \, l \in \{ 0,\dots,m-2\} , \, e \in E\setminus \{e_0\} \, \right\}$, is a basis of $\homo$.
-    \end{itemize}
-
-  \end{coro}
-
-  
-
-
 
 
 
