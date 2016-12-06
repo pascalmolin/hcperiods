@@ -17,6 +17,19 @@
 
 typedef struct
 {
+    /* y^m = prod_{i=1}^d x - roots[i] */
+    slong m;             /* degree in y */
+    slong d;             /* degree in x */
+    acb_ptr roots;       /* branch points */
+    slong g;             /* genus, 2g = (m-1)(d-1) - gcd(N,d) + 1 */
+
+}
+superelliptic_curve;
+
+typedef superelliptic_curve sec_t;
+
+typedef struct
+{
     /*
     double tau;
     double h;
@@ -87,11 +100,8 @@ typedef dform_t * cohom_t;
 
 typedef struct
 {
-    /* y^n = prod_{i=1}^d x - roots[i] */
-    slong n;             /* degree in y */
-    slong d;             /* degree in x */
-    slong g;             /* genus, 2g = (N-1)(d-1) - gcd(N,d) + 1 */
-    acb_ptr roots;       /* branch points */
+    /* curve */
+    sec_t c;
 
     /* differentials */
     cohom_t dz;
@@ -114,9 +124,9 @@ typedef struct
     arb_mat_t proj;
 
 }
-super_elliptic_curve_struct;
+abel_jacobi_struct;
 
-typedef super_elliptic_curve_struct se_curve_t[1];
+typedef abel_jacobi_struct abel_jacobi_t[1];
 
 /******************************************************************************
 
@@ -124,14 +134,14 @@ typedef super_elliptic_curve_struct se_curve_t[1];
 
  ******************************************************************************/
 
-void se_curve_init_roots(se_curve_t c, slong n, acb_srcptr x, slong d);
-void se_curve_init_poly(se_curve_t c, slong n, acb_srcptr f, slong len, slong prec);
-void se_curve_clear(se_curve_t c);
+void abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d);
+void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_srcptr f, slong len, slong prec);
+void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
+void abel_jacobi_clear(abel_jacobi_t aj);
 
+void de_int_params(double * h, ulong *n, double tau, double M1, double M2, slong prec);
 void de_int_init(de_int_t de, double h, ulong n, slong prec);
 void de_int_clear(de_int_t de);
-
-void se_curve_compute(se_curve_t c, slong prec);
 
 /* compute maximum spanning tree */
 void tree_init(tree_t tree, slong d);
@@ -145,19 +155,24 @@ void intersection_tree(inter_mat inter, tree_t tree, acb_srcptr x, slong d);
 /* find g+g symplectic homology basis from tree */
 /* two lists of g loops */
 void symplectic_reduction(si_mat_t p, si_mat_t m, slong g, slong len);
-void symplectic_basis(homol_t loop_a, homol_t loop_b, inter_mat inter, slong g, slong d, slong n);
+void symplectic_basis(homol_t loop_a, homol_t loop_b, inter_mat inter, sec_t c);
 
 /* find basis of holomorphic differentials */
 /* g elementary differentials */
-void differentials(cohom_t dz, slong d, slong n);
+void holomorphic_differentials(cohom_t dz, slong d, slong m);
 
-/* numerically compute d-1 periods along the tree */
+/* numerically compute d-1 integrals along tree edges */
 /* (d-1)*(g-1) matrix, tree edges on lines */
-void periods_tree(acb_mat_t periods, const tree_t tree, const cohom_t dz, slong g, acb_srcptr x, slong d, slong prec);
+void integrals_tree(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
 
 /* get all periods on a, b basis */
 /* two g*g matrices */
-void period_matrix(acb_mat_t omega, homol_t loop, acb_mat_t periods, slong g, slong d, slong prec);
+void period_matrix(acb_mat_t omega, const homol_t basis, const acb_mat_t integrals, slong g, slong d, slong prec);
 
 /* get tau reduced matrix */
 void tau_matrix(acb_mat_t tau, const acb_mat_t omega0, const acb_mat_t omega1, slong prec);
+
+/* core functions */
+void nth_root_pol_def(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong prec);
+void nth_root_pol_prod(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong prec);
+

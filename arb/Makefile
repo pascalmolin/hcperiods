@@ -1,56 +1,92 @@
-INSTALL:=${HOME}/devel/install
+PREFIX=/usr/local
+EXEEXT=
 
-GMP_LIB_DIR       = $(INSTALL)/lib
-GMP_INCLUDE_DIR   = $(INSTALL)/include
-MPFR_LIB_DIR      = $(INSTALL)/lib
-MPFR_INCLUDE_DIR  = $(INSTALL)/include
-FLINT_LIB_DIR     = $(INSTALL)/lib
-FLINT_INCLUDE_DIR = $(INSTALL)/include/flint
-ARB_LIB_DIR     = $(INSTALL)/lib
-ARB_INCLUDE_DIR = $(INSTALL)/include/
-
-CC=gcc
-CFLAGS:=-O2 -ggdb -ansi -std=c99 -pedantic -Wall -funroll-loops
-CFLAGS:=-ggdb -ansi -std=c99 -pedantic -Wall
-
-LIBS=-L$(ARB_LIB_DIR) -L$(FLINT_LIB_DIR) -L$(GMP_LIB_DIR) -L$(MPFR_LIB_DIR) -larb -lflint -lmpfr -lgmp -lpthread -lm
-INCS=-I$(CURDIR) -I$(GMP_INCLUDE_DIR) -I$(MPFR_INCLUDE_DIR) -I$(FLINT_INCLUDE_DIR) -I$(ARB_INCLUDE_DIR)
-LINKLIBS=$(GMP_LIB_DIR)/libgmp.a $(MPFR_LIB_DIR)/libmpfr.a $(FLINT_LIB_DIR)/libflint.so -I$(ARB_INCLUDE_DIR)/libarb.a
-
-LD_LIBRARY_PATH:=${CURDIR}:${FLINT_LIB_DIR}:${MPFR_LIB_DIR}:${GMP_LIB_DIR}:${LD_LIBRARY_PATH}
-export LD_LIBRARY_PATH
-export
-
-BUILD:=_build
-PROG   =
 ifeq ($(shell uname -s),Darwin)
 LIBRARY   = libajsec.dylib
 else
 LIBRARY   = libajsec.so
 endif
 
+INCS=-I$(CURDIR) -I/usr/local/include -I/usr/local/include/flint
+LIBS=-L$(CURDIR) -L/usr/local/lib -lajsec -larb -lflint -lmpfr -lgmp -lm -lpthread
+LIBS2=-L$(CURDIR) -L/usr/local/lib -larb -lflint -lmpfr -lgmp -lm -lpthread
+
+CC=gcc
+CXX=g++
+AR=ar
+LDCONFIG=true
+
+CFLAGS=-fno-common -ansi -pedantic -Wall -O2 -funroll-loops -g -mpopcnt
+ABI_FLAG=
+PIC_FLAG=-fPIC
+EXTRA_SHARED_FLAGS=
+#-install_name /usr/local/lib/libarb-1.1.1.dylib -compatibility_version 1.1 -current_version 1.1.1
+
+DLPATH=DYLD_LIBRARY_PATH
+DLPATH_ADD=$(CURDIR):/usr/local/lib
+EXTENSIONS=
+EXTRA_BUILD_DIRS=
+
+ifdef $(DLPATH)
+  $(DLPATH):=$($(DLPATH)):$(DLPATH_ADD)
+else
+  $(DLPATH):=$(DLPATH_ADD)
+endif
+
+LIBDIR=lib
+
+QUIET_CC  = @echo '   ' CC  ' ' $@;
+QUIET_CXX = @echo '   ' CXX ' ' $@;
+QUIET_AR  = @echo '   ' AR  ' ' $@;
+
+AT=@
+
+export
+
+HEADERS = $(wildcard *.h)
+
 SOURCES = $(wildcard *.c)
+OBJS = $(patsubst %.c, build/%.o, $(SOURCES))
+LOBJS = $(patsubst %.c, build/%.lo, $(SOURCES))
 
-OBJS = $(patsubst %.c, $(BUILD)/%.o, $(SOURCES))
-LOBJS = $(patsubst %.c, $(BUILD)/%.lo, $(SOURCES))
-LIB_SOURCES = $(SOURCES) $(foreach dir, $(BUILD_DIRS), $(wildcard $(dir)/*.c))
-LIB_OBJS = $(patsubst %.c, $(BUILD)/%.lo, $(LIB_SOURCES))
+EXMP_SOURCES = $(wildcard examples/*.c)
+EXMPS = $(patsubst %.c, %, $(EXMP_SOURCES))
 
-$(BUILD)/%.lo: %.c $(BUILD)
-	$(CC) -fPIC $(CFLAGS) $(INCS) -c $< -o $@
+TEST_SOURCES = $(wildcard test/*.c)
+TESTS = $(patsubst %.c, build/%$(EXEEXT), $(TEST_SOURCES))
 
-$(BUILD)/%.o: %.c $(BUILD)
-	$(CC) -fPIC $(CFLAGS) $(INCS) -c $< -o $@
+all: library
 
-# programs
-prog: $(LIBRARY)
-	$(foreach prog, $(PROG), $(CC) $(CFLAGS) $(INCS) $(prog).c -o $(prog) $(LIBS);)
+quiet: library
 
-# library
 library: $(LIBRARY)
-$(LIBRARY): $(OBJS) $(LIB_OBJS)
-	$(CC) -fPIC -shared $(LIB_OBJS) $(LIBS2) -o $(LIBRARY)
 
-$(BUILD):
-	mkdir -p $(BUILD)
+test: library $(TESTS)
+	$(AT)$(foreach prog, $(TESTS), $(prog) || exit $$?;)
 
+verbose:
+	$(MAKE) AT= QUIET_CC= QUIET_CXX= QUIET_AR=
+
+clean:
+	rm -f $(OBJS) $(LOBJS) $(TESTS) $(PROFS) $(EXMPS) $(wildcard $(LIBRARY)*)
+	rm -rf build
+
+build:
+	mkdir -p build
+
+build/test:
+	mkdir -p build/test
+
+build/%.lo: %.c $(HEADERS) | build
+	$(QUIET_CC) $(CC) $(PIC_FLAG) $(CFLAGS) $(INCS) -c $< -o $@;
+
+build/%.o: %.c $(HEADERS) | build
+	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) -c $< -o $@;
+
+build/test/%$(EXEEXT): test/%.c $(HEADERS) | build/test
+	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) $< -o $@ $(LIBS)
+
+$(LIBRARY): $(LOBJS) $(HEADERS) | build
+	$(CC) $(ABI_FLAG) -shared $(EXTRA_SHARED_FLAGS) $(LOBJS) -o $(LIBRARY) $(LDFLAGS) $(LIBS2);
+
+.PHONY: library clean examples check test distclean all valgrind
