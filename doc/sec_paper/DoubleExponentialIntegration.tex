@@ -1,8 +1,10 @@
 \documentclass[main.tex]{subfiles}
 
+\DeclareMathOperator\asinh{asinh}
 \renewcommand\d{\mathrm{d}\,}
 \newcommand\set[1]{\left\{#1\right\}}
 \newcommand\abs[1]{\left|#1\right|}
+\newcommand\phiab{\phi_{a,b}}
 \newcommand\fab{\tilde{f_{a,b}}}
 \DeclareUnicodeCharacter{3B1}{\alpha}
 \DeclareUnicodeCharacter{3BB}{\lambda}
@@ -11,20 +13,28 @@
 \DeclareUnicodeCharacter{3C6}{\varphi}
 \begin{document}
 
-  \section{Double-exponential integration}
+\section{Double-exponential integration}
 
-We want to evaluate
+From \eqref{elem_integral}, we want to compute
+$\int_{-1}^1\phiab$ to absolute precision $e^{-D}$.
+
+Using the double-exponential change of variable
+$u=\tanh(λ\sinh(t))$, the integral
+becomes
 \begin{equation}
-    \int_a^b\omega_{i,j} = C_{i,j}\int_\R g(t)\dt
+    \int_{-1}^1\phiab = \int_\R g(t)\dt
 \end{equation}
-where
+with $α=(1-j/N)$ and
 \begin{equation}
     g(t) = \frac{u(t)^{i-1}}{\fab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
 \end{equation}
-with $α=(1-j/N)$.
 
-Let $Z_\tau = \set{\tanh(λ\sinh(z), \Im(z)<\tau }$ be the image
-of the strip $\Delta_\tau$ under the change of variable $u=\tanh(λ\sinh(t))$.
+Let
+\begin{equation}
+Z_τ = \set{\tanh(λ\sinh(z), -τ<\Im(z)<τ }    
+\end{equation}
+be the image of the strip $\Delta_τ$ under the change of
+variable $u=\tanh(λ\sinh(t))$.
 
 Since we can compute the distance of each branch point $u_i$ to
 both $[-1,1]$ and its neighborhood $Z_\tau$, we obtain
@@ -38,105 +48,214 @@ both $[-1,1]$ and its neighborhood $Z_\tau$, we obtain
       \end{itemize}
   \end{lemma}
 
+We also introduce the following quantities
+\begin{align}
+    X_τ &=\cos(τ)\sqrt{\frac{π}{2λ\sinτ}-1} \\
+    B(τ,α) &=
+    \frac{2}{\cosτ}
+    \left(
+        \frac{X_τ}2(\frac1{\cos^{2α}(λ\sinτ)}+\frac1{X_τ^{2α}})
+        +\frac{1}{2α\sinh^{2α}X_τ}
+    \right)
+\end{align}
 
-  \begin{lemma}[truncation error]
-      \begin{equation}
-          \sum_{\abs{k}>n}\abs{hg(kh)}
-          \leq \frac{2^{2α} M_1}{αλ}\exp(-2αλ\sinh(nh))
-      \end{equation}
-  \end{lemma}
-  \begin{proof}
-      We bound the sum by the integral of a decreasing function
-      \begin{align*}
-          \sum_{\abs{k}>n}\abs{hg(kh)}
-          &\leq2M_1\int_{nh}^\infty\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
-          =2M_1\int_{\sinh(nh)}^\infty\frac{\dt}{\cosh(λ t)^{2α}}\\
-          &\leq 2^{2α+1} M_1\int_{\sinh(nh)}^\infty e^{-2αλ t}\dt
-          = \frac{2^{2α} M_1}{αλ}e^{-2αλ\sinh(nh)}
-      \end{align*}
-  \end{proof}
+Once computed the two bounds $M_1$, $M_2$ and the constant $B(τ,α)$,
+we obtain a rigorous integration scheme as follows
+\begin{thm}
+    With the notations above, for all $D>0$, choose $h$ and $n$ such that
+    \begin{equation}
+        \begin{cases}
+            h \leq \frac{2πτ}{D + \log(2M_2 B(τ,α) + e^{-D})}\\
+            nh \geq \asinh(\frac{D+\log(\frac{2^{2α+1}M_1}{αλ})}{2αλ})
+        \end{cases}
+    \end{equation}
+    then
+    \begin{equation}
+        \abs{
+            \int_{-1}^1 \phiab
+            - h\sum_{k=-n}^n
+            w_k \frac{u_k^{i-1}}{\fab(u_k)^j}
+        } \leq e^{-D}
+    \end{equation}
+    where
+    \begin{equation}
+        \begin{cases} 
+            u_k = \tanh(λ\sinh(kh))\\
+            w_k = \frac{λ\cosh(kh)}{\cosh^{2α}(λ\sinh(kh)}
+        \end{cases}
+    \end{equation}
+\end{thm}
 
-  \begin{lemma}[discretization error]
-      \begin{equation}
-          \sum_{k\neq0}\abs{\hat g(\frac kh)}
-          \leq
-          \frac{M_2B(τ,α)}{e^{2πτ/h}-1}
-      \end{equation}
-      where
-      \begin{equation}
-          B(τ,α)
-          =
-          \frac{2}{\cosτ}
-          \left(
-      \frac{X_1}2(\frac1{\cos^{2α}(λ\sinτ)}+\frac1{X_1^{2α}})
-      +\frac{1}{2α\sinh^{2α}X_1}
-      \right)
-      \end{equation}
-      with
-      $X_1=\cos(τ)\sqrt{\frac{π}{2λ\sinτ}-1}$.
-  \end{lemma}
+The proof follows the same lines as the one in \cite{PMthese}:
+we write the Poisson formula on $h\Z$ for the function $g$
+\begin{equation}
+    \underbrace{h\sum_{\abs{k}>n}g(kh)}_{e_T}
+ + h\sum_{k=-n}^n g(kh)
+ = \int_\R g
+ +
+     \underbrace{\sum_{k\in\Z^\ast} \hat g(\frac{k}{h})}_{e_Q}
+\end{equation}
+and control both error terms $e_T$ and $e_q$ by lemma \ref{lem:de_error_trunc}
+and \ref{lem:de_error_quad} below. The actual parameters $h$ and $n$ follow
+by bounding each error by $e^{-D}/2$.
+
+\begin{lemma}[truncation error]
+    \label{lem:de_error_trunc}
+    \begin{equation}
+        \sum_{\abs{k}>n}\abs{hg(kh)}
+        \leq \frac{2^{2α} M_1}{αλ}\exp(-2αλ\sinh(nh))
+    \end{equation}
+\end{lemma}
+\begin{proof}
+    We bound the sum by the integral of a decreasing function
+    \begin{align*}
+        \sum_{\abs{k}>n}\abs{hg(kh)}
+        &\leq2M_1\int_{nh}^\infty\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
+        =2M_1\int_{\sinh(nh)}^\infty\frac{\dt}{\cosh(λ t)^{2α}}\\
+        &\leq 2^{2α+1} M_1\int_{\sinh(nh)}^\infty e^{-2αλ t}\dt
+        = \frac{2^{2α} M_1}{αλ}e^{-2αλ\sinh(nh)}
+    \end{align*}
+\end{proof}
+
+\begin{lemma}[discretization error]
+    \label{lem:de_error_quad}
+    With the current notations,
+    \begin{equation}
+        \sum_{k\neq0}\abs{\hat g(\frac kh)}
+        \leq
+        \frac{M_2B(τ,α)}{e^{2πτ/h}-1}.
+    \end{equation}
+\end{lemma}
 
 
-  The proof follows the same lines as the one in \cite{PMthese}.
+We first bound the Fourier transform by a shift of contour
+\begin{equation}
+    \forall X>0, \hat g(\pm X) = e^{-2πXτ} \int_{\R} g(t\mp iτ) e^{-2iπtX}\dt
+\end{equation}
+so that
+\begin{equation}
+    \sum_k \abs{\hat g(\frac kh)}
+    \leq
+    \frac{2M_2}{e^{2πτ/h}-1}\int_\R \abs{
+    \frac{λ\cosh(t+iτ)}{\cosh(λ\sinh(t+iτ))^{2α}}}\dt
+\end{equation}
 
-  We first bound the Fourier transform by a shift of contour
-  \begin{equation}
-      \forall X>0, \hat g(\pm X) = e^{-2πXτ} \int_{\R} g(t\mp iτ) e^{-2iπtX}\dt
-  \end{equation}
-  so that introducing $φ(t)=λ\sinh(t+iτ)$ we have
-  \begin{equation}
-      \sum_k \abs{\hat g(\frac kh)}
-      \leq
-      \frac{2M_2}{e^{2πτ/h}-1}\int_\R \abs{
-      \frac{λ\cosh(t+iτ)}{\cosh(λ\sinh(t+iτ))^{2α}}}\dt
-  \end{equation}
+Now the point $λ\sinh(t+iτ) = X(t)+iY(t)$ lies on the hyperbola
+$Y^2 =λ^2(\sin^2τ+\tan^2 τX^2)$, and
+\begin{align}
+    \abs{λ\cosh(t+iτ)} &\leq λ\cosh(t) =\frac{X'(t)}{\cos(τ)}\\
+    \abs{\cosh(X+iY)}^2 &= \sinh(X)^2+\cos(Y)^2 
+\end{align}
+so that
+\begin{equation}
+    \int_\R \abs{
+    \frac{λ\cosh(t+iτ)}{\cosh(λ\sinh(t+iτ))^{2α}}}\dt
+    \leq
+    \frac{2}{\cosτ}\int_0^\infty\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^α}
+\end{equation}
+For $X_0=0$, $Y_0=λ\sinτ<\frac{π}2$, and $Y_τ=\frac{π}2$ for
+$X_τ=\cos(τ)\sqrt{\frac{π}{2Y_0}-1}$.
 
-  Now $φ(t) = X(t)+iY(t)$ lies on the hyperbola
-  $Y^2 =λ^2(\sin^2τ+\tan^2 τX^2)$, and
+  We cut the integral at $X=X_τ$ and write
   \begin{align}
-      \abs{λ\cosh(t+iτ)} &\leq λ\cosh(t) =\frac{X'(t)}{\cos(τ)}\\
-      \abs{\cosh(X+iY)}^2 &= \sinh(X)^2+\cos(Y)^2 
-  \end{align}
-  so that
-  \begin{equation}
-      \int_\R \abs{
-      \frac{λ\cosh(t+iτ)}{\cosh(λ\sinh(t+iτ))^{2α}}}\dt
-      \leq
-      \frac{2}{\cosτ}\int_0^\infty\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^\alpha}
-  \end{equation}
-  For $X_0=0$, $Y_0=λ\sinτ<\frac{π}2$, and $Y_1=\frac{π}2$ for
-  $X_1=\cos(τ)\sqrt{\frac{π}{2Y_0}-1}$.
-
-  We cut the integral at $X=X_1$ and write
-  \begin{align}
-      \int_0^{X_1}\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^\alpha}
-      & \leq \int_0^{X_1}\frac{\d X}{(X^2+\cos^2Y)^α} \\
-      \int_{X_1}^\infty\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^\alpha}
-      & \leq \int_{X_1}^\infty\frac{\d X}{(\sinh X)^{2α}}
+      \int_0^{X_τ}\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^α}
+      & \leq \int_0^{X_τ}\frac{\d X}{(X^2+\cos^2Y)^α} \\
+      \int_{X_τ}^\infty\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^α}
+      & \leq \int_{X_τ}^\infty\frac{\d X}{(\sinh X)^{2α}}
   \end{align}
   
   We bound the first integral by convexity:
-  since $Y(X)$ is convex and $\cos$ is concave decreasing for $Y\leq Y_1$ we
+  since $Y(X)$ is convex and $\cos$ is concave decreasing for $Y\leq Y_τ$ we
   obtain by concavity of the composition
   \begin{equation}
-      \forall X\leq X_1, \cos(Y)\geq \cos(Y_0)(1-\frac{X}{X_1})
+      \forall X\leq X_τ, \cos(Y)\geq \cos(Y_0)(1-\frac{X}{X_τ})
   \end{equation}
   Now $X^2+\cos^2Y\geq P_2(X)$ where
   \begin{equation}
-     P_2(X) = X^2(1+\frac{\cos^2(Y_0)}{X_1^2})-2\frac{\cos^2(Y_0)}{X_1}X+\cos^2(Y_0)
+     P_2(X) = X^2(1+\frac{\cos^2(Y_0)}{X_τ^2})-2\frac{\cos^2(Y_0)}{X_τ}X+\cos^2(Y_0)
   \end{equation}
   is a convex quadratic, so $X\mapsto P_2(X)^{-α}$ is still convex and the integral
   is bounded by one trapeze
   \begin{equation}
-      \int_0^{X_1}\frac{\d X}{P_2(X)^α}\leq X_1\frac{P_2(0)+P_2(X_1)}2
-      = \frac{X_1}2\left(\frac1{\cos^{2α}(Y_0)}+\frac1{X_1^{2α}}\right)
+      \int_0^{X_τ}\frac{\d X}{P_2(X)^α}\leq X_τ\frac{P_2(0)+P_2(X_τ)}2
+      = \frac{X_τ}2\left(\frac1{\cos^{2α}(Y_0)}+\frac1{X_τ^{2α}}\right)
   \end{equation}
 
   For the second integral we use
-  $\sinh(X)\geq\sinh(X_1)e^{X-X_1}$ to obtain
+  $\sinh(X)\geq\sinh(X_τ)e^{X-X_τ}$ to obtain
   \begin{equation}
-      \int_{X_1}^\infty \frac{\d X}{\sinh(X)^{2α}} \leq \frac1{2α\sinh(X_1)^{2α}}
+      \int_{X_τ}^\infty \frac{\d X}{\sinh(X)^{2α}} \leq \frac1{2α\sinh(X_τ)^{2α}}
   \end{equation}
+
+\subsection{Gauss-Chebychev integration}
+\label{sub:gauss_chebychev_integration}
+
+In the case of hyperelliptic curves, we have $α=\frac12$ and the integral
+\begin{equation}
+    \int_{-1}^1\frac{\phiab(u)}{\sqrt{1-u^2}}\du
+\end{equation}
+can be efficiently handled by Gaussian integration with weight $\sqrt{1-u^2}$,
+for which the corresponding orthogonal polynomials are 
+Chebychev polynomials.
+
+In this case, the integration formula is particularly
+simple: there is no need to actually compute the Chebychev polynomials
+since their roots are explicitly given as cosine functions.
+\begin{thm}[Gauss-Chebychev integration]
+    Let $g$ be holomorphic around $[-1,1]$. Then for all
+    $n$, there exist $\xi \in ]-1,1[$ such that
+    \begin{equation}
+        \label{eq:gauss_chebychev}
+        \int_{-1}^1\frac{g(u)}{\sqrt{1-u^2}}\du
+        - \sum_{k=1}^n w_k g(u_k)
+        = \frac{π2^{2n+1}}{2^{4n}}\frac{g^{(2n)}(\xi)}{(2n)!}
+     = E(n),
+    \end{equation}
+    with constant weights $w_k = w =\frac{π}n$ and nodes $u_k = \cos(\frac{2k-1}{2n}π)$.
+\end{thm}
+
+Now $\phiab(u)=\frac{P(u)}{\sqrt{Q(u)}}$ for explicit polynomials
+$P,Q$, so the $2n$-th derivative can be
+estimated quite precisely by Cauchy formula.
+
+\newcommand{\rmax}{r_{\mathrm{max}}}
+\begin{lemma}
+    Let $u_i$ be the roots of $Q$, and $r_i$ the distance from
+    $u_i$ to $[-1,1]$. Let also $\rmax$ be the minimum of $r_i$.
+
+    Then for all $r<\rmax$,
+    \begin{equation}
+    \abs{E_n} \leq \frac{2π}rB(r)(2r)^{-2n}
+    \end{equation}
+    where
+    \begin{equation}
+        B(r) = \frac1{\prod_i(r_i-r)}
+    \end{equation}
+\end{lemma}
+
+For fixed $n$, assuming the minimum value $\rmax$ is attained for exactly
+$m$ roots $u_i$, we can optimize the choice of $r$ by writing
+$r=\rmax(1-λ)$ so that $B(r)\leq\frac{B_1}{(\rmaxλ)^m}$, where
+$B_1=\prod(r_i-\rmax)$, the product being on those $r_i>\rmax$.
+
+Then
+\begin{equation}
+    \frac{2π}rB(r)(2r)^{-2n}
+    = \frac{2πB_1}{\rmax^m} λ^{-m}(2\rmax(1-λ))^{-2n-1}
+\end{equation}
+and $λ^m(1-λ)^{2n+1}$ is maximum for
+\begin{equation}
+    λ = \frac{m}{2n+1+m}
+\end{equation}
+in which case 
+$λ^m(1-λ)^{2n+1}=(1+\frac{2n+1}m)^{-m}(1+\frac{m}{2n+1})^{-(2n+1)}$.
+
+We therefore consider this value of $λ$, so that
+\begin{equation}
+    E(n) \leq 
+    \frac{2πB_1}{\rmax^m}
+    (1+\frac{2n+1}m)^m(1+\frac{m}{2n+1})^{2n+1}(2\rmax)^{-2n-1}
+\end{equation}
 
 \iffalse
   \begin{align}
