@@ -5,7 +5,17 @@
 % Import packages
 \input{macros.tex}
 
+% Solves problem with subfiles/bibtex
+\def\biblio{\bibliographystyle{plain}\bibliography{main}}
+
+
+% Cross referencing using xr-package
+\externaldocument[m-]{main}
+
 \begin{document}
+
+% Bibliography
+\def\biblio{}
 
 % Table of contents
 \tableofcontents
@@ -36,5 +46,9 @@
 
 \subfile{ComputingAbelJacobi.tex}
 
+% Bibliography
+\newpage
+\bibliographystyle{plain}
+\bibliography{main}
 
 \end{document}
