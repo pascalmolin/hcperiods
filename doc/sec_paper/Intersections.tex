@@ -12,14 +12,14 @@
 	In this section we explain how to compute the intersection numbers between the cycles in $C$. 
 	
 	\begin{defn}\label{def:shift_numb}
-	Let $\cyab, \cycd \in C$ be elementary cycles such that there exists a neighbourhood $V$ such that $\yab$ and $\ycd$ are holomorphic on $V$. Then, there exists an
+	Let $\cyab, \cycd \in C$ be elementary cycles and let $V := V_{a,b} \cap V_{c,d}$. Then, $\yab$ and $\yab$ are analytic on $V$ and for all $x$
 	$s \in \Z/m\Z$ such that
 	\begin{align}
 	 \frac{\yab(x)}{\ycd(x)} = \zeta^s \quad \text{for all} \; x \in V\,.
 	\end{align}
 	\end{defn}
 
-	   
+	 
 	    We can compute the shiftung number for all elementary cycles $\cyab, \cycd \in C$:
     
     \begin{thm}\label{thm:shift_numb}
@@ -49,16 +49,16 @@
     
     \newpage
     \begin{thm}\label{thm:intsec_numb}
-      Let $\alpha=\alpha(a,b)$, $\beta=\beta(c,d)$ be elementary cycles, $\tau = \arg\left(\frac{d-c}{b-a}\right)$ and let $s=s(\alpha^{(i)},\beta^{(j)})$ be the
-     shifting number. Then the intersection numbers are given by
+      Let $\cyab$, $\cycd$ be elementary cycles, $\tau = \arg\left(\frac{d-c}{b-a}\right)$ and let $s=s(\cyab,\cycd,x)$ be the
+     shifting number at a point $x$. Then the intersection numbers are given by
       \begin{align}
        \begin{split}
-        (\,\alpha^{(i)} \circ \beta^{(j)}\,) = 
+        (\,\cyab^{(l)} \circ \cycd^{(k)}\,) = 
         \begin{cases}
-            \hspace*{0.95cm} +1, \quad & \text{if} \quad s=0 \quad \text{and} \quad (\,x = b = c \quad \text{or} \quad x = a = d\,)\,,\\
-	     \hspace*{0.95cm} -1, \quad &\text{if} \quad s=-1 \quad \text{and} \quad (\,x = b = c \quad \text{or} \quad x = a = d\,)\,,\\
-          -\sgn(\tau), \quad & \text{if} \quad s=0 \quad \text{and} \quad (\,x = a = c \quad \text{or} \quad x = b = d\,)\,,\\
-           \quad\! \sgn(\tau), \quad & \text{if} \quad s=\sgn(\tau) \quad \text{and} \quad (\,x = a = c \quad \text{or} \quad x = b = d\,)\,,\\
+            \hspace*{0.95cm} -1, \quad & \text{if} \quad s=0 \quad \text{and} \quad (\,x = b = c \quad \text{or} \quad x = a = d\,)\,,\\
+	     \hspace*{0.95cm} +1, \quad &\text{if} \quad s=-1 \quad \text{and} \quad (\,x = b = c \quad \text{or} \quad x = a = d\,)\,,\\
+          \quad\! \sgn(\tau), \quad & \text{if} \quad s=0 \quad \text{and} \quad (\,x = a = c \quad \text{or} \quad x = b = d\,)\,,\\
+            -\sgn(\tau), \quad & \text{if} \quad s=-\sgn(\tau) \quad \text{and} \quad (\,x = a = c \quad \text{or} \quad x = b = d\,)\,,\\
           \hspace*{0.95cm} +1, \quad &\text{if} \quad s=0 \quad \text{and} \quad [a,b] = [c,d]\,,\\
           \hspace*{0.95cm} -1, \quad &\text{if} \quad s=-1 \quad \text{and} \quad [a,b] = [c,d]\,,\\
          \hspace*{0.95cm}  \quad\! 0, \quad &\text{otherwise}\,.

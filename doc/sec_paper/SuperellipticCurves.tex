@@ -42,14 +42,14 @@
 
   Working over the complex we encounter several multi-valued functions which we will briefly discuss here.  Closely related to superelliptic curves over $\C$ is the complex $m$-th root. Before specifying
   a branch it is a multi-valued function $y^m = x$ that defines an $m$-sheeted Riemann surface, whose only branch points are at $z = 0,\infty$ and they're totally ramified. The corresponding global
-  branch cut can be chosen along the negative real axis $]\!-\infty,0[$. Crossing the branch cut in positive orientation corresponds to multiplication by $\zeta^{-1}$, where $\zeta = \zeta_m
+  branch cut can be chosen along the negative real axis $]\!-\infty,0[$. Crossing the branch cut in positive orientation corresponds to multiplication by $\zeta = \zeta_m
   := e^{\frac{2\pi i }{m}}$ is a primitive $m$-th root of unity. Hence, the local monodromy at $z = 0$ is given by a cyclic permutation $\sigma = (1 \dots m)$. \abstand
  In the case of superelliptic curves given by an affine model $\caff : y^m = \prod_{k = 1}^d (x - x_k)$, indepently of $d$ and $m$, every finite branch point $x_k$ is totally ramified, which
  means the local monodromy is given by a cyclic permutation $\sigma_k \in S_m$. We define a 
  \emph{branch of $\cu$} as a function
   $y(x)$ such that $y(x)^m = f(x)$ for all $x \in \C$. Hence, at every $x$, the branches of $\cu$ only differ by multiplication by a power of $\zeta$. \abstand
   In this paper, we will not impose a global ordering on the sheets of $\cu$. Instead we use locally analytic branches $\yab$ (see \ref{def:yab}) and order them such that moving one sheet up corresponds to the
-  transformation $\yab \mapsto \zeta^{-1}\yab$. For us, encircling a branch point in positive orientation means applying 
+  transformation $\yab \mapsto \zeta\yab$. For us, encircling a branch point in positive orientation means applying 
   the local monodromy to the analytic branches of $\cu$, therefore we can therefore assume that $\sigma_k = \sigma$ for $k = 1,\dots,d$\,. \abstand
   In order to write down explicit and well-defined formulas for integration, we need to fix a \emph{principal value (or branch)} for the argument function and the $m$-th root function.
   For $z \in \C$ we choose $\arg(z) \in \,]\!\!-\pi,\pi]$ and $\sqrt[m]{z} \;( = z\mr )$ such that $\arg(\sqrt[m]{z}) \in \, ]\!\!-\frac{\pi}{m},\frac{\pi}{m}]$\,.
@@ -59,26 +59,26 @@
  
   
   
-  For $a,b \in X$ denote by $[a,b]$ the oriented line segment connecting $a$ and $b$. Consider the affine transformation $x \mapsto \frac{b-a}{2}\left(u+\frac{b+a}{b-a}\right)$, which maps 
+  Consider the affine transformation $x \mapsto \frac{b-a}{2}\left(u+\frac{b+a}{b-a}\right)$, which maps 
   $[a,b]$ to $[-1,1]$ and will appear in the double-exponential integration. \abstand
   We use it to implicitly  define local branches of $\cu$ using the following functions
   \begin{align}\label{def:yab}
   \begin{split}
-   \yab(x) & = \left(\frac{b-a}{2}\right)^{\frac{d}{m}} e^{\frac{\pi i}{m}} \; (1 - u(x)^2)\mr \; \ft_{a,b}(x)\,, \quad \text{with} \\
-   \ft_{a,b}(x) & = \prod_{x_k \ne a,b} (u_{a,b}(x) - u_{a,b}(x_k))\mr \quad \text{and} \\
-   u_{a,b}(x) & = u(x) = \frac{2x-b-a}{b-a}\,.
+   \yab(x) \, & = \, \left(\frac{b-a}{2}\right)^{\frac{d}{m}} e^{\frac{\pi i}{m}} \; (1 - u(x)^2)\mr \; \ft_{a,b}(x)\,, \quad \text{with} \\
+   \ft_{a,b}(u(x)) \, & = \, \prod_{x_k \ne a,b} (u(x) - u(x_k))\mr \quad \text{and} \\
+   u(x) \,& = \, u_{a,b}(x) \,=\, \frac{2x-b-a}{b-a}\,.
    \end{split}
   \end{align}
   where all roots are given by the principal value. Under the condition that $x_k \not\in [a,b]$, the function $u(x)-u(x_k)$ does not cross $]\!\!-\infty,0[$
   for $x \in [a,b]$ and $x_k \ne a,b$. Hence,
-  $\ft_{a,b}$ is a function that is holomorphic and has no zeros in a neighbourhood $V_{a,b}$ of $[a,b]$. \abstand 
+  $\ft_{a,b}(u(x))$ is a function that is holomorphic and has no zeros in a neighbourhood $V_{a,b}$ of $[a,b]$. \abstand 
   Similary, $(1-u(x))^2$ does not cross $]\!\!-\infty,0[$ for $x \in [a,b]$. Therefore, locally
  $y_{a,b}(x)$ is an analytic branch of $\cu$ and can be used for numerical integration of differential forms.
   From our affine equation $\caff$ \eqref{eq:aff_model} it follows that other analytic branches above $V_{a,b}$ are given by
   \begin{align}
       \yab \mapsto \zeta^l \yab, \quad l = 0,\dots,m-1\,.
   \end{align}
-  In our situation, we can assume that moving up $l \in \Z/m\Z$ sheets corresponds to multiplication of $\yab$ by $\zeta^{-l}$\,. 
+  In our situation, we can assume that moving up $l \in \Z/m\Z$ sheets corresponds to multiplication of $\yab$ by $\zeta^l$\,. 
 
   \bigskip
   
@@ -90,13 +90,14 @@
    For simplicity we will identify all cycles on $\cu$ with their classes in $\homo$\,.
    
    \begin{defn}\label{def:elem_cycle}
-   Let $a, b \in X$ be branch points such that $x_k \not\in [a,b]$ for all $x_k \ne a,b$. We define the corresponding \textit{elementary cycle} 
+   Let $a, b \in X$ be branch points such that $x_k \not\in [a,b]$ for all $x_k \ne a,b$, where  $[a,b]$ is the oriented line segment connecting $a$ and $b$.  
+   We define the corresponding \textit{elementary cycle} 
    \begin{align}
-    \cyab = \{ \, (x,\yab(x)) \, \mid \, x \in [a,b] \, \} \cup \{ \,(x,\zeta^{-1} \yab(x)) \, \mid \, x \in [b,a] \, \}
+    \cyab = \{ \, (x,\yab(x)) \, \mid \, x \in [a,b] \, \} \cup \{ \,(x,\zeta \yab(x)) \, \mid \, x \in [b,a] \, \}
    \end{align}
    and, for $l \in \Z/m\Z$, its \textit{shifts}
    \begin{align}
-    \cyab^{(l)} = \{ \, (x,\zeta^{-l}y) \, \mid \, (x,y) \in \cyab \, \}\,. 
+    \cyab^{(l)} = \{ \, (x,\zeta^l y) \, \mid \, (x,y) \in \cyab \, \}\,. 
    \end{align}
     \end{defn}
     

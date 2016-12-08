@@ -4,14 +4,14 @@
 
   \section{Strategy for the period matrix}
 
-  In this section we present our strategy to obtain period matrices $\OC, \OB, \OA$ and $\tau$ as defined in \S \ref{m-subsec:bases_matrices}\,. For the sake
+  In this section we present our strategy to obtain period matrices $\OC, \OA, \OB$ and $\tau$ as defined in \S \ref{m-subsec:bases_matrices}\,. For the sake
   of simplicity,  we briefly assume $\delta = 1$ here. The main ingredients were already described in
   Section \ref{m-sec:se_curves}\,: \abstand We integrate the holomorphic differentials in $\W$ (see \S \ref{m-subsec:diff_forms})
   along the cycles in $C$ (see  \S \ref{m-subsec:cycles_homo}) using double-exponential integration (see \S \ref{m-sec:de_int}), which results in a period matrix (see \S \ref{m-subsec:comp_of_periods})
   \begin{align}
     \OC = \left( \int_{\gamma} \w \right)_{\substack{\w \in \W, \\ \gamma \in C}} \in \C^{g \times 2g}\,.
   \end{align}
-  The matrices $\OB$ and $\OA$ require a symplectic basis of $\homo$\,.
+  The matrices $\OA$ and $\OB$ require a symplectic basis of $\homo$\,.
   So, we compute the intersection pairing between the cycles in $C$, as explained in Section \ref{m-sec:intersections}, which results in an
   intersection matrix $K_C \in \Z^{2g \times 2g}$\,. \abstand
   Applying an algorithm for symplectic reduction (see \S \ref{m-subsec:symp_basis}) to $K_C$, we obtain a unimodular matrix $S \in \Z^{2g \times 2g}$, such that
@@ -20,49 +20,54 @@
    \end{align}
    and finally a small period matrix in the Siegel upper half-space
    \begin{align}
-   \tau = \OB^{-1} \OA \in \mathfrak{H}_g \subset \C^{g \times g}\,.
+   \tau = \OA^{-1} \OB \in \mathfrak{H}_g \subset \C^{g \times g}\,.
   \end{align}
   
   \bigskip
   
   \subsection{Computation of periods}\label{subsec:comp_of_periods}
   
-  The following theorem provides a formula for computing the periods of $\cu$. It related integration of differential forms on the curve to numerical integration in $\C$.
+  The following theorem provides a formula for computing the periods of $\cu$. It relates integration of differential forms on the curve to numerical integration in $\C$.
   Although we only need to integrate holomorphic
   differentials, the statement is true for all differentials in $\WM$\,.
   
   We continue to use the notation from Section \ref{m-sec:se_curves}. 
   
   \begin{thm}\label{thm:periods}
-   Let $\gamma_e^{(l)} \in C$ be a shift of an elementary cycle corresponding to $e = (a,b) \in E$ and $w_{i,j} \in \WM$ a differential. There exist a constant $c \in \C$ 
-   and a holomorphic function $g:]a,b[ \rightarrow \C$
-   that is independent of $l \in \Z/m\Z$, such that
+   Let $\gamma_e^{(l)} \in C$ be a shift of an elementary cycle corresponding to $e = (a,b) \in E$\,. Then, for all differentials $w_{i,j} \in \WM$, we have that
    \begin{align}
-    \int_{\gamma_e^{(l)}} \w_{i,j} = c \cdot \int_a^b g(x)\dx\,.
+    \int_{\gamma_e^{(l)}} \w_{i,j} \; & = \; c_{i,j} \cdot \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}} \, \du \,, \\
+    \intertext{with}
+    c_{i,j} \; & = \; (1-\zeta^{-j}) \; \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}} \,, \\ 
+    \varphi_{i,j} \; & = \;
+    \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{(1-u^2)^{\frac{j}{m}}\ft_{a,b}(u)^j}\,,
    \end{align}
+   where $\varphi_{i,j}$ is independent of $l \in \Z/m\Z$ and holomorphic in a neighbourhood of $[-1,1]$\,.
 
   \end{thm}
   \begin{proof}
-    By Definition \ref{m-def:elem_cycle} we can write $\gamma_e^{(l)} = \gamma_1 + \gamma_2$ with $\gamma_1 = \{ \, (x,\zeta^{-l}\yab(x)) \, \mid \, x \in [a,b] \, \}$ and
-    $\gamma_2 = \{ \, (x,\zeta^{-(l+1)}\yab(x)) \, \mid \, x \in [b,a] \, \}$. We split up the integral and compute
+    By Definition \ref{m-def:elem_cycle} we can write $\gamma_e^{(l)} = \gamma_1 + \gamma_2$ with $\gamma_1 = \{ \, (x,\zeta^l \yab(x)) \, \mid \, x \in [a,b] \, \}$ and
+    $\gamma_2 = \{ \, (x,\zeta^{l+1}\yab(x)) \, \mid \, x \in [b,a] \, \}$. We split up the integral and compute
     \begin{align}\label{eq:thm_periods_1}
-     \int_{\gamma_1} \w_{i,j} \; & = \; \int_{\gamma_1} \frac{x^{i-1}}{y^j} \dx \; = \; \zeta^{lj} \int_a^b \frac{x^{i-1}}{\yab(x)^j} \dx \\ \; & = \; 
-     \zeta^{lj} \left(\frac{b-a}{2}\right)^{i-1-\frac{dj}{m}} e^{-\frac{\pi i j}{m}} 
-     \int_a^b \frac{\left(u(x)+\frac{b+a}{b-a}\right)^{i-1}}{(1-u(x)^2)^{\frac{j}{m}}\ft_{a,b}(x)^j} \dx \quad \text{and} \\
-    \int_{\gamma_2} w_{i,j} \; & = \; - \zeta^j \int_{\gamma_1} w_{i,j}\,.
+     \int_{\gamma_1} \w_{i,j} \; & = \; \int_{\gamma_1} \frac{x^{i-1}}{y^j} \, \dx \; = \; \zeta^{-lj} \int_a^b \frac{x^{i-1}}{\yab(x)^j} \, \dx \\ \; & = \; 
+     \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-1-\frac{dj}{m}} e^{-\frac{\pi i j}{m}} 
+     \int_a^b \frac{\left(u(x)+\frac{b+a}{b-a}\right)^{i-1}}{(1-u(x)^2)^{\frac{j}{m}}\ft_{a,b}(u(x))^j} \, \dx \\
+     \; & = \;   \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}  
+     \int_{-1}^1 \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{(1-u^2)^{\frac{j}{m}}\ft_{a,b}(u)^j} \, \du \quad \text{and} \\
+    \int_{\gamma_2} w_{i,j} \; & = \; - \zeta^{-j} \int_{\gamma_1} w_{i,j}\,.
   \end{align}
-  Hence, we obtain the period as
-  \begin{align}
-   \int_{\gamma_e^{(l)}} \w_{i,j} & =  c \cdot \int_a^b g(x)\dx\,, \quad \text{with} \\
-   g(x) & := \frac{\left(u(x)+\frac{b+a}{b-a}\right)^{i-1}}{(1-u(x)^2)^{\frac{j}{m}}\ft_{a,b}(x)^j} \quad \text{and} \\
-      c & := (1-\zeta^j) \; \zeta^{lj} \left(\frac{b-a}{2}\right)^{i-1-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}\,.
-  \end{align}
-  By our discussion in \S \ref{m-subsec:roots_branches} $g$ is well-defined and holomorphic on $]a,b[$ with the principal value of the $m$-th root.
+%   Hence, we obtain the period as
+%   \begin{align}
+%    \int_{\gamma_e^{(l)}} \w_{i,j} & =  c \cdot \int_a^b g(x)\dx\,, \quad \text{with} \\
+%    \varphi_{i,j}(u) & := \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{(1-u^2)^{\frac{j}{m}}\ft_{a,b}(u)^j} \quad \text{and} \\
+%       c_{i,j,l} & := (1-\zeta^{-j}) \; \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}\,.
+%   \end{align}
+  By our discussion in \S \ref{m-subsec:roots_branches} $\phi_{i,j}$ is well-defined and holomorphic on $]-1,1[$ with the principal value of the $m$-th root.
   \end{proof}
   
-  \begin{coro}
-   The period matrix $\OC = \left( \int_{\gamma} \w \right)_{\substack{\w \in \W, \\ \gamma \in C}}$ can be obtained from computing $d-1$ integrals in $\C$\,. 
-  \end{coro}
+%   \begin{coro}
+%    The period matrix $\OC = \left( \int_{\gamma} \w \right)_{\substack{\w \in \W, \\ \gamma \in C}}$ can be obtained from computing $d-1$ integrals in $\C$\,. 
+%   \end{coro}
 
   \subsection{Symplectic basis}\label{subsec:symp_basis}
   
@@ -74,7 +79,7 @@
     \cite[Theorem 18]{KB2002} to obtain a unimodular matrix $S$ such that
   $$S^T \cdot K_C \cdot S = J, \quad \text{where} \quad J = \begin{pmatrix} 0 & I_g \\ -I_g & 0 \end{pmatrix}\,.$$
   Then, the linear combinations of cycles given by $\OC \cdot S$ correspond to a canonical homology basis, i.e. $( \, \OA \; \OB \, ) = \OC \cdot S$\,.
-  In the case $\delta > 1$, $K_C$ is of dimension $(d-1)(N-1)$, but still has rank $2g$. 
+  In the case $\delta > 1$, $K_C$ is of dimension $(d-1)(m-1)$, but still has rank $2g$. 
   
   The last $\delta-1$ columns of $\OC \cdot S$ will be zero and can be ignored, as they correspond to the dependent cycles
   in $C$ and contribute nothing..
