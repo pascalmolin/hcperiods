@@ -1,16 +1,6 @@
 \documentclass[main.tex]{subfiles}
 
-\DeclareMathOperator\asinh{asinh}
-\renewcommand\d{\mathrm{d}\,}
-\newcommand\set[1]{\left\{#1\right\}}
-\newcommand\abs[1]{\left|#1\right|}
-\newcommand\phiab{\phi_{a,b}}
-\newcommand\fab{\tilde{f_{a,b}}}
-\DeclareUnicodeCharacter{3B1}{\alpha}
-\DeclareUnicodeCharacter{3BB}{\lambda}
-\DeclareUnicodeCharacter{3C4}{\tau}
-\DeclareUnicodeCharacter{3C0}{\pi}
-\DeclareUnicodeCharacter{3C6}{\varphi}
+
 \begin{document}
 
   \section{Double-exponential integration}\label{sec:de_int}
@@ -66,8 +56,8 @@ we obtain a rigorous integration scheme as follows
     With the notations above, for all $D>0$, choose $h$ and $n$ such that
     \begin{equation}
         \begin{cases}
-            h \leq \frac{2πτ}{D + \log(2M_2 B(τ,α) + e^{-D})}\\
-            nh \geq \asinh(\frac{D+\log(\frac{2^{2α+1}M_1}{αλ})}{2αλ})
+            h \le \frac{2πτ}{D + \log(2M_2 B(τ,α) + e^{-D})}\\
+            nh \ge \asinh(\frac{D+\log(\frac{2^{2α+1}M_1}{αλ})}{2αλ})
         \end{cases}
     \end{equation}
     then

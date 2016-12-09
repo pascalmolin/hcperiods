@@ -4,8 +4,8 @@
 
   \section{Strategy for the period matrix}
 
-  In this section we present our strategy to obtain period matrices $\OC, \OA, \OB$ and $\tau$ as defined in \S \ref{m-subsec:bases_matrices}\,. For the sake
-  of simplicity,  we briefly assume $\delta = 1$ here. The main ingredients were already described in
+  In this section we present our strategy to obtain period matrices $\OC, \OA, \OB$ and $\tau$ as defined in \S \ref{m-subsec:bases_matrices}\,. In order to simplify notation, 
+  we briefly assume $\delta = 1$ here. The main ingredients were already described in
   Section \ref{m-sec:se_curves}\,: \abstand We integrate the holomorphic differentials in $\W$ (see \S \ref{m-subsec:diff_forms})
   along the cycles in $C$ (see  \S \ref{m-subsec:cycles_homo}) using double-exponential integration (see \S \ref{m-sec:de_int}), which results in a period matrix (see \S \ref{m-subsec:comp_of_periods})
   \begin{align}
@@ -74,7 +74,7 @@
   For a period matrix $\tau$, we need to integrate along a canonical basis of $\homo$. In Section \ref{m-subsec:cycles_homo}, we chose a generating set $C$ for $\homo$, that is in general not 
   a canonical basis. \abstand We 
   ressolve this by computing the intersection pairing on between the cycles in $C$, as explained in Section \ref{m-sec:intersections}. The resulting intersection matrix $K_C$
-   is a skew-symmetric matrix of dimension $(d-1)(N-1)$ with entries in $\{ 0,\pm 1\}$ of rank $2g$. Hence, in the case $\delta = 1$, we can apply an algorithm 
+   is a skew-symmetric matrix of dimension $(d-1)(m-1)$ with entries in $\{ 0,\pm 1\}$ of rank $2g$. Hence, in the case $\delta = 1$, we can apply an algorithm 
   for symplectic reduction over $\Z$ based on
     \cite[Theorem 18]{KB2002} to obtain a unimodular matrix $S$ such that
   $$S^T \cdot K_C \cdot S = J, \quad \text{where} \quad J = \begin{pmatrix} 0 & I_g \\ -I_g & 0 \end{pmatrix}\,.$$

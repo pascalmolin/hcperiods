@@ -4,21 +4,118 @@
 
   \section{Intersections}\label{sec:intersections}
 
-  Content: - Def. shifting number + Thm. shifting number
-	   - 4 big Lemma's for intersections
-	   - Building the intersection matrix from blocks + algorithm proves rank 2g
-	   - Long proof of Thm. shifting number
+  In \S \ref{m-subsec:cycles_homo} we presented a generating set $C$ for $\homo$\,. The formulas in Theorem \ref{m-thm:intsec_numb} explicitly determine the intersection matrix $K_C$ and
+  the rest of this section is concerned with its proof.
+  
+  \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
+      The intersection numbers of $\cyabl, \cycdk \in C$ are given by the following formulas.
+      \begin{itemize}
+       \item[(i)] If $[a,b] \cap [c,d] = \emptyset$\,, then $\left(\,\cyabl \circ \cycdk\,\right) = 0$, 
+       \item[(ii)] If $[a,b] = [c,d]$\,, then $\left(\,\cyabl \circ \cyab^{(k)}\,\right) = \begin{cases}
+	 +1, \quad \text{if} \quad k = l+1\,, \\
+	 -1, \quad \text{if} \quad k = l-1\,, \\
+	  \quad\! 0, \quad \text{otherwise}\,.
+	\end{cases}$
+      \item[(iii)] If $[a,b] \cap [c,d] = \{x\}$ and $\rho = \arg\left(\frac{b-a}{d-c}\right)$, then
+      \begin{align*}
+       \left(\,\cyabl \circ \cycdk\,\right) = \begin{cases}
+            \hspace*{0.95cm} +1, \quad & \text{if} \quad s+k-l=0 \quad \text{and} \quad (\,x = b = c \quad \text{or} \quad x = a = d\,)\,,\\
+	     \hspace*{0.95cm} -1, \quad &\text{if} \quad s+k-l=1 \quad \text{and} \quad (\,x = b = c \quad \text{or} \quad x = a = d\,)\,,\\
+           -\sgn(\rho), \quad & \text{if} \quad s+k-l=0 \quad \text{and} \quad (\,x = a = c \quad \text{or} \quad x = b = d\,)\,,\\
+           \quad \sgn(\rho), \quad & \text{if} \quad s+k-l=\sgn(\rho) \quad \text{and} \quad (\,x = a = c \quad \text{or} \quad x = b = d\,)\,,\\
+         \hspace*{0.95cm}  \quad\! 0, \quad &\text{otherwise}\,,
+        \end{cases}
+       \end{align*}
+       where  
+       \begin{align*}
+       s = \frac{1}{2\pi} \left( \theta +  m \cdot \arg \left( \frac{(d-c)^{\frac{d}{m}} \ft_{c,d}(x)}{(b-a)^{\frac{d}{m}} \ft_{a,b}(x)} \right) \right) \in \Z/m\Z
+       \end{align*}
+       and 
+       \begin{align*}
+        \theta = \begin{cases}
+                              \pi+\rho, \quad \text{if} \quad (\,x = b = c \quad \text{or} \quad x = a = d\,)\,,\\
+                              \hspace{0.7cm} \rho, \quad \text{if} \quad (\,x = a = c \quad \text{or} \quad x = b = d\,)\,.
+                             \end{cases}
+       \end{align*}
+      \end{itemize}
+ \end{thm}
 
-	In this section we explain how to compute the intersection numbers between the cycles in $C$. 
+  \begin{proof}\let\qed\relax
+   \begin{itemize}
+    \item[(i)] $P = (x,y) \in \cyabl \cap \cycdk \,  \Rightarrow \, x \in [a,b] \cap [c,d]$\,.
+   \end{itemize}
+  \end{proof}
+  
+  In order to prove $(ii)$ and $(iii)$ we have to introduce some more machinery. Recall from \S \ref{m-subsec:roots_branches} that $\yab$ and $\ycd$ are analytic branches of $\cu$ on the open sets
+  $\vab$ and $\vcd$ respectively. \abstandl
+  We choose a common point $x \in V = \vab \cap \vcd$ and determine $s  = s(\cyab,\cycd,x) \in \Z/m\Z$  such that
+  \begin{align}
+	  \frac{\ycd(x)}{\yab(x)} = \zeta^s \,.
+  \end{align}
+  We say $s  = s(\cyab,\cycd,x)$ is the \emph{shfiting number of $\cyab$ and $\cycd$ at $x$}.
+  This definition naturally extends to shifts of elementary cycles via
+\begin{align}
+	 \frac{\zeta^k\ycd(x)}{\zeta^l\yab(x)} = \zeta^{s+k-l} \quad \imp \quad s(\cyabl,\cycdk,x) = s(\cyab,\cycd,x) + k - l\,.
+\end{align}
+	Hence, everything can be computed using only elementary cycles. \abstandl
+	Within our setting, the shifting number $s=s(\cyab,\cycd,x)$  can be interpreted as '$\cyab$ running $s$ sheets above $\cycd$ at the point $x$'. 
+	Due to $\yab$ and $\yab$ being analytic, the shifting number is constant on connected open subsets of $V$. Moreover, the intersection number must be independent of the choice of that subset. \abstandl
+	Thus,
+	this information can be used to determine
+	the intersection number graphically by continously deforming the cycles such that $(x,\yab(x)) \in \cyab$ and $(x,\ycd(x)) \in \cycd$.
 	
-	\begin{defn}\label{def:shift_numb}
-	Let $\cyab, \cycd \in C$ be elementary cycles and let $V := V_{a,b} \cap V_{c,d}$. Then, $\yab$ and $\yab$ are analytic on $V$ and for all $x$
-	$s \in \Z/m\Z$ such that
-	\begin{align}
-	 \frac{\yab(x)}{\ycd(x)} = \zeta^s \quad \text{for all} \; x \in V\,.
-	\end{align}
-	\end{defn}
+   \begin{proof}(continued)\let\qed\relax
+   \begin{itemize}
+    \item[(ii)] Here, we have that $[a,b] = [c,d]$. Hence, we can take $x = \frac{b+a}{2} \in \; ]a,b[ \; \subset V = \vab$. We obtain the shifting number as
+    \begin{align*}
+      s(\cyabl,\cyab^{(k)},x) = s(\cyab,\cyab,x) + k - l = k - l\,.
+    \end{align*}
+    Obviously, we have that $\left(\,\cyabl \circ \cyab^{(k)}\,\right) = 0$ for $k - l \not\in \{ 0, \pm 1\}$\,. For the remaining cases, see Figure \ref{m-fig:int_self_shift} below.
+    Illustrated are the cycles $\cyabl$ (black),
+      $\cyab^{(l+1)}$ (red) and $\cyab^{(l-1)}$ (green). 
+    \begin{figure}[H]
+      \begin{center}
+	  \input{images/tikz_pic_3.tex}
+      \end{center}
+    \caption{Intersections of self-shifts.}
+    \label{fig:int_self_shift}
+\end{figure}
+   \item[(iii)]
+    
+  In the case $[a,b] \cap [c,d] = \{ x \}$, we cannot compute the shifting number at $x$ directly, since $x \not\in V = \vab \cap \vab$\,. Instead, we choose a point $x_0$ on the bissectrix of 
+  $[a,b]$ and $[c,d]$, close enough to $x$, such that $[x_0,x[ \subset V$. We compute the shifting number $s = s(\cyab,\cycd,x_0)$\,:
+  \begin{align}
+   \zeta^s = \frac{\ycd(x_0)}{\yab(x_0)} = \frac{(1- u_{c,d}(x_0)^2)\mr (d-c)^{\frac{d}{m}}\fcd(x_0) }{(1-u_{a,b}(x_0)^2)\mr (b-a)^{\frac{d}{m}}\fab(x_0)} \\
+   \Rightarrow \frac{2\pi s}{m} = \arg \left( \frac{(1- u_{c,d}(x_0)^2)\mr}{(1-u_{a,b}(x_0)^2)\mr} \right)
+  \end{align}
 
+  
+  
+	  
+	
+	\end{itemize}
+  \end{proof}
+	
+	
+
+% 	\begin{defn}\label{def:shift_numb}
+% 	Let $\cyab, \cycd \in C$ be elementary cycles and let $V = V_{a,b} \cap V_{c,d}$\,. Then, $\yab$ and $\ycd$ are analytic functions with no zeros on $V$. For each $x \in V$ there
+% 	exists an $s \in \Z/m\Z$ such that
+% 	\begin{align}
+% 	  \frac{\ycd(x)}{\yab(x)} = \zeta^s \,.
+% 	\end{align}
+% 	We say $s  = s(\cyab,\cycd,x)$ is the \emph{shfiting number of $\cyab$ and $\cycd$ at $x$}.
+% 	\end{defn}
+% 	This definition naturally extends to shifts of elementary cycles via
+% 	\begin{align}
+% 	  \frac{\zeta^k\ycd(x)}{\zeta^l\yab(x)} = \zeta^{s+k-l} \quad \imp \quad s(\cyabl,\cycdk,x) = s(\cyab,\cycd,x) + k - l\,.
+% 	\end{align}
+	
+	
+	Note that the set $V$ is not connected. It is split up into two disjoint open subsets by the local branch cuts. Although the shifting number is not constant on $V$, it is constant on its
+	connected components. 
+	
+	However, computing the shifting number for \emph{one} point $x \in V$ is sufficient to determine all the intersections $\left( \, \cyabl \circ \cycdk \,\right)$.
 	 
 	    We can compute the shiftung number for all elementary cycles $\cyab, \cycd \in C$:
     
@@ -47,24 +144,20 @@
 %      $\beta_0$ runs $s$ sheets above $\alpha_0$. We will call $s = s(\alpha,\beta)$ the \textit{shifting number} of $\alpha$ and $\beta$ at $p$.
 %     If $p$ is a branch point, we choose homologous paths whose $x$-projections intersect at a non-branch point and take a limit.
     
-    \newpage
-    \begin{thm}\label{thm:intsec_numb}
-      Let $\cyab$, $\cycd$ be elementary cycles, $\tau = \arg\left(\frac{d-c}{b-a}\right)$ and let $s=s(\cyab,\cycd,x)$ be the
-     shifting number at a point $x$. Then the intersection numbers are given by
-      \begin{align}
-       \begin{split}
-        (\,\cyab^{(l)} \circ \cycd^{(k)}\,) = 
-        \begin{cases}
-            \hspace*{0.95cm} -1, \quad & \text{if} \quad s=0 \quad \text{and} \quad (\,x = b = c \quad \text{or} \quad x = a = d\,)\,,\\
-	     \hspace*{0.95cm} +1, \quad &\text{if} \quad s=-1 \quad \text{and} \quad (\,x = b = c \quad \text{or} \quad x = a = d\,)\,,\\
-          \quad\! \sgn(\tau), \quad & \text{if} \quad s=0 \quad \text{and} \quad (\,x = a = c \quad \text{or} \quad x = b = d\,)\,,\\
-            -\sgn(\tau), \quad & \text{if} \quad s=-\sgn(\tau) \quad \text{and} \quad (\,x = a = c \quad \text{or} \quad x = b = d\,)\,,\\
-          \hspace*{0.95cm} +1, \quad &\text{if} \quad s=0 \quad \text{and} \quad [a,b] = [c,d]\,,\\
-          \hspace*{0.95cm} -1, \quad &\text{if} \quad s=-1 \quad \text{and} \quad [a,b] = [c,d]\,,\\
-         \hspace*{0.95cm}  \quad\! 0, \quad &\text{otherwise}\,.
-        \end{cases}
-       \end{split}
-      \end{align}
-    \end{thm}
+    
+
+%        \begin{split}
+%         (\,\cyabl \circ \cycdk\,) = 
+%         \begin{cases}
+%             \hspace*{0.95cm} -1, \quad & \text{if} \quad s=0 \quad \text{and} \quad (\,x = b = c \quad \text{or} \quad x = a = d\,)\,,\\
+% 	     \hspace*{0.95cm} +1, \quad &\text{if} \quad s=-1 \quad \text{and} \quad (\,x = b = c \quad \text{or} \quad x = a = d\,)\,,\\
+%           \quad\! \sgn(\tau), \quad & \text{if} \quad s=0 \quad \text{and} \quad (\,x = a = c \quad \text{or} \quad x = b = d\,)\,,\\
+%             -\sgn(\tau), \quad & \text{if} \quad s=-\sgn(\tau) \quad \text{and} \quad (\,x = a = c \quad \text{or} \quad x = b = d\,)\,,\\
+%           \hspace*{0.95cm} +1, \quad &\text{if} \quad s=1 \quad \text{and} \quad [a,b] = [c,d]\,,\\
+%           \hspace*{0.95cm} -1, \quad &\text{if} \quad s=-1 \quad \text{and} \quad [a,b] = [c,d]\,,\\
+%          \hspace*{0.95cm}  \quad\! 0, \quad &\text{otherwise}\,.
+%         \end{cases}
+%        \end{split}
+%       \end{align}
 	   
 \end{document}
