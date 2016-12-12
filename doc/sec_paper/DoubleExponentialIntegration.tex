@@ -1,6 +1,5 @@
 \documentclass[main.tex]{subfiles}
 
-
 \begin{document}
 
   \section{Double-exponential integration}\label{sec:de_int}
@@ -185,7 +184,8 @@ In the case of hyperelliptic curves, we have $α=\frac12$ and the integral
 \begin{equation}
     \int_{-1}^1\frac{\phiab(u)}{\sqrt{1-u^2}}\du
 \end{equation}
-can be efficiently handled by Gaussian integration with weight $\sqrt{1-u^2}$,
+can be efficiently handled by Gaussian integration with weight
+$\sqrt{1-u^2}^{-1}$,
 for which the corresponding orthogonal polynomials are 
 Chebychev polynomials.
 
@@ -205,8 +205,44 @@ since their roots are explicitly given as cosine functions.
     with constant weights $w_k = w =\frac{π}n$ and nodes $u_k = \cos(\frac{2k-1}{2n}π)$.
 \end{thm}
 
-Now $\phiab(u)=\frac{P(u)}{\sqrt{Q(u)}}$ for explicit polynomials
-$P,Q$, so the $2n$-th derivative can be
+Moreover, very nice estimates can by obtained by applying the residue
+theorem on an ellipse $ε_r$ of the form
+\begin{equation}
+    ε_r = \set{z, \abs{z-1}+\abs{z+1} = 2r }
+\end{equation}
+Its foci are $\pm1$ and $r>1$ is the sum of half axis.
+
+\begin{thm}[\cite{ChawlaJain68},thm 5]
+    Let $r>1$ such that $g$ is holomorphic on $ε_r$. Then
+    \begin{equation}
+        \abs{E(n)}\leq \frac{2πM(r)}{r^{2n}-1}
+    \end{equation}
+    where $M(r)=\max\set{\abs{f(z)},z\in ε_r}$.
+\end{thm}
+
+Now $\phiab(u)=\frac{P(u)}{\sqrt{Q(u)}}$ for explicitely factored
+polynomials
+$P(u)=(u-c)^k$ and $Q(u)=\prod(u-u_i)$, and one can explicitely
+compute the distance $d_r(u_i)$ from $u_i$ to the ellipse $ε_r$
+by Newton iteration, so that the parameters can be chosen
+as follows
+\begin{prop}
+    Let $r>1$ be such that $2r<\abs{u_i-1}+\abs{u_i+1}$ for all
+    roots $u_i$ of $Q$, and let
+    \begin{equation}
+        M(r) =  \frac{(r+c)^k}{\sqrt{\prod d_r(u_i)} }
+    \end{equation}
+    then $E(n) \leq e^{-D}$ for all
+    \begin{equation}
+        n \geq \frac{D+\log(2πM(r))+1}{2\log(r)}
+    \end{equation}
+\end{prop}
+
+More details on the choice of $r$ and the computation of $M(r)$
+are given in section \ref{choice_r_ellipse}.
+
+\iffalse
+the $2n$-th derivative can be
 estimated quite precisely by Cauchy formula.
 
 \newcommand{\rmax}{r_{\mathrm{max}}}
@@ -248,7 +284,6 @@ We therefore consider this value of $λ$, so that
     (1+\frac{2n+1}m)^m(1+\frac{m}{2n+1})^{2n+1}(2\rmax)^{-2n-1}
 \end{equation}
 
-\iffalse
   \begin{align}
       \sinh(x+iy) &= \sinh x\cos y+i\cosh x\sin y\\
       \cosh(x+iy) &= \cosh x\cos y+i\sinh x\sin y
