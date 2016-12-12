@@ -1,0 +1,61 @@
+\begin{tikzpicture}
+
+  \draw (-3.6,2) node {$a$};  \draw (0,2) node {$b$};  \draw (1.8,5.117) node {$d$}; 
+  
+  
+% Intersections
+    \draw (-0.75,4.25) node[cross=3pt,black,rotate=80]{};
+    \draw (-1,4.5) node {$-1$};    
+      \draw (-0.35,0.606) node[cross=3pt,black,rotate=60]{};
+    \draw (0.0,0.5) node {$+1$}; 
+
+% Sheet 3
+  \filldraw [black] (-3.6,8) circle (0.8pt); 
+  \filldraw [black] (0,8) circle (0.8pt);   
+  \filldraw [black] (1.8,11.117) circle (0.8pt); 
+  \draw [dashed] (-4.3,8) -- (-3.6,8); 
+  \draw [dashed] (1.8,11.117) -- (2.15,11.723);
+  \draw [dashed] (0,8) -- (0.5,7.134); 
+  \draw [green] (1.95,11.377) .. controls (0.5,12) and (1.5,8.5) .. (0.35,7.4) [halfarrow1];
+
+  
+  
+% Sheet 2
+  \filldraw [black] (-3.6,4) circle (0.8pt); 
+  \filldraw [black] (0,4) circle (0.8pt);   
+  \filldraw [black] (1.8,7.117) circle (0.8pt); 
+  \draw [dashed] (-4.3,4) -- (-3.6,4); 
+  \draw [dashed] (1.8,7.117) -- (2.15,7.723);
+  \draw [dashed] (0,4) -- (0.5,3.134); 
+  \draw (-3.9,4) .. controls (-2.5,3) and (0.8,5.5) .. (0.18,3.7) [halfarrow2];
+  \draw [green] (1.95,7.377) .. controls (2,6.5) and (2,5.5) .. (-0.35,4.606) [halfarrow2];
+  \draw [green] (-0.35,4.606) arc(110:310:0.7cm) [halfarrow2];
+  \draw [gray] (1.95,7.377) .. controls (0.5,8) and (1.5,4.5) .. (0.35,3.4) [halfarrow1];
+ 
+ 
+% Sheet 1
+\filldraw [black] (-3.6,0) circle (0.8pt); 
+\filldraw [black] (0,0) circle (0.8pt);   
+\filldraw [black] (1.8,3.117) circle (0.8pt); 
+% \filldraw [black] (-0.35,0.606) circle (0.8pt);
+    \draw [dashed] (-4.3,0) -- (-3.6,0);  
+    \draw [dashed] (1.8,3.117) -- (2.15,3.723); 
+    \draw [dashed] (0,0) -- (0.5,-0.866);
+    \draw (-3.9,0) .. controls (-3,0.5) and (0.2,1.5) .. (-0.35,0.606) [halfarrow1];
+    \draw [gray] (1.95,3.377) .. controls (2.8,3) and (2,1.5) .. (-0.35,0.606) [halfarrow2];
+    \draw (-0.35,0.606) arc(150:270:0.6cm) [halfarrow1];
+        \draw [gray] (-0.35,0.606) arc(110:310:0.7cm) [halfarrow2];
+      \draw [blue] (1.95,3.377) .. controls (0.5,4) and (1.5,0.5) .. (0.35,-0.6) [halfarrow1];
+
+
+% Sheet 0
+\filldraw [black] (-3.6,-4) circle (0.8pt); 
+\filldraw [black] (0,-4) circle (0.8pt);   
+\filldraw [black] (1.8,-0.883) circle (0.8pt); 
+    \draw [dashed] (-4.3,-4) -- (-3.6,-4);  
+    \draw [dashed] (1.8,-0.883) -- (2.15,-0.277); 
+    \draw [dashed] (0,-4) -- (0.5,-4.866);
+    \draw [blue] (-0.35,-3.394) arc(110:310:0.7cm) [halfarrow2];
+    \draw [blue] (1.95,-0.623) .. controls (2,-1.5) and (2,-2.5) .. (-0.35,-3.394) [halfarrow2];
+ 
+\end{tikzpicture}
