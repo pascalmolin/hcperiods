@@ -5,11 +5,72 @@
   \section{The Abel-Jacobi map}
 
   \subsection{Definition}
-  
-    Definition AJM, AJ-Thm.
-    
-  \subsection{Explicit bases and standard matrices}\label{subsec:bases_matrices}
-  
-    Def. period matrix, canonical homology, dual basis of differentials, $\OC,\OA,\OB,\tau$.
-  
+
+  Let $\cu$ be a smooth irreducible curve of genus $g$. Its space
+  of holomorphic differentials $\hd$ has dimension $g$, let us fix
+  a basis $ω_1,\dots ω_g$.
+
+  For any two points $P_0,P$ we can 
+  consider the integral $\int_{P_0}^Pω_j\in\C^g$ but its value
+  depends on the chosen path from $P_0$ to $P$.
+
+  In fact the integral is defined up to homology on the path,
+  so we consider the {\em period lattice} of $\cu$
+  \begin{equation}
+      \Lambda = \set{\int_γ ω_i, γ\in\homo} \subset\C^g
+  \end{equation}
+  where $\homo(\cu,\Z)\simeq\Z^{2g}$ is the first homology group
+  of the curve.
+
+  Now the integral
+  \begin{equation}
+      P \mapsto \int_{P_0}^P ω_i \in \C^g/\Lambda
+  \end{equation}
+  is well defined, and the definition can be extended
+  by linearity to the group $D^0(\cu)$ of zero degree divisors.
+
+  The Abel-Jacobi theorem states that one abtains a
+  surjective map %to the torus $\C^g/\Lambda$ and
+  whose kernel
+  is formed by divisors of functions, so that the integration
+  provides an explicit isomorphism
+  \begin{equation}
+      \AJ:\left\{\begin{array}{ccc}
+              \Jac = \div^0/P^0 &\to &\C^g/\Lambda \\
+              \sum_k [Q_k-P_k] &\mapsto & \sum_k \int_{P_k}^{Q_k} \omega_j \mod \Lambda
+  \end{array}\right.
+  \end{equation}
+  between the Jacobian variety and the complex torus.
+
+  \subsection{Explicit basis and standard matrices}\label{subsec:bases_matrices}
+
+  %There exist a skew-symmetric intersection product on paths
+  Let us choose a symplectic basis of $\homo$, that is two
+  families of loops $α_i$, $β_j$ for $1\leq i,j\leq g$ such that
+  the intersections
+  \begin{equation}
+      α_i\cdot β_j = \delta_{i,j}
+  \end{equation}
+  the other intersections being all zero. 
+
+  We define the period matrices
+  \begin{equation}
+      \OA = \left(\int_{α_i}ω_j\right)_{1\leq i,j\leq g}
+      \text{ and }
+      \OB = \left(\int_{β_i}ω_j\right)_{1\leq i,j\leq g}
+  \end{equation}
+  and call {\em big period matrix} the matrix
+  \begin{equation}
+      \Omega = (\OA,\OB)
+  \end{equation}
+  such that $\Lambda = \Omega\Z^{2g}$.
+
+  If one takes as basis of differentials the dual basis of
+  the loops $α_i$ the matrix becomes
+  \begin{equation}
+      \OA^{-1}\Omega = (I_g,\tau)
+  \end{equation}
+  where $\tau = \OA^{-1}\OB$ is in the Siegel space of
+  symmetric matrices with positive definite imaginary part.
+
 \end{document}
