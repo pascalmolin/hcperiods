@@ -5,7 +5,7 @@
   \section{Intersections}\label{sec:intersections}
 
   In \S \ref{m-subsec:cycles_homo} we presented a generating set $C$ for $\homo$\,. The formulas in Theorem \ref{m-thm:intsec_numb} explicitly determine the intersection matrix $K_C$ and
-  the rest of the section is concerned with its proof.
+  the rest of this section is concerned with its proof.
   
   \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
       The intersection numbers of $\cyabl, \cycdk \in C$ are given by the following formulas.
@@ -19,11 +19,11 @@
       \item[(iii)] If $[a,b] \cap [c,d] = \{x_0\}$ and $\rho = \arg\left(\frac{b-a}{d-c}\right)$, then
       \begin{align*}
        \left(\,\cyabl \circ \cycdk\,\right) = \begin{cases}
-            \hspace*{0.95cm} +1, \quad  \text{if} \quad s+k-l=0 \quad \text{and} \quad (\,x_0 = b = c \quad \text{or} \quad x_0 = a = d\,)\,,\\
-	     \hspace*{0.95cm} -1, \quad \text{if} \quad s+k-l=1 \quad \text{and} \quad (\,x_0 = b = c \quad \text{or} \quad x_0 = a = d\,)\,,\\
-           -\sgn(\rho), \quad  \text{if} \quad s+k-l=0 \quad \text{and} \quad (\,x_0 = a = c \quad \text{or} \quad x_0 = b = d\,)\,,\\
-           \quad \sgn(\rho), \quad  \text{if} \quad s+k-l=\sgn(\rho) \; \text{and} \; (\,x_0 = a = c \;\; \text{or} \;\; x_0 = b = d\,)\,,\\
-         \hspace*{0.95cm}  \quad\! 0, \quad \text{otherwise}\,,
+            \hspace*{0.95cm} +1, \quad & \text{if} \quad s+k-l=0 \quad \text{and} \quad (\,x_0 = b = c \quad \text{or} \quad x_0 = a = d\,)\,,\\
+	     \hspace*{0.95cm} -1, \quad &\text{if} \quad s+k-l=1 \quad \text{and} \quad (\,x_0 = b = c \quad \text{or} \quad x_0 = a = d\,)\,,\\
+           -\sgn(\rho), \quad & \text{if} \quad s+k-l=0 \quad \text{and} \quad (\,x_0 = a = c \quad \text{or} \quad x_0 = b = d\,)\,,\\
+           \quad \sgn(\rho), \quad & \text{if} \quad s+k-l=\sgn(\rho) \quad \text{and} \quad (\,x_0 = a = c \quad \text{or} \quad x_0 = b = d\,)\,,\\
+         \hspace*{0.95cm}  \quad\! 0, \quad &\text{otherwise}\,,
         \end{cases}
        \end{align*}
        where  
@@ -42,11 +42,11 @@
 
   \begin{proof}\let\qed\relax
    \begin{itemize}
-    \item[($i$)] $P = (x,y) \in \cyabl \cap \cycdk \,  \Rightarrow \, x \in [a,b] \cap [c,d]$\,.
+    \item[(i)] $P = (x,y) \in \cyabl \cap \cycdk \,  \Rightarrow \, x \in [a,b] \cap [c,d]$\,.
    \end{itemize}
   \end{proof}
   
-  In order to prove ($ii$) and ($iii$) we have to introduce some more machinery. Recall from \S \ref{m-subsec:roots_branches} that $\yab$ and $\ycd$ are analytic branches of $\cu$ on the open sets
+  In order to prove $(ii)$ and $(iii)$ we have to introduce some more machinery. Recall from \S \ref{m-subsec:roots_branches} that $\yab$ and $\ycd$ are analytic branches of $\cu$ on the open sets
   $\vab$ and $\vcd$ respectively. \abstandl
   We choose a common point $x \in V = \vab \cap \vcd$ and determine $s  = s(\cyab,\cycd,x) \in \Z/m\Z$  such that
   \begin{align}
@@ -54,7 +54,7 @@
   \end{align}
   We say $s  = s(\cyab,\cycd,x)$ is the \emph{shfiting number of $\cyab$ and $\cycd$ at $x$}.
   This definition naturally extends to shifts of elementary cycles via
-\begin{align}\label{eq:shift_numb_rel}
+\begin{align}
 	 \frac{\zeta^k\ycd(x)}{\zeta^l\yab(x)} = \zeta^{s+k-l} \quad \imp \quad s(\cyabl,\cycdk,x) = s(\cyab,\cycd,x) + k - l\,.
 \end{align}
 	Hence, everything can be computed using only elementary cycles. \abstandl
@@ -64,9 +64,9 @@
 	this information can be used to determine
 	the intersection number graphically by continously deforming the cycles such that $(x,\yab(x)) \in \cyab$ and $(x,\ycd(x)) \in \cycd$.
 	
-   \begin{proof}(continued)
+   \begin{proof}(continued)\let\qed\relax
    \begin{itemize}
-    \item[($ii$)] Here, we have that $[a,b] = [c,d]$. Hence, we can take $x = \frac{b+a}{2} \in \; ]a,b[ \; \subset V = \vab$. We obtain the shifting number as
+    \item[(ii)] Here, we have that $[a,b] = [c,d]$. Hence, we can take $x = \frac{b+a}{2} \in \; ]a,b[ \; \subset V = \vab$. We obtain the shifting number as
     \begin{align*}
       s(\cyabl,\cyab^{(k)},x) = s(\cyab,\cyab,x) + k - l = k - l\,.
     \end{align*}
@@ -80,7 +80,8 @@
     \caption{Intersections of self-shifts.}
     \label{fig:int_self_shift}
 \end{figure}
-   \item[($iii$)]
+   \item[(iii)]
+    
   In the case $[a,b] \cap [c,d] = \{ x_0 \}$ we cannot compute the shifting number at $x_0$ directly, since $x_0 \not\in V = \vab \cap \vcd$\,. Instead, we choose a point $\xt$ on the bissectrix of 
   $[a,b]$ and $[c,d]$, close enough to $x_0$, such that $[\xt,x_0[ \, \subset \, V$. Then, for all $x \in [\xt,x_0[$ we compute the shifting number $s = s(\cyab,\cycd,x)$ as
   \begin{align}
@@ -93,16 +94,16 @@
   \begin{align}
    \theta = \lim_{x \rightarrow x_0} \arg \left( \frac{(1- \ucd(x)^2)}{(1-\uab(x)^2)} \right)
   \end{align}
-  we obtain equation \eqref{m-eq:shift_numb}. In any of the cases, this limit exists and it depends only on the choice of $\xt$\,. We will now proof ($iii$) for one of these cases.
+  we obtain equation \eqref{m-eq:shift_numb}. In any of the cases, this limit exists and it depends only on the choice of $\xt$\,. We will now proof (iii) for one of these cases.
   
   \begin{center}
    \underline{Case: $x_0 = b = c$}
   \end{center}
-  As you can see in Figure \ref{m-fig:set_v} the set $V$ is not connected, but the disjoint union of two open sets that are seperated by the local branch cuts. Here, we choose $\xt$ on the upper bissectrix.
+  As you can see in Figure \ref{m-fig:set_v} the set $V$ is not connected, but the disjoint union. Here, we choose $\xt$ on the upper bissectrix (although the lower would work as well).
    \begin{figure}[H]
       \begin{center}
 	  \input{images/tikz_pic_4.tex}
-      \end{center}x
+      \end{center}
     \caption{The set $V = \vab \cap \vbd$.}
     \label{fig:set_v}
 \end{figure}
@@ -111,33 +112,18 @@
    & \arg (1+\ubd(x)) = \frac{\pi+\rho}{2} \quad \text{for all} \; x \in [\xt,x_0[\,,\\
    & \arg (1-\uab(x)) = -\frac{\pi+\rho}{2} \quad \text{for all} \; x \in [\xt,x_0[\,,\\
    & \arg (1-\ubd(x_0)) = 0\,,\\ 
-   & \arg (1+\uab(x_0))= 0\,,
+   & \arg (1+\uab(x_0))= 0\,
   \end{align*}
   and therefore 
   \begin{align*}
-   \theta = \frac{\pi+\rho}{2} - \left(-\frac{\pi+\rho}{2}\right) = \pi + \rho\,.
+   \theta = \frac{\pi+\rho}{2} - (-\frac{\pi+\rho}{2}) = \pi + \rho\,.
   \end{align*}
-  Assuming that the shifting number $s=s(\cyab,\cycd,\xt)$ is computed as above, we can now determine the intersections graphically. \abstandl
-  As before, the only interesting cases
-  are $s \in \{0,\pm 1\}$\,. Figure \ref{m-fig:int_b=c} displays the cycles $\cyab$ (black) and $\cycd$ in green ($s=1$), gray ($s=0$) and red ($s=-1$). 
-  We can read off the intersection numbers
-  \begin{align*}
-    \left(\,\cyab \circ \cycd\,\right) = \begin{cases}
-                                          +1, \quad & \text{if} \quad s=0\,,\\
-                                          -1, \quad & \text{if} \quad s=1\,,\\
-                                          \quad\!0, \quad & \text{otherwise}\,.
-                                         \end{cases}
-  \end{align*}
-  The relation \eqref{m-eq:shift_numb_rel} extends this to $\left(\,\cyabl \circ \cycdk\,\right)$ as claimed. 
-  \begin{figure}[H]
-      \begin{center}
-	  \input{images/tikz_pic_5.tex}
-      \end{center}
-    \caption{Intersections for $b=c$ and $s \in \{1,0,-1\}$\,.}
-    \label{fig:int_b=c}
-\end{figure}
+
+  
+  
+  
+	
 	\end{itemize}
-	\todo Other cases?
   \end{proof}
 	
 	

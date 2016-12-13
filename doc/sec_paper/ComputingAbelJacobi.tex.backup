@@ -41,42 +41,24 @@
   
   \subsection{From branch to regular point}\label{subsec:ajm_finite}
   
-   Let $P = (x_P,y_P) \in \cu$ be a finite regular point and $a \in X$ be a branch point such that $x_k \not\in [a,x_P]$ for all $x_k \ne a$\,.
+   Let $P = (x,y) \in \cu$ be a regular point and $a \in X$ be a branch point such that $x_k \not\in [a,x]$ for all $x_k \ne a$.
   
-  As in \S \ref{m-subsec:roots_branches} we define a local branch of $\cu$ via the functions
+  As in \S \ref{m-refsubsec:roots_branches} a local branch of $\cu$ via the function functions ...
   \begin{align}\label{def:yax}
   \begin{split}
-   y_{a,x_P}(x) \, & = \, \left(\frac{x_P-a}{2}\right)^{\frac{d}{m}} \; (1 + u(x))^{\frac{j}{m}} \; \ft_{a,x_P}(u(x))\,, \quad \text{with} \\
-   \ft_{a,x_P}(u(x)) \, & = \, \prod_{x_k \ne a} (u(x) - u(x_k))\mr \quad \text{and} \\
-   u(x) \,& = \, u_{a,x_P}(x) \,=\, \frac{2x-x_P-a}{x_P-a}\,.
+   \yab(x) \, & = \, \left(\frac{b-a}{2}\right)^{\frac{d}{m}} e^{\frac{\pi i}{m}} \; (1 - u(x)^2)\mr \; \ft_{a,b}(x)\,, \quad \text{with} \\
+   \ft_{a,b}(u(x)) \, & = \, \prod_{x_k \ne a,b} (u(x) - u(x_k))\mr \quad \text{and} \\
+   u(x) \,& = \, u_{a,b}(x) \,=\, \frac{2x-b-a}{b-a}\,.
    \end{split}
   \end{align}
-  Now $y_{a,x_P}(x)$ is a branch of $\cu$ that is holomorphic in a neighbourhood of $]a,x_P]$\,.
-  
-  Define a path
-  \begin{align*}
-   \gamma_{a,x_P} = \{ \, (x,y_{a,x_P}(x)) \, \mid \, x \in [a,x_P] \, \}\,.
-  \end{align*}
-  Now, we can compute a \emph{shifting number} at $x=x_P$
-  \begin{align*}
-   \zeta^s & = \frac{y_P}{y_{a,x_P}(x_P)} = \frac{y_P}{\left(\frac{x_P-a}{2}\right)^{\frac{d}{m}} 2\mr \ft_{a,x_P}(x_P)} \\
-   \Rightarrow s & = \frac{m}{2\pi} \arg\left(  \frac{y_P}{ (x_P-a)^{\frac{d}{m}} \ft_{a,x_P}(x_P)} \right)
-  \end{align*}
-  and define a smooth path between $P_a$ and $P$ on $\cu$ by
-  \begin{align*}
-   \gamma_{P_a,P} = \{ \, (x, \zeta^s y_{a,x_P}(x)) \, \mid \, x \in [a,x_P] \, \}\,.
-  \end{align*}
-
-
-  
   \begin{thm}\label{thm:ajm_finite_int}
-  Let $\w_{i,j} \in \WM$\,. With notation as above we have
+  
  \begin{align}\label{eq:aj_int}
   \begin{split}
-       \int_{P_a}^P \w_{i,j} & = \left(\frac{x_P-a}{2}\right)^{i-\frac{dj}{m}} \zeta^{-js} \int_{-1}^1 
-      \frac{\left(u + \frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}} \ft_{a,x_P}(u)^j} \, \du\,.
-%      \tilde{f}_{a,x_P}(u) & = \prod_{x_k \ne a} ( u - u_{a,x_P}(x_k) )\mr\,, \\
-%      s & = \frac{m}{2\pi}  \arg \left( y_P \cdot (x_P-a)^{-\frac{d}{m}} \right)\,.
+       \int_{(a,0)}^P \w_{i,j} & = \left(\frac{x_P-a}{2}\right)^{i-\frac{dj}{m}} \zeta^{-js} \int_{-1}^1 
+      \frac{\left(u + \frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}} \ft_{a,x_P}(u)^j} \, \du \quad \text{with} \\
+     \tilde{f}_{a,x_P}(u) & = \prod_{x_k \ne a} ( u - u_{a,x_P}(x_k) )\mr\,, \\
+     s & = \frac{m}{2\pi}  \arg \left( y_P \cdot (x_P-a)^{-\frac{d}{m}} \right)\,.
    \end{split}
    \end{align}
   \end{thm}

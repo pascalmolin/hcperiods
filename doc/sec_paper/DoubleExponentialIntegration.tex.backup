@@ -37,10 +37,8 @@ both $[-1,1]$ and its neighborhood $Z_\tau$, we obtain
       constants $M_1$, $M_2$ such
       that
       \begin{itemize}
-          %\item for $u\in[-1,1]$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_1$
-          \item for $u\in[-1,1]$, $\abs{\frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u)^{j}}}\leq M_1$\,,
-          %\item for $u\in Z_\tau$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_2$.
-          \item for $u\in Z_\tau$, $\abs{\frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u)^{j}}}\leq M_2$\,.
+          \item for $u\in[-1,1]$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_1$
+          \item for $u\in Z_\tau$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_2$.
       \end{itemize}
   \end{lemma}
 
@@ -82,7 +80,7 @@ we obtain a rigorous integration scheme as follows
     \end{equation}
 \end{thm}
 
-The proof follows the same lines as the one in \cite{Molin2010}:
+The proof follows the same lines as the one in \cite{PMthese}:
 we write the Poisson formula on $h\Z$ for the function $g$
 \begin{equation}
     \underbrace{h\sum_{\abs{k}>n}g(kh)}_{e_T}
