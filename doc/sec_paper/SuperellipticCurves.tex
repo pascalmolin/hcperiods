@@ -19,7 +19,7 @@
    Over $\C$ we identify the curve $\cu$ with the Riemann surface $\cu(\hat{\C})$ and denote by $\pr : \cu \rightarrow \P^1_{\C}$ the corresponding smooth cyclic branched covering of the projective line
    defined by the $x$-coordinate.
    
-  There are $\delta = \gcd(m,d)$ points above infinity $P_1^{\infty},\dots,P_{\delta}^{\infty} \in \cu$, that behave differently depending on $m$ and $d$ (see \cite{CT1996}, \S 1 for details). 
+  There are $\delta = \gcd(m,d)$ points above infinity $P_{\infty}^{(1)},\dots,P_{\infty}^{(\delta)} \in \cu$, that behave differently depending on $m$ and $d$ (see \cite{CT1996}, \S 1 for details). 
   Especially, $\infty \in \P^1_{\C}$ is a branch point for $\delta \ne m$. Thus, we introduce the set of finite branch points $X = \X$ as well as the set of all branch points
   \vspace{-0.3cm}
   \begin{align}\label{eq:branch_points}
@@ -61,7 +61,7 @@
   
   
   Consider the affine transformation $x \mapsto \frac{b-a}{2}\left(u+\frac{b+a}{b-a}\right)$, which maps 
-  $[a,b]$ to $[-1,1]$ and will appear in the double-exponential integration. \abstand
+  $[a,b]$ to $[-1,1]$ and appears in the double-exponential integration. \abstand
   We use it to implicitly  define local branches of $\cu$ using the following functions
   \begin{align}\label{def:yab}
   \begin{split}
@@ -77,8 +77,9 @@
   \medskip
   
   Similary, $(1-u(x))^2$ does not cross $]\!\!-\infty,0[$ for $x \in \,]a,b[$. Therefore, 
- $\yab(x)$ is a locally analytic branch of $\cu$ on a open set $\vab$ (see Figure \ref{m-fig:set_vab}), which is obtained by removing the halflines left of $a$ and right of $b$ from $\tilde{V}_{a,b}$ 
-  and can be used for numerical integration of differential forms.
+ $\yab(x)$ is a locally analytic branch of $\cu$ on a open set $\vab$ (see Figure \ref{m-fig:set_vab}), which is obtained by removing the halflines left of $a$ and right of 
+ $b$ from $\tilde{V}_{a,b}$\,. \abstand
+ Thus, $\yab$ can be used for integration of differential forms on $\vab$\,.
  \begin{figure}[H]
       \begin{center}
 	  \input{images/tikz_pic_1.tex}
@@ -88,8 +89,8 @@
 \end{figure}
  
  From the affine equation $\caff$ \eqref{eq:aff_model} it follows that other analytic branches on $V_{a,b}$ are given by
-      $\yab \mapsto \zeta^l \yab,\, l = \Z/m\Z$\,.
-  In our situation, we can assume that moving up $l \in \Z/m\Z$ sheets corresponds to multiplication of $\yab$ by $\zeta^l$\,. 
+      $\yab \mapsto \zeta^l \,\yab$ for $l \in \Z/m\Z$\,.
+  In our situation, we can assume that moving up $l$ sheets corresponds to multiplication of $\yab$ by $\zeta^l$\,. 
 
   \bigskip
   
@@ -104,35 +105,41 @@
    Let $a, b \in X$ be branch points such that $x_k \not\in [a,b]$ for all $x_k \ne a,b$, where  $[a,b]$ is the oriented line segment connecting $a$ and $b$.  
    We define the corresponding \textit{elementary cycle} 
    \begin{align}
-    \cyab = \{ \, (x,\yab(x)) \, \mid \, x \in [a,b] \, \} \cup \{ \,(x,\zeta \yab(x)) \, \mid \, x \in [b,a] \, \}
+    \cyab = \{ \, (x,\yab(x)) \, \mid \, x \in [a,b] \, \} \cup \{ \,(x,\zeta \, \yab(x)) \, \mid \, x \in [b,a] \, \}
    \end{align}
    and, for $l \in \Z/m\Z$, its \textit{shifts}
    \begin{align}
-    \cyab^{(l)} = \{ \, (x,\zeta^l y) \, \mid \, (x,y) \in \cyab \, \}\,. 
+    \cyab^{(l)} = \{ \, (x,\zeta^l \,\yab(x)) \, \mid \, (x,y) \in \cyab \, \}\,. 
    \end{align}
     \end{defn}
     
-   By our discussion in \S \ref{subsec:roots_branches}, the $\cyab^{(l)}$ are smooth oriented closed paths in $\pi_1(\cu)$. Although these paths are given as lifts of the line segment $[a,b]$, in $\pi_1(\cu)$
-   they are homotopic to paths that encirlce  $a$ in negative and $b$ in positive orientation, once each.
-   Assuming the branch cuts are parallel to $[a,b]$, we have the following useful visualizations of $\cyab$ on $\cu$.
+   By our discussion in \S \ref{subsec:roots_branches}, the $\cyab^{(l)}$ are smooth oriented closed paths in $\pi_1(\cu)$ that are given as concatination of
+   lifts of the line segment $[a,b]$ to $\cu$\,. \abstand
+   In $\pi_1(\cu)$
+   they are homotopic to cycles that encirlce  $a$ in negative and $b$ in positive orientation, once each.
+   Assuming the local branch cuts are parallel to $[a,b]$, we have the following useful visualizations of $\cyabl$ on $\cu$.
    \begin{figure}[H]
       \begin{center}
 	  \input{images/tikz_pic_13.tex}
       \end{center}
-    \caption{Representations of the elementary cycle $\cyab$.} 
+    \caption{Representations of a cycle $\cyabl$.} 
     \label{fig:elem_cycle}
 \end{figure}
  
+  \bigskip
  
   As it turns out, we do not need all elementary cycles and their shifts to generate $\homo$\,, but only those that correspond to edges in a \emph{maximal spanning tree}, which is constructed
   as follows. \abstand
    Consider the complete graph on the set of finite branch points $G = (X,E')$, i.e.\ $E' = \{ \, (a,b) \, \mid \, a,b \in X \}$\,.
-   Each edge $e = (a,b) \in E$ gets assigned a capacity $\tau_e$ that indicates the cost of numerical integration along the interval $[a,b]$\,. Here, the integration process ist most favourable
-   between branch points that are far away from the others, that is, according to the double-exponential integration scheme that will be employed.
+   Each edge $e = (a,b) \in E$ gets assigned a capacity $\tau_e$ that indicates the cost of numerical integration along the interval $[a,b]$\,. \abstand
+   Here, the integration process ist most favourable
+   between branch points that are far away from the others, that is, according to the double-exponential integration scheme that will be employed. \abstand
    We now apply a standard 'maximal-flow' algorithm from graph theory, based on a greedy approach, that results in a spanning tree $T = (X,E)$, where $E \subset E'$ contains the $d-1$ best edges
    for integration that connect all vertices without producing cycles.
+   
+   \bigskip
   
-  For an edge $e = (a,b) \in E$, we denote by $y_e^{(l)}$ the shifts of the corresponding elementary cycle $\cyab$\,.
+  For an edge $e = (a,b) \in E$, we denote by $\gamma_e^{(l)}$ the shifts of the corresponding elementary cycle $\cyab$\,.
   
   \begin{thm}\label{thm:gen_set}
    The cycles $C = \left\{ \, \gamma_{e}^{(l)} \, \mid \, 0 \le l <m-1, \, e \in E \, \right\}$ generate $\homo$.
@@ -202,15 +209,17 @@
   
     The computation of the period matrix and the Abel-Jacobi map requires a basis of $\hd$ as $\C$-vector space. In this section we provide a basis that only 
    depends on $m$ and $d$ and is suitable for double-exponential integration. \abstand
-  Among the meromorphic differentials in $\WM$  there are exactly $g$ that are holomorphic  and they can be found by imposing a simple combinatorial condition on $i$ and $j$.
-  \begin{align*}
+    Among the meromorphic differentials
+    \begin{align*}
  \WM = \left\{ \, \omega_{i,j}  \, \right\}_{\substack{1 \le i \le d-1, \\ 1 \le j \le m-1}} \quad \text{with} \quad \omega_{i,j} = \frac{ \dx^i}{i y^j}\,,
   \end{align*}
+  there are exactly $g$ that are holomorphic  and they can be found by imposing a simple combinatorial condition on $i$ and $j$.
+ 
 
    \bigskip
    
      \begin{prop}\label{prop:holom_diff}
-	Let $\delta = \gcd(m,d)$. The following differentials form  a $\C$-basis of $\hd$.
+	Let $\delta = \gcd(m,d)$. The following differentials form  a $\C$-basis of $\hd$\,.
 	\begin{align}\label{eq:holm_diff}
 	  \W =  \left\{ \, \omega_{i,j} \in \WM \, \mid \, -mi + jd - \delta \ge 0 \, \right\}
 	\end{align}
@@ -219,9 +228,9 @@
       First we show that the differentials in $\W$ are holomorphic.
       Let $\w_{i,j} = x^{i-1}y^{-j} \dx \in \WM$. We write down the relevant divisors
       \begin{align*}
-       \div(x) & = \sum_{k=1}^m \left(0,\zeta^k{f(0)}^{1/m}\right) - \frac{m}{\delta} \cdot \sum_{l = 1}^{\delta} P^{\infty}_l\,, \\
-       \div(y) & = \sum_{k = 1}^d (x_k,0) - \frac{d}{\delta} \cdot \sum_{l = 1}^{\delta}  P^{\infty}_l\,, \\
-       \div(\dx) & = (m-1)\sum_{k = 1}^d (x_k,0) - \left(\frac{m}{\delta} + 1\right)\cdot \sum_{l = 1}^{\delta}  P^{\infty}_l\,.
+       \div(x) & = \sum_{k=1}^m \left(0,\zeta^k{f(0)}^{1/m}\right) - \frac{m}{\delta} \cdot \sum_{l = 1}^{\delta} P_{\infty}^{(l)}\,, \\
+       \div(y) & = \sum_{k = 1}^d (x_k,0) - \frac{d}{\delta} \cdot \sum_{l = 1}^{\delta}  P_{\infty}^{(l)}\,, \\
+       \div(\dx) & = (m-1)\sum_{k = 1}^d (x_k,0) - \left(\frac{m}{\delta} + 1\right)\cdot \sum_{l = 1}^{\delta}  P_{\infty}^{(l)}\,.
       \end{align*}
      Putting together the information, for $P \in \cu$ lying over $x_0 \in \P^1_{\C}$, we obtain
      \begin{align}\label{eq:diff_cases}

@@ -9,18 +9,18 @@
   \begin{align*}
     \int_{P_0}^{P_k} \w\quad \text{(see \S \ref{m-subsec:ajm_bp}),} \quad
     \int_{P_k}^{P} \w \quad \text{(see \S \ref{m-subsec:ajm_finite}),}
-    \quad \text{and} \quad \int_{P_0}^{P^{\infty}} \w\quad \text{(see \S \ref{m-subsec:ajm_infty}),} \quad \text{where}
+    \quad \text{and} \quad \int_{P_0}^{P_{\infty}} \w\quad \text{(see \S \ref{m-subsec:ajm_infty}),} \quad \text{where}
   \end{align*}
   
   \begin{itemize}
    \item $\w = \w_{i,j}\in \W$ is a holomorphic differential,
-   \item $P = (x_P,y_P) \in \cu$ is a finite place on the curve,
+   \item $P = (x_P,y_P) \in \cu$ is a finite point on the curve,
    \item $P_0$ is a basepoint for $\AJ$\,,
-   \item $P_k = (x_k,0) \in \cu$ is a branch place (\todo other word?ramification point?), i.e.\ $x_k \in X$\,,
-   \item $P^{\infty} \in \cu$ is a point above infinity.
+   \item $P_k = (x_k,0) \in \cu$ is a ramification point, i.e.\ $x_k \in X$\,,
+   \item $P_{\infty} \in \cu$ is a point above infinity.
   \end{itemize}
   
-  Typically, we choose as basepoint $P_0 = (x_0,0)$, where $x_0 \in X$ is the root of the spanning tree $T = (X,E)$\,.
+  Typically, we choose as basepoint the point $P_0 = (x_0,0)$, where $x_0 \in X$ is the root of the spanning tree $T = (X,E)$\,.
 
   \subsection{Between branch points}\label{subsec:ajm_bp}
 
@@ -28,43 +28,43 @@
   \begin{align}
     \int_{P_0}^{P_k} \w_{i,j} = \sum_{j = 0}^{n-1} \; \int_{P_{k_j}}^{P_{k_{j+1}}} \w_{i,j}\,.
   \end{align}
-  Denote $a = x_{k_j},\, b = x_{k_{j+1}} \in X$. Since the integral is defined up to homology, we can integrate along
+  Denote $a = x_{k_j},\, b = x_{k_{j+1}} \in X$. From \S \ref{m-subsec:cycles_homo} we know that for $(a,b) \in E$ a smooth path between $a$ and $b$ is given by
   \begin{align*}
    \gamma = \{ \, (x,\yab(x)) \, \mid \, x \in [a,b] \, \}\,.
   \end{align*}
-  According to the proof of Theorem \ref{m-thm:periods} the integral is given as
+  According to the proof of Theorem \ref{m-thm:periods} the corresponding integral is
   \begin{align}
    \int_{\gamma} \w_{i,j} \; & = \; \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}} \, \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}\, \du \,,
   \end{align}
   which has already been evaluated during the period matrix computation.
 
   
-  \subsection{From branch to regular point}\label{subsec:ajm_finite}
+  \subsection{From ramification point to regular point}\label{subsec:ajm_finite}
   
    Let $P = (x_P,y_P) \in \cu$ be a finite regular point and $a \in X$ be a branch point such that $x_k \not\in [a,x_P]$ for all $x_k \ne a$\,.
   
   As in \S \ref{m-subsec:roots_branches} we define a local branch of $\cu$ via the functions
   \begin{align}\label{def:yax}
   \begin{split}
-   y_{a,x_P}(x) \, & = \, \left(\frac{x_P-a}{2}\right)^{\frac{d}{m}} \; (1 + u(x))^{\frac{j}{m}} \; \ft_{a,x_P}(u(x))\,, \quad \text{with} \\
+   \yaxp(x) \, & = \, \left(\frac{x_P-a}{2}\right)^{\frac{d}{m}} \; (1 + u(x))^{\frac{j}{m}} \; \ft_{a,x_P}(u(x))\,, \quad \text{with} \\
    \ft_{a,x_P}(u(x)) \, & = \, \prod_{x_k \ne a} (u(x) - u(x_k))\mr \quad \text{and} \\
    u(x) \,& = \, u_{a,x_P}(x) \,=\, \frac{2x-x_P-a}{x_P-a}\,.
    \end{split}
   \end{align}
-  Now $y_{a,x_P}(x)$ is a branch of $\cu$ that is holomorphic in a neighbourhood of $]a,x_P]$\,.
+  Now $\yaxp(x)$ is a branch of $\cu$ that is holomorphic in a neighbourhood of $]a,x_P]$\,.
   
   Define a path
   \begin{align*}
-   \gamma_{a,x_P} = \{ \, (x,y_{a,x_P}(x)) \, \mid \, x \in [a,x_P] \, \}\,.
+   \gamma_{a,x_P} = \{ \, (x,\yaxp(x)) \, \mid \, x \in [a,x_P] \, \}\,.
   \end{align*}
-  Now, we can compute a \emph{shifting number} at $x=x_P$
+  Now, we can compute a \emph{shifting number} at the endpoint $x=x_P$
   \begin{align*}
-   \zeta^s & = \frac{y_P}{y_{a,x_P}(x_P)} = \frac{y_P}{\left(\frac{x_P-a}{2}\right)^{\frac{d}{m}} 2\mr \ft_{a,x_P}(x_P)} \\
+   \zeta^s & = \frac{y_P}{\yaxp(x_P)} = \frac{y_P}{\left(\frac{x_P-a}{2}\right)^{\frac{d}{m}} 2\mr \ft_{a,x_P}(x_P)} \\
    \Rightarrow s & = \frac{m}{2\pi} \arg\left(  \frac{y_P}{ (x_P-a)^{\frac{d}{m}} \ft_{a,x_P}(x_P)} \right)
   \end{align*}
   and define a smooth path between $P_a$ and $P$ on $\cu$ by
   \begin{align*}
-   \gamma_{P_a,P} = \{ \, (x, \zeta^s y_{a,x_P}(x)) \, \mid \, x \in [a,x_P] \, \}\,.
+   \gamma_{P_a,P} = \{ \, (x, \zeta^s \yaxp(x)) \, \mid \, x \in [a,x_P] \, \}\,.
   \end{align*}
 
 
@@ -75,22 +75,49 @@
   \begin{split}
        \int_{P_a}^P \w_{i,j} & = \left(\frac{x_P-a}{2}\right)^{i-\frac{dj}{m}} \zeta^{-js} \int_{-1}^1 
       \frac{\left(u + \frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}} \ft_{a,x_P}(u)^j} \, \du\,.
-%      \tilde{f}_{a,x_P}(u) & = \prod_{x_k \ne a} ( u - u_{a,x_P}(x_k) )\mr\,, \\
+%      \ftaxp(u) & = \prod_{x_k \ne a} ( u - u_{a,x_P}(x_k) )\mr\,, \\
 %      s & = \frac{m}{2\pi}  \arg \left( y_P \cdot (x_P-a)^{-\frac{d}{m}} \right)\,.
    \end{split}
    \end{align}
   \end{thm}
   \begin{proof}
-    \todo
+    \begin{align}
+    \begin{split}
+     \int_{P_a}^P \w_{i,j} \; & = \; \int_{\gamma_{P,a_P}} \frac{x^{i-1}}{y^j} \, \dx \; = \; \zeta^{-sj} \int_a^{x_P} \frac{x^{i-1}}{\yaxp(x)^j} \, \dx \\ \; & = \; 
+     \zeta^{-sj} \left(\frac{x_P-a}{2}\right)^{i-1-\frac{dj}{m}}
+     \int_a^{x_P} \frac{\left(u(x)+\frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u(x))^{\frac{j}{m}}\ftaxp(u(x))^j} \, \dx \\
+    \; & = \; \zeta^{-sj} \left(\frac{x_P-a}{2}\right)^{i-\frac{dj}{m}}
+     \int_{-1}^{1} \frac{\left(u+\frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}}\ftaxp(u)^j} \, \du \\
+    \end{split}
+  \end{align}
   \end{proof}
   
-  \subsection{Basepoint to infinity}\label{subsec:ajm_infty}    
+  \subsection{From basepoint to infinity}\label{subsec:ajm_infty}    
       
-      ...
+    If there is only one point $P_{\infty}$ above infinity, i.e. $\delta = \gcd(m,d) = 1$\,, we can easily obtain from data that has already been computed.
+    
+    Consider the Bézout identity $\mu m + \nu d = 1$\,, with $\mu,\nu \in \Z$. We use the following following princial divisors to express $P_{\infty}$ in terms of the finite ramification points
+    modulo the periods lattice.
+    \begin{align}
+     \begin{split}
+      &\div(y^{\nu}) )\; = \; \nu \sum_{k = 1}^d P_k - \nu d P_{\infty}\,,\\
+      &\div((x-x_0)^{\mu}) \; = \; \mu m P_0 - \mu m P_{\infty} \,,\\
+      D \; = \; & \div(y^{\nu}(x-x_0)^{\mu}) \; = \;\nu \sum_{k = 1}^d P_k + \mu m P_0 - P_{\infty}  
+     \end{split}
+    \end{align}
+    Integrating from $P_0$ to $P_{\infty}$ is equivalent to computing the Abel-Jacobi map of the divisor $D_{\infty} =  P_{\infty} - P_0 $. Therefore,
+    \begin{align}
+     \AJ( D_{\infty} ) \; & \equiv \; \AJ(D_{\infty} + D) \; = \; \AJ(  \nu \sum_{k = 1}^d P_k + (\mu m - 1) P_0  ) \\ \; & \equiv \; \AJ(  \nu \sum_{k = 1}^d P_k  ) 
+     \; =  \; \left( \nu \sum_{k=1}^d \int_{P_0}^{P_k} \w \right)_{w \in W} \mod \Lambda\,.
+    \end{align}
+
+
+    
+    
   
   \subsection{Lattice reduction}
   
-    ...
+    Necessary?
       
 \biblio
 \end{document}
