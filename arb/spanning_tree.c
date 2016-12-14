@@ -65,6 +65,16 @@ edges_init(edge_t * e, const cdouble * w, slong len)
     }
 }
 
+static edge_t
+edge_flip(edge_t e)
+{
+    edge_t f;
+    f.tau =  e.tau;
+    f.a = e.b;
+    f.b = e.a ;
+    return f;
+}
+
 int
 edge_cmp(const edge_t * x, const edge_t * y)
 {
@@ -88,6 +98,8 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
     edges_init(e, w, len);
     free(w);
 
+
+    /* order edges */
     qsort(e, n, sizeof(edge_t), (int(*)(const void*,const void*))edge_cmp);
 
     t = malloc(len * sizeof(int));
@@ -97,8 +109,13 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
     n--;
     for (k = 0; k < tree->n; k++)
     {
-        for (; t[e[n].a] && t[e[n].b]; n--);
-        tree->e[k] = e[n];
+        /* discard if both left or taken */
+        for (; t[e[n].a] == t[e[n].b]; n--);
+        /* reorder edge so that a is in t */
+        if (t[e[n].b])
+            tree->e[k] = edge_flip(e[n]);
+        else
+            tree->e[k] = e[n];
         t[e[n].a] = 1;
         t[e[n].b] = 1;
     }

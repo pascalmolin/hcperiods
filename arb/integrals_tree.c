@@ -106,7 +106,7 @@ integrals_tree(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz
     slong k;
     slong * yvec, ny;
     ulong n;
-    double h;
+    arf_t h;
     de_int_t de;
 
 

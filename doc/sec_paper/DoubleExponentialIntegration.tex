@@ -301,5 +301,17 @@ We therefore consider this value of $λ$, so that
       &= \sinh^2 X + \cos^2 Y \label{eq:boundchsh}
   \end{align}
 \fi
+
+\iffalse
+assume(t,real);
+assume(tau,real);
+assume(l,real);
+assume(l>0);
+assume(l<Pi/2);
+phi:=tanh(l*sinh(t+I*tau));;
+simplify(expand(diff(phi,t$1)));
+\fi
+
+
 \biblio      
 \end{document}

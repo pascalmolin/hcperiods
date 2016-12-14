@@ -6,6 +6,8 @@
 
 #include "abel_jacobi.h"
 
+#define m(i,j) fmpz_mat_entry(m,i,j)
+
 /*
  assume m is a 2g*2g antisymmetric matrix,
  find a basis such that m has standard form
@@ -40,9 +42,9 @@ neg_step(si_mat_t p, si_mat_t m, slong i, slong len)
     col_neg(m, i, len);
 }
 static void
-transvect_step(si_mat_t p, si_mat_t m, slong i1, slong i2, slong q, slong len)
+transvect_step(si_mat_t p, si_mat_t m, slong i1, slong i2, fmpz_t q, slong len)
 {
-    flint_printf("    transvect %d <- + %d * %d \n",i1,q,i2);
+    flint_printf("    transvect %d <- + %d * %d \n",i1,*q,i2);
     row_addmul(p, i1, i2, q, len);
     row_addmul(m, i1, i2, q, len);
     col_addmul(m, i1, i2, q, len);
@@ -74,19 +76,21 @@ s_xgcd(slong * u, slong * v, slong a, slong b)
 }
 
 static void
-bezout_step(si_mat_t p, si_mat_t m, slong i, slong k, slong a, slong b, slong len)
+bezout_step(si_mat_t p, si_mat_t m, slong i, slong k, fmpz_t a, fmpz_t b, slong len)
 {
-    slong u, v, g, u1, v1;
-    g = s_xgcd(&u, &v, a, b);
-    /* in case a = b*q, u = 0 */
-#if 0
-    if (!u)
-        /* a = b*q, i <- k, k <- i - q*k */
-        u = 0; v = 1; u1 = 1; v1 = -a/b;
-    else
-#endif
-    u1 = -b/g; v1 = a/g;
-    flint_printf("    bezout %d,%d <- (%d,%d), (%d,%d)\n",i,k,u,v,u1,v1);
+    fmpz_t u, v, g, u1, v1;
+    fmpz_init(u);
+    fmpz_init(v);
+    fmpz_init(g);
+    fmpz_init(u1);
+    fmpz_init(v1);
+
+    fmpz_xgcd(g, u, v, a, b);
+
+    fmpz_divexact(u1, b, g);
+    fmpz_neg(u1, u1);
+    fmpz_divexact(v1, a, g);
+
     row_bezout(p, i, k, u, v, u1, v1, len);
     row_bezout(m, i, k, u, v, u1, v1, len);
     col_bezout(m, i, k, u, v, u1, v1, len);
@@ -96,20 +100,23 @@ bezout_step(si_mat_t p, si_mat_t m, slong i, slong k, slong a, slong b, slong le
 slong
 pivot_line(si_mat_t m, slong i, slong len)
 {
-    slong j, v = 0, jv = len;
+    slong j, jv = len;
+    fmpz_t v;
+    fmpz_init(v);
     for (j = i + 1; j < len; j++)
     {
-        if (!m[i][j])
+        if (*m(i, j) == 0)
             continue;
         /* or return +/-1 if possible */
-        if (m[i][j] == 1 || m[i][j] == -1)
+        if (fmpz_is_pm1(m(i, j)))
             return j;
-        if (!v || (-v < m[i][j] && m[i][j] < v))
+        if (*v == 0 || fmpz_cmpabs(v, m(i, j)) > 0)
         {
-            v = m[i][j];
+            fmpz_set(v, m(i, j));
             jv = j;
         }
     }
+    fmpz_clear(v);
     return jv;
 }
 
@@ -134,56 +141,66 @@ symplectic_reduction(si_mat_t p, si_mat_t m, slong g, slong len)
             if (len == 2*d)
                 return;
         }
-        flint_printf("choose pivot %d,%d -> %d\n",i,j,m[i][j]);
+        flint_printf("choose pivot %d,%d -> %d\n",i,j,*m(i, j));
 
         /* move j to i + 1 */
         if (j != i+1)
             swap_step(p, m, j, i + 1, len);
         j = i + 1;
 
-        /* make sure m[i][j] > 0 */
-        if (m[i][j] < 0)
+        /* make sure m(i, j) > 0 */
+        if (fmpz_sgn(m(i, j)) < 0)
             /* could also neg i or swap i and j */
             neg_step(p, m, j, len);
 
         while(!cleared)
         {
+                fmpz_t q;
+                fmpz_init(q);
             /* clear row i */
             for (k = j + 1; k < len; k++)
             {
-                if (m[i][k])
+                if (*m(i, k))
                 {
-                    if (m[i][k] % m[i][j] == 0)
-                        transvect_step(p, m, k, j, -m[i][k] / m[i][j], len);
+                    if (fmpz_divisible(m(i, k), m(i, j)))
+                    {
+                        fmpz_divexact(q, m(i, k), m(i, j));
+                        fmpz_neg(q, q);
+                        transvect_step(p, m, k, j, q, len);
+                    }
                     else
-                        bezout_step(p, m, j, k, m[i][j], m[i][k], len);
+                        bezout_step(p, m, j, k, m(i, j), m(i, k), len);
                 }
             }
             /* check */
             for (k = j + 1; k < len; k++)
-                if (m[i][k])
+                if (*m(i, k))
                     return;
             flint_printf("OK cleared row %d\n",i);
             cleared = 1;
             /* clear row j */
             for (k = j + 1; k < len; k++)
             {
-                if (m[j][k])
+                if (*m(j, k))
                 {
-                    if (m[j][k] % m[i][j] == 0)
-                        transvect_step(p, m, k, i, m[j][k] / m[i][j], len);
+                    if (fmpz_divisible(m(j, k), m(i, j)))
+                    {
+                        fmpz_divexact(q, m(j, k), m(i, j));
+                        transvect_step(p, m, k, i, q, len);
+                    }
                     else
                     {
-                        bezout_step(p, m, i, k, m[j][i], m[j][k], len);
+                        bezout_step(p, m, i, k, m(j, i), m(j, k), len);
                         /* warning: row i now contains some ck.cl... */
                         cleared = 0;
                     }
                 }
             }
             for (k = j + 1; k < len; k++)
-                if (m[j][k])
+                if (*m(j, k))
                     return;
             flint_printf("OK cleared row %d\n",j);
+            fmpz_clear(q);
         }
     }
 }
@@ -197,25 +214,25 @@ pivot_gcd(si_mat_t p, si_mat_t m, slong d, slong len)
     {
         for (j = i + 1; j < len; j++)
         {
-            if (m[i][j])
+            if (m(i, j))
             {
-                if (!g || g % m[i][j] == 0)
+                if (!g || g % m(i, j) == 0)
                 {
                     /* use i,j as pivot */
-                    if (m[i][j] > 0)
+                    if (m(i, j) > 0)
                     {
-                        g = m[i][j];
+                        g = m(i, j);
                         transpose_step(m, p, i, 2*d, len);
                         transpose_step(m, p, j, 2*d+1, len);
                     }
                     else
                     {
-                        g = m[j][i];
+                        g = m(j, i);
                         transpose_step(m, p, j, 2*d, len);
                         transpose_step(m, p, i, 2*d+1, len);
                     }
                 }
-                else if (m[i][j]%g)
+                else if (m(i, j)%g)
                 {
                     /* replace pivot by gcd */
                     ulong u, v;
@@ -223,7 +240,7 @@ pivot_gcd(si_mat_t p, si_mat_t m, slong d, slong len)
                      u * ci.cj - v * ci.ck = 1
                      ci.(u * cj - v * ck) = 1
                      */
-                    n_xgcd(&u, &v, m[i][j], m[i][k]);
+                    n_xgcd(&u, &v, m(i, j), m(i, k));
                     row_muladdmul(p, j, u, k, -v, len);
                     row_muladdmul(m, j, u, k, -v, len);
                     col_muladdmul(m, j, u, k, -v, len);
@@ -241,14 +258,14 @@ choose_pivot(slong * pi, slong * pj, si_mat_t m, slong d, slong len)
     v = 0; *pi = len; *pj = len;
     for (i = 2 * d, j = 2 * d + 1; j < len;)
     {
-        if (m[i][j] == 1 || m[i][j] == -1)
+        if (m(i, j) == 1 || m(i, j) == -1)
         {
             *pi = i; *pj = j;
             return 1;
         }
-        else if (!v || (-v < m[i][j] && m[i][j] < v))
+        else if (!v || (-v < m(i, j) && m(i, j) < v))
         {
-            v = m[i][j];
+            v = m(i, j);
             *pi = i; *pj = j;
         }
         if (++j == len)

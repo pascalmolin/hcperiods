@@ -1,5 +1,8 @@
 #include "abel_jacobi.h"
 
+#define m1(i,j) fmpz_mat_entry(m1,i,j)
+#define m2(i,j) fmpz_mat_entry(m2,i,j)
+
 int main() {
 
     slong g;
@@ -15,9 +18,9 @@ int main() {
         slong i, j, g2, l;
 
         g2 = 2 * g;
-        m1 = si_mat_init(g2, g2);
-        m2 = si_mat_init(g2, g2);
-        p = si_mat_init(g2, g2);
+        si_mat_init(m1, g2, g2);
+        si_mat_init(m2, g2, g2);
+        si_mat_init(p, g2, g2);
         flint_printf("\n========= init completed =====\n");
 
         for (l = 0; l < 10; l++)
@@ -26,21 +29,27 @@ int main() {
             /* random matrix */
             for (i = 0; i < g2; i++)
             {
-                m1[i][i] = m2[i][i] = 0;
+                fmpz_zero(m1(i, i));
+                fmpz_zero(m2(i, i));
                 for (j = i + 1; j < g2; j++)
                 {
-                    int t = n_randint(state, 3) - 1;
-                    m1[i][j] = m2[i][j] = t;
-                    m1[j][i] = m2[j][i] = -t;
+                    slong t = n_randint(state, 3) - 1;
+                    fmpz_set_si(m1(i, j), t);
+                    fmpz_set_si(m2(i, j), t);
+                    fmpz_set_si(m1(j, i), -t);
+                    fmpz_set_si(m2(j, i), -t);
                 }
             }
+
+        flint_printf("\n== initial m ==\n");
+        si_mat_print(m2, g2, g2);
 
             symplectic_reduction(p, m2, g, g2);
 
             if (!is_symplectic_j(m2, g, g2))
             {
                 flint_printf("\n== initial m ==\n");
-                si_mat_print_gp(m1, g2, g2);
+                si_mat_print(m1, g2, g2);
 
                 flint_printf("\n== reduced m ==\n");
                 si_mat_print(m2, g2, g2);

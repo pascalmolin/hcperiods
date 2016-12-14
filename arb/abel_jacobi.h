@@ -9,6 +9,8 @@
 #include "acb.h"
 #include "acb_mat.h"
 
+#include "si_mat.h"
+
 /******************************************************************************
 
   data structures
@@ -30,13 +32,10 @@ typedef superelliptic_curve sec_t;
 
 typedef struct
 {
-    /*
-    double tau;
-    double h;
-    */
-    ulong n;
-    slong prec;
-    arb_t factor;
+    arf_t h;       /* step size, exact */
+    ulong n;       /* number of points */
+    slong prec;    /* precision */
+    arb_t factor;  /* lambda*h, lambda=Pi/2 */
     arb_ptr x;
     arb_ptr dx;
 }
@@ -84,9 +83,6 @@ typedef struct
 
 /* homology basis */
 typedef loop_t * homol_t;
-
-/* integer matrix */
-typedef slong ** si_mat_t;
 
 /* differential form */
 typedef struct
@@ -139,8 +135,8 @@ void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_srcptr f, slong len, s
 void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
-void de_int_params(double * h, ulong *n, double tau, double M1, double M2, slong prec);
-void de_int_init(de_int_t de, double h, ulong n, slong prec);
+void de_int_params(arf_t h, ulong *n, double tau, double M1, double M2, slong prec);
+void de_int_init(de_int_t de, arf_t h, ulong n, slong prec);
 void de_int_clear(de_int_t de);
 
 /* compute maximum spanning tree */
