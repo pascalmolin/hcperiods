@@ -151,6 +151,8 @@ int
 is_symplectic_j(si_mat_t m, long g, long g2)
 {
     long i, j;
+    fmpz_t c;
+    fmpz_init(c);
     for (i = 0; i < g; i++)
     {
         for (j = 0; j < g2; j++)
@@ -160,8 +162,10 @@ is_symplectic_j(si_mat_t m, long g, long g2)
             if (j!=2*i && *m(2*i+1, j))
                 return 0;
         }
-        if (*m(2*i, 2*i+1) + *m(2*i+1, 2*i))
-                return 0;
+        fmpz_neg(c, m(2*i, 2*i+1));
+        if (!fmpz_equal(c, m(2*i+1, 2*i)))
+            return 0;
     }
+    fmpz_clear(c);
     return 1;
 }

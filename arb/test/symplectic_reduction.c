@@ -12,7 +12,7 @@ int main() {
     fflush(stdout);
     flint_randinit(state);
 
-    for (g = 2; g < 20; g++)
+    for (g = 2; g < 30; g++)
     {       
         si_mat_t m1, m2, p;
         slong i, j, g2, l;
@@ -21,19 +21,27 @@ int main() {
         si_mat_init(m1, g2, g2);
         si_mat_init(m2, g2, g2);
         si_mat_init(p, g2, g2);
-        flint_printf("\n========= init completed =====\n");
 
         for (l = 0; l < 10; l++)
         { 
 
-            /* random matrix */
+            /* random matrix with 0,1,-1,
+             * density decreases with l */
             for (i = 0; i < g2; i++)
             {
                 fmpz_zero(m1(i, i));
                 fmpz_zero(m2(i, i));
                 for (j = i + 1; j < g2; j++)
                 {
-                    slong t = n_randint(state, 3) - 1;
+#if 0
+                    slong t;
+                    if (n_randint(state, 2) > 0)
+                        t = 0;
+                    else
+                        t = n_randint(state, 3) - 1;
+#else
+                        slong t = n_randint(state, 3) - 1;
+#endif
                     fmpz_set_si(m1(i, j), t);
                     fmpz_set_si(m2(i, j), t);
                     fmpz_set_si(m1(j, i), -t);
@@ -41,8 +49,10 @@ int main() {
                 }
             }
 
-        flint_printf("\n== initial m ==\n");
-        si_mat_print(m2, g2, g2);
+#if 0
+                flint_printf("\n== initial m ==\n");
+                si_mat_print(m1, g2, g2);
+#endif
 
             symplectic_reduction(p, m2, g, g2);
 
