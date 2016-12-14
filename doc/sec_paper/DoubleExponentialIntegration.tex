@@ -5,18 +5,22 @@
   \section{Double-exponential integration}\label{sec:de_int}
 
 
-From \eqref{elem_integral}, we want to compute
-$\int_{-1}^1\phiab$ to absolute precision $e^{-D}$.
+For $(a,b) \in E$ we want to compute (see Theorem \ref{m-thm:periods}) 
+\begin{align*}
+ \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}} \, \du 
+\end{align*}
+ to absolute precision $e^{-D}$.
 
 Using the double-exponential change of variable
 $u=\tanh(λ\sinh(t))$, the integral
 becomes
 \begin{equation}
-    \int_{-1}^1\phiab = \int_\R g(t)\dt
+    \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}} \, \du = \int_\R g(t)\dt
 \end{equation}
-with $α=(1-j/N)$ and
+with $α=(1-j/m)$ and
 \begin{equation}
-    g(t) = \frac{u(t)^{i-1}}{\fab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
+   % g(t) = \frac{u(t)^{i-1}}{\fab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
+   g(t) = \frac{\left(u(t)+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
 \end{equation}
 
 Let
@@ -33,8 +37,10 @@ both $[-1,1]$ and its neighborhood $Z_\tau$, we obtain
       constants $M_1$, $M_2$ such
       that
       \begin{itemize}
-          \item for $u\in[-1,1]$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_1$
-          \item for $u\in Z_\tau$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_2$.
+          %\item for $u\in[-1,1]$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_1$
+          \item for $u\in[-1,1]$, $\abs{\frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u)^{j}}}\leq M_1$\,,
+          %\item for $u\in Z_\tau$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_2$.
+          \item for $u\in Z_\tau$, $\abs{\frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u)^{j}}}\leq M_2$\,.
       \end{itemize}
   \end{lemma}
 
@@ -55,14 +61,14 @@ we obtain a rigorous integration scheme as follows
     With the notations above, for all $D>0$, choose $h$ and $n$ such that
     \begin{equation}
         \begin{cases}
-            h \leq \frac{2πτ}{D + \log(2M_2 B(τ,α) + e^{-D})}\\
-            nh \geq \asinh(\frac{D+\log(\frac{2^{2α+1}M_1}{αλ})}{2αλ})
+            h \le \frac{2πτ}{D + \log(2M_2 B(τ,α) + e^{-D})}\\
+            nh \ge \asinh(\frac{D+\log(\frac{2^{2α+1}M_1}{αλ})}{2αλ})
         \end{cases}
     \end{equation}
     then
     \begin{equation}
         \abs{
-            \int_{-1}^1 \phiab
+            \int_{-1}^1 \varphi_{i,j}
             - h\sum_{k=-n}^n
             w_k \frac{u_k^{i-1}}{\fab(u_k)^j}
         } \leq e^{-D}
@@ -76,7 +82,7 @@ we obtain a rigorous integration scheme as follows
     \end{equation}
 \end{thm}
 
-The proof follows the same lines as the one in \cite{PMthese}:
+The proof follows the same lines as the one in \cite{Molin2010}:
 we write the Poisson formula on $h\Z$ for the function $g$
 \begin{equation}
     \underbrace{h\sum_{\abs{k}>n}g(kh)}_{e_T}
@@ -182,7 +188,7 @@ $X_τ=\cos(τ)\sqrt{\frac{π}{2Y_0}-1}$.
 
 In the case of hyperelliptic curves, we have $α=\frac12$ and the integral
 \begin{equation}
-    \int_{-1}^1\frac{\phiab(u)}{\sqrt{1-u^2}}\du
+    \int_{-1}^1\frac{\varphi_{i,j}(u)}{\sqrt{1-u^2}}\du
 \end{equation}
 can be efficiently handled by Gaussian integration with weight
 $\sqrt{1-u^2}^{-1}$,
@@ -220,7 +226,7 @@ Its foci are $\pm1$ and $r>1$ is the sum of half axis.
     where $M(r)=\max\set{\abs{f(z)},z\in ε_r}$.
 \end{thm}
 
-Now $\phiab(u)=\frac{P(u)}{\sqrt{Q(u)}}$ for explicitely factored
+Now $\varphi_{i,j}(u)=\frac{P(u)}{\sqrt{Q(u)}}$ for explicitely factored
 polynomials
 $P(u)=(u-c)^k$ and $Q(u)=\prod(u-u_i)$, and one can explicitely
 compute the distance $d_r(u_i)$ from $u_i$ to the ellipse $ε_r$

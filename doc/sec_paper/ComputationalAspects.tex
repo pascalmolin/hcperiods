@@ -6,5 +6,29 @@
 
   Content: Winding number, computation of integration parameters, complexity analysis?
 
-  
+  \subsection{Winding number}
+      
+      For numerical integration of the integrals in \eqref{m-eq:thm_periods_1} we need to evaluate $\fab(u) = \prod_{x_k \ne a,b} (u-u(x_k))\mr$ at $u \in [-1,1]$\,. 
+      Instead of computing $(d-2)$ $m$-th roots for each integration point, we compute $q \in \Q$ such that
+      $$\prod_{x_k \ne a,b} \left(u - u(x_k) \right)\mr = \zeta^q \cdot \left( \prod_{x_k \ne a,b} \left( u - u(x_k) \right) \right)\mr \,,$$
+      which can be done by tracking the winding number of the product while staying away from the branch cut of the $m$-th root.
+      
+      For complex numbers $z_1,z_2 \in \C$ we can make a diagram of $\frac{\sqrt[m]{z_1}\sqrt[m]{z_2}}{\sqrt[m]{z_1z_2}} \in \{ 1, \zeta, \zeta^{-1} \}$, depending on the position of
+      $z_1,z_2$ and their product $z_1z_2$ in the complex plane, resulting in the following Lemma.
+      
+     \begin{lemma}\label{lemma:wind_numb}
+     Let $z_1,z_2 \in \C \, \setminus \, ]\infty,0[$\,. Then,
+     $$\frac{\sqrt[m]{z_1}\sqrt[m]{z_2}}{\sqrt[m]{z_1z_2}} = \begin{cases}
+                                                             \, \zeta, \quad \text{if} \quad \Im(z_1), \Im(z_2) > 0 \quad \text{and} \quad \Im(z_1z_2) < 0 \,, \\
+                                                             \, \zeta^{-1}, \text{if} \quad \Im(z_1), \Im(z_2) < 0 \quad \text{and} \quad \Im(z_1z_2) > 0 \,, \\
+                                                             \, 1, \quad \text{otherwise}\,.
+                                                            \end{cases}$$
+      For $z \in \;]\infty,0[$ we use $\sqrt[m]{z} = \zeta^{\frac{1}{2}} \cdot \sqrt[m]{-z}$\,.
+     \end{lemma}
+     \begin{proof}
+      Follows from the choices for $\sqrt[m]{\cdot}$ and $\zeta$ that were made in \S \ref{m-subsec:roots_branches}.
+     \end{proof}
+      This Lemma can easily be turned into an algorithm that computes $q$\,.
+ 
+ \biblio
 \end{document}

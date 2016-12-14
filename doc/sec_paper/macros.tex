@@ -11,7 +11,6 @@
 \newcommand{\surj}{\longrightarrow\!\!\!\!\to}
 \newcommand{\isom}{\cong}
 
-
 % Sets
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -21,16 +20,14 @@
 \newcommand{\K}{\mathbb{K}}
 \renewcommand{\P}{\mathbb{P}}
 
-
 % Operators
 \DeclarePairedDelimiter\ceil{\lceil}{\rceil}
 \DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 \newcommand\set[1]{\left\{#1\right\}}
 \newcommand\abs[1]{\left|#1\right|}
-
 \DeclareMathOperator{\id}{id}
-\DeclareMathOperator\asinh{asinh}
-\DeclareMathOperator\atanh{atanh}
+\DeclareMathOperator{\atanh}{atanh}
+\DeclareMathOperator{\asinh}{asinh}
 \DeclareMathOperator{\rk}{rk}
 \DeclareMathOperator{\sgn}{sgn}
 \DeclareMathOperator{\Jac}{Jac}
@@ -60,6 +57,8 @@
 \newcommand{\homo}{H_1(\cu,\Z)} % first integral homology group
 \newcommand{\cyab}{\gamma_{a,b}}
 \newcommand{\cycd}{\gamma_{c,d}}
+\newcommand{\cyabl}{\gamma_{a,b}^{(l)}}
+\newcommand{\cycdk}{\gamma_{c,d}^{(k)}}
 \newcommand{\cyt}{\tilde{gamma}}
 \newcommand{\cytab}{\tilde{gamma}(a,b)}
 \newcommand{\cytcd}{\tilde{gamma}(c,d)}
@@ -71,18 +70,38 @@
 \newcommand{\sij}{s(\alpha^{(i)},\beta^{(j)})} % shifting number
 \newcommand{\yab}{y_{a,b}}
 \newcommand{\ycd}{y_{c,d}}
+\newcommand{\yaxp}{y_{a,x_P}}
 \newcommand{\mr}{^{\frac{1}{m}}}
 \newcommand{\ft}{\tilde{f}}
-\newcommand\phiab{\phi_{a,b}}
-\newcommand\fab{\tilde{f_{a,b}}}
+\newcommand{\vab}{V_{a,b}}
+\newcommand{\vbd}{V_{b,d}}
+\newcommand{\vcd}{V_{c,d}}
+\newcommand{\uab}{u_{a,b}}
+\newcommand{\ubd}{u_{b,d}}
+\newcommand{\ucd}{u_{c,d}}
+\newcommand{\fab}{\tilde{f}_{a,b}}
+\newcommand{\fcd}{\tilde{f}_{c,d}}
+\newcommand{\ftaxp}{\tilde{f}_{a,x_P}}
+\newcommand{\xt}{\tilde{x}}
 
+
+% Pascal
+\renewcommand\d{\mathrm{d}\,}
+\newcommand\phiab{\phi_{a,b}}
 \DeclareUnicodeCharacter{3B1}{\alpha}
 \DeclareUnicodeCharacter{3BB}{\lambda}
 \DeclareUnicodeCharacter{3C4}{\tau}
 \DeclareUnicodeCharacter{3C0}{\pi}
 \DeclareUnicodeCharacter{3C6}{\varphi}
+\DeclareUnicodeCharacter{3B1}{\alpha}
+\DeclareUnicodeCharacter{3B2}{\beta}
+\DeclareUnicodeCharacter{3BB}{\lambda}
+\DeclareUnicodeCharacter{3B3}{\gamma}
+\DeclareUnicodeCharacter{3C4}{\tau}
+\DeclareUnicodeCharacter{3C0}{\pi}
 \DeclareUnicodeCharacter{3B5}{\varepsilon}
 \DeclareUnicodeCharacter{3C9}{\omega}
+
 
 %%  Theorem style %%
 \theoremstyle{plain}
