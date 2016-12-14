@@ -6,12 +6,6 @@
 
 #include "abel_jacobi.h"
 
-static void
-powers_x(arb_ptr vx, const arb_t x, const arb_t dx, slong xmax, slong prec)
-{
-    return;
-}
-
 void
 ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec)
 {
@@ -38,26 +32,19 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec)
 }
 
 static void
-powers_inv_y(acb_ptr vy, const arb_t x, acb_srcptr u, const slong * yvec, slong n, slong m, slong prec)
-{
-    acb_t yp, ym;
-
-    acb_init(yp);
-    acb_init(ym);
-    acb_clear(yp);
-    acb_clear(ym);
-}
-
-static void
 integrals_edge(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
-        const slong * yvec, slong ny, const de_int_t de, slong prec)
+        const de_int_t de, slong prec)
 {
     slong k, l, d = c.d;
-    arb_ptr x;
-    acb_ptr u, y;
-    x = _arb_vec_init(d - 1);
-    y = _acb_vec_init(ny);
+    arb_t x;
+    acb_t y, wy, wyx;
+    acb_ptr u;
+
     u = _acb_vec_init(d - 2);
+    arb_init(x);
+    acb_init(y);
+    acb_init(wy);
+    acb_init(wyx);
 
     /* reduce roots */
     ab_points(u, c.roots, e, d, prec);
@@ -66,59 +53,71 @@ integrals_edge(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
     _acb_vec_zero(res, c.g);
     for (l = 0; l < de->n; l++)
     {
-        /* powers dx^k/k */
-        powers_x(x, de->x + l, de->dx + l, d - 1, prec);
-        /* powers 1/y(x)^k+(-1)^k/y(-x)^k */
-        powers_inv_y(y, de->x + l, u, yvec, ny, c.m, prec);
-        /* all differentials */
+        slong ix, iy;
+        /* compute 1/y(x) */
+        nth_root_pol_def(y, u, de->x + l, d - 2, c.m, prec);
+        acb_inv(y, y, prec);
+
+        /* all differentials for x */
+        iy = 1; ix = 0;
+        acb_set_arb(wy, de->dx + l);
+        acb_mul_arb(wy, y, de->dx + l, prec);
         for (k = 0; k < c.g; k++)
-            acb_addmul_arb(res + l, y + dz[k].y, x + dz[k].x, prec);
+        {
+            for (; iy < dz[k].y; ix = 0, iy++)
+            {
+                acb_mul(wy, wy, y, prec);
+                acb_set(wyx, wy);
+            }
+            for (; ix < dz[k].x; ix++)
+                acb_mul_arb(wyx, wyx, de->x + l, prec);
+            acb_add(res + k, res + k, wyx, prec);
+        }
+        if (l == 0)
+            continue;
+        /* now on -x */
+        arb_neg(x, de->x + l);
+        nth_root_pol_def(y, u, x, d - 2, c.m, prec);
+        acb_inv(y, y, prec);
+        iy = 1; ix = 0;
+        acb_set_arb(wy, de->dx + l);
+        acb_mul_arb(wy, y, de->dx + l, prec);
+        for (k = 0; k < c.g; k++)
+        {
+            for (; iy < dz[k].y; ix = 0, iy++)
+            {
+                acb_mul(wy, wy, y, prec);
+                acb_set(wyx, wy);
+            }
+            for (; ix < dz[k].x; ix++)
+                acb_mul_arb(wyx, wyx, de->x + l, prec);
+            if (ix % 2)
+                acb_sub(res + k, res + k, wyx, prec);
+            else
+                acb_add(res + k, res + k, wyx, prec);
+        }
     }
     /* periods a->b of all differentials */
-    _arb_vec_clear(x, d - 1);
-    _acb_vec_clear(y, ny);
     _acb_vec_clear(u, d - 2);
-    return;
-}
-
-static slong *
-select_ypowers(const cohom_t dz, slong g, slong * len)
-{
-    slong * yvec, ny, k;
-
-    for (ny = 1, k = 1; k < g; k++)
-        if (dz[k].y > dz[k-1].y)
-            ny++;
-
-    * len = ny;
-    yvec = flint_malloc(ny * sizeof(int));
-
-    for (ny = 0, k = 1; k < g; k++)
-        if (dz[k].y > dz[k-1].y)
-            yvec[ny++] = dz[k].y;
-
-    return yvec;
+    arb_clear(x);
+    acb_clear(y);
+    acb_clear(wy);
+    acb_clear(wyx);
 }
 
 void
 integrals_tree(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec)
 {
     slong k;
-    slong * yvec, ny;
     ulong n;
     arf_t h;
     de_int_t de;
 
-
-    de_int_params(&h, &n, tree->tau, 1., 1., prec);
+    de_int_params(h, &n, tree->tau, 1., 1., prec);
     de_int_init(de, h, n, prec);
 
-    yvec = select_ypowers(dz, c.g, &ny);
-
     for (k = 0; k < c.d - 1; k++)
-        integrals_edge(integrals->rows[k], c, tree->e[k], dz, yvec, ny, de, prec);
-
-    flint_free(yvec);
+        integrals_edge(integrals->rows[k], c, tree->e[k], dz, de, prec);
 
     de_int_clear(de);
 }
