@@ -47,7 +47,13 @@ nth_root_pol_prod(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong 
 }
 
 void
-nth_root_pol_turn(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong prec)
+nth_root_pol_turn(acb_t y, acb_srcptr u, const arb_t x, acb_srcptr z, slong d, slong m, slong prec)
 {
-    return;
+    slong q; /* integer mod 2m */
+
+    /* make and product and update q */
+
+    /* multiply by (z^1/2)^q */
+    if (q)
+        acb_mul(y, y, z + q, prec);
 }

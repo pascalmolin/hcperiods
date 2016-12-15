@@ -171,4 +171,5 @@ void tau_matrix(acb_mat_t tau, const acb_mat_t omega0, const acb_mat_t omega1, s
 /* core functions */
 void nth_root_pol_def(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong prec);
 void nth_root_pol_prod(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong prec);
+void nth_root_pol_turn(acb_t y, acb_srcptr u, const arb_t x, acb_srcptr z, slong d, slong m, slong prec);
 
