@@ -12,11 +12,11 @@
 
   Let $\cu$ be a smooth irreducible curve of genus $g$. Its space
   of holomorphic differentials $\hd$ has dimension $g$, let us fix
-  a basis $ω_1,\dots ω_g$ and denote by $\bar ω$ the vector
+  a basis $ω_1,\dots ω_g$ and denote by $\bar\w$ the vector
   $(ω_1,\dots ω_g)$.
 
   For any two points $P,Q$ we can
-  consider the vector integral $\int_{P}^Q\bar ω\in\C^g$, however its value
+  consider the vector integral $\int_{P}^Q\bar\w\in\C^g$, however its value
   depends on the chosen path from $P$ to $Q$.
 
   In fact the integral depends on the path up to homology,
@@ -29,13 +29,13 @@
 
   Now the integral
   \begin{equation}
-      P,Q \mapsto \int_{P}^Q \bar ω \in \C^g/\Lambda
+      P,Q \mapsto \int_{P}^Q \bar\w \in \C^g/\Lambda
   \end{equation}
   is well defined, and the definition can be extended
   by linearity to the group of
   zero degree divisors
   \begin{equation}
-      \div^0(\cu)=\set{ \sum a_i P_i, a_i\in\Z, \sum a_i = 0}
+      \Div^0(\cu)=\set{ \sum a_i P_i, a_i\in\Z, \sum a_i = 0}
   \end{equation}
 
   The Abel-Jacobi theorem states that one obtains a
@@ -45,12 +45,12 @@
   provides an explicit isomorphism
   \begin{equation}\label{eq:ajm_def}
       \AJ:\left\{\begin{array}{ccc}
-              \Jac = \div^0/P^0 &\To &\C^g/\Lambda \\
-              \sum_k [Q_k-P_k] &\mapsto & \sum_k \int_{P_k}^{Q_k} \bar ω \mod \Lambda
+              \Jac = \Div^0/P^0 &\To &\C^g/\Lambda \\
+              \sum_k [Q_k-P_k] &\mapsto & \sum_k \int_{P_k}^{Q_k} \bar\w \mod \Lambda
   \end{array}\right.
   \end{equation}
   between the Jacobian variety and the complex torus. \\
-  \todo (CN) $D^0 = \div^0 = \div_0(\cu)$? $P^0$ = principal divisors? unclear.
+  \todo (CN) $D^0 = \Div^0 = \div_0(\cu)$? $P^0$ = principal divisors? unclear.
  
 
   \subsection{Explicit basis and standard matrices}\label{subsec:bases_matrices}
