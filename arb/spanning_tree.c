@@ -6,7 +6,8 @@
 
 #include "abel_jacobi.h"
 #include <complex.h>
-#define LAMBDA M_PI_2
+#define PI2 asin(0.)
+#define LAMBDA PI2
 
 typedef complex double cdouble;
 
@@ -31,7 +32,7 @@ static double
 tau_edge(const cdouble * w, slong i, slong j, slong len, slong * l)
 {
     slong k;
-    double tmp, tau = M_PI_2;
+    double tmp, tau = PI2;
     for (k = 0; k < len; k++)
     {
         if (k == i || k == j)

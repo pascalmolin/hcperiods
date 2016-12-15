@@ -1,4 +1,14 @@
+WHO=$(shell whoami)
+ifeq ($(WHO), molin)
+PREFIX=${HOME}/install
+EXEC=export LD_LIBRARY_PATH=$(CURDIR):${PREFIX}/lib;
+else ifeq ($(WHO), neurohr)
+PREFIX=${HOME}/neurohr/superelliptic
+EXEC=export LD_LIBRARY_PATH=$(CURDIR):${PREFIX}/lib;
+else
 PREFIX=/usr/local
+EXEC =
+endif
 EXEEXT=
 
 ifeq ($(shell uname -s),Darwin)
@@ -7,9 +17,9 @@ else
 LIBRARY   = libajsec.so
 endif
 
-INCS=-I$(CURDIR) -I/usr/local/include -I/usr/local/include/flint
-LIBS=-L$(CURDIR) -L/usr/local/lib -lajsec -larb -lflint -lmpfr -lgmp -lm -lpthread
-LIBS2=-L$(CURDIR) -L/usr/local/lib -larb -lflint -lmpfr -lgmp -lm -lpthread
+INCS=-I$(CURDIR) -I/usr/include -I${PREFIX}/include -I${PREFIX}/include/flint
+LIBS=-L$(CURDIR) -L/usr/lib -L${PREFIX}/lib -lajsec -larb -lflint -lmpfr -lgmp -lm -lpthread
+LIBS2=-L$(CURDIR) -L/usr/lib -L${PREFIX}/lib -larb -lflint -lmpfr -lgmp -lm -lpthread
 
 CC=gcc
 CXX=g++
@@ -21,19 +31,6 @@ ABI_FLAG=
 PIC_FLAG=-fPIC
 EXTRA_SHARED_FLAGS=
 #-install_name /usr/local/lib/libarb-1.1.1.dylib -compatibility_version 1.1 -current_version 1.1.1
-
-DLPATH=DYLD_LIBRARY_PATH
-DLPATH_ADD=$(CURDIR):/usr/local/lib
-EXTENSIONS=
-EXTRA_BUILD_DIRS=
-
-ifdef $(DLPATH)
-  $(DLPATH):=$($(DLPATH)):$(DLPATH_ADD)
-else
-  $(DLPATH):=$(DLPATH_ADD)
-endif
-
-LIBDIR=lib
 
 QUIET_CC  = @echo '   ' CC  ' ' $@;
 QUIET_CXX = @echo '   ' CXX ' ' $@;
@@ -62,7 +59,8 @@ quiet: library
 library: $(LIBRARY)
 
 test: library $(TESTS)
-	$(AT)$(foreach prog, $(TESTS), $(prog) || exit $$?;)
+	export LD_LIBRARY_PATH=${PREFIX}/lib
+	$(AT)$(foreach prog, $(TESTS), $(EXEC) $(prog) || exit $$?;)
 
 verbose:
 	$(MAKE) AT= QUIET_CC= QUIET_CXX= QUIET_AR=
