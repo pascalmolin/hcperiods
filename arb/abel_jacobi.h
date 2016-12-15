@@ -137,7 +137,7 @@ void spanning_tree(tree_t tree, acb_srcptr x, slong d);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
-void intersection_tree(si_mat_t c, tree_t tree, slong d, slong m);
+void intersection_tree(si_mat_t c, const tree_t tree, slong d, slong m);
 
 /* find g+g symplectic homology basis from tree */
 /* two lists of g loops */

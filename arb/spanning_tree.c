@@ -52,7 +52,6 @@ static void
 endvalues_edge(double * va, double * vb, const cdouble * w, slong ia, slong ib, slong len)
 {
     slong k;
-    double ta = 0., tb = 0.;
     cdouble fa, fb;
 
     fa = fb = w[ib] - w[ia];
