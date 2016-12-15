@@ -4,18 +4,23 @@
 
   \section{The Abel-Jacobi map}
 
+  We recall, without proof, the main objects we are interested in.
+  The exposition follows that of \cite{vanWamelen}. More details can
+  be found in \cite{???}.
+
   \subsection{Definition}
 
   Let $\cu$ be a smooth irreducible curve of genus $g$. Its space
   of holomorphic differentials $\hd$ has dimension $g$, let us fix
-  a basis $ω_1,\dots ω_g$.
+  a basis $ω_1,\dots ω_g$ and denote by $\bar ω$ the vector
+  $(ω_1,\dots ω_g)$.
 
-  For any two points $P_0,P$ we can 
-  consider the integral $\int_{P_0}^Pω_j\in\C^g$ but its value
-  depends on the chosen path from $P_0$ to $P$.
+  For any two points $P,Q$ we can
+  consider the vector integral $\int_{P}^Q\bar ω\in\C^g$, however its value
+  depends on the chosen path from $P$ to $Q$.
 
-  In fact the integral is defined up to homology on the path,
-  so we consider the {\em period lattice} of $\cu$
+  In fact the integral depends on the path up to homology,
+  so we introduce the {\em period lattice} of $\cu$
   \begin{equation}
       \Lambda = \set{\int_γ ω_j, γ\in\homo} \subset\C^g
   \end{equation}
@@ -24,26 +29,29 @@
 
   Now the integral
   \begin{equation}
-      P \mapsto \int_{P_0}^P ω_j \in \C^g/\Lambda
+      P,Q \mapsto \int_{P}^Q \bar ω \in \C^g/\Lambda
   \end{equation}
   is well defined, and the definition can be extended
-  by linearity to the group $D^0(\cu)$ of zero degree divisors.
+  by linearity to the group of
+  zero degree divisors
+  \begin{equation}
+      \div^0(\cu)=\set{ \sum a_i P_i, a_i\in\Z, \sum a_i = 0}
+  \end{equation}
 
   The Abel-Jacobi theorem states that one obtains a
   surjective map %to the torus $\C^g/\Lambda$ and
   whose kernel
   is formed by divisors of functions, so that the integration
   provides an explicit isomorphism
-  
   \begin{equation}\label{eq:ajm_def}
       \AJ:\left\{\begin{array}{ccc}
               \Jac = \div^0/P^0 &\To &\C^g/\Lambda \\
-              \sum_k [Q_k-P_k] &\mapsto & \sum_k \int_{P_k}^{Q_k} \omega_j \mod \Lambda
+              \sum_k [Q_k-P_k] &\mapsto & \sum_k \int_{P_k}^{Q_k} \bar ω \mod \Lambda
   \end{array}\right.
   \end{equation}
   between the Jacobian variety and the complex torus. \\
   \todo (CN) $D^0 = \div^0 = \div_0(\cu)$? $P^0$ = principal divisors? unclear.
-  
+ 
 
   \subsection{Explicit basis and standard matrices}\label{subsec:bases_matrices}
 
@@ -51,20 +59,20 @@
   Let us choose a symplectic basis of $\homo$, that is two
   families of loops $α_i$, $β_j$ for $1\leq i,j\leq g$ such that
   %the intersections
-  the intersections satisfy 
+  the intersections satisfy
   \begin{equation}
       %α_i\cdot β_j = \delta_{i,j}
       \left( \,\alpha_i \circ \beta_j \,\right) = \delta_{i,j}\,,
   \end{equation}
-  the other intersections being all zero. 
+  the other intersections being all zero.
 
-  We define the period matrices
+  We define the period matrices on those loops
   \begin{equation}
       \OA = \left(\int_{α_i}ω_j\right)_{1\leq i,j\leq g}
       \text{ and }
       \OB = \left(\int_{β_i}ω_j\right)_{1\leq i,j\leq g}
   \end{equation}
-  and call {\em big period matrix} the matrix \\
+  and call {\em big period matrix} the concatenated matrix \\
   \todo (CN) without comma? $(\OA \, \OB)$? $\in \C^{g \times 2g}$ or $\C^{2g \times g}$?
   \begin{equation}
       \Omega = (\OA,\OB)
