@@ -10,6 +10,14 @@
 
 typedef complex double cdouble;
 
+static cdouble
+acb_get_cd(const acb_t z)
+{
+    return
+        arf_get_d(arb_midref(acb_realref(z)), ARF_RND_NEAR)
+    + _Complex_I * arf_get_d(arb_midref(acb_imagref(z)), ARF_RND_NEAR);
+}
+
 static double
 tau_3(cdouble a, cdouble b, cdouble c)
 {
@@ -39,12 +47,24 @@ tau_edge(const cdouble * w, slong i, slong j, slong len, slong * l)
     return tau;
 }
 
-static cdouble
-acb_get_cd(const acb_t z)
+static void
+endvalues_edge(double * va, double * vb, const cdouble * w, slong ia, slong ib, slong len)
 {
-    return
-        arf_get_d(arb_midref(acb_realref(z)), ARF_RND_NEAR)
-    + _Complex_I * arf_get_d(arb_midref(acb_imagref(z)), ARF_RND_NEAR);
+    slong k;
+    double ta = 0., tb = 0.;
+    cdouble fa, fb;
+
+    fa = fb = w[ib] - w[ia];
+    
+    for (k = 0; k < len; k++)
+    {
+        if (k == ia || k == ib)
+            continue;
+        fa *= (w[ia] - w[k]);
+        fb *= (w[ia] - w[k]);
+    }
+    *va = carg(fa);
+    *vb = carg(fb);
 }
 
 static void
@@ -72,6 +92,8 @@ edge_flip(edge_t e)
     f.tau =  e.tau;
     f.a = e.b;
     f.b = e.a ;
+    f.va = e.vb;
+    f.vb = e.va ;
     return f;
 }
 
@@ -89,6 +111,7 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
     int * t;
     edge_t * e;
 
+    /* small approx of roots */
     w = malloc(len * sizeof(cdouble));
     for (k = 0; k < len; k++)
         w[k] = acb_get_cd(x + k);
@@ -96,8 +119,6 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
     n = (len * (len - 1)) / 2;
     e = malloc(n * sizeof(edge_t));
     edges_init(e, w, len);
-    free(w);
-
 
     /* order edges */
     qsort(e, n, sizeof(edge_t), (int(*)(const void*,const void*))edge_cmp);
@@ -109,18 +130,27 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
     n--;
     for (k = 0; k < tree->n; k++)
     {
+
         /* discard if both left or taken */
         for (; t[e[n].a] == t[e[n].b]; n--);
-        /* reorder edge so that a is in t */
+
         if (t[e[n].b])
-            tree->e[k] = edge_flip(e[n]);
-        else
-            tree->e[k] = e[n];
+            /* reorder edge */
+            e[n] = edge_flip(e[n]);
+
         t[e[n].a] = 1;
         t[e[n].b] = 1;
+
+        /* compute endvalues for shifting numbers */
+        endvalues_edge(&e[n].va, &e[n].vb, w, e[n].a, e[n].b, len);
+
+        tree->e[k] = e[n];
     }
+
+    /* save complexity estimate */
     tree->tau = e[n].tau;
 
+    free(w);
     free(e);
     free(t);
 }

@@ -6,26 +6,56 @@
 
 #include "abel_jacobi.h"
 
-void
-intersection_tree(inter_mat inter, tree_t tree, acb_srcptr x, slong d)
+/* set
+   c[i+k][j+l] = 1 if k-l = sp mod m
+   c[i+k][j+l] = -1 if k-l = sm mod m
+ */
+static void
+fill_block(si_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
 {
-    slong k, l;
+    return;
+}
 
+void
+intersection_tree(si_mat_t c, tree_t tree, slong d, slong m)
+{
+    slong k, l, size = m - 1;
+
+    /* the entry c[ k * (m-1) + s ] corresponds to loop alpha_i^(s) */
     for (k = 0; k < d - 1; k++)
     {
+        slong s, sp, sm; /* shift */
         edge_t ek = tree->e[k];
-        for (l = k; l < d - 1; l++)
+
+        /* intersection with self shifts */
+
+        fill_block(c, k * size, k * size, 1, -1, m);
+        
+        /* intersection with others */
+        for (l = k + 1; l < d - 1; l++)
         {
             edge_t el = tree->e[l];
+
+            if (el.a != ek.a && el.a != ek.b)
+                /* no intersection */
+                continue;
+
+            /* compute angle */
+
+            /* compute shift */
+
             if(el.a == ek.a)
             {
                 /* case ab.ad */
+                double v = el.va - ek.va;
+                fill_block(c, k * size, l * size, 1, -1, m);
             }
             else if (el.a == ek.b)
             {
                 /* case ab.bd */
+                double v = el.va - ek.vb;
+                fill_block(c, k * size, l * size, 1, -1, m);
             }
         }
     }
-    return;
 }

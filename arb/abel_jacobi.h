@@ -47,6 +47,8 @@ typedef struct
     double tau;
     slong a;
     slong b;
+    double va;
+    double vb;
 } edge_t;
 
 typedef struct
@@ -56,16 +58,6 @@ typedef struct
     edge_t * e;
 } tree_struct;
 typedef tree_struct tree_t[1];
-
-/* intersection between two edges of the tree */
-typedef struct
-{
-    slong coeff; /* intersection 0, 1 or -1 */
-    slong shift; /* number of sheets to move to */
-    slong dir;   /* up or down */
-} inter_t;
-
-typedef inter_t ** inter_mat;
 
 /* represents the loop_t(coeff * zeta^shift * tree[index]) */
 typedef struct
@@ -104,7 +96,6 @@ typedef struct
 
     /* homology using tree */
     tree_t tree;         /* choice of best loops */
-    inter_mat inter;     /* intersections in tree, size d-1 * d-1 */
 
     /* A,B symplectic basis as sums of shifted gamma loops */
     homol_t loop_a;
@@ -146,12 +137,12 @@ void spanning_tree(tree_t tree, acb_srcptr x, slong d);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
-void intersection_tree(inter_mat inter, tree_t tree, acb_srcptr x, slong d);
+void intersection_tree(si_mat_t c, tree_t tree, slong d, slong m);
 
 /* find g+g symplectic homology basis from tree */
 /* two lists of g loops */
 void symplectic_reduction(si_mat_t p, si_mat_t m, slong g, slong len);
-void symplectic_basis(homol_t loop_a, homol_t loop_b, inter_mat inter, sec_t c);
+void symplectic_basis(homol_t loop_a, homol_t loop_b, const tree_t tree, sec_t c);
 
 /* find basis of holomorphic differentials */
 /* g elementary differentials */
