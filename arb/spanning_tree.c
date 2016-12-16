@@ -38,7 +38,6 @@ tau_edge(const cdouble * w, slong i, slong j, slong len, slong * l)
         if (k == i || k == j)
             continue;
         tmp = tau_3(w[i], w[j], w[k]);
-        flint_printf("\ntau[%ld,%ld,%ld] = %g", i, j, k, tmp);
         if (tmp < tau)
         {
             tau = tmp;
@@ -130,9 +129,6 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
     for (k = 0; k < len; k++)
         t[k] = 0;
 
-    for (i = 0; i < n; i++)
-        flint_printf("\nedge %ld [%ld-%ld] -> tau = %g", i, e[i].a, e[i].b, e[i].tau);
-
     for (k = 0; k < tree->n; k++)
     {
 
@@ -140,9 +136,7 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
         /* remark: stupid to loop many times, otherwise one can
          * take non-connected edges but one must reorder the
          * edges at the end */
-        for (i = n - 1; k && i >= 0 && t[e[i].a] == t[e[i].b]; i--);
-
-        flint_printf("\n[%ld] take edge %ld -> tau = %lf", k, i, e[i].tau);
+        for (i = n - 1; k && t[e[i].a] == t[e[i].b]; i--);
 
         if (t[e[i].b])
             /* reorder edge */
@@ -151,10 +145,8 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
         t[e[i].a] = 1;
         t[e[i].b] = 1;
 
-#if 0
         /* compute endvalues for shifting numbers */
-        endvalues_edge(&e[n].va, &e[n].vb, w, e[n].a, e[n].b, len);
-#endif
+        endvalues_edge(&e[i].va, &e[i].vb, w, e[i].a, e[i].b, len);
 
         tree->e[k] = e[i];
 

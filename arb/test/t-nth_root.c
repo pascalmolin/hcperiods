@@ -9,7 +9,7 @@ int main() {
 
     flint_rand_t state;
     
-    flint_printf("nth_root_pol...");
+    flint_printf("nth_root...");
     fflush(stdout);
     flint_randinit(state);
 
