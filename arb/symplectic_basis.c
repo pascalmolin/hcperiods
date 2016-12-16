@@ -39,13 +39,13 @@ void
 symplectic_basis(homol_t alpha, homol_t beta, const tree_t tree, sec_t c)
 {
     slong i, len = (c.d-1)*(c.m-1);
-    si_mat_t m, p;
-    si_mat_init(m, len, len);
-    si_mat_init(p, len, len);
+    fmpz_mat_t m, p;
+    fmpz_mat_init(m, len, len);
+    fmpz_mat_init(p, len, len);
     /* compute big intersection matrix, size len = (d-1)*(m-1) */
     intersection_tree(m, tree, c.d, c.m);
-    symplectic_reduction(p, m, c.g, len);
-    si_mat_clear(m, len, len);
+    symplectic_reduction(p, m, c.g);
+    fmpz_mat_clear(m);
 
     for (i = 0; i < c.g; i++)
     {
@@ -64,5 +64,5 @@ symplectic_basis(homol_t alpha, homol_t beta, const tree_t tree, sec_t c)
         beta[i].l = flint_malloc(n * sizeof(gamma_t));
         set_loops(beta[i].l, n, row, c.m - 1, len);
     }
-    si_mat_clear(p, len, len);
+    fmpz_mat_clear(p);
 }

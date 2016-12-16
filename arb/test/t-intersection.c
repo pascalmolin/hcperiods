@@ -33,9 +33,9 @@ int main() {
 
             for (m = 2; m < 7; m++)
             {
-                si_mat_t c;
+                fmpz_mat_t c;
                 slong len = (d-1)*(m-1);
-                si_mat_init(c, len, len);
+                fmpz_mat_init(c, len, len);
 
                 intersection_tree(c, tree, d, m);
 
@@ -44,7 +44,7 @@ int main() {
                 fmpz_mat_print_pretty(c);
 #endif
 
-                si_mat_clear(c, len, len);
+                fmpz_mat_clear(c);
             }
 
             tree_clear(tree);

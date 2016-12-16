@@ -9,7 +9,7 @@
 #include "acb.h"
 #include "acb_mat.h"
 
-#include "si_mat.h"
+#include "fmpz_mat_extras.h"
 
 /******************************************************************************
 
@@ -138,11 +138,11 @@ void spanning_tree(tree_t tree, acb_srcptr x, slong d);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
-void intersection_tree(si_mat_t c, const tree_t tree, slong d, slong m);
+void intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m);
 
 /* find g+g symplectic homology basis from tree */
 /* two lists of g loops */
-void symplectic_reduction(si_mat_t p, si_mat_t m, slong g, slong len);
+void symplectic_reduction(fmpz_mat_t p, fmpz_mat_t m, slong g);
 void symplectic_basis(homol_t loop_a, homol_t loop_b, const tree_t tree, sec_t c);
 
 /* find basis of holomorphic differentials */

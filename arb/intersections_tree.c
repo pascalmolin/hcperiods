@@ -15,7 +15,7 @@
  */
 
 static void
-fill_block(si_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
+fill_block(fmpz_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
 {
     slong k, l;
     /* important: make sp and sm positive */
@@ -39,7 +39,7 @@ fill_block(si_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
 }
 
 void
-intersection_tree(si_mat_t c, const tree_t tree, slong d, slong m)
+intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
 {
     slong k, l, size = m - 1;
 
