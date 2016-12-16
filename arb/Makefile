@@ -79,7 +79,7 @@ build/%.lo: %.c $(HEADERS) | build
 build/%.o: %.c $(HEADERS) | build
 	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) -c $< -o $@;
 
-build/test/%$(EXEEXT): test/%.c $(HEADERS) | build/test
+build/test/%$(EXEEXT): test/%.c $(HEADERS) $(LIBRARY) | build/test
 	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) $< -o $@ $(LIBS)
 
 $(LIBRARY): $(LOBJS) $(HEADERS) | build

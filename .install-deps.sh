@@ -3,14 +3,12 @@ DEPS=$HOME/deps
 TMP=$HOME/tmp
 mkdir -p $TMP
 
-if [ "$TRAVIS_OS_NAME" == "osx" ]
-then
+if [ "$TRAVIS_OS_NAME" = "osx" ]; then
     brew update
     brew install gmp mpfr
-elif [ "$TRAVIS_OS_NAME" == "linux" ]
-then
-    sudo apt-get update
-    sudo apt-get install libgmp-dev libmpfr-dev
+elif [ "$TRAVIS_OS_NAME" = "linux" ]; then
+    sudo apt-get -qq update
+    sudo apt-get install -y libgmp-dev libmpfr-dev
 else
     cd $TMP
     wget http://mpir.org/mpir-2.7.0.tar.bz2
