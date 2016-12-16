@@ -7,9 +7,12 @@ else
 LIBRARY   = libajsec.so
 endif
 
-INCS=-I$(CURDIR) -I/usr/local/include -I/usr/local/include/flint
-LIBS=-L$(CURDIR) -L/usr/local/lib -lajsec -larb -lflint -lmpfr -lgmp -lm -lpthread
-LIBS2=-L$(CURDIR) -L/usr/local/lib -larb -lflint -lmpfr -lgmp -lm -lpthread
+BASEDIR=/home/neurohr/superelliptic
+
+#INCS=-I$(CURDIR) -I/usr/local/include -I/usr/local/include/flint -I
+INCS=-I$(CURDIR) -I$(BASEDIR)/include
+LIBS=-L$(CURDIR) -L$(BASEDIR)/lib -lajsec -larb -lflint -lmpfr -lgmp -lm -lpthread
+LIBS2=-L$(CURDIR) -L$(BASEDIR)/lib -larb -lflint -lmpfr -lgmp -lm -lpthread
 
 CC=gcc
 CXX=g++
