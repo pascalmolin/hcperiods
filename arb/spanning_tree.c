@@ -9,6 +9,10 @@
 #define PI2 acos(0.)
 #define LAMBDA PI2
 
+#define edge_flip(e) do { \
+    slong a = e.a; e.a = e.b; e.b = a; \
+} while (0);
+
 typedef complex double cdouble;
 
 static cdouble
@@ -49,13 +53,15 @@ tau_edge(const cdouble * w, slong i, slong j, slong len, slong * l)
 }
 
 static void
-endvalues_edge(double * va, double * vb, const cdouble * w, slong ia, slong ib, slong d)
+endvalues_edge(double * va, double * vb, double * dir,
+        const cdouble * w, slong ia, slong ib, slong d)
 {
     slong k;
     double a, b;
     cdouble ba = w[ib] - w[ia];
 
-    a = b = (d - 1) * carg(ba);
+    *dir = carg(ba);
+    a = b = (d - 1) * (*dir);
     
     for (k = 0; k < d; k++)
     {
@@ -84,18 +90,6 @@ edges_init(edge_t * e, const cdouble * w, slong len)
             k++;
         }
     }
-}
-
-static edge_t
-edge_flip(edge_t e)
-{
-    edge_t f;
-    f.tau =  e.tau;
-    f.a = e.b;
-    f.b = e.a ;
-    f.va = e.vb;
-    f.vb = e.va ;
-    return f;
 }
 
 int
@@ -138,15 +132,15 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
          * edges at the end */
         for (i = n - 1; k && t[e[i].a] == t[e[i].b]; i--);
 
+        /* ensure a already in tree */
         if (t[e[i].b])
-            /* reorder edge */
-            e[i] = edge_flip(e[i]);
+            edge_flip(e[i]);
 
         t[e[i].a] = 1;
         t[e[i].b] = 1;
 
         /* compute endvalues for shifting numbers */
-        endvalues_edge(&e[i].va, &e[i].vb, w, e[i].a, e[i].b, len);
+        endvalues_edge(&e[i].va, &e[i].vb, &e[i].dir, w, e[i].a, e[i].b, len);
 
         tree->e[k] = e[i];
 

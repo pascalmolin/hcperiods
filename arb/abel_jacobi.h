@@ -49,6 +49,7 @@ typedef struct
     slong b;
     double va;
     double vb;
+    double dir;
 } edge_t;
 
 typedef struct
