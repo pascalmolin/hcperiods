@@ -1,0 +1,11 @@
+language: c
+os:
+  - osx
+  - linux
+compiler:
+  - gcc
+  - clang
+install:
+  - ./.install-deps.sh
+script:
+  - make -j4 test PREFIX=$HOME/deps

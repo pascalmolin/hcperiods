@@ -117,7 +117,7 @@ si_mat_set_id(si_mat_t p, long len)
 int
 si_mat_eq(si_mat_t a, si_mat_t b, long nr, long nc)
 {
-    fmpz_mat_equal(a, b);
+    return fmpz_mat_equal(a, b);
 }
 
 void

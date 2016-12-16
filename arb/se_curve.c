@@ -22,10 +22,6 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d)
     tree_init(aj->tree, d);
     aj->dz = malloc(g * sizeof(dform_t));
 
-    aj->inter = malloc( (d-1) * sizeof (inter_t *) );
-    for (k = 0; k < d-1; k++)
-        aj->inter[k] = malloc( (d-1) * sizeof(inter_t));
-
     aj->loop_a = malloc(g * sizeof(loop_t));
     aj->loop_b = malloc(g * sizeof(loop_t));
     /*
@@ -70,7 +66,6 @@ abel_jacobi_clear(abel_jacobi_t aj)
     tree_clear(aj->tree);
     free(aj->loop_a);
     free(aj->loop_b);
-    free(aj->inter);
     free(aj->dz);
 }
 
@@ -82,8 +77,7 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
 
     /* homology */
     spanning_tree(aj->tree, c.roots, c.d);
-    intersection_tree(aj->inter, aj->tree, c.roots, c.d);
-    symplectic_basis(aj->loop_a, aj->loop_b, aj->inter, c);
+    symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
 
     /* cohomology */
     holomorphic_differentials(aj->dz, c.d, c.m);

@@ -1,0 +1,23 @@
+\select@language {english}
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}
+\contentsline {section}{\numberline {2}The Abel-Jacobi map}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Definition}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Explicit basis and standard matrices}{3}{subsection.2.2}
+\contentsline {section}{\numberline {3}Superelliptic curves}{4}{section.3}
+\contentsline {subsection}{\numberline {3.1}Definition \& properties}{4}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Complex roots and branches of the curve}{4}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Cycles and homology}{5}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Differential forms}{7}{subsection.3.4}
+\contentsline {section}{\numberline {4}Strategy for the period matrix}{9}{section.4}
+\contentsline {subsection}{\numberline {4.1}Computation of periods}{10}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Symplectic basis}{11}{subsection.4.2}
+\contentsline {section}{\numberline {5}Intersections}{11}{section.5}
+\contentsline {section}{\numberline {6}Double-exponential integration}{15}{section.6}
+\contentsline {subsection}{\numberline {6.1}Gauss-Chebychev integration}{17}{subsection.6.1}
+\contentsline {section}{\numberline {7}Computing the Abel-Jacobi map}{18}{section.7}
+\contentsline {subsection}{\numberline {7.1}Between branch points}{18}{subsection.7.1}
+\contentsline {subsection}{\numberline {7.2}From ramification point to regular point}{19}{subsection.7.2}
+\contentsline {subsection}{\numberline {7.3}From basepoint to infinity}{19}{subsection.7.3}
+\contentsline {subsection}{\numberline {7.4}Lattice reduction}{20}{subsection.7.4}
+\contentsline {section}{\numberline {8}Computational aspects}{20}{section.8}
+\contentsline {subsection}{\numberline {8.1}Winding number}{20}{subsection.8.1}

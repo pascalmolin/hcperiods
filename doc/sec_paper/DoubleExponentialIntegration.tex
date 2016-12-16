@@ -62,7 +62,7 @@ we obtain a rigorous integration scheme as follows
     \begin{equation}
         \begin{cases}
             h \le \frac{2πτ}{D + \log(2M_2 B(τ,α) + e^{-D})}\\
-            nh \ge \asinh(\frac{D+\log(\frac{2^{2α+1}M_1}{αλ})}{2αλ})
+            nh \ge \asinh(\frac{D+\log(\frac{2^{2α+1}M_1}{α})}{2αλ})
         \end{cases}
     \end{equation}
     then
@@ -107,9 +107,9 @@ by bounding each error by $e^{-D}/2$.
     \begin{align*}
         \sum_{\abs{k}>n}\abs{hg(kh)}
         &\leq2M_1\int_{nh}^\infty\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
-        =2M_1\int_{\sinh(nh)}^\infty\frac{\dt}{\cosh(λ t)^{2α}}\\
-        &\leq 2^{2α+1} M_1\int_{\sinh(nh)}^\infty e^{-2αλ t}\dt
-        = \frac{2^{2α} M_1}{αλ}e^{-2αλ\sinh(nh)}
+        =2M_1\int_{λ\sinh(nh)}^\infty\frac{\dt}{\cosh(t)^{2α}}\\
+        &\leq 2^{2α+1} M_1\int_{λ\sinh(nh)}^\infty e^{-2αt}\dt
+        = \frac{2^{2α} M_1}{α}e^{-2αλ\sinh(nh)}
     \end{align*}
 \end{proof}
 
