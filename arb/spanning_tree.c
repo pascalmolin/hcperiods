@@ -1,12 +1,13 @@
 /******************************************************************************
 
- Copyright (C) 2016 Pascal Molin
+ Copyright (C) 2016 Pascal Molin, Christian Neurohr
 
  ******************************************************************************/
 
 #include "abel_jacobi.h"
 #include <complex.h>
-#define PI2 asin(0.)
+/*#define PI2 asin(0.)*/
+#define PI2 asin(1.0)
 #define LAMBDA PI2
 
 typedef complex double cdouble;
@@ -48,7 +49,7 @@ tau_edge(const cdouble * w, slong i, slong j, slong len, slong * l)
     return tau;
 }
 
-static void
+static void	
 endvalues_edge(double * va, double * vb, const cdouble * w, slong ia, slong ib, slong len)
 {
     slong k;
@@ -61,7 +62,7 @@ endvalues_edge(double * va, double * vb, const cdouble * w, slong ia, slong ib, 
         if (k == ia || k == ib)
             continue;
         fa *= (w[ia] - w[k]);
-        fb *= (w[ia] - w[k]);
+        fb *= (w[ib] - w[k]);
     }
     *va = carg(fa);
     *vb = carg(fb);
