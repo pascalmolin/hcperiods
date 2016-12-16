@@ -5,10 +5,8 @@
  ******************************************************************************/
 
 #include "abel_jacobi.h"
-#include <math.h>
 
-/*#define PI2 (2 * acos(-1.))*/
-#define PI2 (2 * M_PI)
+#define TWOPI (2 * acos(-1.))
 #define c(i,j) fmpz_mat_entry(c,i,j)
 
 /* set
@@ -70,7 +68,7 @@ intersection_tree(si_mat_t c, const tree_t tree, slong d, slong m)
             if(el.a == ek.a)
             {
                 /* case ab.ad */
-                s = lrint((el.va - ek.va ) / PI2);
+                s = lrint((el.va - ek.va ) / TWOPI);
                 if (el.dir > ek.dir)
                     fill_block(c, k * size, l * size, -s, -1-s, m);
                 else
@@ -79,7 +77,7 @@ intersection_tree(si_mat_t c, const tree_t tree, slong d, slong m)
             else if (el.a == ek.b)
             {
                 /* case ab.bd */
-                s = lrint(.5 + (el.va - ek.vb ) / PI2);
+                s = lrint(.5 + (el.va - ek.vb ) / TWOPI);
                 fill_block(c, k * size, l * size, -s, 1-s, m);
             }
             else
