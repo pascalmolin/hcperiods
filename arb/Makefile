@@ -25,7 +25,7 @@ CXX=g++
 AR=ar
 LDCONFIG=true
 
-CFLAGS=-fno-common -ansi -pedantic -Wall -O2 -funroll-loops -g -mpopcnt
+CFLAGS=-fno-common -ansi -pedantic -Wall -O2 -funroll-loops -g -mpopcnt -std=c99
 ABI_FLAG=
 PIC_FLAG=-fPIC
 EXTRA_SHARED_FLAGS=
@@ -80,7 +80,7 @@ build/%.lo: %.c $(HEADERS) | build
 build/%.o: %.c $(HEADERS) | build
 	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) -c $< -o $@;
 
-build/test/%$(EXEEXT): test/%.c $(HEADERS) | build/test
+build/test/%$(EXEEXT): test/%.c $(HEADERS) $(LIBRARY) | build/test
 	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) $< -o $@ $(LIBS)
 
 $(LIBRARY): $(LOBJS) $(HEADERS) | build
