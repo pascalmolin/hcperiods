@@ -6,7 +6,7 @@
 
 #include "abel_jacobi.h"
 #include <complex.h>
-#define PI2 asin(0.)
+#define PI2 acos(0.)
 #define LAMBDA PI2
 
 typedef complex double cdouble;
@@ -38,6 +38,7 @@ tau_edge(const cdouble * w, slong i, slong j, slong len, slong * l)
         if (k == i || k == j)
             continue;
         tmp = tau_3(w[i], w[j], w[k]);
+        flint_printf("\ntau[%ld,%ld,%ld] = %g", i, j, k, tmp);
         if (tmp < tau)
         {
             tau = tmp;
@@ -107,7 +108,7 @@ edge_cmp(const edge_t * x, const edge_t * y)
 void
 spanning_tree(tree_t tree, acb_srcptr x, slong len)
 {
-    slong k, n;
+    slong k, i, n;
     cdouble * w;
     int * t;
     edge_t * e;
@@ -121,6 +122,7 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
     e = malloc(n * sizeof(edge_t));
     edges_init(e, w, len);
 
+
     /* order edges */
     qsort(e, n, sizeof(edge_t), (int(*)(const void*,const void*))edge_cmp);
 
@@ -128,28 +130,38 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
     for (k = 0; k < len; k++)
         t[k] = 0;
 
-    n--;
+    for (i = 0; i < n; i++)
+        flint_printf("\nedge %ld [%ld-%ld] -> tau = %g", i, e[i].a, e[i].b, e[i].tau);
+
     for (k = 0; k < tree->n; k++)
     {
 
-        /* discard if both left or taken */
-        for (; t[e[n].a] == t[e[n].b]; n--);
+        /* start from last edge, discard if both left or taken */
+        /* remark: stupid to loop many times, otherwise one can
+         * take non-connected edges but one must reorder the
+         * edges at the end */
+        for (i = n - 1; k && i >= 0 && t[e[i].a] == t[e[i].b]; i--);
 
-        if (t[e[n].b])
+        flint_printf("\n[%ld] take edge %ld -> tau = %lf", k, i, e[i].tau);
+
+        if (t[e[i].b])
             /* reorder edge */
-            e[n] = edge_flip(e[n]);
+            e[i] = edge_flip(e[i]);
 
-        t[e[n].a] = 1;
-        t[e[n].b] = 1;
+        t[e[i].a] = 1;
+        t[e[i].b] = 1;
 
+#if 0
         /* compute endvalues for shifting numbers */
         endvalues_edge(&e[n].va, &e[n].vb, w, e[n].a, e[n].b, len);
+#endif
 
-        tree->e[k] = e[n];
+        tree->e[k] = e[i];
+
+        /* save complexity estimate */
+        if (e[i].tau < tree->tau)
+            tree->tau = e[i].tau;
     }
-
-    /* save complexity estimate */
-    tree->tau = e[n].tau;
 
     free(w);
     free(e);
@@ -161,6 +173,7 @@ tree_init(tree_t tree, slong n)
 {
     tree->n = n;
     tree->e = malloc(n * sizeof(edge_t));
+    tree->tau = PI2;
 }
 
 void
