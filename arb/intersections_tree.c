@@ -20,6 +20,9 @@ static void
 fill_block(si_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
 {
     slong k, l;
+    /* important: make sp and sm positive */
+    sp = (sp % m + m) % m;
+    sm = (sm % m + m) % m;
     for (l = 0; l < m - 1; l++)
     {
         k = (l + sp) % m;
