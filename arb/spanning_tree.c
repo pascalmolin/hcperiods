@@ -49,22 +49,23 @@ tau_edge(const cdouble * w, slong i, slong j, slong len, slong * l)
 }
 
 static void
-endvalues_edge(double * va, double * vb, const cdouble * w, slong ia, slong ib, slong len)
+endvalues_edge(double * va, double * vb, const cdouble * w, slong ia, slong ib, slong d)
 {
     slong k;
-    cdouble fa, fb;
+    double a, b;
+    cdouble ba = w[ib] - w[ia];
 
-    fa = fb = w[ib] - w[ia];
+    a = b = (d - 1) * carg(ba);
     
-    for (k = 0; k < len; k++)
+    for (k = 0; k < d; k++)
     {
         if (k == ia || k == ib)
             continue;
-        fa *= (w[ia] - w[k]);
-        fb *= (w[ia] - w[k]);
+        a += carg((w[ia] - w[k]) / ba);
+        b += carg((w[ib] - w[k]) / ba);
     }
-    *va = carg(fa);
-    *vb = carg(fb);
+    *va = a;
+    *vb = b;
 }
 
 static void

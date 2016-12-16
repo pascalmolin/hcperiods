@@ -24,7 +24,7 @@ CXX=g++
 AR=ar
 LDCONFIG=true
 
-CFLAGS=-fno-common -ansi -pedantic -Wall -O2 -funroll-loops -g -mpopcnt
+CFLAGS=-fno-common -ansi -pedantic -Wall -O2 -funroll-loops -g -mpopcnt -std=c99
 ABI_FLAG=
 PIC_FLAG=-fPIC
 EXTRA_SHARED_FLAGS=
