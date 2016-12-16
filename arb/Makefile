@@ -1,14 +1,12 @@
 WHO=$(shell whoami)
 ifeq ($(WHO), molin)
 PREFIX=${HOME}/install
-EXEC=export LD_LIBRARY_PATH=$(CURDIR):${PREFIX}/lib;
 else ifeq ($(WHO), neurohr)
 PREFIX=${HOME}/neurohr/superelliptic
-EXEC=export LD_LIBRARY_PATH=$(CURDIR):${PREFIX}/lib;
 else
 PREFIX=/usr/local
-EXEC =
 endif
+EXEC=export LD_LIBRARY_PATH=$(CURDIR):${PREFIX}/lib;
 EXEEXT=
 
 ifeq ($(shell uname -s),Darwin)
