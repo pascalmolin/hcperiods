@@ -11,4 +11,4 @@ before_install:
 install:
   - ./.install-deps.sh
 script:
-  - make -j4 test
+  - make -j4 test PREFIX=$HOME/deps
