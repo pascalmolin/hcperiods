@@ -3,11 +3,11 @@ DEPS=$HOME/deps
 TMP=$HOME/tmp
 mkdir -p $TMP
 
-if [[ "TRAVIS_OS_NAME" == "osx" ]]
+if [ "TRAVIS_OS_NAME" == "osx" ]
 then
     brew update
     brew install gmp mpfr
-elif [[ "TRAVIS_OS_NAME" == "linux" ]] 
+elif [ "TRAVIS_OS_NAME" == "linux" ]
 then
     sudo apt-get update
     sudo apt-get install libgmp-dev libmpfr-dev
