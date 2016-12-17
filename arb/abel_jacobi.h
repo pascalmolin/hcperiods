@@ -121,6 +121,8 @@ typedef abel_jacobi_struct abel_jacobi_t[1];
   functions
 
  ******************************************************************************/
+void sec_init(sec_t * c, slong m, acb_srcptr x, slong d);
+void sec_clear(sec_t c);
 
 void abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d);
 void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_srcptr f, slong len, slong prec);
