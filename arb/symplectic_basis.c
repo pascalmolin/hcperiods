@@ -51,18 +51,19 @@ symplectic_basis(homol_t alpha, homol_t beta, const tree_t tree, sec_t c)
     {
         slong n;
         fmpz * row;
+
         /* loops alpha = even coordinates */
         row = p->rows[2 * i];
         n = count_coeffs(row, len);
-        alpha[i].n = n;
-        alpha[i].l = flint_malloc(n * sizeof(gamma_t));
+        loop_init(&alpha[i], n);
         set_loops(alpha[i].l, n, row, c.m - 1, len);
+
         /* loops beta = odd coordinates */
         row = p->rows[2 * i + 1];
         n = count_coeffs(row, len);
-        beta[i].n = n;
-        beta[i].l = flint_malloc(n * sizeof(gamma_t));
+        loop_init(&beta[i], n);
         set_loops(beta[i].l, n, row, c.m - 1, len);
+
     }
     fmpz_mat_clear(p);
 }

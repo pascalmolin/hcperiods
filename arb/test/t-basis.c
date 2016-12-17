@@ -42,6 +42,10 @@ int main() {
 
                 symplectic_basis(alpha, beta, tree, c);
 
+
+                homol_clear(alpha, c.g);
+                homol_clear(beta, c.g);
+
                 sec_clear(c);
             }
 

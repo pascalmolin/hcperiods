@@ -144,6 +144,8 @@ void intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m);
 
 /* find g+g symplectic homology basis from tree */
 /* two lists of g loops */
+void loop_init(loop_t * l, slong len);
+void homol_clear(homol_t l, slong len);
 void symplectic_reduction(fmpz_mat_t p, fmpz_mat_t m, slong g);
 void symplectic_basis(homol_t loop_a, homol_t loop_b, const tree_t tree, sec_t c);
 

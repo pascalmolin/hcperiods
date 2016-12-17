@@ -59,8 +59,8 @@ abel_jacobi_clear(abel_jacobi_t aj)
     acb_mat_clear(aj->tau);
     arb_mat_clear(aj->proj);
     tree_clear(aj->tree);
-    free(aj->loop_a);
-    free(aj->loop_b);
+    homol_clear(aj->loop_a, aj->c.g);
+    homol_clear(aj->loop_b, aj->c.g);
     free(aj->dz);
 }
 
