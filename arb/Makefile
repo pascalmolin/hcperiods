@@ -2,7 +2,7 @@ WHO=$(shell whoami)
 ifeq ($(WHO), molin)
 PREFIX=${HOME}/install
 else ifeq ($(WHO), neurohr)
-PREFIX=${HOME}/neurohr/superelliptic
+PREFIX=${HOME}/install
 else
 PREFIX=/usr/local
 endif
