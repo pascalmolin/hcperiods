@@ -1,11 +1,12 @@
 /******************************************************************************
 
- Copyright (C) 2016 Pascal Molin
+ Copyright (C) 2016 Pascal Molin, Christian Neurohr
 
  ******************************************************************************/
 
 #include "abel_jacobi.h"
 #include <complex.h>
+
 #define PI2 acos(0.)
 #define LAMBDA PI2
 
@@ -52,6 +53,7 @@ tau_edge(const cdouble * w, slong i, slong j, slong len, slong * l)
     return tau;
 }
 
+
 static void
 endvalues_edge(double * va, double * vb, double * dir,
         const cdouble * w, slong ia, slong ib, slong d)
@@ -67,6 +69,7 @@ endvalues_edge(double * va, double * vb, double * dir,
     {
         if (k == ia || k == ib)
             continue;
+
         a += carg((w[ia] - w[k]) / ba);
         b += carg((w[ib] - w[k]) / ba);
     }

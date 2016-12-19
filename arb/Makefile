@@ -15,6 +15,7 @@ else
 LIBRARY   = libajsec.so
 endif
 
+
 INCS=-I$(CURDIR) -I/usr/include -I${PREFIX}/include -I${PREFIX}/include/flint
 LIBS=-L$(CURDIR) -L/usr/lib -L${PREFIX}/lib -lajsec -larb -lflint -lmpfr -lgmp -lm -lpthread
 LIBS2=-L$(CURDIR) -L/usr/lib -L${PREFIX}/lib -larb -lflint -lmpfr -lgmp -lm -lpthread

@@ -5,6 +5,7 @@
  ******************************************************************************/
 
 #include "abel_jacobi.h"
+#include <complex.h>
 
 #define TWOPI (2 * acos(-1.))
 #define c(i,j) fmpz_mat_entry(c,i,j)
@@ -13,6 +14,7 @@
    c[i+k][j+l] = 1 if k-l = sp mod m
    c[i+k][j+l] = -1 if k-l = sm mod m
  */
+
 
 static void
 fill_block(fmpz_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
@@ -41,8 +43,8 @@ fill_block(fmpz_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
 void
 intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
 {
-    slong k, l, size = m - 1;
-
+    slong k, l, shft, sp, sm, size = m - 1;
+    double rho; /* angle arg((b-a)/(d-c)) <-- need w for this (low prec branch pts) */ 
     fmpz_mat_zero(c);
 
     /* the entry c[ k * (m-1) + s ] corresponds to the
@@ -53,8 +55,8 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
         edge_t ek = tree->e[k];
 
         /* intersection with self shifts */
-
         fill_block(c, k * size, k * size, 1, -1, m);
+
 
         /* intersection with other shifts */
         for (l = k + 1; l < d - 1; l++)
@@ -65,6 +67,7 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
                 /* no intersection */
                 continue;
 
+
             if(el.a == ek.a)
             {
                 /* case ab.ad */
@@ -74,7 +77,7 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
                 else
                     fill_block(c, k * size, l * size, 1-s, -s, m);
             }
-            else if (el.a == ek.b)
+            else if (ek.b == el.b)
             {
                 /* case ab.bd */
                 s = lrint(.5 + (el.va - ek.vb ) / TWOPI);
@@ -85,6 +88,28 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
                 flint_printf("invalid tree\n");
                 abort();
             }
+            else if (ek.b == el.a)
+            {
+                /* case b=c  */
+                shft = round((1/(2*PI)) * ( PI + rho + el.va - ek.vb ));
+                sp = -shft;
+                sm = 1 - shft; 
+            }
+            else if (ek.a == el.b)
+            {
+                /* case a=d  */
+                shft = round((1/(2*PI)) * ( PI + rho + el.vb - ek.va ));
+                sp = -shft;
+                sm = 1 - shft; 
+            }
+
+            /* corresponding block matrix */
+            fill_block(c, k * size, l * size, sp, sm, m);
         }
     }
 }
+
+
+
+
+
