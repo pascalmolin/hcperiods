@@ -4,42 +4,73 @@
 
   \section{Intersections}\label{sec:intersections}
 
-  In \S \ref{m-subsec:cycles_homo} we presented a generating set $C$ for $\homo$\,. The formulas in Theorem \ref{m-thm:intsec_numb} explicitly determine the intersection matrix $K_C$ and
+  In \S \ref{m-subsec:cycles_homo} we presented a generating set $C$ for $\homo$\,.
+  The formulas in Theorem \ref{m-thm:intsec_numb} explicitly determine the
+  intersection matrix $K_C$ and
   the rest of the section is concerned with its proof.
+
+
+  Since we generate $\homo$ with elementary cycles $\cyab$ and their shifts $\cyab^{(k)}$,
+  we only need
+  to know intersections between 
+  We recall the notations used for elementary cycles and their shifts
   
   \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
-      The intersection numbers of $\cyabl, \cycdk \in C$ are given by the following formulas.
-      \begin{itemize}
-       \item[(i)] If $[a,b] \cap [c,d] = \emptyset$\,, then $\left(\,\cyabl \circ \cycdk\,\right) = 0$, 
-       \item[(ii)] If $[a,b] = [c,d]$\,, then $\left(\,\cyabl \circ \cyab^{(k)}\,\right) = \begin{cases}
-	 +1, \quad \text{if} \quad k = l+1\,, \\
-	 -1, \quad \text{if} \quad k = l-1\,, \\
-	  \quad\! 0, \quad \text{otherwise}\,.
-	\end{cases}$
-      \item[(iii)] If $[a,b] \cap [c,d] = \{x_0\}$ and $\rho = \arg\left(\frac{b-a}{d-c}\right)$, then
-      \begin{align*}
-       \left(\,\cyabl \circ \cycdk\,\right) = \begin{cases}
-            \hspace*{0.95cm} +1, \quad  \text{if} \quad s+k-l=0 \quad \text{and} \quad (\,x_0 = b = c \quad \text{or} \quad x_0 = a = d\,)\,,\\
-	     \hspace*{0.95cm} -1, \quad \text{if} \quad s+k-l=1 \quad \text{and} \quad (\,x_0 = b = c \quad \text{or} \quad x_0 = a = d\,)\,,\\
-           -\sgn(\rho), \quad  \text{if} \quad s+k-l=0 \quad \text{and} \quad (\,x_0 = a = c \quad \text{or} \quad x_0 = b = d\,)\,,\\
-           \quad \sgn(\rho), \quad  \text{if} \quad s+k-l=\sgn(\rho) \; \text{and} \; (\,x_0 = a = c \;\; \text{or} \;\; x_0 = b = d\,)\,,\\
-         \hspace*{0.95cm}  \quad\! 0, \quad \text{otherwise}\,,
-        \end{cases}
-       \end{align*}
-       where  
-       \begin{align}\label{eq:shift_numb}
-       s = \frac{1}{2\pi} \left( \theta +  m \cdot \arg \left( \frac{(d-c)^{\frac{d}{m}} \ft_{c,d}(x_0)}{(b-a)^{\frac{d}{m}} \ft_{a,b}(x_0)} \right) \right) \in \Z/m\Z
-       \end{align}
-       and 
-       \begin{align*}
-        \theta = \begin{cases}
-                              \pi+\rho, \quad \text{if} \quad (\,x_0 = b = c \quad \text{or} \quad x_0 = a = d\,)\,,\\
-                              \hspace{0.7cm} \rho, \quad \text{if} \quad (\,x_0 = a = c \quad \text{or} \quad x_0 = b = d\,)\,.
-                             \end{cases}
-       \end{align*}
-      \end{itemize}
+      Let $a,b,c,d\in X$ be branch points, and $\cyabl, \cycdk$ be in $C$.
+      
+      Then
+      \begin{equation}
+          \left(\,\cyab^{(k)} \circ \cycd^{(l)}\,\right)
+          = \begin{cases}
+              1  &\text{ if } l-k \equiv s_+ \bmod m\\
+              -1 &\text{ if } l-k \equiv s_- \bmod m\\
+              0 \text{ otherwise}
+          \end{cases}
+      \end{equation}
+      where $s_+$, $s_-$ are given by the following table, which covers all
+      cases occuring in the algorithm
+      \begin{center}
+      \begin{tabular}{lll}
+          \toprule
+          $(a,b),(c,d)$
+          %$\cyab \circ \cycd$
+          & $s_+$ & $s_-$ \\
+          \midrule
+          $a=c$ and $b=d$
+          %$\cyab \circ \cyab$
+          & $1$ & $-1$ \\
+          $b=c$
+          %$\cyab \circ \cybd$
+          & $-s(b)$ & $1-s(b)$ \\
+          $a=c$ and $\rho>0$
+          %$\cyab \circ \cyad$ and $\rho>0$
+          & $1-s(a)$ & $-s(a)$ \\
+          $a=c$ and $\rho<0$
+          %$\cyab \circ \cyad$ and $\rho<0$
+          & $-s(a)$ & $-1-s(a)$\\
+          $\set{a,b}\cap\set{c,d}=\varnothing$ & \multicolumn{2}{c}{no intersection} \\
+          \bottomrule
+      \end{tabular}
+      \end{center}
+      and where $s(x)\in\Z$ for $x\in\set{a,b}$ is given by
+      \begin{equation}
+          s(x) = \frac{(d-1)\rho+m(\arg \ft_{c,d}(x)-\arg\ft_{a,b}(x))}{2π}
+          +\delta_{a=c}\frac{1}2
+      \end{equation}
+     and
+      \begin{equation}
+          \rho = \arg(d-c) - \arg(b-a).
+      \end{equation}
  \end{thm}
 
+ \todo Notice $\ft_{a,b}(a) = \prod_{x\neq a,b}(\frac{2x-2a}{b-a})^{\frac1m}$, and
+ $s(x)$ can also be written
+      \begin{equation}
+      2π s(x) = (d-1)\rho
+      + \sum_{x_k\neq c,d}\arg \frac{c-x_k}{d-c}
+      - \sum_{x_k\neq a,b}\arg \frac{x-x_k}{b-a}
+      \end{equation}
+ 
   \begin{proof}\let\qed\relax
    \begin{itemize}
     \item[($i$)] $P = (x,y) \in \cyabl \cap \cycdk \,  \Rightarrow \, x \in [a,b] \cap [c,d]$\,.
