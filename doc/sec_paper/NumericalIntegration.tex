@@ -211,24 +211,31 @@ since their roots are explicitly given as cosine functions.
     with constant weights $w_k = w =\frac{π}n$ and nodes $u_k = \cos(\frac{2k-1}{2n}π)$.
 \end{thm}
 
-Moreover, very nice estimates can by obtained by applying the residue
+Moreover, very nice estimates on the error $E_n$ can by obtained by applying the residue
 theorem on an ellipse $ε_r$ of the form
 \begin{equation}
     ε_r = \set{z, \abs{z-1}+\abs{z+1} = 2r }
 \end{equation}
-Its foci are $\pm1$ and $r>1$ is the sum of half axis.
+
+  \begin{figure}
+      \includegraphics[width=5cm,page=1]{images/ellipse.pdf}
+  \end{figure}
 
 \begin{thm}[\cite{ChawlaJain68},thm 5]
     Let $r>1$ such that $g$ is holomorphic on $ε_r$. Then
     \begin{equation}
-        \abs{E(n)}\leq \frac{2πM(r)}{r^{2n}-1}
+        \abs{E(n)}\leq \frac{2πM(r)}{(r+\sqrt{r^2-1})^{2n}-1}
     \end{equation}
     where $M(r)=\max\set{\abs{f(z)},z\in ε_r}$.
 \end{thm}
 
-Now $\varphi_{i,j}(u)=\frac{P(u)}{\sqrt{Q(u)}}$ for explicitely factored
-polynomials
-$P(u)=(u-c)^k$ and $Q(u)=\prod(u-u_i)$, and one can explicitely
+Now we use this theorem with a function
+$g_{i,j}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitely factored
+polynomial
+$Q(u)=\prod(u-u_k)$.
+
+
+, so that , and one can explicitely
 compute the distance $d_r(u_i)$ from $u_i$ to the ellipse $ε_r$
 by Newton iteration, so that the parameters can be chosen
 as follows
@@ -240,7 +247,7 @@ as follows
     \end{equation}
     then $E(n) \leq e^{-D}$ for all
     \begin{equation}
-        n \geq \frac{D+\log(2πM(r))+1}{2\log(r)}
+        n \geq \frac{D+\log(2πM(r))+1}{2\log(r+\sqrt{r^2-1})}
     \end{equation}
 \end{prop}
 

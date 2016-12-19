@@ -7,3 +7,9 @@ default: $(PDF)
 
 all: $(wildcard *.tex)
 	pdflatex main.tex
+
+IPE:= $(wildcard images/*.ipe)
+images/%.pdf: images/%.ipe
+	ipetoipe -pdf $< $@
+
+ipe: $(IPE:.ipe=.pdf)
