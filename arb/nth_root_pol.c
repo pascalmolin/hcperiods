@@ -50,24 +50,19 @@ void
 nth_root_pol_turn(acb_t y, acb_srcptr u, const arb_t x, acb_srcptr z, slong d, slong m, slong prec)
 {
   
-    slong q;
-    slong k;  
-    arb_t isgn_s;
-    arb_t isgn_t;
-    acb_t s;
-    acb_t t;
+    slong q, k isgn_s, isgn_t, sgn_res;  
+    acb_t s, t;
     acb_init(s);
     acb_init(t);
-    arb_init(isgn_s);
-    arb_init(isgn_t);
     q = 0;
+    sgn_res = 0;
     acb_one(y);
     acb_set_arb(s, x);
     acb_sub(s, s, u + 0, prec);
 
     if ( acb_is_real(s) && arb_is_negative(acb_realref(s)) )
     {
-        acb_mul_ui(s, s,-1, prec);
+        sgn_res++;
         q++;
     }
     arb_sgn(isgn_s,acb_imagref(s));
@@ -79,7 +74,7 @@ nth_root_pol_turn(acb_t y, acb_srcptr u, const arb_t x, acb_srcptr z, slong d, s
 
       if ( acb_is_real(t) && arb_is_negative(acb_realref(t)) )
       {
-        acb_mul_ui(t, t, -1, prec);
+        sgn_res++;
         q++;
       }
       arb_sgn(isgn_t,acb_imagref(t));
@@ -106,7 +101,7 @@ nth_root_pol_turn(acb_t y, acb_srcptr u, const arb_t x, acb_srcptr z, slong d, s
 
       if ( acb_is_real(s) && arb_is_negative(acb_realref(s)) )
       {
-        acb_mul_ui(s, s, -1, prec);
+        sgn_res++;
         q++;
       }
     } 
@@ -117,29 +112,8 @@ nth_root_pol_turn(acb_t y, acb_srcptr u, const arb_t x, acb_srcptr z, slong d, s
     acb_pow_ui(t, t, q, prec);
     acb_mul(y, y, t, prec);
     acb_mul(y, y, s, prec);
+    acb_mul(y, y, sgn_res % 2);
 
     acb_clear(s);
     acb_clear(t);
-    arb_clear(isgn_s);
-    arb_clear(isgn_t);
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
