@@ -4,31 +4,18 @@
 
  ******************************************************************************/
 
-#include "flint.h"
-#include "si_mat.h"
+#include "fmpz_mat_extras.h"
 
 #define m(i,j) fmpz_mat_entry(m,i,j)
 
 void
-si_mat_init(si_mat_t m, long nr, long nc)
-{
-    fmpz_mat_init(m, nr, nc);
-}
-
-void
-si_mat_clear(si_mat_t m, long nr, long nc)
-{
-    fmpz_mat_clear(m);
-}
-
-void
-row_swap(si_mat_t m, long i1, long i2, long len)
+row_swap(fmpz_mat_t m, long i1, long i2)
 {
     fmpz_mat_swap_rows(m, NULL, i1, i2);
 }
 
 void
-col_swap(si_mat_t m, long j1, long j2, long len)
+col_swap(fmpz_mat_t m, long j1, long j2)
 {
     long i;
     for (i = 0; i < m->r; i++)
@@ -36,7 +23,7 @@ col_swap(si_mat_t m, long j1, long j2, long len)
 }
 
 void
-col_neg(si_mat_t m, long j, long len)
+col_neg(fmpz_mat_t m, long j)
 {
     long i;
     for (i = 0; i < m->r; i++)
@@ -44,7 +31,7 @@ col_neg(si_mat_t m, long j, long len)
 }
 
 void
-row_neg(si_mat_t m, long i, long len)
+row_neg(fmpz_mat_t m, long i)
 {
     long j;
     for (j = 0; j < m->c; j++)
@@ -52,7 +39,7 @@ row_neg(si_mat_t m, long i, long len)
 }
 
 void
-col_addmul(si_mat_t m, long j, long k, fmpz_t v, long len)
+col_addmul(fmpz_mat_t m, long j, long k, fmpz_t v)
 {
     long i;
     for (i = 0; i < m->r; i++)
@@ -60,7 +47,7 @@ col_addmul(si_mat_t m, long j, long k, fmpz_t v, long len)
 }
 
 void
-row_addmul(si_mat_t m, long i, long k, fmpz_t v, long len)
+row_addmul(fmpz_mat_t m, long i, long k, fmpz_t v)
 {
     long j;
     for (j = 0; j < m->c; j++)
@@ -70,7 +57,7 @@ row_addmul(si_mat_t m, long i, long k, fmpz_t v, long len)
 /* cj <- a cj + b ck
    ck <- c cj + d ck */
 void
-row_bezout(si_mat_t m, long i1, long i2, fmpz_t a, fmpz_t b, fmpz_t c, fmpz_t d, long len)
+row_bezout(fmpz_mat_t m, long i1, long i2, fmpz_t a, fmpz_t b, fmpz_t c, fmpz_t d)
 {
     long j;
     fmpz_t s, t;
@@ -89,7 +76,7 @@ row_bezout(si_mat_t m, long i1, long i2, fmpz_t a, fmpz_t b, fmpz_t c, fmpz_t d,
     fmpz_clear(t);
 }
 void
-col_bezout(si_mat_t m, long j1, long j2, fmpz_t a, fmpz_t b, fmpz_t c, fmpz_t d, long len)
+col_bezout(fmpz_mat_t m, long j1, long j2, fmpz_t a, fmpz_t b, fmpz_t c, fmpz_t d)
 {
     long i;
     fmpz_t s, t;
@@ -108,27 +95,9 @@ col_bezout(si_mat_t m, long j1, long j2, fmpz_t a, fmpz_t b, fmpz_t c, fmpz_t d,
     fmpz_clear(t);
 }
 
-void
-si_mat_set_id(si_mat_t p, long len)
-{
-    fmpz_mat_one(p);
-}
-
-int
-si_mat_eq(si_mat_t a, si_mat_t b, long nr, long nc)
-{
-    return fmpz_mat_equal(a, b);
-}
-
-void
-si_mat_print(si_mat_t m, long nr, long nc)
-{
-    fmpz_mat_print(m);
-}
-    
 #if 0
 void
-si_mat_print_gp(si_mat_t m, long nr, long nc)
+fmpz_mat_print_gp(fmpz_mat_t m, long nr, long nc)
 {
     long i, j;
     flint_printf("[");
@@ -148,7 +117,7 @@ si_mat_print_gp(si_mat_t m, long nr, long nc)
 #endif
 
 int
-is_symplectic_j(si_mat_t m, long g, long g2)
+is_symplectic_j(fmpz_mat_t m, long g, long g2)
 {
     long i, j;
     fmpz_t c;

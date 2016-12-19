@@ -22,32 +22,32 @@
  */
 
 static void
-swap_step(si_mat_t p, si_mat_t m, slong i1, slong i2, slong len)
+swap_step(fmpz_mat_t p, fmpz_mat_t m, slong i1, slong i2)
 {
     if (i1 == i2)
         return;
-    row_swap(p, i1, i2, len);
-    row_swap(m, i1, i2, len);
-    col_swap(m, i1, i2, len);
+    row_swap(p, i1, i2);
+    row_swap(m, i1, i2);
+    col_swap(m, i1, i2);
 }
 
 static void
-neg_step(si_mat_t p, si_mat_t m, slong i, slong len)
+neg_step(fmpz_mat_t p, fmpz_mat_t m, slong i)
 {
-    row_neg(p, i, len);
-    row_neg(m, i, len);
-    col_neg(m, i, len);
+    row_neg(p, i);
+    row_neg(m, i);
+    col_neg(m, i);
 }
 static void
-transvect_step(si_mat_t p, si_mat_t m, slong i1, slong i2, fmpz_t q, slong len)
+transvect_step(fmpz_mat_t p, fmpz_mat_t m, slong i1, slong i2, fmpz_t q)
 {
-    row_addmul(p, i1, i2, q, len);
-    row_addmul(m, i1, i2, q, len);
-    col_addmul(m, i1, i2, q, len);
+    row_addmul(p, i1, i2, q);
+    row_addmul(m, i1, i2, q);
+    col_addmul(m, i1, i2, q);
 }
 
 static void
-bezout_step(si_mat_t p, si_mat_t m, slong i, slong k, fmpz_t a, fmpz_t b, slong len)
+bezout_step(fmpz_mat_t p, fmpz_mat_t m, slong i, slong k, fmpz_t a, fmpz_t b)
 {
     fmpz_t u, v, g, u1, v1;
     fmpz_init(u);
@@ -62,9 +62,9 @@ bezout_step(si_mat_t p, si_mat_t m, slong i, slong k, fmpz_t a, fmpz_t b, slong 
     fmpz_neg(u1, u1);
     fmpz_divexact(v1, a, g);
 
-    row_bezout(p, i, k, u, v, u1, v1, len);
-    row_bezout(m, i, k, u, v, u1, v1, len);
-    col_bezout(m, i, k, u, v, u1, v1, len);
+    row_bezout(p, i, k, u, v, u1, v1);
+    row_bezout(m, i, k, u, v, u1, v1);
+    col_bezout(m, i, k, u, v, u1, v1);
 
     fmpz_clear(u);
     fmpz_clear(v);
@@ -75,7 +75,7 @@ bezout_step(si_mat_t p, si_mat_t m, slong i, slong k, fmpz_t a, fmpz_t b, slong 
 
 /* return 1 if 1 is on the line or smallest entry */
 slong
-pivot_line(si_mat_t m, slong i, slong len)
+pivot_line(fmpz_mat_t m, slong i, slong len)
 {
     slong j, jv = len;
     fmpz_t v;
@@ -98,12 +98,13 @@ pivot_line(si_mat_t m, slong i, slong len)
 }
 
 void
-symplectic_reduction(si_mat_t p, si_mat_t m, slong g, slong len)
+symplectic_reduction(fmpz_mat_t p, fmpz_mat_t m, slong g)
 {
-    slong d, i, j, k;
+    slong d, i, j, k, len;
 
-    si_mat_set_id(p, len);
+    fmpz_mat_one(p);
 
+    len = m->r;
     /* main loop on symplectic 2-subspace */
     for (d = 0; d < g; d++)
     {
@@ -113,7 +114,7 @@ symplectic_reduction(si_mat_t p, si_mat_t m, slong g, slong len)
         while ((j = pivot_line(m, i, len)) == len)
         {
             /* no intersection -> move ci to end */
-            swap_step(p, m, i, len - 1, len);
+            swap_step(p, m, i, len - 1);
             len--;
             if (len == 2*d)
                 return;
@@ -121,13 +122,13 @@ symplectic_reduction(si_mat_t p, si_mat_t m, slong g, slong len)
 
         /* move j to i + 1 */
         if (j != i+1)
-            swap_step(p, m, j, i + 1, len);
+            swap_step(p, m, j, i + 1);
         j = i + 1;
 
         /* make sure m(i, j) > 0 */
         if (fmpz_sgn(m(i, j)) < 0)
             /* could also neg i or swap i and j */
-            neg_step(p, m, j, len);
+            neg_step(p, m, j);
 
         while(!cleared)
         {
@@ -142,10 +143,10 @@ symplectic_reduction(si_mat_t p, si_mat_t m, slong g, slong len)
                     {
                         fmpz_divexact(q, m(i, k), m(i, j));
                         fmpz_neg(q, q);
-                        transvect_step(p, m, k, j, q, len);
+                        transvect_step(p, m, k, j, q);
                     }
                     else
-                        bezout_step(p, m, j, k, m(i, j), m(i, k), len);
+                        bezout_step(p, m, j, k, m(i, j), m(i, k));
                 }
             }
             cleared = 1;
@@ -157,11 +158,11 @@ symplectic_reduction(si_mat_t p, si_mat_t m, slong g, slong len)
                     if (fmpz_divisible(m(j, k), m(i, j)))
                     {
                         fmpz_divexact(q, m(j, k), m(i, j));
-                        transvect_step(p, m, k, i, q, len);
+                        transvect_step(p, m, k, i, q);
                     }
                     else
                     {
-                        bezout_step(p, m, i, k, m(j, i), m(j, k), len);
+                        bezout_step(p, m, i, k, m(j, i), m(j, k));
                         /* warning: row i now contains some ck.cl... */
                         cleared = 0;
                     }

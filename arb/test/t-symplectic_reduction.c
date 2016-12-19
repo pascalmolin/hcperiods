@@ -14,13 +14,13 @@ int main() {
 
     for (g = 2; g < 30; g++)
     {       
-        si_mat_t m1, m2, p;
+        fmpz_mat_t m1, m2, p;
         slong i, j, g2, l;
 
         g2 = 2 * g;
-        si_mat_init(m1, g2, g2);
-        si_mat_init(m2, g2, g2);
-        si_mat_init(p, g2, g2);
+        fmpz_mat_init(m1, g2, g2);
+        fmpz_mat_init(m2, g2, g2);
+        fmpz_mat_init(p, g2, g2);
 
         for (l = 0; l < 10; l++)
         { 
@@ -51,29 +51,29 @@ int main() {
 
 #if 0
                 flint_printf("\n== initial m ==\n");
-                si_mat_print(m1, g2, g2);
+                fmpz_mat_print(m1);
 #endif
 
-            symplectic_reduction(p, m2, g, g2);
+            symplectic_reduction(p, m2, g);
 
             if (!is_symplectic_j(m2, g, g2))
             {
                 flint_printf("\n== initial m ==\n");
-                si_mat_print(m1, g2, g2);
+                fmpz_mat_print(m1);
 
                 flint_printf("\n== reduced m ==\n");
-                si_mat_print(m2, g2, g2);
+                fmpz_mat_print(m2);
 
                 flint_printf("\n== p ==\n");
-                si_mat_print(p, g2, g2);
+                fmpz_mat_print(p);
 
                 abort();
             }
         }
 
-        si_mat_clear(m1, g2, g2);
-        si_mat_clear(m2, g2, g2);
-        si_mat_clear(p, g2, g2);
+        fmpz_mat_clear(m1);
+        fmpz_mat_clear(m2);
+        fmpz_mat_clear(p);
     }
 
     flint_randclear(state);

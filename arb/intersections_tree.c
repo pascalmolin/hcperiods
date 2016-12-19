@@ -7,37 +7,31 @@
 #include "abel_jacobi.h"
 #include <complex.h>
 
+#define TWOPI (2 * acos(-1.))
+#define c(i,j) fmpz_mat_entry(c,i,j)
+
 /* set
    c[i+k][j+l] = 1 if k-l = sp mod m
    c[i+k][j+l] = -1 if k-l = sm mod m
  */
 
-#define c(i,j) fmpz_mat_entry(c,i,j)
-#define PI 2*asin(1.0)
-
-
-int 
-real_sgn(double x)
-{
-  if (x > 0.0) return 1;
-  if (x < 0.0) return -1;
-  return 0;
-}
-
 
 static void
-fill_block(si_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
+fill_block(fmpz_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
 {
     slong k, l;
+    /* important: make sp and sm positive */
+    sp = (sp % m + m) % m;
+    sm = (sm % m + m) % m;
     for (l = 0; l < m - 1; l++)
     {
-        k = l + sp % m;
+        k = (l + sp) % m;
         if (k < m - 1)
         {
             *c(i + k, j + l) = 1;
             *c(j + l, i + k) = -1;
         }
-        k = l + sm % m;
+        k = (l + sm) % m;
         if (k < m - 1)
         {
             *c(i + k, j + l) = -1;
@@ -47,21 +41,24 @@ fill_block(si_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
 }
 
 void
-intersection_tree(si_mat_t c, const cdouble * w, const tree_t tree, slong d, slong m)
+intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
 {
     slong k, l, shft, sp, sm, size = m - 1;
     double rho; /* angle arg((b-a)/(d-c)) <-- need w for this (low prec branch pts) */ 
     fmpz_mat_zero(c);
 
-    /* the entry c[ k * (m-1) + s ] corresponds to cycle gamma_{k+1}^{(s)} */
+    /* the entry c[ k * (m-1) + s ] corresponds to the
+       loop gamma_k^(s) */
     for (k = 0; k < d - 1; k++)
     {
+        slong s;
         edge_t ek = tree->e[k];
 
         /* intersection with self shifts */
         fill_block(c, k * size, k * size, 1, -1, m);
 
-        /* intersection with other cycles */
+
+        /* intersection with other shifts */
         for (l = k + 1; l < d - 1; l++)
         {
             edge_t el = tree->e[l];
@@ -70,39 +67,26 @@ intersection_tree(si_mat_t c, const cdouble * w, const tree_t tree, slong d, slo
                 /* no intersection */
                 continue;
 
-            /* compute angle */
-            rho = carg((w[ek.b]-w[ek.a])/(w[el.b]-w[el.a]));
-                                        
-            if (ek.a == el.a)
+
+            if(el.a == ek.a)
             {
-                /* case a=c */
-                shft = round((1/(2*PI)) * ( rho + el.va - ek.va ));
-                if ( real_sgn(rho) > 0 )
-                {
-                  sp = 1 - shft;
-                  sm = -shft; 
-                }
+                /* case ab.ad */
+                s = lrint((el.va - ek.va ) / TWOPI);
+                if (el.dir > ek.dir)
+                    fill_block(c, k * size, l * size, -s, -1-s, m);
                 else
-                {
-                  sp = -shft;
-                  sm = -1 - shft;
-                }
-               
+                    fill_block(c, k * size, l * size, 1-s, -s, m);
             }
             else if (ek.b == el.b)
             {
-                /* case b=d  */
-                shft = round((1/(2*PI)) * ( rho + el.vb - ek.vb ));
-                if ( real_sgn(rho) > 0 )
-                {
-                  sp = 1 - shft;
-                  sm = -shft; 
-                }
-                else
-                {
-                  sp = -shft;
-                  sm = -1 - shft;
-                }
+                /* case ab.bd */
+                s = lrint(.5 + (el.va - ek.vb ) / TWOPI);
+                fill_block(c, k * size, l * size, -s, 1-s, m);
+            }
+            else
+            {
+                flint_printf("invalid tree\n");
+                abort();
             }
             else if (ek.b == el.a)
             {
