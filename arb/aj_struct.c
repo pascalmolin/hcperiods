@@ -17,15 +17,8 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d)
     tree_init(aj->tree, d - 1);
     aj->dz = malloc(g * sizeof(dform_t));
 
-    aj->loop_a = malloc(g * sizeof(loop_t));
-    aj->loop_b = malloc(g * sizeof(loop_t));
-    /*
-    for (k = 0; k < g; k++)
-    {
-        aj->loop_a[k] = malloc( (d-1) * sizeof(int_tree));
-        aj->loop_b[k] = malloc( (d-1) * sizeof(int_tree));
-    }
-    */
+    homol_init(&aj->loop_a, g);
+    homol_init(&aj->loop_b, g);
 
     acb_mat_init(aj->omega0, g, g);
     acb_mat_init(aj->omega1, g, g);

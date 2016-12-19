@@ -20,12 +20,18 @@ loop_clear(loop_t l)
 }
 
 void
-homol_clear(homol_t l, slong len)
+homol_init(homol_t * cyc, slong len)
+{
+    * cyc = malloc(g * sizeof(loop_t));
+}
+
+void
+homol_clear(homol_t cyc, slong len)
 {
     slong k;
 
     for (k = 0; k < len; k++)
-        loop_clear(l[k]);
+        loop_clear(cyc[k]);
 
-    flint_free(l);
+    flint_free(cyc);
 }

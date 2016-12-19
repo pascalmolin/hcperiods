@@ -145,6 +145,7 @@ void intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m);
 /* find g+g symplectic homology basis from tree */
 /* two lists of g loops */
 void loop_init(loop_t * l, slong len);
+void homol_init(homol_t * cyc, slong len);
 void homol_clear(homol_t l, slong len);
 void symplectic_reduction(fmpz_mat_t p, fmpz_mat_t m, slong g);
 void symplectic_basis(homol_t loop_a, homol_t loop_b, const tree_t tree, sec_t c);
@@ -155,6 +156,7 @@ void holomorphic_differentials(cohom_t dz, slong d, slong m);
 
 /* numerically compute d-1 integrals along tree edges */
 /* (d-1)*(g-1) matrix, tree edges on lines */
+void ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec);
 void integrals_tree(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
 
 /* get all periods on a, b basis */
