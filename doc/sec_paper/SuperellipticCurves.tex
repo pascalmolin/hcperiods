@@ -84,7 +84,7 @@
   applying the local monodromy to the analytic branches of $\cu$, therefore we
   can therefore assume that $\sigma_k = \sigma$ for $k = 1,\dots,d$.
  
-  \subsubsection{Local branches of $\cu$}
+  \subsubsection{Local branches}
   
   In order to integrate holomorphic forms on $\cu$
   it is crucial to be able to follow an explicit analytic continuation of $y$ along a
@@ -125,18 +125,19 @@
       \ft_{a,b}(u) = \prod_{x_k \ne a,b} \sqrt[m]{u - u_k}
   \end{equation}
   is holomorphic on a neighborhood $U_{a,b}$ of $[-1,1]$ which we can take as
-  any ellipse containing no $u_k\neq\pm1$, while
+  any ellipse\footnote{we will exhibit such a neighborhood in section \ref{sec:gc_ellipse}}
+  containing no $u_k\neq\pm1$ , while
   \begin{equation}
       \sqrt[m]{1-u^2}
   \end{equation}
   has two cuts $]-\infty,-1]$ and $[1,\infty[$, and is holomorphic on the complementary
-  $U_1$ of these cuts.
+  $\overline U$ of these cuts.
 
   \begin{figure}[H] \begin{center} \input{images/tikz_pic_1.tex}
   \end{center} \caption{Area of holomorphicity for $\yab$\,.}
   \label{fig:set_vab} \end{figure}
 
-  We call $V_{a,b} = u_{a,b}^{-1}(U_{a,b}\cap U_1)$ the inverse image of their intersection,
+  We call $V_{a,b} = u_{a,b}^{-1}(U_{a,b}\cap \overline U)$ the inverse image of their intersection,
   so that $V_{a,b}$ is an ellipse shaped neighborhood of $]a,b[$ with two segments removed
       (see Figure \ref{m-fig:set_vab})
       on which the local branch $\yab$ is well defined and holomorphic.
