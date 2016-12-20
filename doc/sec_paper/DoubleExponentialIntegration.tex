@@ -5,9 +5,9 @@
   \section{Double-exponential integration}\label{sec:de_int}
 
 
-For $(a,b) \in E$ we want to compute (see Theorem \ref{m-thm:periods}) 
+For $(a,b) \in E$ we want to compute (see Theorem \ref{m-thm:periods})
 \begin{align*}
- \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}} \, \du 
+ \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du
 \end{align*}
  to absolute precision $e^{-D}$.
 
@@ -15,7 +15,7 @@ Using the double-exponential change of variable
 $u=\tanh(λ\sinh(t))$, the integral
 becomes
 \begin{equation}
-    \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}} \, \du = \int_\R g(t)\dt
+    \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du = \int_\R g(t)\dt
 \end{equation}
 with $α=(1-j/m)$ and
 \begin{equation}
@@ -25,7 +25,7 @@ with $α=(1-j/m)$ and
 
 Let
 \begin{equation}
-Z_τ = \set{\tanh(λ\sinh(z), -τ<\Im(z)<τ }    
+Z_τ = \set{\tanh(λ\sinh(z), -τ<\Im(z)<τ }
 \end{equation}
 be the image of the strip $\Delta_τ$ under the change of
 variable $u=\tanh(λ\sinh(t))$.
@@ -38,9 +38,9 @@ both $[-1,1]$ and its neighborhood $Z_\tau$, we obtain
       that
       \begin{itemize}
           %\item for $u\in[-1,1]$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_1$
-          \item for $u\in[-1,1]$, $\abs{\frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u)^{j}}}\leq M_1$\,,
+          \item for $u\in[-1,1]$, $\abs{\frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u)^{j}}}\leq M_1$,
           %\item for $u\in Z_\tau$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_2$.
-          \item for $u\in Z_\tau$, $\abs{\frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u)^{j}}}\leq M_2$\,.
+          \item for $u\in Z_\tau$, $\abs{\frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u)^{j}}}\leq M_2$.
       \end{itemize}
   \end{lemma}
 
@@ -75,7 +75,7 @@ we obtain a rigorous integration scheme as follows
     \end{equation}
     where
     \begin{equation}
-        \begin{cases} 
+        \begin{cases}
             u_k = \tanh(λ\sinh(kh))\\
             w_k = \frac{λ\cosh(kh)}{\cosh^{2α}(λ\sinh(kh)}
         \end{cases}
@@ -140,7 +140,7 @@ Now the point $λ\sinh(t+iτ) = X(t)+iY(t)$ lies on the hyperbola
 $Y^2 =λ^2(\sin^2τ+\tan^2 τX^2)$, and
 \begin{align}
     \abs{λ\cosh(t+iτ)} &\leq λ\cosh(t) =\frac{X'(t)}{\cos(τ)}\\
-    \abs{\cosh(X+iY)}^2 &= \sinh(X)^2+\cos(Y)^2 
+    \abs{\cosh(X+iY)}^2 &= \sinh(X)^2+\cos(Y)^2
 \end{align}
 so that
 \begin{equation}
@@ -159,7 +159,7 @@ $X_τ=\cos(τ)\sqrt{\frac{π}{2Y_0}-1}$.
       \int_{X_τ}^\infty\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^α}
       & \leq \int_{X_τ}^\infty\frac{\d X}{(\sinh X)^{2α}}
   \end{align}
-  
+
   We bound the first integral by convexity:
   since $Y(X)$ is convex and $\cos$ is concave decreasing for $Y\leq Y_τ$ we
   obtain by concavity of the composition
@@ -192,7 +192,7 @@ In the case of hyperelliptic curves, we have $α=\frac12$ and the integral
 \end{equation}
 can be efficiently handled by Gaussian integration with weight
 $\sqrt{1-u^2}^{-1}$,
-for which the corresponding orthogonal polynomials are 
+for which the corresponding orthogonal polynomials are
 Chebychev polynomials.
 
 In this case, the integration formula is particularly
@@ -280,12 +280,12 @@ and $λ^m(1-λ)^{2n+1}$ is maximum for
 \begin{equation}
     λ = \frac{m}{2n+1+m}
 \end{equation}
-in which case 
+in which case
 $λ^m(1-λ)^{2n+1}=(1+\frac{2n+1}m)^{-m}(1+\frac{m}{2n+1})^{-(2n+1)}$.
 
 We therefore consider this value of $λ$, so that
 \begin{equation}
-    E(n) \leq 
+    E(n) \leq
     \frac{2πB_1}{\rmax^m}
     (1+\frac{2n+1}m)^m(1+\frac{m}{2n+1})^{2n+1}(2\rmax)^{-2n-1}
 \end{equation}
@@ -319,5 +319,5 @@ simplify(expand(diff(phi,t$1)));
 \fi
 
 
-\biblio      
+\biblio
 \end{document}
