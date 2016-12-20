@@ -10,7 +10,7 @@
 
   \subsection{Definition}
 
-  Let $\cu$ be a smooth irreducible curve of genus $g$. Its space
+  Let $\cu$ be a smooth irreducible projective curve of genus $g$. Its space
   of holomorphic differentials $\hd$ has dimension $g$, let us fix
   a basis $ω_1,\dots ω_g$ and denote by $\bar\w$ the vector
   $(ω_1,\dots ω_g)$.
@@ -45,12 +45,11 @@
   provides an explicit isomorphism
   \begin{equation}\label{eq:ajm_def}
       \AJ:\left\{\begin{array}{ccc}
-              \Jac = \Div^0/P^0 &\To &\C^g/\Lambda \\
+              \Jac(\cu) = \Div^0(\cu)/\Prin^0(\cu) &\To &\C^g/\Lambda \\
               \sum_k [Q_k-P_k] &\mapsto & \sum_k \int_{P_k}^{Q_k} \bar\w \mod \Lambda
   \end{array}\right.
   \end{equation}
   between the Jacobian variety and the complex torus. \\
-  \todo (CN) $D^0 = \Div^0 = \div_0(\cu)$? $P^0$ = principal divisors? unclear.
  
 
   \subsection{Explicit basis and standard matrices}\label{subsec:bases_matrices}
@@ -73,18 +72,17 @@
       \OB = \left(\int_{β_i}ω_j\right)_{1\leq i,j\leq g}
   \end{equation}
   and call {\em big period matrix} the concatenated matrix \\
-  \todo (CN) without comma? $(\OA \, \OB)$? $\in \C^{g \times 2g}$ or $\C^{2g \times g}$?
   \begin{equation}
-      \Omega = (\OA,\OB)
+      \Omega = (\OA \,\OB) \in \C^{g\times 2g}
   \end{equation}
   such that $\Lambda = \Omega\Z^{2g}$.
 
-  If one takes as basis of differentials the dual basis of
+  If one takes as basis of differentials the dual basis of\,,
   the loops $α_i$ the matrix becomes
   \begin{equation}
-      \OA^{-1}\Omega = (I_g,\tau)
+      \OA^{-1}\Omega = (I_g\, \tau)\,,	
   \end{equation}
-  where $\tau = \OA^{-1}\OB$ is in the Siegel space of
+  where $\tau = \OA^{-1}\OB \in \C^{g \times g}$ is in the Siegel space of
   symmetric matrices with positive definite imaginary part.
 
 \biblio
