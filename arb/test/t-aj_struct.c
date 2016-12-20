@@ -31,7 +31,7 @@ int main() {
                 abel_jacobi_t aj;
                 abel_jacobi_init_roots(aj, m, x, d);
 
-                spanning_tree(aj->tree, x, d);
+                spanning_tree(aj->tree, x, d, INT_DE);
                 symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, aj->c);
 
                 abel_jacobi_clear(aj);

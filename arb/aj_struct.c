@@ -64,7 +64,7 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
     acb_mat_t integrals;
 
     /* homology */
-    spanning_tree(aj->tree, c.roots, c.d);
+    spanning_tree(aj->tree, c.roots, c.d, (c.m == 2) ? INT_GC : INT_DE);
     symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
 
     /* cohomology */

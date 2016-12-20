@@ -23,12 +23,15 @@ typedef struct
     slong m;             /* degree in y */
     slong d;             /* degree in x */
     acb_ptr roots;       /* branch points */
-    slong g;             /* genus, 2g = (m-1)(d-1) - gcd(N,d) + 1 */
+    slong delta;         /* default = gcd(m, d) */
+    slong g;             /* genus, 2g = (m-1)(d-1) - delta + 1 */
 
 }
 superelliptic_curve;
 
 typedef superelliptic_curve sec_t;
+
+enum { INT_GC, INT_DE };
 
 typedef struct
 {
@@ -129,14 +132,18 @@ void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_srcptr f, slong len, s
 void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
+/* parameters for DE integration */
 void de_int_params(arf_t h, ulong *n, double tau, double M1, double M2, slong prec);
 void de_int_init(de_int_t de, arf_t h, ulong n, slong prec);
 void de_int_clear(de_int_t de);
 
+/* parameters for GC integration */
+slong gc_int_params(double r, sec_t c, slong prec);
+
 /* compute maximum spanning tree */
 void tree_init(tree_t tree, slong d);
 void tree_clear(tree_t tree);
-void spanning_tree(tree_t tree, acb_srcptr x, slong d);
+void spanning_tree(tree_t tree, acb_srcptr x, slong d, int type);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
@@ -158,6 +165,8 @@ void holomorphic_differentials(cohom_t dz, slong d, slong m);
 /* (d-1)*(g-1) matrix, tree edges on lines */
 void ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec);
 void integrals_tree(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
+void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
+void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
 
 /* get all periods on a, b basis */
 /* two g*g matrices */

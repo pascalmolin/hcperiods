@@ -16,15 +16,28 @@
 typedef complex double cdouble;
 
 static cdouble
-acb_get_cd(const acb_t z)
+acb_get_cdouble(const acb_t z)
 {
     return
         arf_get_d(arb_midref(acb_realref(z)), ARF_RND_NEAR)
     + _Complex_I * arf_get_d(arb_midref(acb_imagref(z)), ARF_RND_NEAR);
 }
 
+
+typedef double (* param_f)(cdouble a, cdouble b, cdouble c);
+
+/* superelliptic case, ellipse */
+
 static double
-tau_3(cdouble a, cdouble b, cdouble c)
+param_gc_r(cdouble a, cdouble b, cdouble c)
+{
+    return (cabs(c-a)+cabs(c-b))/cabs(b-a);
+}
+
+/* general case, tanhsinh estimate */
+
+static double
+param_de_tau(cdouble a, cdouble b, cdouble c)
 {
     cdouble z, xItau;
     z = (2*c-a-b)/(b-a);
@@ -33,23 +46,43 @@ tau_3(cdouble a, cdouble b, cdouble c)
 }
 
 static double
-tau_edge(const cdouble * w, slong i, slong j, slong len, slong * l)
+param_edge(param_f param, const cdouble * w, slong i, slong j, slong len)
 {
     slong k;
-    double tmp, tau = PI2;
+    double tmp, p = 0;
     for (k = 0; k < len; k++)
     {
         if (k == i || k == j)
             continue;
-        tmp = tau_3(w[i], w[j], w[k]);
-        if (tmp < tau)
+        tmp = param(w[i], w[j], w[k]);
+        if (!p || tmp < p)
+            p = tmp;
+    }
+    return p;
+}
+
+static void
+edges_init(edge_t * e, param_f param, const cdouble * w, slong len)
+{
+    slong i, j, k;
+
+    k = 0;
+    for (i = 0; i < len; i++)
+    {
+        for (j = i + 1; j < len; j++)
         {
-            tau = tmp;
-            if (l)
-                *l = k;
+            e[k].a = i;
+            e[k].b = j;
+            e[k].tau = param_edge(param, w, i, j, len);
+            k++;
         }
     }
-    return tau;
+}
+
+int
+edge_cmp(const edge_t * x, const edge_t * y)
+{
+        return (x->tau < y->tau) ? -1 : (x->tau > y->tau);
 }
 
 static void
@@ -74,32 +107,8 @@ endvalues_edge(double * va, double * vb, double * dir,
     *vb = b;
 }
 
-static void
-edges_init(edge_t * e, const cdouble * w, slong len)
-{
-    slong i, j, k;
-
-    k = 0;
-    for (i = 0; i < len; i++)
-    {
-        for (j = i + 1; j < len; j++)
-        {
-            e[k].a = i;
-            e[k].b = j;
-            e[k].tau = tau_edge(w, i, j, len, NULL);
-            k++;
-        }
-    }
-}
-
-int
-edge_cmp(const edge_t * x, const edge_t * y)
-{
-        return (x->tau < y->tau) ? -1 : (x->tau > y->tau);
-}
-
 void
-spanning_tree(tree_t tree, acb_srcptr x, slong len)
+spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
 {
     slong k, i, n;
     cdouble * w;
@@ -109,12 +118,17 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len)
     /* small approx of roots */
     w = malloc(len * sizeof(cdouble));
     for (k = 0; k < len; k++)
-        w[k] = acb_get_cd(x + k);
+        w[k] = acb_get_cdouble(x + k);
 
     n = (len * (len - 1)) / 2;
     e = malloc(n * sizeof(edge_t));
-    edges_init(e, w, len);
 
+    if (type == INT_GC)
+        edges_init(e, param_gc_r, w, len);
+    else if (type == INT_DE)
+        edges_init(e, param_de_tau, w, len);
+    else
+        printf("unknown type\n"), abort();
 
     /* order edges */
     qsort(e, n, sizeof(edge_t), (int(*)(const void*,const void*))edge_cmp);

@@ -29,7 +29,7 @@ int main() {
 
             tree_init(tree, d - 1);
 
-            spanning_tree(tree, x, d);
+            spanning_tree(tree, x, d, INT_DE);
 
             tree_clear(tree);
             _acb_vec_clear(x, d);

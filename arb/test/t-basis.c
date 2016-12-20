@@ -28,7 +28,7 @@ int main() {
             }
 
             tree_init(tree, d - 1);
-            spanning_tree(tree, x, d);
+            spanning_tree(tree, x, d, INT_DE);
 
             for (m = 2; m < 7; m++)
             {

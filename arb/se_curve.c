@@ -9,13 +9,14 @@
 void
 sec_init(sec_t * c, slong m, acb_srcptr x, slong d)
 {
-    slong k, g;
+    slong k;
 
-    g = ((m-1)*(d-1) - n_gcd(m,d) + 1)/ 2;
+
 
     c->m = m;
     c->d = d;
-    c->g = g;
+    c->delta = n_gcd(m,d);
+    c->g = ((m-1)*(d-1) - c->delta + 1)/ 2;
     c->roots = _acb_vec_init(d);
     for (k = 0; k < d; k++)
         acb_set(c->roots + k, x + k);
