@@ -22,7 +22,7 @@ loop_clear(loop_t l)
 void
 homol_init(homol_t * cyc, slong len)
 {
-    * cyc = malloc(g * sizeof(loop_t));
+    * cyc = malloc(len * sizeof(loop_t));
 }
 
 void
