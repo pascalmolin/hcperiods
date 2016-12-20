@@ -9,7 +9,7 @@ int main() {
     fflush(stdout);
     flint_randinit(state);
 
-    for (d = 3; d < 10; d++)
+    for (d = 3; d < 30; d++)
     {
         for (i = 0; i < 10; i++)
         {
@@ -30,6 +30,7 @@ int main() {
             tree_init(tree, d - 1);
 
             spanning_tree(tree, x, d, INT_DE);
+            spanning_tree(tree, x, d, INT_GC);
 
             tree_clear(tree);
             _acb_vec_clear(x, d);
