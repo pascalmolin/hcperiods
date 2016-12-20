@@ -39,62 +39,122 @@
   
   \subsection{Complex roots and branches of the curve}\label{subsec:roots_branches}
 
+  \subsubsection{The complex mth root}
+
+  Working over the complex we encounter several multi-valued functions
+  which we will briefly discuss here.  Closely related to superelliptic
+  curves over $\C$ is the complex $m$-th root.
+  Before specifying a branch it is a multi-valued function $y^m = x$
+  that defines an $m$-sheeted Riemann surface, whose only branch points
+  are at $z = 0,\infty$, and they're totally ramified.
+
+  For $z\in\C$, it is natural and computationally convenient to use the
+  principal branch of the $m$-th root
+  \begin{equation}
+      \sqrt[m]z \text{ such that } -\frac{π}m<\arg(\sqrt[m]z)\leq\frac{π}m
+  \end{equation}
+  which has a branch cut along the negative real axis $]\!-\infty,0[$.
+  Crossing it in positive orientation corresponds to multiplication by
+  the primitive $m$-th root of unity
+  \begin{equation}
+  \zeta = \zeta_m = e^{\frac{2\pi i }{m}}    
+  \end{equation}
+  on the surface. In
+  particular the monodromy at $z=0$ is cyclic of order $m$.
+
+  \subsubsection{Superelliptic curves}
+
+  Now the superelliptic curve $\cu:y^m=f(x)$ is also a Riemann surface with
+  $m$ sheets.
+  We call \emph{branch of $\cu$} a function $y(x)$ such that
+  $y(x)^m = f(x)$ for all $x \in \C$. At every $x$, the branches of $\cu$ only
+  differ by multiplication by a power of $\zeta$.
   
-  Working over the complex we encounter several multi-valued functions which we will briefly discuss here.  Closely related to superelliptic curves over $\C$ is the complex $m$-th root. Before specifying
-  a branch it is a multi-valued function $y^m = x$ that defines an $m$-sheeted Riemann surface, whose only branch points are at $z = 0,\infty$ and they're totally ramified. The corresponding global
-  branch cut can be chosen along the negative real axis $]\!-\infty,0[$. Crossing the branch cut in positive orientation corresponds to multiplication by  a primitive $m$-th root of unity
-  $\zeta = \zeta_m
-  := e^{\frac{2\pi i }{m}}$\,. Hence, the local monodromy at $z = 0$ is given by a cyclic permutation $\sigma = (1 \dots m)$. \abstandl
- In the case of superelliptic curves given by an affine model $\caff : y^m = \prod_{k = 1}^d (x - x_k)$, indepently of $d$ and $m$, every finite branch point $x_k$ is totally ramified, which
- means the local monodromy is given by a cyclic permutation $\sigma_k \in S_m$. We define a 
- \emph{branch of $\cu$} as a function
-  $y(x)$ such that $y(x)^m = f(x)$ for all $x \in \C$. Hence, at every $x$, the branches of $\cu$ only differ by multiplication by a power of $\zeta$. \abstandl
-  In this paper, we will not impose a global ordering on the sheets of $\cu$. Instead we use locally analytic branches $\yab$ (see \ref{def:yab}) and order them such that moving one sheet up corresponds to the
-  transformation $\yab \mapsto \zeta\yab$. For us, encircling a branch point in positive orientation means applying 
-  the local monodromy to the analytic branches of $\cu$, therefore we can therefore assume that $\sigma_k = \sigma$ for $k = 1,\dots,d$\,. \abstandl
-  In order to write down explicit and well-defined formulas for integration, we need to fix a \emph{principal value (or branch)} for the argument function and the $m$-th root function.
-  For $z \in \C$ we choose $\arg(z) \in \,]\!\!-\pi,\pi]$ and $\sqrt[m]{z} \;( = z\mr )$ such that $\arg(\sqrt[m]{z}) \in \, ]\!\!-\frac{\pi}{m},\frac{\pi}{m}]$\,. \abstandl
 
-
-
+  In the case of superelliptic curves given
+  by an affine model $\caff : y^m = \prod_{k = 1}^d (x - x_k)$, indepently of
+  $d$ and $m$, every finite branch point $x_k$ is totally ramified, which means
+  the local monodromy is given by a cyclic permutation $\sigma_k \in S_m$.
+  
+  As we shall see below, we
+  will not impose a global ordering on the sheets of $\cu$. Instead we use
+  locally analytic branches $\yab$ (see \ref{def:yab}) and order them such that
+  moving one sheet up corresponds to the transformation $\yab \mapsto
+  \zeta\yab$. For us, encircling a branch point in positive orientation means
+  applying the local monodromy to the analytic branches of $\cu$, therefore we
+  can therefore assume that $\sigma_k = \sigma$ for $k = 1,\dots,d$.
  
+  \subsubsection{Local branches}
   
+  In order to integrate holomorphic forms on $\cu$
+  it is crucial to be able to follow an explicit analytic continuation of $y$ along a
+  path joining two branch points $a$ and $b$.
   
-  Consider the affine transformation $x \mapsto \frac{b-a}{2}\left(u+\frac{b+a}{b-a}\right)$, which maps 
-  $[a,b]$ to $[-1,1]$ and appears in the double-exponential integration. \abstand
-  We use it to implicitly  define local branches of $\cu$ using the following functions
-  \begin{align}\label{def:yab}
-  \begin{split}
-   \yab(x) \, & = \, \left(\frac{b-a}{2}\right)^{\frac{d}{m}} e^{\frac{\pi i}{m}} \; (1 - u(x)^2)\mr \; \ft_{a,b}(u(x))\,, \quad \text{with} \\
-   \ft_{a,b}(u(x)) \, & = \, \prod_{x_k \ne a,b} (u(x) - u(x_k))\mr \quad \text{and} \\
-   u(x) \,& = \, u_{a,b}(x) \,=\, \frac{2x-b-a}{b-a}\,.
-   \end{split}
-  \end{align}
-  where all roots are given by the principal value. Under the condition that $x_k \not\in [a,b]$, the function $u(x)-u(x_k)$ does not cross $]\!\!-\infty,0[$
-  for $x \in [a,b]$ and $x_k \ne a,b$. Hence, there exists a open neighbourhood $\tilde{V}_{a,b}$ of $[a,b]$ (think of an ellipse) such that
-  $\ft_{a,b}(u(x))$ is a holomorphic function with no zeros in $\tilde{V}_{a,b}$.
-  
-  \medskip
-  
-  Similary, $(1-u(x))^2$ does not cross $]\!\!-\infty,0[$ for $x \in \,]a,b[$. Therefore, 
- $\yab(x)$ is a locally analytic branch of $\cu$ on a open set $\vab$ (see Figure \ref{m-fig:set_vab}), which is obtained by removing the halflines left of $a$ and right of 
- $b$ from $\tilde{V}_{a,b}$\,. \abstand
- Thus, $\yab$ can be used for integration of differential forms on $\vab$\,.
- \begin{figure}[H]
-      \begin{center}
-	  \input{images/tikz_pic_1.tex}
-      \end{center}
-    \caption{Area of holomorphicity for $\yab$\,.}
-    \label{fig:set_vab}
-\end{figure}
- 
- From the affine equation $\caff$ \eqref{eq:aff_model} it follows that other analytic branches on $V_{a,b}$ are given by
-      $\yab \mapsto \zeta^l \,\yab$ for $l \in \Z/m\Z$\,.
-  In our situation, we can assume that moving up $l$ sheets corresponds to multiplication of $\yab$ by $\zeta^l$\,. 
+  One could of course consider the principal branch of the curve
+  \begin{equation}
+      y(x) = \sqrt[m]{f(x)}
+  \end{equation}
+  however this is not a good model to compute with: it has branch cuts
+  wandering around the $x$-plane.
 
-  \bigskip
-  
-  
+  Instead, let us first consider the affine transformation
+  \begin{equation}
+      \label{def:uab}
+      u_{a,b} : x \mapsto \frac{b-a}{2}\left(x+\frac{b+a}{b-a}\right) 
+  \end{equation}
+  which depends on two branch points $a,b$ and maps $[a,b]$ to $[-1,1]$.
+
+  Then we define the local branch
+  \begin{equation}
+      \label{def:yab}
+      \yab(x) =   C_{a,b} \sqrt[m]{1 - u_{a,b}(x)^2}
+      \prod_{x_k\neq a,b}\sqrt[m]{u_{a,b}(x)-u_{a,b}(x_k)}
+  \end{equation}
+  where
+  \begin{equation}
+      C_{a,b} = \left(\frac{b-a}{2}\right)^{\frac{d}{m}} e^{\frac{\pi i}{m}}
+  \end{equation}
+  is chosen so that $y_{a,b}^m = f(x)$.
+
+  This is a branch of $\cu$, whose branch cuts are all parallel to $(a,b)$,
+  which is holomorphic inside $]a,b[$ and has two outward cuts $]\infty, a]$ and $[b,\infty[$.
+
+  In fact it is convenient to work with the local $u$ variable: let $u_k = u_{a,b}(x_k)$ be the image
+  of all branch points, then the function
+  \begin{equation}
+      \ft_{a,b}(u) = \prod_{x_k \ne a,b} \sqrt[m]{u - u_k}
+  \end{equation}
+  is holomorphic on a neighborhood $U_{a,b}$ of $[-1,1]$ which we can take as
+  any ellipse\footnote{we will exhibit such a neighborhood in section \ref{sec:gc_ellipse}}
+  containing no $u_k\neq\pm1$ , while
+  \begin{equation}
+      \sqrt[m]{1-u^2}
+  \end{equation}
+  has two cuts $]-\infty,-1]$ and $[1,\infty[$, and is holomorphic on the complementary
+  $\overline U$ of these cuts.
+
+  \begin{figure}[H] \begin{center} \input{images/tikz_pic_1.tex}
+  \end{center} \caption{Area of holomorphicity for $\yab$\,.}
+  \label{fig:set_vab} \end{figure}
+
+  We call $V_{a,b} = u_{a,b}^{-1}(U_{a,b}\cap \overline U)$ the inverse image of their intersection,
+  so that $V_{a,b}$ is an ellipse shaped neighborhood of $]a,b[$ with two segments removed
+      (see Figure \ref{m-fig:set_vab})
+      on which the local branch $\yab$ is well defined and holomorphic.
+
+  With these notations, we now have
+  \begin{prop}
+     \begin{itemize}
+         \item $\ft_{a,b}$ is holomorphic and does not vanish on $U_{a,b}$
+         \item $y_{a,b}(x) = C_{a,b} \ft_{a,b}(u(x)) \sqrt[m]{1-u(x)^2}$ is holomorphic
+         on $V_{a,b}$
+         \item $y_{a,b}^m = f(x)$ for all $x\in\C$
+     \end{itemize} 
+     Moreover, we can assume that moving up $l$ sheets on $\cu$
+     corresponds to multiplication of $\yab$ by $\zeta^l$. 
+ \end{prop}
+
+
   \subsection{Cycles and homology}\label{subsec:cycles_homo}
     
    In this paragraph we present an explicit generating set of $\homo$ that is obtained by connecting the locally analytic branches $\yab$\,, as defined in \eqref{def:yab}\,,
