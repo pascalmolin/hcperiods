@@ -47,7 +47,7 @@ typedef de_integration_struct de_int_t[1];
 
 typedef struct
 {
-    double tau;
+    double r;
     slong a;
     slong b;
     double va;
@@ -58,7 +58,7 @@ typedef struct
 typedef struct
 {
     slong n;
-    double tau;
+    double r;
     edge_t * e;
 } tree_struct;
 typedef tree_struct tree_t[1];

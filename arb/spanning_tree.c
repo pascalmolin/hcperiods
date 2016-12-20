@@ -73,7 +73,7 @@ edges_init(edge_t * e, param_f param, const cdouble * w, slong len)
         {
             e[k].a = i;
             e[k].b = j;
-            e[k].tau = param_edge(param, w, i, j, len);
+            e[k].r = param_edge(param, w, i, j, len);
             k++;
         }
     }
@@ -82,7 +82,7 @@ edges_init(edge_t * e, param_f param, const cdouble * w, slong len)
 int
 edge_cmp(const edge_t * x, const edge_t * y)
 {
-        return (x->tau < y->tau) ? -1 : (x->tau > y->tau);
+        return (x->r < y->r) ? -1 : (x->r > y->r);
 }
 
 static void
@@ -159,8 +159,8 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
         tree->e[k] = e[i];
 
         /* save complexity estimate */
-        if (e[i].tau < tree->tau)
-            tree->tau = e[i].tau;
+        if (e[i].r < tree->r)
+            tree->r = e[i].r;
     }
 
     free(w);
@@ -173,7 +173,7 @@ tree_init(tree_t tree, slong n)
 {
     tree->n = n;
     tree->e = malloc(n * sizeof(edge_t));
-    tree->tau = PI2;
+    tree->r = PI2;
 }
 
 void
