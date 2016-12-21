@@ -35,16 +35,20 @@
 
   \begin{thm}\label{thm:periods}
    Let $\gamma_e^{(l)} \in C$ be a shift of an elementary cycle corresponding to $e = (a,b) \in E$. Then, for all differentials $w_{i,j} \in \WM$, we have that
-   \begin{align}\label{eq:thm_periods_1}
-   \begin{split}
-    \int_{\gamma_e^{(l)}} \w_{i,j}  & =  c_{i,j,l} \cdot \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du \quad \text{with} \\
-    c_{i,j,l}   & =  (1-\zeta^{-j})  \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}} , \\
-    \varphi_{i,j}  & = 
-    \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{(1-u^2)^{\frac{j}{m}}\ft_{a,b}(u)^j},
-    \end{split}
-   \end{align}
-   where $\varphi_{i,j}$ is independent of $l \in \Z/m\Z$ and holomorphic in a neighbourhood of $]\!-1,1[$.
-
+   \begin{equation}
+      \label{eq:thm_periods_1} 
+      \int_{\gamma_e^{(l)}} \w_{i,j}  =  c_{i,j,l} \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du
+   \end{equation}
+   where
+   \begin{equation}
+    c_{i,j,l}   =  (1-\zeta^{-j})  \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}
+   \end{equation}
+   and the function
+   \begin{equation}
+    \varphi_{i,j}  = \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\ft_{a,b}(u)^j}
+   \end{equation}
+   is independent of $l\in\Z/m\Z$ and holomorphic in a neighbourhood of
+   $]\!-1,1[$.
   \end{thm}
   \begin{proof}
     By Definition \ref{m-def:elem_cycle} we can write $\gamma_e^{(l)} = \gamma_1 + \gamma_2$ with $\gamma_1 = \{  (x,\zeta^l \yab(x))  \mid  x \in [a,b]  \}$ and
@@ -65,7 +69,7 @@
 %    \varphi_{i,j}(u) & := \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{(1-u^2)^{\frac{j}{m}}\ft_{a,b}(u)^j} \quad \text{and} \\
 %       c_{i,j,l} & := (1-\zeta^{-j})  \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}.
 %   \end{align}
-  By our discussion in \S \ref{m-subsec:roots_branches} $\phi_{i,j}$ is well-defined and holomorphic on $]-1,1[$ with the principal value of the $m$-th root.
+  By our discussion in \S \ref{m-subsec:roots_branches} $\varphi_{i,j}$ is well-defined and holomorphic on $]-1,1[$ with the principal value of the $m$-th root.
   \end{proof}
 
 %   \begin{coro}
