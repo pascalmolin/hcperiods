@@ -80,8 +80,8 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
         integrals_tree_de(integrals, c, aj->tree, aj->dz, prec);
 
     /* period matrices */
-    period_matrix(aj->omega0, aj->loop_a, integrals, c.g, c.d, prec);
-    period_matrix(aj->omega1, aj->loop_b, integrals, c.g, c.d, prec);
+    period_matrix(aj->omega0, aj->loop_a, integrals, c, prec);
+    period_matrix(aj->omega1, aj->loop_b, integrals, c, prec);
 
     acb_mat_clear(integrals);
 

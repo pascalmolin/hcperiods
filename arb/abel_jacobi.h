@@ -172,7 +172,7 @@ void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, const co
 
 /* get all periods on a, b basis */
 /* two g*g matrices */
-void period_matrix(acb_mat_t omega, const homol_t basis, const acb_mat_t integrals, slong g, slong d, slong prec);
+void period_matrix(acb_mat_t omega, const homol_t basis, const acb_mat_t integrals, sec_t c, slong prec);
 
 /* get tau reduced matrix */
 void tau_matrix(acb_mat_t tau, const acb_mat_t omega0, const acb_mat_t omega1, slong prec);
