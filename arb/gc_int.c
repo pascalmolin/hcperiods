@@ -8,6 +8,7 @@
 #include "complex_extras.h"
 
 #define LOG2 log(2)
+#define PARAMS 0
 
 double
 distance_ellipse_d(double x, double y, double a)
@@ -79,7 +80,7 @@ ab_points_worst(cdouble * w, tree_t tree, sec_t c)
 }
 
 slong
-gc_int_params(tree_t tree, sec_t c, slong prec)
+gc_int_params(const tree_t tree, sec_t c, slong prec)
 {
     slong n;
     double r;
@@ -98,6 +99,7 @@ gc_int_params(tree_t tree, sec_t c, slong prec)
     w = malloc(c.d * sizeof(cdouble));
     ab_points_worst(w, tree, c);
 
+#if PARAMS
     {
         /* zero estimate */
         double r1 = (1 + r) / 2;
@@ -107,13 +109,16 @@ gc_int_params(tree_t tree, sec_t c, slong prec)
         B = 2*log(rho);
         printf("r = %lf -> n0 = %lf [M = %lf, A = %lf, B = %lf]\n", r1, A/B, M, A, B);
     }
+#endif
 
     /* first estimate */
     M = constant_m_d(w, c.d - 2, r, c.d);
     A = prec*LOG2 + log(2*PI*M) + 1;
     rho = r + sqrt(r*r-1);
     B = 2*log(rho);
+#if PARAMS
     printf("r = %lf -> n1 = %lf [M = %lf, A = %lf, B = %lf]\n", r, A/B, M, A, B);
+#endif
     n = ceil(A / B);
 
     /* second = should be exact */
@@ -122,7 +127,9 @@ gc_int_params(tree_t tree, sec_t c, slong prec)
     A = prec*LOG2 + log(2*PI*M) + 1;
     rho = r + sqrt(r*r-1);
     B = 2*log(rho);
+#if PARAMS
     printf("r = %lf -> n2 = %lf [M = %lf, A = %lf, B = %lf]\n", r, A/B, M, A, B);
+#endif
     n = ceil(A / B);
 
     free(w);

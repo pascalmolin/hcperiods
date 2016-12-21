@@ -99,6 +99,9 @@ typedef struct
     /* differentials */
     cohom_t dz;
 
+    /* integration type: Gauss or DE */
+    int type;
+
     /* homology using tree */
     tree_t tree;         /* choice of best loops */
 
@@ -114,7 +117,6 @@ typedef struct
     /* for Abel-Jacobi map, choice of a base point */
     slong p0;            /* base point */
     arb_mat_t proj;
-
 }
 abel_jacobi_struct;
 
@@ -134,12 +136,12 @@ void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
 /* parameters for DE integration */
-void de_int_params(arf_t h, ulong *n, tree_t tree, sec_t c, slong prec);
+void de_int_params(arf_t h, ulong *n, const tree_t tree, sec_t c, slong prec);
 void de_int_init(de_int_t de, arf_t h, ulong n, slong prec);
 void de_int_clear(de_int_t de);
 
 /* parameters for GC integration */
-slong gc_int_params(tree_t tree, sec_t c, slong prec);
+slong gc_int_params(const tree_t tree, sec_t c, slong prec);
 
 /* compute maximum spanning tree */
 void tree_init(tree_t tree, slong d);
@@ -165,7 +167,6 @@ void holomorphic_differentials(cohom_t dz, slong d, slong m);
 /* numerically compute d-1 integrals along tree edges */
 /* (d-1)*(g-1) matrix, tree edges on lines */
 void ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec);
-void integrals_tree(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
 void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
 void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
 

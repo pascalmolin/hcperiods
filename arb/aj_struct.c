@@ -14,6 +14,8 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d)
     sec_init(&aj->c, m, x, d);
     g = aj->c.g;
 
+    aj->type = (m == 2) ? INT_GC : INT_DE;
+
     tree_init(aj->tree, d - 1);
     aj->dz = malloc(g * sizeof(dform_t));
 
@@ -64,24 +66,22 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
     acb_mat_t integrals;
 
     /* homology */
-    spanning_tree(aj->tree, c.roots, c.d, (c.m == 2) ? INT_GC : INT_DE);
-    flint_printf("spanning tree\n");
+    spanning_tree(aj->tree, c.roots, c.d, aj->type);
     symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
-    flint_printf("symplectic basis\n");
 
     /* cohomology */
     holomorphic_differentials(aj->dz, c.d, c.m);
-    flint_printf("differentials\n");
 
     /* integration */
     acb_mat_init(integrals, c.d-1, c.g);
-    integrals_tree(integrals, c, aj->tree, aj->dz, prec);
-    flint_printf("integrals\n");
+    if (aj->type == INT_GC)
+        integrals_tree_gc(integrals, c, aj->tree, aj->dz, prec);
+    else
+        integrals_tree_de(integrals, c, aj->tree, aj->dz, prec);
 
     /* period matrices */
     period_matrix(aj->omega0, aj->loop_a, integrals, c.g, c.d, prec);
     period_matrix(aj->omega1, aj->loop_b, integrals, c.g, c.d, prec);
-    flint_printf("periods\n");
 
     acb_mat_clear(integrals);
 

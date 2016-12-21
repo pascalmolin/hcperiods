@@ -43,7 +43,7 @@ de_int_params_se(arf_t h, slong * n, double tau, mag_t M1, mag_t M2, slong prec)
 #endif
 
 void
-de_int_params(arf_t h, ulong *n, tree_t tree, sec_t c, slong prec)
+de_int_params(arf_t h, ulong *n, const tree_t tree, sec_t c, slong prec)
 {
     arf_set_d(h, .1);
     *n = 100;

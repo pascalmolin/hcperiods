@@ -30,12 +30,3 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec)
     acb_clear(mab);
     acb_clear(ba);
 }
-
-void
-integrals_tree(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec)
-{
-    if (c.m == 2)
-        integrals_tree_gc(integrals, c, tree, dz, prec);
-    else
-        integrals_tree_de(integrals, c, tree, dz, prec);
-}
