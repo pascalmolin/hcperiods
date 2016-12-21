@@ -10,10 +10,10 @@ static void
 integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
         slong n, slong prec)
 {
-    slong k, l, d = c.d;
+    slong i, l, d = c.d;
     fmpq_t ln;
     arb_t w, x;
-    acb_t y, yj, yjxi;
+    acb_t y, yxi;
     acb_ptr u;
 
     u = _acb_vec_init(d - 2);
@@ -21,8 +21,7 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
     arb_init(w);
     arb_init(x);
     acb_init(y);
-    acb_init(yj);
-    acb_init(yjxi);
+    acb_init(yxi);
 
     /* reduce roots */
     ab_points(u, c.roots, e, d, prec);
@@ -32,7 +31,6 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
     for (l = 0; l < n; l++)
     {
         fmpq_t ln;
-        slong i, j;
 
         /* compute x */
         fmpq_set_si(ln, 2 * l - 1, 2 * n);
@@ -42,28 +40,18 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
         nth_root_pol_def(y, u, x, d - 2, 2, prec);
         acb_inv(y, y, prec);
 
-        /* differentials, jd + mi >= delta */
-        acb_one(yj);
-        for (k = 0, j = 1; j < c.m; j++)
+        /* differentials : j = 1 && i < g */
+        acb_set(yxi, y);
+        acb_add(res + 0, res + 0, yxi, prec);
+
+        for (i = 1; i < c.g; i++)
         {
-            slong lim = j * c.d - c.delta;
-
-            acb_mul(yj, yj, y, prec);
-
-            if (c.m > lim)
-                continue;
-            
-            acb_set(yjxi, yj);
-            acb_add(res + k, res + k, yjxi, prec);
-            k++;
-
-            for (i = 2; i < c.d && c.m * i < j * c.d - c.delta; i++)
-            {
-                acb_mul_arb(yjxi, yjxi, x, prec);
-                acb_add(res + k, res + k, yjxi, prec);
-                k++;
-            }
+            acb_mul_arb(yxi, yxi, x, prec);
+            acb_add(res + i, res + i, yxi, prec);
         }
+
+        continue;
+        /* could reuse -x, but not a big deal */
 
         if (l == 0)
             continue;
@@ -74,30 +62,17 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
         nth_root_pol_def(y, u, x, d - 2, 2, prec);
         acb_inv(y, y, prec);
 
-        /* differentials, jd + mi >= delta */
-        acb_one(yj);
-        for (k = 0, j = 1; j < c.m; j++)
+        /* differentials : j = 1 && i < g */
+        acb_set(yxi, y);
+        acb_add(res + 0, res + 0, yxi, prec);
+
+        for (i = 1; i < c.g; i++)
         {
-            slong lim = j * d - c.delta;
-
-            acb_mul(yj, yj, y, prec);
-
-            if (c.m > lim)
-                continue;
-            
-            acb_set(yjxi, yj);
-            acb_add(res + k, res + k, yjxi, prec);
-            k++;
-
-            for (i = 2; i < c.d && c.m * i < j * c.d - c.delta; i++)
-            {
-                acb_mul_arb(yjxi, yjxi, x, prec);
-                if (i % 2)
-                    acb_add(res + k, res + k, yjxi, prec);
-                else
-                    acb_sub(res + k, res + k, yjxi, prec);
-                k++;
-            }
+            acb_mul_arb(yxi, yxi, x, prec);
+            if (i % 2)
+                acb_add(res + i, res + i, yxi, prec);
+            else
+                acb_sub(res + i, res + i, yxi, prec);
         }
     }
 
@@ -106,15 +81,14 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
     arb_const_pi(w, prec);
     arb_div_ui(w, w, n, prec);
 
-    for (k = 0; k < c.g; k++)
-        acb_mul_arb(res + k, res + k, w, prec);
+    for (i = 0; i < c.g; i++)
+        acb_mul_arb(res + i, res + i, w, prec);
 
     _acb_vec_clear(u, d - 2);
     fmpq_clear(ln);
     arb_clear(x);
     acb_clear(y);
-    acb_clear(yj);
-    acb_clear(yjxi);
+    acb_clear(yxi);
 }
 
 void
