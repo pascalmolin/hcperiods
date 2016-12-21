@@ -65,18 +65,23 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
 
     /* homology */
     spanning_tree(aj->tree, c.roots, c.d, (c.m == 2) ? INT_GC : INT_DE);
+    flint_printf("spanning tree\n");
     symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
+    flint_printf("symplectic basis\n");
 
     /* cohomology */
     holomorphic_differentials(aj->dz, c.d, c.m);
+    flint_printf("differentials\n");
 
     /* integration */
     acb_mat_init(integrals, c.d-1, c.g);
     integrals_tree(integrals, c, aj->tree, aj->dz, prec);
+    flint_printf("integrals\n");
 
     /* period matrices */
     period_matrix(aj->omega0, aj->loop_a, integrals, c.g, c.d, prec);
     period_matrix(aj->omega1, aj->loop_b, integrals, c.g, c.d, prec);
+    flint_printf("periods\n");
 
     acb_mat_clear(integrals);
 

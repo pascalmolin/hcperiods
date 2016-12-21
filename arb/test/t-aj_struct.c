@@ -3,6 +3,7 @@
 int main() {
 
     slong d, i, m;
+    slong prec = 200;
     flint_rand_t state;
     
     flint_printf("abel_jacobi struct...");
@@ -19,7 +20,7 @@ int main() {
             x = _acb_vec_init(d);
             for (i = 0; i < d; i++)
             {
-                acb_randtest_precise(x + i, state, 100, 4);
+                acb_randtest_precise(x + i, state, prec, 4);
                 /*
                 flint_printf("\nx[%ld] = ", i);
                 acb_printd(x + i, 10);
@@ -31,8 +32,13 @@ int main() {
                 abel_jacobi_t aj;
                 abel_jacobi_init_roots(aj, m, x, d);
 
-                spanning_tree(aj->tree, x, d, INT_DE);
-                symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, aj->c);
+                if (m == 2)
+                    abel_jacobi_compute(aj, prec);
+                else
+                {
+                    spanning_tree(aj->tree, x, d, INT_DE);
+                    symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, aj->c);
+                }
 
                 abel_jacobi_clear(aj);
             }

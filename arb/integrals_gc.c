@@ -123,7 +123,7 @@ integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t
     slong k;
     ulong n;
 
-    n = gc_int_params(tree->r, c, prec);
+    n = gc_int_params(tree, c, prec);
 
     for (k = 0; k < c.d - 1; k++)
         integrals_edge_gc(integrals->rows[k], c, tree->e[k], dz, n, prec);

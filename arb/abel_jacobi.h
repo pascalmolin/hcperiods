@@ -58,6 +58,7 @@ typedef struct
 typedef struct
 {
     slong n;
+    slong min;
     double r;
     edge_t * e;
 } tree_struct;
@@ -133,12 +134,12 @@ void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
 /* parameters for DE integration */
-void de_int_params(arf_t h, ulong *n, double tau, double M1, double M2, slong prec);
+void de_int_params(arf_t h, ulong *n, tree_t tree, sec_t c, slong prec);
 void de_int_init(de_int_t de, arf_t h, ulong n, slong prec);
 void de_int_clear(de_int_t de);
 
 /* parameters for GC integration */
-slong gc_int_params(double r, sec_t c, slong prec);
+slong gc_int_params(tree_t tree, sec_t c, slong prec);
 
 /* compute maximum spanning tree */
 void tree_init(tree_t tree, slong d);

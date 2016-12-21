@@ -7,24 +7,26 @@
 #include "abel_jacobi.h"
 #include "complex_extras.h"
 
+#define LOG2 log(2)
+
 double
 distance_ellipse_d(double x, double y, double a)
 {
-    double b, t, t1, st, ct;
+    const double eps = 1.e-10;
+    double b, t, ft, st, ct;
     b = sqrt(a*a-1);
     t = atan(a*y/(b*x));
 
     do
     {
-        double ft, fpt;
+        double fpt;
         st = sin(t);
         ct = cos(t);
-        ft = ct*st-x*a*st+y*b*ct;
+        ft = ct*st - x*a*st + y*b*ct;
         fpt = ct*(ct-x*a) - st*(st + y*b);
-        t1 = t;
         t -= ft / fpt;
     }
-    while (t != t1);
+    while (fabs(ft) > eps);
 
     x -= a * ct;
     y -= b * st;
@@ -48,38 +50,84 @@ constant_m_d(cdouble * w, slong len, double r, slong d)
     return 2 * PI * pow(r, d) / sqrt(p);
 }
 
-slong
-gc_int_params(double r, sec_t c, slong prec)
+void
+ab_points_worst(cdouble * w, tree_t tree, sec_t c)
 {
-    slong k, n;
+    slong k, l, i, j;
+    cdouble a, b;
+
+    /* small approx of points */
+    for (k = 0; k < c.d; k++)
+        w[k] = acb_get_cdouble(c.roots + k);
+
+    /* get worst edge */
+    k = tree->min;
+
+    i = tree->e[k].a;
+    j = tree->e[k].b;
+
+    a = w[i];
+    b = w[j];
+
+    for (k = 0, l = 0; k < c.d; k++)
+    {
+        if (k == i || k == j)
+            continue;
+        else
+            w[l++] = (2*w[k]-a-b)/(b-a);
+    }
+}
+
+slong
+gc_int_params(tree_t tree, sec_t c, slong prec)
+{
+    slong n;
+    double r;
     double M, A, B, rho;
     double mult = .25;
     cdouble * w;
 
-    /* small approx of roots */
+    r = tree->r;
+
+    if (r <= 1)
+    {
+        flint_printf("gc int: r must be > 1 (r = %lf)\n", r);
+        abort();
+    }
+
     w = malloc(c.d * sizeof(cdouble));
-    for (k = 0; k < c.d; k++)
-        w[k] = acb_get_cdouble(c.roots + k);
+    ab_points_worst(w, tree, c);
+
+    {
+        /* zero estimate */
+        double r1 = (1 + r) / 2;
+        M = constant_m_d(w, c.d - 2, r1, c.d);
+        A = prec*LOG2 + log(2*PI*M) + 1;
+        rho = r1 + sqrt(r1*r1 - 1);
+        B = 2*log(rho);
+        printf("r = %lf -> n0 = %lf [M = %lf, A = %lf, B = %lf]\n", r1, A/B, M, A, B);
+    }
 
     /* first estimate */
-    M = constant_m_d(w, c.d, r, c.d);
-    A = prec*log(10) + log(2*PI*M) + 1;
+    M = constant_m_d(w, c.d - 2, r, c.d);
+    A = prec*LOG2 + log(2*PI*M) + 1;
     rho = r + sqrt(r*r-1);
     B = 2*log(rho);
-    printf("n1 = %lf\n", A/B);
+    printf("r = %lf -> n1 = %lf [M = %lf, A = %lf, B = %lf]\n", r, A/B, M, A, B);
     n = ceil(A / B);
 
     /* second = should be exact */
     r *= 1-mult/n;
-    M = constant_m_d(w, c.d, r, c.d);
-    A = prec*log(10) + log(2*PI*M) + 1;
+    M = constant_m_d(w, c.d - 2, r, c.d);
+    A = prec*LOG2 + log(2*PI*M) + 1;
     rho = r + sqrt(r*r-1);
     B = 2*log(rho);
-    printf("n2 = %lf\n", A/B);
+    printf("r = %lf -> n2 = %lf [M = %lf, A = %lf, B = %lf]\n", r, A/B, M, A, B);
+    n = ceil(A / B);
 
     free(w);
 
-    return ceil(A/B);
+    return n;
 }
 
 void

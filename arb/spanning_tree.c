@@ -146,8 +146,11 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
         tree->e[k] = e[i];
 
         /* save complexity estimate */
-        if (e[i].r < tree->r)
+        if (!tree->r || e[i].r < tree->r)
+        {
             tree->r = e[i].r;
+            tree->min = k;
+        }
     }
 
     free(w);
@@ -160,7 +163,8 @@ tree_init(tree_t tree, slong n)
 {
     tree->n = n;
     tree->e = malloc(n * sizeof(edge_t));
-    tree->r = PI2;
+    tree->r = 0.;
+    tree->min = 0;
 }
 
 void
