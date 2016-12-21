@@ -33,8 +33,10 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
         fmpq_t ln;
 
         /* compute x */
+        fmpq_init(ln);
         fmpq_set_si(ln, 2 * l - 1, 2 * n);
         arb_cos_pi_fmpq(x, ln, prec);
+        fmpq_clear(ln);
 
         /* compute 1/y(x) */
         nth_root_pol_def(y, u, x, d - 2, 2, prec);
