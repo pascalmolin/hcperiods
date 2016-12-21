@@ -59,8 +59,8 @@ de_int_init(de_int_t de, arf_t h, ulong n, slong prec)
     de->n = n;
     de->prec = prec;
 
-    arb_init(de->h);
-    arb_set_arf(de->h, h);
+    arf_init(de->h);
+    arf_set(de->h, h);
     arb_init(lambda);
     arb_const_pi(lambda, prec);
     arb_mul_2exp_si(lambda, lambda, -1);
