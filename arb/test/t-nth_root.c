@@ -4,8 +4,11 @@ int main() {
 
     slong i, prec;
     acb_ptr u;
-    acb_t y1, y2;
+    acb_t y1, y2, y3;
     arb_t x;
+    acb_t z;
+
+    
 
     flint_rand_t state;
     
@@ -20,11 +23,16 @@ int main() {
             slong m, d, j;
 
             d = 3 + n_randint(state, 20);
-            m = n_randint(state, 12);
+            m = 2 + n_randint(state, 12);
             u = _acb_vec_init(d);
             arb_init(x);
             acb_init(y1);
             acb_init(y2);
+            acb_init(y3);
+            acb_init(z);
+            acb_set_ui(z,2);
+            acb_div_ui(z,z,m,prec);
+            acb_exp_pi_i(z,z,prec);
 
             for (j = 0; j < d; j++)
                 acb_randtest_precise(u + j, state, prec, 10);
@@ -34,14 +42,18 @@ int main() {
                 arb_randtest_precise(x, state, prec, 1);
                 nth_root_pol_def(y1, u, x, d, m, prec);
                 nth_root_pol_prod(y2, u, x, d, m, prec);
-                if (!acb_overlaps(y1, y2))
+                nth_root_pol_turn(y3, u, x, z, d, m, prec);
+                if (!acb_overlaps(y1, y2) || !acb_overlaps(y2,y3) || !acb_overlaps(y1,y3))
                 {
                     flint_printf("FAIL:\n\n");
                     flint_printf("d = %ld, m = %ld, prec = %ld\n", d, m, prec);
                     flint_printf("nth_root_def = ");
                     acb_printd(y1, 20);
                     flint_printf("\nnth_root_pol = ");
-                    acb_printd(y2, 20);
+                    acb_printd(y2, 20); 
+                    flint_printf("\nnth_root_turn = ");
+                    acb_printd(y3, 20);
+
                     flint_printf("\n\n");
                     abort();
                 }
@@ -50,6 +62,8 @@ int main() {
             arb_clear(x);
             acb_clear(y1);
             acb_clear(y2);
+            acb_clear(y3);
+            acb_clear(z);
             _acb_vec_clear(u, d);
 
         }
