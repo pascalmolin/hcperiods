@@ -245,29 +245,39 @@ theorem on an ellipse $ε_r$ of the form
 
 Now we use this theorem with a function
 $g_{i,j}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitely factored
-polynomial $Q(u)=\prod(u-u_k)$, so that the error can be controlled
-as follows
-\begin{prop}
+polynomial $Q(u)=\prod(u-u_k)$, so that the error can be
+explicitly controlled
+
+\begin{lemma}
+    \label{lem:param_r}
     Let $r>1$ be such that $2r<\abs{u_i-1}+\abs{u_i+1}$ for all
-    roots $u_i$ of $Q$, and denote by
+    roots $u_i$ of $Q$,
+    then there exists an explicitly computable
+    constant $M(r)$ such that for all $u\in ε_r$
     \begin{equation}
-        d_r(u_i) = \inf_{z\in ε_r}\abs{z-u_i}
+        \abs{\frac{u^{i-1}}{\ft_{a,b}(u)}}\leq M(r)
     \end{equation}
-    the distance from $u_i$ to the ellipse $ε_r$.
-    Then writing
+\end{lemma}
+\begin{proof}
+We simply compute the distance
+        $d_r(u_i) = \inf_{z\in ε_r}\abs{z-u_i}$
+ from a root $u_i$ to the ellipse $ε_r$, and let
+ $M(r) =  \frac{r^{i-1}}{\sqrt{\prod d_r(u_i)} }$.
+\end{proof}
+
+\begin{prop}
+    With $r$ and $M(r)$ satisfying lemme \ref{lem:param_r},
+    for all $n$ such that
     \begin{equation}
-        M(r) =  \frac{(r+c)^k}{\sqrt{\prod d_r(u_i)} }
+        n \geq \frac{D+\log(2πM(r))+1}{2\log(r+\sqrt{r^2-1})}
     \end{equation}
     we have
     \begin{equation}
         \abs{I_{a,b}(i,j)
-        - \frac{π}n\sum_{k=1}^n \frac{u_k^(i-1)}{\fab(u_k)}}
+        - \frac{π}n\sum_{k=1}^n \frac{u_k^{i-1}}{\fab(u_k)}}
             \leq e^{-D}
     \end{equation}
-    for all
-    \begin{equation}
-        n \geq \frac{D+\log(2πM(r))+1}{2\log(r+\sqrt{r^2-1})}
-    \end{equation}
+    where $u_k=\cos(\frac{2k-1}{2n}π)$.
 \end{prop}
 
 More details on the choice of $r$ and the computation of $M(r)$
