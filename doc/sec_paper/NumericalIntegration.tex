@@ -20,14 +20,26 @@ As explained in \S \ref{sec:real_int}, the actual computations will be done on i
     \label{eq:elem_num_int}
     I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{\frac jm}\ft_{a,b}(u)^j}
 \end{equation}
-so that we restrict the numerical analysis to this case.
-
-
-The value of elementary integrals correspond to the polynomial shift
+so that we restrict the numerical analysis to this case,
+the value of elementary integrals being recovered by polynomial shift
 \begin{equation}
     \int_{-1}^1\frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac jm}}\du
-    = \sum_{l=0}^{i-1} \left(\frac{b+a}{b-a}\right)^{i-1-l} I_{a,b}(l,j)
+    = \sum_{l=0}^{i-1} \left(\frac{b+a}{b-a}\right)^{i-1-l} I_{a,b}(l,j).
 \end{equation}
+
+We study here two numerical integration schemes:
+\begin{itemize}
+    \item 
+the double-exponential change of variables is completely general and its robustness
+allows to compute rigorously all integrals of periods in a very unified setting
+even with different values of $\alpha$;
+\item in the special case of hyperelliptic curves however, the Gauss-Chebychev method applies and
+    provides a better scheme (fewer and simpler integration points).
+\end{itemize}
+For larger $m$, the periods could also be computed using general Gauss-Jacobi integration
+of parameters $\alpha,\alpha$. However a different scheme has to be computed for each $\alpha$,
+and it now involves computing roots of general Jacobi polynomials to large accuracy, which
+makes it hard to compete with the double-exponential scheme.
 
 \subsection{Double-exponential integration}\label{sec:de_int}
 
@@ -35,9 +47,10 @@ Using the double-exponential change of variable
 \begin{equation}
 u=\tanh(λ\sinh(t)),
 \end{equation}
+the singularities at $\pm1$ are pushed to infinity and
 the integral \eqref{eq:elem_num_int} becomes
 \begin{equation}
-    \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du = \int_\R g(t)\dt
+    I_{a,b}(i,j) = \int_\R g(t)\dt
 \end{equation}
 with
 \begin{equation}
