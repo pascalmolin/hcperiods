@@ -193,7 +193,8 @@
    Consider the complete graph on the set of finite branch points $G = (X,E')$, i.e.\ $E' = \{  (a,b)  \mid  a,b \in X \}$.
    Each edge $e = (a,b) \in E$ gets assigned a capacity $\tau_e$ that indicates the cost of numerical integration along the interval $[a,b]$. \abstand
    Here, the integration process ist most favourable
-   between branch points that are far away from the others, that is, according to the double-exponential integration scheme that will be employed. \abstand
+   between branch points that are far away from the others, that is, according to the
+   numerical integration scheme that will be employed. \abstand
    We now apply a standard 'maximal-flow' algorithm from graph theory, based on a greedy approach, that results in a spanning tree $T = (X,E)$, where $E \subset E'$ contains the $d-1$ best edges
    for integration that connect all vertices without producing cycles.
 
@@ -268,7 +269,7 @@
 \subsection{Differential forms}\label{subsec:diff_forms}
 
     The computation of the period matrix and the Abel-Jacobi map requires a basis of $\hd$ as $\C$-vector space. In this section we provide a basis that only
-   depends on $m$ and $d$ and is suitable for double-exponential integration. \abstand
+   depends on $m$ and $d$ and is suitable for numerical integration. \abstand
     Among the meromorphic differentials
     \begin{align*}
  \WM = \left\{  \omega_{i,j}   \right\}_{\substack{1 \le i \le d-1, \\ 1 \le j \le m-1}} \quad \text{with} \quad \omega_{i,j} = \frac{ \dx^i}{i y^j},

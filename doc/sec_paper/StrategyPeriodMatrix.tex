@@ -7,21 +7,24 @@
   In this section we present our strategy to obtain period matrices $\OC, \OA, \OB$ and $\tau$ as defined in \S \ref{m-subsec:bases_matrices}. In order to simplify notation,
   we briefly assume $\delta = 1$ here. The main ingredients were already described in
   Section \ref{m-sec:se_curves}: \abstand We integrate the holomorphic differentials in $\W$ (see \S \ref{m-subsec:diff_forms})
-  along the cycles in $C$ (see  \S \ref{m-subsec:cycles_homo}) using double-exponential integration (see \S \ref{m-sec:de_int}), which results in a period matrix (see \S \ref{m-subsec:comp_of_periods})
-  \begin{align}
+  along the cycles in $C$ (see  \S \ref{m-subsec:cycles_homo}) using numerical integration (see \S \ref{m-sec:de_int}), which results in a period matrix (see \S \ref{m-subsec:comp_of_periods})
+  \begin{equation}
+      \label{eq:OC}
     \OC = \left( \int_{\gamma} \w \right)_{\substack{\w \in \W, \\ \gamma \in C}} \in \C^{g \times 2g}.
-  \end{align}
+  \end{equation}
   The matrices $\OA$ and $\OB$ require a symplectic basis of $\homo$.
   So, we compute the intersection pairing between the cycles in $C$, as explained in Section \ref{m-sec:intersections}, which results in an
   intersection matrix $K_C \in \Z^{2g \times 2g}$. \abstand
   Applying an algorithm for symplectic reduction (see \S \ref{m-subsec:symp_basis}) to $K_C$, we obtain a unimodular matrix $S \in \Z^{2g \times 2g}$, such that
-  \begin{align}
-   (  \OA  \OB  ) = \OC \cdot S,
-   \end{align}
+  \begin{equation}
+      \label{eq:OAOB}
+      (  \OA,  \OB  ) = \OC \cdot S,
+  \end{equation}
    and finally a small period matrix in the Siegel upper half-space
-   \begin{align}
+  \begin{equation}
+      \label{eq:tau}
    \tau = \OA^{-1} \OB \in \mathfrak{H}_g \subset \C^{g \times g}.
-  \end{align}
+  \end{equation}
 
   \bigskip
 
