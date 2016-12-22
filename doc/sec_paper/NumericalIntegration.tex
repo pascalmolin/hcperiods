@@ -4,25 +4,38 @@
 
   \section{Numerical integration}\label{sec:num_int}
 
-  \subsection{Double-exponential integration}\label{sec:de_int}
-
-
-For $(a,b) \in E$ we want to compute (see Theorem \ref{m-thm:periods})
+  For $(a,b) \in E$ we want to compute to absolute precision say $e^{-D}$ the elementary integrals
+  (see Theorem \ref{m-thm:periods})
 \begin{align*}
- \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du
+ \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du.
 \end{align*}
- to absolute precision $e^{-D}$.
+
+In this section, we denote by $α$ the value $1-j/m$, which is the crucial parameter for numerical integration.
+Notice that $α=1/2$ for hyperelliptic curves, while for general superelliptic curves $α$ ranges
+from $1/m$ to $\frac{m-1}m$ depending on the differential form $\omega_{i,j}$ considered.
+
+
+As explained in \S \ref{sec:real_int}, the actual computations will be done on integrals of the form
+\begin{equation}
+    \label{eq:elem_num_int}
+    I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{frac jm}\ft_{a,b}(u)^j}
+\end{equation}
+so that we restrict the numerical analysis to this case.
+
+\subsection{Double-exponential integration}\label{sec:de_int}
 
 Using the double-exponential change of variable
-$u=\tanh(λ\sinh(t))$, the integral
-becomes
+\begin{equation}
+u=\tanh(λ\sinh(t)),
+\end{equation}
+the integral \eqref{eq:elemn_num_int} becomes
 \begin{equation}
     \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du = \int_\R g(t)\dt
 \end{equation}
-with $α=(1-j/m)$ and
+with
 \begin{equation}
    % g(t) = \frac{u(t)^{i-1}}{\fab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
-   g(t) = \frac{\left(u(t)+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
+   g(t) = \frac{u(t)^{i-1}}{\fab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
 \end{equation}
 
 Let
@@ -33,16 +46,14 @@ be the image of the strip $\Delta_τ$ under the change of
 variable $u=\tanh(λ\sinh(t))$.
 
 Since we can compute the distance of each branch point $u_i$ to
-both $[-1,1]$ and its neighborhood $Z_\tau$, we obtain
+both $[-1,1]$ and its neighborhood $Z_\tau$ (see \S \ref{sec:dist_zt}), we obtain
   \begin{lemma}
       There exist explicitly computable
       constants $M_1$, $M_2$ such
       that
       \begin{itemize}
-          %\item for $u\in[-1,1]$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_1$
-          \item for $u\in[-1,1]$, $\abs{\frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u)^{j}}}\leq M_1$,
-          %\item for $u\in Z_\tau$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_2$.
-          \item for $u\in Z_\tau$, $\abs{\frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\fab(u)^{j}}}\leq M_2$.
+          \item for $u\in[-1,1]$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_1$
+          \item for $u\in Z_\tau$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_2$.
       \end{itemize}
   \end{lemma}
 
@@ -70,7 +81,7 @@ we obtain a rigorous integration scheme as follows
     then
     \begin{equation}
         \abs{
-            \int_{-1}^1 \varphi_{i,j}
+            I_{a,b}(i,j)
             - h\sum_{k=-n}^n
             w_k \frac{u_k^{i-1}}{\fab(u_k)^j}
         } \leq e^{-D}
@@ -219,9 +230,10 @@ theorem on an ellipse $ε_r$ of the form
     ε_r = \set{z, \abs{z-1}+\abs{z+1} = 2r }
 \end{equation}
 
-  \begin{figure}
+  \begin{figure}[H] \begin{center}
       \includegraphics[width=5cm,page=1]{images/ellipse.pdf}
-  \end{figure}
+  \end{center} \caption{Ellipse parameters.}
+  \label{fig:ellipse} \end{figure}
 
 \begin{thm}[\cite{ChawlaJain68},thm 5]
     Let $r>1$ such that $g$ is holomorphic on $ε_r$. Then
@@ -233,21 +245,26 @@ theorem on an ellipse $ε_r$ of the form
 
 Now we use this theorem with a function
 $g_{i,j}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitely factored
-polynomial
-$Q(u)=\prod(u-u_k)$.
-
-
-, so that , and one can explicitely
-compute the distance $d_r(u_i)$ from $u_i$ to the ellipse $ε_r$
-by Newton iteration, so that the parameters can be chosen
+polynomial $Q(u)=\prod(u-u_k)$, so that the error can be controlled
 as follows
 \begin{prop}
     Let $r>1$ be such that $2r<\abs{u_i-1}+\abs{u_i+1}$ for all
-    roots $u_i$ of $Q$, and let
+    roots $u_i$ of $Q$, and denote by
+    \begin{equation}
+        d_r(u_i) = \inf_{z\in ε_r}\abs{z-u_i}
+    \end{equation}
+    the distance from $u_i$ to the ellipse $ε_r$.
+    Then writing
     \begin{equation}
         M(r) =  \frac{(r+c)^k}{\sqrt{\prod d_r(u_i)} }
     \end{equation}
-    then $E(n) \leq e^{-D}$ for all
+    we have
+    \begin{equation}
+        \abs{I_{a,b}(i,j)
+        - \frac{π}n\sum_{k=1}^n \frac{u_k^(i-1)}{\fab(u_k)}}
+            \leq e^{-D}
+    \end{equation}
+    for all
     \begin{equation}
         n \geq \frac{D+\log(2πM(r))+1}{2\log(r+\sqrt{r^2-1})}
     \end{equation}

@@ -1,4 +1,4 @@
-TEX:= AbelJacobiMap.tex ComputationalAspects.tex ComputingAbelJacobi.tex DoubleExponentialIntegration.tex Intersections.tex Introduction.tex StrategyPeriodMatrix.tex SuperellipticCurves.tex
+TEX:= AbelJacobiMap.tex ComputationalAspects.tex ComputingAbelJacobi.tex NumericalIntegration.tex Intersections.tex Introduction.tex StrategyPeriodMatrix.tex SuperellipticCurves.tex
 PDF:=$(TEX:.tex=.pdf)
 %.pdf: %.tex macros.tex packages.tex
 	pdflatex $<
