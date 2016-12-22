@@ -18,7 +18,7 @@ from $1/m$ to $\frac{m-1}m$ depending on the differential form $\omega_{i,j}$ co
 As explained in \S \ref{sec:real_int}, the actual computations will be done on integrals of the form
 \begin{equation}
     \label{eq:elem_num_int}
-    I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{frac jm}\ft_{a,b}(u)^j}
+    I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{\frac jm}\ft_{a,b}(u)^j}
 \end{equation}
 so that we restrict the numerical analysis to this case.
 
@@ -28,7 +28,7 @@ Using the double-exponential change of variable
 \begin{equation}
 u=\tanh(λ\sinh(t)),
 \end{equation}
-the integral \eqref{eq:elemn_num_int} becomes
+the integral \eqref{eq:elem_num_int} becomes
 \begin{equation}
     \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du = \int_\R g(t)\dt
 \end{equation}
