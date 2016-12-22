@@ -22,6 +22,13 @@ As explained in \S \ref{sec:real_int}, the actual computations will be done on i
 \end{equation}
 so that we restrict the numerical analysis to this case.
 
+
+The value of elementary integrals correspond to the polynomial shift
+\begin{equation}
+    \int_{-1}^1\frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac jm}}\du
+    = \sum_{l=0}^{i-1} \left(\frac{b+a}{b-a}\right)^{i-1-l} I_{a,b}(l,j)
+\end{equation}
+
 \subsection{Double-exponential integration}\label{sec:de_int}
 
 Using the double-exponential change of variable

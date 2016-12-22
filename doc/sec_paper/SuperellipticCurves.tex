@@ -49,27 +49,28 @@
   are at $z = 0,\infty$, and they're totally ramified.
 
   For $z\in\C$, it is natural and computationally convenient to use the
-  principal branch of the $m$-th root
+  principal branch of the $m$-th root $\sqrt[m]z$ defined by
   \begin{equation}
-      \sqrt[m]z \text{ such that } -\frac{π}m<\arg(\sqrt[m]z)\leq\frac{π}m
+      \label{eq:principal_mth_root}
+      -\frac{π}m<\arg(\sqrt[m]z)\leq\frac{π}m
   \end{equation}
   which has a branch cut along the negative real axis $]\!-\infty,0[$.
   Crossing it in positive orientation corresponds to multiplication by
   the primitive $m$-th root of unity
   \begin{equation}
+      \label{eq:zeta}
   \zeta = \zeta_m = e^{\frac{2\pi i }{m}}
   \end{equation}
   on the surface. In
   particular the monodromy at $z=0$ is cyclic of order $m$.
 
-  \subsubsection{Superelliptic curves}
+  \subsubsection{Sheets and monodromy}
 
   Now the superelliptic curve $\cu:y^m=f(x)$ is also a Riemann surface with
   $m$ sheets.
   We call \emph{branch of $\cu$} a function $y(x)$ such that
   $y(x)^m = f(x)$ for all $x \in \C$. At every $x$, the branches of $\cu$ only
   differ by multiplication by a power of $\zeta$.
-
 
   In the case of superelliptic curves given
   by an affine model $\caff : y^m = \prod_{k = 1}^d (x - x_k)$, indepently of
@@ -91,61 +92,95 @@
   path joining two branch points $a$ and $b$.
 
   One could of course consider the principal branch of the curve
-  \begin{equation}
+  \begin{equation*}
       y(x) = \sqrt[m]{f(x)}
-  \end{equation}
+  \end{equation*}
   however this is not a good model to compute with: it has branch cuts
-  wandering around the $x$-plane.
+  wandering around the $x$-plane (see figure \ref{fig:mth_root_principal}).
+  
+  A better option is to split the product as follows:
+  assume $a,b$ are the points $-1,1$. Then the function
+  \begin{equation*}
+      y(x) = \prod_{x_k\in X}\sqrt[m]{x-x_k}
+  \end{equation*}
+  has $d$ branch cuts parallel to the real line (see figure \ref{fig:mth_root_product}).
+  However one of them lies exactly on the interval $[-1,1]$ we are interested in. We fix
+  that by taking the cut towards $+\infty$ for each point $x_k$ with positive real part, writing
+  \begin{equation*}
+      y(x) = e^{\frac{iπn^+}m}\prod_{\Re(x_k)\leq0}\sqrt[m]{x-x_k} \prod_{\Re(x_k)>0}\sqrt[m]{x_k-x}
+  \end{equation*}
+  where $n^+$ is the number of points with positive real part (including $b=+1$).
 
-  Instead, let us first consider the affine transformation
+  \begin{figure}[H]
+      \begin{center}
+          \subfloat[principal]{
+          \includegraphics[width=.3\linewidth,page=1]{images/branch_cuts.pdf}
+          \label{fig:mth_root_principal} }
+          \subfloat[product]{ \includegraphics[width=.3\linewidth,page=2]{images/branch_cuts.pdf}\label{fig:mth_root_product} }
+          \subfloat[$y_{a,b}$]{ \includegraphics[width=.3\linewidth,page=3]{images/branch_cuts.pdf}\label{fig:mth_root_signed} }
+      \end{center}
+      \caption{Branch cuts of different $m$-th roots.}
+  \label{fig:mth_root_pol} \end{figure}
+
+  In general we proceed the same way by considering the affine 
+  transformation
   \begin{equation}
       \label{def:uab}
       u_{a,b} : x \mapsto \frac{b-a}{2}\left(x+\frac{b+a}{b-a}\right)
   \end{equation}
   which depends on two branch points $a,b$ and maps $[a,b]$ to $[-1,1]$.
 
-  Then we define the local branch
-  \begin{equation}
-      \label{def:yab}
-      \yab(x) =   C_{a,b} \sqrt[m]{1 - u_{a,b}(x)^2}
-      \prod_{x_k\neq a,b}\sqrt[m]{u_{a,b}(x)-u_{a,b}(x_k)}
-  \end{equation}
-  where
-  \begin{equation}
-      C_{a,b} = \left(\frac{b-a}{2}\right)^{\frac{d}{m}} e^{\frac{\pi i}{m}}
-  \end{equation}
-  is chosen so that $y_{a,b}^m = f(x)$.
+  We split the image of branch points into the following subsets
+  \begin{equation*}
+      \set{ u_{a,b}(x), x\in X} = \set{-1,1} \cup U^- \cup U^+
+  \end{equation*}
+  where points in $U^+$ (resp. $U_-$) have strictly positive (resp. negative) real part.
 
-  This is a branch of $\cu$, whose branch cuts are all parallel to $(a,b)$,
-  which is holomorphic inside $]a,b[$ and has two outward cuts $]\infty, a]$ and $[b,\infty[$.
-
-  In fact it is convenient to work with the local $u$ variable: let $u_k = u_{a,b}(x_k)$ be the image
-  of all branch points, then the function
+  Then the product
   \begin{equation}
-      \ft_{a,b}(u) = \prod_{x_k \ne a,b} \sqrt[m]{u - u_k}
+      \label{eq:fab}
+      \ft_{a,b}(u) = \prod_{u_k\in U^-} \sqrt[m]{u-u_k}\prod_{u_k\in U^+}\sqrt[m]{u_k-u}
   \end{equation}
-  is holomorphic on a neighborhood $U_{a,b}$ of $[-1,1]$ which we can take as
-  any ellipse\footnote{we will exhibit such a neighborhood in section \ref{sec:gc_ellipse}}
-  containing no $u_k\neq\pm1$ , while
+  is holomorphic on a neighborhood $ε_{a,b}$ of $[-1,1]$ which we can take as
+  an ellipse\footnote{we will exhibit such a neighborhood in section \ref{sec:gc_ellipse}}
+  containing no point $u_k\in U^-\cup U^+$, while the term corresponding to $a,b$
   \begin{equation}
       \sqrt[m]{1-u^2}
   \end{equation}
   has two cuts $]-\infty,-1]$ and $[1,\infty[$, and is holomorphic on the complementary
   $\overline U$ of these cuts.
 
+  We can now define the local branch
+  \begin{equation}
+      \label{def:yab}
+      \yab(x) =   C_{a,b} \ft_{a,b}( u_{a,b}(x) ) \sqrt[m]{1 - u_{a,b}(x)^2}
+  \end{equation}
+  where the constant
+  \begin{equation}
+      C_{a,b} = \left(\frac{b-a}{2}\right)^{\frac{d}{m}} e^{\frac{\pi i(1+\#U^+)}{m}}
+  \end{equation}
+  is chosen so that $y_{a,b}^m = f(x)$.
+
+  $y_{a,b}$ has $d$ branch cuts all parallel to $(a,b)$ in outward direction, and
+  is holomorphic inside $]a,b[$ (see figure \ref{fig:mth_root_signed}).
+
+  More precisely, let $V_{a,b} = u_{a,b}^{-1}(ε_{a,b}\cap \overline U)$,
+  so that $V_{a,b}$ is an ellipse shaped neighborhood of $]a,b[$ with two segments removed
+  (see Figure \ref{m-fig:set_vab})
+  on which the local branch $\yab$ is well defined and holomorphic.
+
   \begin{figure}[H] \begin{center} \input{images/tikz_pic_1.tex}
   \end{center} \caption{Area of holomorphicity for $\yab$.}
   \label{fig:set_vab} \end{figure}
 
-  We call $V_{a,b} = u_{a,b}^{-1}(U_{a,b}\cap \overline U)$ the inverse image of their intersection,
-  so that $V_{a,b}$ is an ellipse shaped neighborhood of $]a,b[$ with two segments removed
-      (see Figure \ref{m-fig:set_vab})
-      on which the local branch $\yab$ is well defined and holomorphic.
 
-  With these notations, we now have
   \begin{prop}
+      Let $a,b\in X$ be two branch points such that $X\cap]a,b[=\varnothing$.
+      Then with the notations above, the functions
+      $\fab$ \eqref{eq:fab} and $y_{a,b}$ \eqref{eq:yab}
+      satisfy
      \begin{itemize}
-         \item $\ft_{a,b}$ is holomorphic and does not vanish on $U_{a,b}$
+         \item $\ft_{a,b}$ is holomorphic and does not vanish on $ε_{a,b}$
          \item $y_{a,b}(x) = C_{a,b} \ft_{a,b}(u(x)) \sqrt[m]{1-u(x)^2}$ is holomorphic
          on $V_{a,b}$
          \item $y_{a,b}^m = f(x)$ for all $x\in\C$
