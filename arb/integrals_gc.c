@@ -28,7 +28,7 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slo
 
         /* compute x */
         fmpq_init(ln);
-        fmpq_set_si(ln, 2 * l - 1, 2 * n);
+        fmpq_set_si(ln, 2 * l + 1, 2 * n);
         arb_cos_pi_fmpq(x, ln, prec);
         fmpq_clear(ln);
 
@@ -110,7 +110,7 @@ integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec)
 {
     slong k, n;
 
-    n = gc_int_params_tree(tree, c, prec);
+    n = gc_params_tree(tree, c, prec);
 
     for (k = 0; k < c.d - 1; k++)
         integrals_edge_gc(integrals->rows[k], c, tree->e[k], n, prec);

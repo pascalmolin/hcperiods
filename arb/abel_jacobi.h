@@ -141,8 +141,8 @@ void de_int_init(de_int_t de, arf_t h, ulong n, slong prec);
 void de_int_clear(de_int_t de);
 
 /* parameters for GC integration */
-slong gc_int_params(acb_srcptr u, slong len, double r, slong i, slong prec);
-slong gc_int_params_tree(const tree_t tree, sec_t c, slong prec);
+slong gc_params(acb_srcptr u, slong len, double r, slong i, slong prec);
+slong gc_params_tree(const tree_t tree, sec_t c, slong prec);
 
 /* compute maximum spanning tree */
 void tree_init(tree_t tree, slong d);

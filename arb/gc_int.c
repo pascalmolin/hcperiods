@@ -52,15 +52,29 @@ constant_m_d(const cdouble * w, slong len, double r, slong d)
 }
 
 slong
-gc_int_params_d(const cdouble * w, slong len, double r, slong i, slong prec)
+gc_params_d(const cdouble * w, slong len, double r, slong i, slong prec)
 {
     slong n;
     double M, A, B, rho;
     double mult = .25;
 
+    if (r <= 0)
+    {
+        slong k;
+        for (k = 0; k < len; k++)
+        {
+            double t = (cabs(w[k] - 1) + cabs(w[k] + 1)) / 2;
+            if (!k || t < r)
+                r = t;
+        }
+    }
+
     if (r <= 1)
     {
+        slong k;
         flint_printf("gc int: r must be > 1 (r = %lf)\n", r);
+        for (k = 0; k < len; k++)
+            printf("u[%ld] = %f + %f*I\n", k, creal(w[k]), cimag(w[k]));
         abort();
     }
 #if PARAMS
@@ -100,7 +114,7 @@ gc_int_params_d(const cdouble * w, slong len, double r, slong i, slong prec)
 }
 
 slong
-gc_int_params(acb_srcptr u, slong len, double r, slong i, slong prec)
+gc_params(acb_srcptr u, slong len, double r, slong i, slong prec)
 {
     slong n, k;
     cdouble * w;
@@ -108,7 +122,7 @@ gc_int_params(acb_srcptr u, slong len, double r, slong i, slong prec)
     for (k = 0; k < len; k++)
         w[k] = acb_get_cdouble(u + k);
 
-    n = gc_int_params_d(w, len, r, i, prec);
+    n = gc_params_d(w, len, r, i, prec);
 
     free(w);
     return n;
@@ -143,7 +157,7 @@ ab_points_worst(cdouble * w, const tree_t tree, sec_t c)
 }
 
 slong
-gc_int_params_tree(const tree_t tree, sec_t c, slong prec)
+gc_params_tree(const tree_t tree, sec_t c, slong prec)
 {
     slong n;
     double r;
@@ -154,7 +168,7 @@ gc_int_params_tree(const tree_t tree, sec_t c, slong prec)
     w = malloc(c.d * sizeof(cdouble));
     ab_points_worst(w, tree, c);
 
-    n = gc_int_params_d(w, c.d - 2, r, c.g - 1, prec);
+    n = gc_params_d(w, c.d - 2, r, c.g - 1, prec);
 
     free(w);
 
