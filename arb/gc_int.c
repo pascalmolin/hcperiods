@@ -36,7 +36,7 @@ distance_ellipse_d(double x, double y, double a)
 }
 
 double
-constant_m_d(cdouble * w, slong len, double r, slong d)
+constant_m_d(const cdouble * w, slong len, double r, slong d)
 {
     /* 2*Pi*r^d/sqrt(prod d(w_i,e_r)) */
     slong k;
@@ -49,6 +49,69 @@ constant_m_d(cdouble * w, slong len, double r, slong d)
         p *= (d < eps) ? r : d;
     }
     return 2 * PI * pow(r, d) / sqrt(p);
+}
+
+slong
+gc_int_params_d(const cdouble * w, slong len, double r, slong i, slong prec)
+{
+    slong n;
+    double M, A, B, rho;
+    double mult = .25;
+
+    if (r <= 1)
+    {
+        flint_printf("gc int: r must be > 1 (r = %lf)\n", r);
+        abort();
+    }
+#if PARAMS
+    {
+        /* zero estimate */
+        double r1 = (1 + r) / 2;
+        M = constant_m_d(w, len, r1, i);
+        A = prec*LOG2 + log(2*PI*M) + 1;
+        rho = r1 + sqrt(r1*r1 - 1);
+        B = 2*log(rho);
+        printf("r = %lf -> n0 = %lf [M = %lf, A = %lf, B = %lf]\n", r1, A/B, M, A, B);
+    }
+#endif
+
+    /* first estimate */
+    M = constant_m_d(w, len, r, i);
+    A = prec*LOG2 + log(2*PI*M) + 1;
+    rho = r + sqrt(r*r-1);
+    B = 2*log(rho);
+#if PARAMS
+    printf("r = %lf -> n1 = %lf [M = %lf, A = %lf, B = %lf]\n", r, A/B, M, A, B);
+#endif
+    n = ceil(A / B);
+
+    /* second = should be exact */
+    r *= 1-mult/n;
+    M = constant_m_d(w, len, r, i);
+    A = prec*LOG2 + log(2*PI*M) + 1;
+    rho = r + sqrt(r*r-1);
+    B = 2*log(rho);
+#if PARAMS
+    printf("r = %lf -> n2 = %lf [M = %lf, A = %lf, B = %lf]\n", r, A/B, M, A, B);
+#endif
+    n = ceil(A / B);
+
+    return n;
+}
+
+slong
+gc_int_params(acb_srcptr u, slong len, double r, slong i, slong prec)
+{
+    slong n, k;
+    cdouble * w;
+    w = malloc(len * sizeof(cdouble));
+    for (k = 0; k < len; k++)
+        w[k] = acb_get_cdouble(u + k);
+
+    n = gc_int_params_d(w, len, r, i, prec);
+
+    free(w);
+    return n;
 }
 
 void
@@ -80,57 +143,18 @@ ab_points_worst(cdouble * w, const tree_t tree, sec_t c)
 }
 
 slong
-gc_int_params(const tree_t tree, sec_t c, slong prec)
+gc_int_params_tree(const tree_t tree, sec_t c, slong prec)
 {
     slong n;
     double r;
-    double M, A, B, rho;
-    double mult = .25;
     cdouble * w;
 
     r = tree->r;
 
-    if (r <= 1)
-    {
-        flint_printf("gc int: r must be > 1 (r = %lf)\n", r);
-        abort();
-    }
-
     w = malloc(c.d * sizeof(cdouble));
     ab_points_worst(w, tree, c);
 
-#if PARAMS
-    {
-        /* zero estimate */
-        double r1 = (1 + r) / 2;
-        M = constant_m_d(w, c.d - 2, r1, c.d);
-        A = prec*LOG2 + log(2*PI*M) + 1;
-        rho = r1 + sqrt(r1*r1 - 1);
-        B = 2*log(rho);
-        printf("r = %lf -> n0 = %lf [M = %lf, A = %lf, B = %lf]\n", r1, A/B, M, A, B);
-    }
-#endif
-
-    /* first estimate */
-    M = constant_m_d(w, c.d - 2, r, c.d);
-    A = prec*LOG2 + log(2*PI*M) + 1;
-    rho = r + sqrt(r*r-1);
-    B = 2*log(rho);
-#if PARAMS
-    printf("r = %lf -> n1 = %lf [M = %lf, A = %lf, B = %lf]\n", r, A/B, M, A, B);
-#endif
-    n = ceil(A / B);
-
-    /* second = should be exact */
-    r *= 1-mult/n;
-    M = constant_m_d(w, c.d - 2, r, c.d);
-    A = prec*LOG2 + log(2*PI*M) + 1;
-    rho = r + sqrt(r*r-1);
-    B = 2*log(rho);
-#if PARAMS
-    printf("r = %lf -> n2 = %lf [M = %lf, A = %lf, B = %lf]\n", r, A/B, M, A, B);
-#endif
-    n = ceil(A / B);
+    n = gc_int_params_d(w, c.d - 2, r, c.g - 1, prec);
 
     free(w);
 
