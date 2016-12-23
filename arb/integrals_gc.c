@@ -33,7 +33,7 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slo
         fmpq_clear(ln);
 
         /* compute 1/y(x) */
-        nth_root_pol_def(y, u, x, d - 2, 2, prec);
+        mth_root_pol_def(y, u, d1, d, x, 2, prec);
         acb_inv(y, y, prec);
 
         /* differentials : j = 1 && i < g */
@@ -55,7 +55,7 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slo
         /* now on -x */
         arb_neg(x, x);
 
-        nth_root_pol_def(y, u, x, d - 2, 2, prec);
+        mth_root_pol_def(y, u, d1, d, x, 2, prec);
         acb_inv(y, y, prec);
 
         /* differentials : j = 1 && i < g */
@@ -143,7 +143,7 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, slong n, slong prec)
     ab2 = u + d - 2;
     cab = u + d - 1;
 
-    gc_integrals(res, u, d1, d, c.g, n, prec);
+    gc_integrals(res, u, d1, d - 2, c.g, n, prec);
     integrals_edge_factors_gc(res, cab, ab2, c, prec);
 
     _acb_vec_clear(u, d);

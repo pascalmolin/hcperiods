@@ -9,7 +9,7 @@ int main() {
 
     flint_rand_t state;
     
-    flint_printf("nth_root...");
+    flint_printf("mth_root...");
     fflush(stdout);
     flint_randinit(state);
 
@@ -32,15 +32,15 @@ int main() {
             for (j = 0; j < 10; j++)
             {
                 arb_randtest_precise(x, state, prec, 1);
-                nth_root_pol_def(y1, u, x, d, m, prec);
-                nth_root_pol_prod(y2, u, x, d, m, prec);
+                mth_root_pol_def(y1, u, d, d, x, m, prec);
+                mth_root_pol_prod(y2, u, d, d, x, m, prec);
                 if (!acb_overlaps(y1, y2))
                 {
                     flint_printf("FAIL:\n\n");
                     flint_printf("d = %ld, m = %ld, prec = %ld\n", d, m, prec);
-                    flint_printf("nth_root_def = ");
+                    flint_printf("mth_root_def = ");
                     acb_printd(y1, 20);
-                    flint_printf("\nnth_root_pol = ");
+                    flint_printf("\nmth_root_pol = ");
                     acb_printd(y2, 20);
                     flint_printf("\n\n");
                     abort();

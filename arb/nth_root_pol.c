@@ -7,7 +7,7 @@
 #include "abel_jacobi.h"
 
 void
-nth_root_pol_def(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong prec)
+sqrt_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong prec)
 {
     slong k;
     acb_t t;
@@ -16,8 +16,29 @@ nth_root_pol_def(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong p
     acb_one(y);
     for (k = 0; k < d; k++)
     {
-        acb_set_arb(t, x);
-        acb_sub(t, t, u + k, prec);
+        acb_sub_arb(t, u + k, x, prec);
+        if (k < d1)
+            acb_neg(t, t);
+        acb_sqrt(t, t, prec);
+        acb_mul(y, y, t, prec);
+    }
+
+    acb_clear(t);
+}
+
+void
+mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec)
+{
+    slong k;
+    acb_t t;
+    acb_init(t);
+
+    acb_one(y);
+    for (k = 0; k < d; k++)
+    {
+        acb_sub_arb(t, u + k, x, prec);
+        if (k < d1)
+            acb_neg(t, t);
         acb_root_ui(t, t, m, prec);
         acb_mul(y, y, t, prec);
     }
@@ -26,7 +47,7 @@ nth_root_pol_def(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong p
 }
 
 void
-nth_root_pol_prod(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong prec)
+mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec)
 {
     slong k;
     acb_t t;
@@ -35,8 +56,9 @@ nth_root_pol_prod(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong 
     acb_zero(y);
     for (k = 0; k < d; k++)
     {
-        acb_set_arb(t, x);
-        acb_sub(t, t, u + k, prec);
+        acb_sub_arb(t, u + k, x, prec);
+        if (k < d1)
+            acb_neg(t, t);
         acb_log(t, t, prec + 4);
         acb_add(y, y, t, prec + 4);
     }
@@ -47,7 +69,7 @@ nth_root_pol_prod(acb_t y, acb_srcptr u, const arb_t x, slong d, slong m, slong 
 }
 
 void
-nth_root_pol_turn(acb_t y, acb_srcptr u, const arb_t x, acb_srcptr z, slong d, slong m, slong prec)
+mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec)
 {
     slong q; /* integer mod 2m */
 

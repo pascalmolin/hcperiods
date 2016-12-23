@@ -10,7 +10,7 @@ static void
 integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
         const de_int_t de, slong prec)
 {
-    slong k, l, d = c.d;
+    slong k, l, d = c.d, d1;
     arb_t x;
     acb_t y, wy, wyx;
     acb_ptr u;
@@ -22,7 +22,7 @@ integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
     acb_init(wyx);
 
     /* reduce roots */
-    ab_points(u, c.roots, e, d, prec);
+    d1 = ab_points(u, c.roots, e, d, prec);
 
     /* compute integral */
     _acb_vec_zero(res, c.g);
@@ -30,7 +30,7 @@ integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
     {
         slong ix, iy;
         /* compute 1/y(x) */
-        nth_root_pol_def(y, u, de->x + l, d - 2, c.m, prec);
+        mth_root_pol_def(y, u, d1, d, de->x + l, c.m, prec);
         acb_inv(y, y, prec);
 
         /* all differentials for x */
@@ -52,7 +52,7 @@ integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
             continue;
         /* now on -x */
         arb_neg(x, de->x + l);
-        nth_root_pol_def(y, u, x, d - 2, c.m, prec);
+        mth_root_pol_def(y, u, d1, d, de->x + l, c.m, prec);
         acb_inv(y, y, prec);
         iy = 1; ix = 0;
         acb_set_arb(wy, de->dx + l);
