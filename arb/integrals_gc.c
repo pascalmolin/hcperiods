@@ -87,50 +87,6 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slo
 }
 
 void
-integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec)
-{
-    slong i;
-    acb_t cj, ci;
-
-    acb_init(cj);
-    acb_init(ci);
-
-    /* polynomial shift */
-    acb_vec_polynomial_shift(res, cab, c.g, prec);
-
-    /* constants cj, j = 1 */
-    /* c_1 = (1-zeta^-1) ba2^(-d/2) (-I)^i
-     *     = 2 / ba2^(d/2) */
-
-    acb_pow_ui(cj, ba2, c.d / 2, prec);
-    if (c.d % 2)
-    {
-        acb_t t;
-        acb_init(t);
-        acb_sqrt(t, ba2, prec);
-        acb_mul(cj, cj, t, prec);
-        acb_clear(t);
-    }
-    acb_inv(cj, cj, prec);
-    acb_mul_2exp_si(cj, cj, 1);
-
-    _acb_vec_scalar_mul(res, res, c.g, cj, prec);
-
-    /* constant ci = -I * ba2*/
-    acb_one(ci);
-    for (i = 1; i < c.g; i++)
-    {
-        acb_mul(ci, ci, ba2, prec);
-        acb_div_onei(ci, ci);
-        acb_mul(res + i, res + i, ci, prec);
-    }
-
-    acb_clear(ci);
-    acb_clear(cj);
-}
-
-
-void
 integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, slong n, slong prec)
 {
     slong d, d1;

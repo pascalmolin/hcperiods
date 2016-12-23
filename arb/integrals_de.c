@@ -6,23 +6,18 @@
 
 #include "abel_jacobi.h"
 
-static void
-integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
-        const de_int_t de, slong prec)
+void
+de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
+        const cohom_t dz, const de_int_t de, slong prec)
 {
-    slong k, l, d = c.d, d1;
+    slong k, l;
     arb_t x;
     acb_t y, wy, wyx;
-    acb_ptr u;
 
-    u = _acb_vec_init(d - 2);
     arb_init(x);
     acb_init(y);
     acb_init(wy);
     acb_init(wyx);
-
-    /* reduce roots */
-    d1 = ab_points(u, c.roots, e, d, prec);
 
     /* compute integral */
     _acb_vec_zero(res, c.g);
@@ -72,12 +67,30 @@ integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
                 acb_add(res + k, res + k, wyx, prec);
         }
     }
-    /* periods a->b of all differentials */
-    _acb_vec_clear(u, d - 2);
+
     arb_clear(x);
     acb_clear(y);
     acb_clear(wy);
     acb_clear(wyx);
+}
+
+void
+integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz, const de_int_t de, slong prec)
+{
+    slong d, d1;
+    acb_ptr u, cab, ab2;
+
+    /* reduce roots */
+    d = c.d;
+    u = _acb_vec_init(d);
+    d1 = ab_points(u, c.roots, e, d, prec);
+    ab2 = u + d - 2;
+    cab = u + d - 1;
+
+    de_integrals(res, u, d1, d - 2, c, dz, de, prec);
+    integrals_edge_factors(res, cab, ab2, c, dz, prec);
+
+    _acb_vec_clear(u, d);
 }
 
 void

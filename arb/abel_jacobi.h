@@ -167,8 +167,10 @@ void holomorphic_differentials(cohom_t dz, slong d, slong m);
 /* numerically compute d-1 integrals along tree edges */
 /* (d-1)*(g-1) matrix, tree edges on lines */
 void gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slong prec);
-void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const de_int_t de, slong prec);
+void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const cohom_t dz, const de_int_t de, slong prec);
 slong ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec);
+void integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec);
+void integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, const cohom_t dz, slong prec);
 void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
 void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
 void acb_vec_polynomial_shift(acb_ptr x, const acb_t c, slong len, slong prec);
