@@ -6,17 +6,58 @@
 
 #include "abel_jacobi.h"
 
-static void
-integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
-        slong n, slong prec)
+void
+integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec)
 {
-    slong i, l, d = c.d;
+    slong i;
+    acb_t cj, ci;
+
+    acb_init(cj);
+    acb_init(ci);
+
+    /* polynomial shift */
+    acb_vec_polynomial_shift(res, cab, c.g, prec);
+
+    /* constants cj, j = 1 */
+    /* c_1 = (1-zeta^-1) ba2^(-d/2) (-I)^i
+     *     = 2 / ba2^(d/2) */
+
+    acb_pow_ui(cj, ba2, c.d / 2, prec);
+    if (c.d % 2)
+    {
+        acb_t t;
+        acb_init(t);
+        acb_sqrt(t, ba2, prec);
+        acb_mul(cj, cj, t, prec);
+        acb_clear(t);
+    }
+    acb_inv(cj, cj, prec);
+    acb_mul_2exp_si(cj, cj, 1);
+
+    _acb_vec_scalar_mul(res, res, c.g, cj, prec);
+
+    /* constant ci = -I * ba2*/
+    acb_one(ci);
+    for (i = 1; i < c.g; i++)
+    {
+        acb_mul(ci, ci, ba2, prec);
+        acb_div_onei(ci, ci);
+        acb_mul(res + i, res + i, ci, prec);
+    }
+
+    acb_clear(ci);
+    acb_clear(cj);
+}
+
+void
+integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, slong n, slong prec)
+{
+    slong i, l, d = c.d, l1;
     fmpq_t ln;
     arb_t w, x;
     acb_t y, yxi;
-    acb_ptr u;
+    acb_ptr u, cab, ab2;
 
-    u = _acb_vec_init(d - 2);
     fmpq_init(ln);
     arb_init(w);
     arb_init(x);
@@ -24,7 +65,10 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
     acb_init(yxi);
 
     /* reduce roots */
-    ab_points(u, c.roots, e, d, prec);
+    u = _acb_vec_init(d);
+    l1 = ab_points(u, c.roots, e, d, prec);
+    ab2 = u + d - 2;
+    cab = u + d - 1;
 
     /* compute integral */
     _acb_vec_zero(res, c.g);
@@ -86,15 +130,18 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, const cohom_t dz,
     for (i = 0; i < c.g; i++)
         acb_mul_arb(res + i, res + i, w, prec);
 
-    _acb_vec_clear(u, d - 2);
+    integrals_edge_factors_gc(res, cab, ab2, c, prec);
+
+    _acb_vec_clear(u, d);
     fmpq_clear(ln);
     arb_clear(x);
     acb_clear(y);
     acb_clear(yxi);
 }
 
+
 void
-integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec)
+integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec)
 {
     slong k;
     ulong n;
@@ -102,6 +149,6 @@ integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t
     n = gc_int_params(tree, c, prec);
 
     for (k = 0; k < c.d - 1; k++)
-        integrals_edge_gc(integrals->rows[k], c, tree->e[k], dz, n, prec);
+        integrals_edge_gc(integrals->rows[k], c, tree->e[k], n, prec);
 
 }

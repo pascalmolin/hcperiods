@@ -166,9 +166,10 @@ void holomorphic_differentials(cohom_t dz, slong d, slong m);
 
 /* numerically compute d-1 integrals along tree edges */
 /* (d-1)*(g-1) matrix, tree edges on lines */
-void ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec);
+slong ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec);
+void acb_vec_polynomial_shift(acb_ptr x, const acb_t c, slong len, slong prec);
 void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
-void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
+void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
 
 /* get all periods on a, b basis */
 /* two g*g matrices */

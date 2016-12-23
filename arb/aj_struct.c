@@ -75,7 +75,7 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
     /* integration */
     acb_mat_init(integrals, c.d-1, c.g);
     if (aj->type == INT_GC)
-        integrals_tree_gc(integrals, c, aj->tree, aj->dz, prec);
+        integrals_tree_gc(integrals, c, aj->tree, prec);
     else
         integrals_tree_de(integrals, c, aj->tree, aj->dz, prec);
 

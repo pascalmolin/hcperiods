@@ -52,7 +52,7 @@ constant_m_d(cdouble * w, slong len, double r, slong d)
 }
 
 void
-ab_points_worst(cdouble * w, tree_t tree, sec_t c)
+ab_points_worst(cdouble * w, const tree_t tree, sec_t c)
 {
     slong k, l, i, j;
     cdouble a, b;
