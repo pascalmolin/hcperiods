@@ -43,7 +43,16 @@ periods_loop(acb_ptr res, const loop_t loop, const cohom_t dz, const acb_mat_t i
 }
 
 void
-period_matrix(acb_mat_t omega, const homol_t basis, const acb_mat_t integrals, sec_t c, slong prec)
+period_matrix(acb_mat_t omega, const homol_t basis, const cohom_t dz, const acb_mat_t integrals, sec_t c, slong prec)
 {
+    slong k;
+    acb_ptr z;
+    z = _acb_vec_init(c.m);
+    _acb_vec_unit_roots(z, c.m, prec);
+
+    for (k = 0; k < c.g; k++)
+        periods_loop(omega->rows[k], basis[k], dz, integrals, z, c, prec);
+
+    _acb_vec_clear(z, c.m);
     return;
 }
