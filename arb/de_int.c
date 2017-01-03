@@ -158,7 +158,7 @@ de_constant_m2(mag_t b, acb_srcptr u, slong len, double r, slong i, slong m, slo
     arb_acosh(abs, abs, prec);
     arb_get_ubound_arf(tmax, abs, prec);
 
-    arb_max_func_arf(abs, &max_f, (void *)&p, tmin, tmax, 50, prec);
+    arb_max_func_arf(abs, &max_f, &p, tmin, tmax, 50, prec);
     arb_get_mag(b, abs);
 
     arb_clear(abs);
