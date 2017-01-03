@@ -7,7 +7,6 @@
 #include "abel_jacobi.h"
 #include "complex_extras.h"
 
-#define LOG2 log(2)
 #define PARAMS 0
 
 double

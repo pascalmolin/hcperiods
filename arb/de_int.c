@@ -5,6 +5,202 @@
  ******************************************************************************/
 
 #include "abel_jacobi.h"
+#include "complex_extras.h"
+
+
+/* rough estimates using doubles */
+double
+de_distance_d(double x, double y, double r)
+{
+    /* FIXME: this is not the real distance... */
+    cdouble xItau;
+    xItau = casinh(catanh(x+I*y)/LAMBDA);
+    return fabs(cimag(xItau))-r;
+}
+
+double
+de_constant_m_d(const cdouble * w, slong len, double r, slong d, slong m)
+{
+    /* 2*Pi*r^d/sqrt(prod d(w_i,e_r)) */
+    slong k;
+    double p;
+    const double eps = 1.e-5;
+    p = 1;
+    for (k = 0; k < len; k++)
+    {
+        double d = de_distance_d(creal(w[k]), cimag(w[k]), r);
+        p *= (d < eps) ? r : d;
+    }
+    return pow(r, d) / pow(p, 1/m);
+}
+
+static double
+de_constant_b(double r, double alpha)
+{
+    double xr, cr, y0, a2, b;
+    a2 = 2*alpha;
+    y0 = LAMBDA * sin(r);
+    cr = cos(r);
+    xr = cr*sqrt(PI2/y0-1);
+    b = xr / 2 * (pow(cos(y0), -a2) + pow(xr, -a2))
+        + pow(sinh(xr), -a2) / a2;
+    return 2/cr*b;
+}
+
+slong
+de_params_d(double *ph, const cdouble * w, slong len, double r, slong i, slong m, slong prec)
+{
+    slong n;
+    double h, D, M1, M2, B, alpha;
+
+    D = prec * LOG2;
+    alpha = (m-1) / m;
+    M1 = 1;
+    M2 = 1;
+    /* TODO: heuristic choice of r */
+    B = de_constant_b(r, alpha);
+
+    h = 2*PI*r / (D + log(2*M2*B+1));
+    n = asinh((D+log(32*M1/alpha))/(2*alpha*LAMBDA));
+
+    * ph = h;
+    return n;
+}
+
+slong
+de_params(double *ph, acb_srcptr u, slong len, double r, slong i, slong m, slong prec)
+{
+    slong n, k;
+    cdouble * w;
+    w = malloc(len * sizeof(cdouble));
+    for (k = 0; k < len; k++)
+        w[k] = acb_get_cdouble(u + k);
+
+    n = de_params_d(ph, w, len, r, i, m, prec);
+
+    free(w);
+    return n;
+}
+
+/* precise bounds for actual integral */
+
+typedef struct
+{
+    arb_t r;
+    arb_t lambda;
+    acb_srcptr u;
+    slong len;
+    slong i;
+    slong m;
+} params_t;
+
+static int
+max_f(arb_t m, const arb_t t, params_t * p, slong prec)
+{
+    slong k;
+    acb_t z, zu;
+    arb_t abs;
+
+    acb_init(z);
+    acb_init(zu);
+
+    arb_set(acb_realref(z), t);
+    arb_set(acb_imagref(z), p->r);
+    acb_sinh(z, z, prec);
+    acb_mul_arb(z, z, p->lambda, prec);
+    acb_tanh(z, z, prec);
+
+    arb_one(m);
+    for (k = 0; k < p->len; k++)
+    {
+        acb_sub(zu, z, p->u + k, prec);
+        if (acb_contains_zero(zu))
+            return 0;
+        acb_abs(abs, zu, prec);
+        arb_mul(m, m, abs, prec);
+    }
+    arb_root_ui(m, m, p->m, prec);
+    acb_abs(abs, z, prec);
+    arb_pow_ui(abs, abs, p->i, prec);
+    arb_div(abs, abs, m, prec);
+    return 1;
+}
+
+void
+de_constant_m2(mag_t b, acb_srcptr u, slong len, double r, slong i, slong m, slong prec)
+{
+    arb_t abs, tmp;
+    arf_t tmin;
+    arf_t tmax;
+    params_t p;
+    p.m = m;
+    p.i = i;
+    p.u = u;
+    p.len = len;
+    arb_init(p.r);
+    arb_set_d(p.r, r);
+    arb_init(p.lambda);
+    arb_const_pi(p.lambda, prec);
+    arb_mul_2exp_si(p.lambda, p.lambda, -1);
+    arb_init(abs);
+
+    arf_init(tmin);
+    arf_init(tmax);
+    arf_zero(tmin);
+    /* tmax = acosh(Pi/(2*l*sin(r))) */
+    arb_init(tmp);
+    arb_set_d(tmp, r);
+    arb_sin(tmp, tmp, prec);
+    arb_mul(tmp, tmp, p.lambda, prec);
+    arb_mul_2exp_si(tmp, tmp, 1);
+    arb_const_pi(abs, prec);
+    arb_div(abs, abs, tmp, prec);
+    arb_acosh(abs, abs, prec);
+    arb_get_ubound_arf(tmax, abs, prec);
+
+    arb_max_func_arf(abs, &max_f, (void *)&p, tmin, tmax, 50, prec);
+    arb_get_mag(b, abs);
+
+    arb_clear(abs);
+    arb_clear(p.r);
+    arb_clear(p.lambda);
+}
+
+void
+de_constant_m1(mag_t b, acb_srcptr u, slong len, double r, slong i, slong m, slong prec)
+{
+    slong k;
+    arb_t abs;
+    arb_t z1;
+    arb_t tmp;
+
+    arb_init(abs);
+    arb_init(z1);
+    arb_one(abs);
+    arb_init(tmp);
+
+    /* [0,1] */
+    arb_union(z1, z1, abs, prec);
+
+    for (k = 0; k < len; k++)
+    {
+        if (arb_overlaps(acb_realref(u + k), z1))
+        {
+            arb_mul(abs, abs, acb_imagref(u + k), prec);
+        }
+        else
+        {
+            acb_abs(tmp, u + k, prec);
+            arb_mul(abs, abs, tmp, prec);
+        }
+    }
+    arb_root_ui(abs, abs, m, prec);
+    arb_inv(abs, abs, prec);
+    arb_get_mag(b, abs);
+    arb_clear(tmp);
+    arb_clear(abs);
+    arb_clear(z1);
+}
 
 #if 0
 void
@@ -33,20 +229,20 @@ de_int_cst_b(mag_t b, mag_t tau, slong j, slong m)
     mag_clear(xt);
     mag_clear(a2);
 }
-
-void
-de_int_params_se(arf_t h, slong * n, double tau, mag_t M1, mag_t M2, slong prec)
-{
-    mag_t D;
-
-}
 #endif
 
-void
-de_int_params(arf_t h, ulong *n, const tree_t tree, sec_t c, slong prec)
+slong
+de_int_params(arf_t h, acb_srcptr u, slong len, double r, sec_t c, slong prec)
 {
     arf_set_d(h, .1);
-    *n = 100;
+    return 100;
+}
+
+slong
+de_int_params_tree(arf_t h, const tree_t tree, sec_t c, slong prec)
+{
+    arf_set_d(h, .1);
+    return 100;
 }
 
 void

@@ -101,7 +101,7 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t
     arf_t h;
     de_int_t de;
 
-    de_int_params(h, &n, tree, c, prec);
+    n = de_int_params_tree(h, tree, c, prec);
     de_int_init(de, h, n, prec);
 
     for (k = 0; k < c.d - 1; k++)

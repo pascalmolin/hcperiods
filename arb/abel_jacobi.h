@@ -136,7 +136,9 @@ void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
 /* parameters for DE integration */
-void de_int_params(arf_t h, ulong *n, const tree_t tree, sec_t c, slong prec);
+void arb_max_func_arf(arb_t m, int (* f)(arb_t abs, const arb_t, void * params, slong prec), void * params, arf_t tmin, arf_t tmax, slong n, slong prec);
+slong de_int_params(arf_t h, acb_srcptr u, slong len, double r, sec_t c, slong prec);
+slong de_int_params_tree(arf_t h, const tree_t tree, sec_t c, slong prec);
 void de_int_init(de_int_t de, arf_t h, ulong n, slong prec);
 void de_int_clear(de_int_t de);
 

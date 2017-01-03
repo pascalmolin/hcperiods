@@ -10,6 +10,7 @@
 #define PI acos(-1.)
 #define PI2 acos(0.)
 #define LAMBDA PI2
+#define LOG2 log(2)
 
 typedef complex double cdouble;
 
