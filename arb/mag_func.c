@@ -39,7 +39,7 @@ arb_subdivide(arb_t t, arf_t step, const arb_t b, slong n, slong prec)
 }
 
 void
-arb_max_func_arb(arb_t m, max_func f, void * params, const arb_t b, slong n, slong prec)
+arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n, slong prec)
 {
     slong k;
     arb_t t, abs;
@@ -57,7 +57,7 @@ arb_max_func_arb(arb_t m, max_func f, void * params, const arb_t b, slong n, slo
     for (k = 0; k < n; k++)
     {
         if (f(abs, t, params, prec) == 0 || !arb_is_finite(abs))
-            arb_max_func_arb(abs, f, params, t, 5, prec);
+            arb_bound_func_arb(abs, f, params, t, 5, prec);
         if (k == 0)
             arb_set(m, abs);
         else
@@ -72,17 +72,17 @@ arb_max_func_arb(arb_t m, max_func f, void * params, const arb_t b, slong n, slo
 }
 
 void
-arb_max_func_arf(arb_t m, max_func f, void * params, const arf_t tmin, const arf_t tmax, slong n, slong prec)
+arb_bound_func_arf(arb_t m, arb_func_t f, void * params, const arf_t tmin, const arf_t tmax, slong n, slong prec)
 {
     arb_t b;
     arb_init(b);
     arb_set_interval_arf(b, tmin, tmax, prec);
-    arb_max_func_arb(m, f, params, b, n, prec);
+    arb_bound_func_arb(m, f, params, b, n, prec);
     arb_clear(b);
 }
 
 slong
-mag_func_arb(mag_t m, max_func f, void * params, const arb_t b, slong n, slong prec)
+mag_func_arb(mag_t m, arb_func_t f, void * params, const arb_t b, slong n, slong prec)
 {
     slong k, count;
     arb_t t, abs;
@@ -141,7 +141,7 @@ mag_func_arb(mag_t m, max_func f, void * params, const arb_t b, slong n, slong p
 }
     
 slong
-mag_func_arf(mag_t m, max_func f, void * params, const arf_t tmin, const arf_t tmax, slong n, slong prec)
+mag_func_arf(mag_t m, arb_func_t f, void * params, const arf_t tmin, const arf_t tmax, slong n, slong prec)
 {
     slong count;
     arb_t b;

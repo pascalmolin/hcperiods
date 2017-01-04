@@ -101,6 +101,7 @@ max_f(arb_t m, const arb_t t, params_t * p, slong prec)
     acb_t z, zu;
     arb_t abs;
 
+    arb_init(abs);
     acb_init(z);
     acb_init(zu);
 
@@ -115,7 +116,12 @@ max_f(arb_t m, const arb_t t, params_t * p, slong prec)
     {
         acb_sub(zu, z, p->u + k, prec);
         if (acb_contains_zero(zu))
+        {
+            arb_clear(abs);
+            acb_clear(zu);
+            acb_clear(z);
             return 0;
+        }
         acb_abs(abs, zu, prec);
         arb_mul(m, m, abs, prec);
     }
@@ -123,6 +129,10 @@ max_f(arb_t m, const arb_t t, params_t * p, slong prec)
     acb_abs(abs, z, prec);
     arb_pow_ui(abs, abs, p->i, prec);
     arb_div(abs, abs, m, prec);
+
+    arb_clear(abs);
+    acb_clear(zu);
+    acb_clear(z);
     return 1;
 }
 
@@ -158,7 +168,7 @@ de_constant_m2(mag_t b, acb_srcptr u, slong len, double r, slong i, slong m, slo
     arb_acosh(abs, abs, prec);
     arb_get_ubound_arf(tmax, abs, prec);
 
-    arb_max_func_arf(abs, &max_f, &p, tmin, tmax, 50, prec);
+    arb_bound_func_arf(abs, (arb_func_t)&max_f, &p, tmin, tmax, 50, prec);
     arb_get_mag(b, abs);
 
     arb_clear(abs);

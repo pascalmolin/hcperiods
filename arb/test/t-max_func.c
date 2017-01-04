@@ -53,15 +53,77 @@ f_thsh(arb_t max, const arb_t t, params_t * p, slong prec)
     return 1;
 }
 
+int
+f_thsh_shift(arb_t max, const arb_t t, params_t * p, slong prec)
+{
+    acb_t z;
+    acb_init(z);
+    arb_set(acb_realref(z), t);
+    arb_set_d(acb_imagref(z), .7);
+
+    acb_sinh(z, z, prec);
+    acb_tanh(z, z, prec);
+    acb_abs(max, z, prec);
+
+    acb_clear(z);
+    return 1;
+}
+
+int
+f_aj(arb_t m, const arb_t t, params_t * p, slong prec)
+{
+    slong k;
+    acb_t z, zu;
+    arb_t abs;
+
+    arb_init(abs);
+    acb_init(z);
+    acb_init(zu);
+
+    arb_const_pi(abs, prec);
+    arb_mul_2exp_si(abs, abs, -2); /* Pi/4 */
+
+    arb_set(acb_realref(z), t);
+    arb_set(acb_imagref(z), abs);
+
+    acb_sinh(z, z, prec);
+    arb_mul_2exp_si(abs, abs, 1); /* Pi/2 */
+    acb_mul_arb(z, z, abs, prec);
+    acb_tanh(z, z, prec);
+
+    arb_one(m);
+    for (k = 0; k < p->len; k++)
+    {
+        acb_sub(zu, z, p->z + k, prec);
+        if (acb_contains_zero(zu))
+        {
+            arb_clear(abs);
+            acb_clear(zu);
+            acb_clear(z);
+            return 0;
+        }
+        acb_abs(abs, zu, prec);
+        arb_mul(m, m, abs, prec);
+    }
+    arb_inv(m, m, prec);
+
+    arb_clear(abs);
+    acb_clear(zu);
+    acb_clear(z);
+    return 1;
+}
+
 int main() {
 
 #define ni 5
     slong n, i, f;
     double b[ni][2] = { { 0, 1}, {-1, 1}, {0, 10}, {-20, 3}, {0, 3.14} };
     const slong prec = 40;
-#define nf 3
-    max_func func[nf] = { f_1x2, f_pol, f_thsh };
-    char * fn[nf] = { "1/(1+x^2)", "1/p(x)", "tanh(sinh(x))" };
+#define nf 5
+    arb_func_t func[nf] = { (arb_func_t)&f_1x2, (arb_func_t)&f_pol, (arb_func_t)&f_thsh, (arb_func_t)&f_thsh_shift, (arb_func_t)&f_aj };
+#if VERBOSE
+    char * fn[nf] = { "1/(1+x^2)", "1/p(x)", "th(sh(x))", "th(sh(x+.7I))" , "1/y" };
+#endif
     params_t p[nf];
     
     arf_t tmin, tmax;
@@ -75,6 +137,8 @@ int main() {
     acb_set_d_d(p[1].z + 0, 2, 1);
     acb_set_d_d(p[1].z + 1, 2, .1);
     acb_set_d_d(p[1].z + 2, 1, .1);
+
+    p[4] = p[1];
 
     arf_init(tmin);
     arf_init(tmax);
