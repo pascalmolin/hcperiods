@@ -145,7 +145,7 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
 
         tree->e[k] = e[i];
 
-        /* save complexity estimate */
+        /* save worst edge and complexity estimate */
         if (!tree->r || e[i].r < tree->r)
         {
             tree->r = e[i].r;

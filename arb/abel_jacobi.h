@@ -10,6 +10,7 @@
 #include "acb_mat.h"
 
 #include "fmpz_mat_extras.h"
+#include "complex_extras.h"
 #include "mag_func.h"
 
 /******************************************************************************
@@ -137,12 +138,14 @@ void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
 /* parameters for DE integration */
-slong de_int_params(arf_t h, acb_srcptr u, slong len, double r, sec_t c, slong prec);
-slong de_int_params_tree(arf_t h, const tree_t tree, sec_t c, slong prec);
-void de_int_init(de_int_t de, arf_t h, ulong n, slong prec);
+slong de_params_d(double *ph, const cdouble * w, slong len, double r, slong i, slong m, slong prec);
+slong de_params(double * h, acb_srcptr u, slong len, double r, slong i, slong m, slong prec);
+slong de_params_tree(double * h, const tree_t tree, sec_t c, slong prec);
+void de_int_init(de_int_t de, double h, ulong n, slong prec);
 void de_int_clear(de_int_t de);
 
 /* parameters for GC integration */
+slong gc_params_d(const cdouble * w, slong len, double r, slong i, slong prec);
 slong gc_params(acb_srcptr u, slong len, double r, slong i, slong prec);
 slong gc_params_tree(const tree_t tree, sec_t c, slong prec);
 
@@ -170,8 +173,10 @@ void holomorphic_differentials(cohom_t dz, slong d, slong m);
 /* numerically compute d-1 integrals along tree edges */
 /* (d-1)*(g-1) matrix, tree edges on lines */
 void gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slong prec);
-void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const cohom_t dz, const de_int_t de, slong prec);
+void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const cohom_t dz, const de_int_t de, slong prec);
+void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec);
 slong ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec);
+void ab_points_worst(cdouble * w, const tree_t tree, sec_t c);
 void integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec);
 void integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, const cohom_t dz, slong prec);
 void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
