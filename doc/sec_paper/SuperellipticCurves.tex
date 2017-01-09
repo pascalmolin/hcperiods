@@ -46,13 +46,13 @@
   curves over $\C$ is the complex $m$-th root.
   Before specifying a branch it is a multi-valued function $y^m = x$
   that defines an $m$-sheeted Riemann surface, whose only branch points
-  are at $z = 0,\infty$, and they're totally ramified.
+  are at $x = 0,\infty$, and they're totally ramified.
 
-  For $z\in\C$, it is natural and computationally convenient to use the
-  principal branch of the $m$-th root $\sqrt[m]z$ defined by
+  For $x\in\C$, it is natural and computationally convenient to use the
+  \emph{principal branch} of the $m$-th root $\sqrt[m]x$ defined by
   \begin{equation}
       \label{eq:principal_mth_root}
-      -\frac{π}m<\arg(\sqrt[m]z)\leq\frac{π}m
+      -\frac{π}m<\arg(\sqrt[m]x)\leq\frac{π}m
   \end{equation}
   which has a branch cut along the negative real axis $]\!-\infty,0[$.
   Crossing it in positive orientation corresponds to multiplication by
@@ -62,7 +62,7 @@
   \zeta = \zeta_m = e^{\frac{2\pi i }{m}}
   \end{equation}
   on the surface. In
-  particular the monodromy at $z=0$ is cyclic of order $m$.
+  particular, the monodromy at $x=0$ is cyclic of order $m$.
 
   \subsubsection{Sheets and monodromy}
 
@@ -79,7 +79,7 @@
 
   As we shall see below, we
   will not impose a global ordering on the sheets of $\cu$. Instead we use
-  locally analytic branches $\yab$ (see \ref{def:yab}) and order them such that
+  locally analytic branches $\yab$ (see \eqref{eq:def_yab}) and order them such that
   moving one sheet up corresponds to the transformation $\yab \mapsto
   \zeta\yab$. For us, encircling a branch point in positive orientation means
   applying the local monodromy to the analytic branches of $\cu$, therefore we
@@ -91,33 +91,35 @@
   it is crucial to be able to follow an explicit analytic continuation of $y$ along a
   path joining two branch points $a$ and $b$.
 
-  One could of course consider the principal branch of the curve
+  One could of course consider the \emph{principal branch} of the curve
   \begin{equation*}
-      y(x) = \sqrt[m]{f(x)}
+      y(x) = \sqrt[m]{f(x)},
   \end{equation*}
-  however this is not a good model to compute with: it has branch cuts
-  wandering around the $x$-plane (see figure \ref{fig:mth_root_principal}).
+  but this is not a good model to compute with: it has branch cuts
+  wandering around the $x$-plane (see Figure \ref{fig:mth_root_principal}).
   
   A better option is to split the product as follows:
   assume $a,b$ are the points $-1,1$. Then the function
   \begin{equation*}
       y(x) = \prod_{x_k\in X}\sqrt[m]{x-x_k}
   \end{equation*}
-  has $d$ branch cuts parallel to the real line (see figure \ref{fig:mth_root_product}).
+  has $d$ branch cuts parallel to the real line (see Figure \ref{fig:mth_root_product}).
   However one of them lies exactly on the interval $[-1,1]$ we are interested in. We fix
-  that by taking the cut towards $+\infty$ for each point $x_k$ with positive real part, writing
+  that by taking the cut towards $+\infty$ for each branch point $x_k$ with positive real part, writing
   \begin{equation*}
-      y(x) = e^{\frac{iπn^+}m}\prod_{\Re(x_k)\leq0}\sqrt[m]{x-x_k} \prod_{\Re(x_k)>0}\sqrt[m]{x_k-x}
+      y(x) = e^{\frac{iπn^+}m}\prod_{\Re(x_k)\leq0}\sqrt[m]{x-x_k} \prod_{\Re(x_k)>0}\sqrt[m]{x_k-x},
   \end{equation*}
   where $n^+$ is the number of points with positive real part (including $b=+1$).
 
+  \todo (CN): Figure mth root signed missing? \\ difference between dashed and non-dashed lines? \\ remake pictures with tikz so they fit the style of the others?
+  
   \begin{figure}[H]
       \begin{center}
-          \subfloat[principal]{
+          \subfloat[principal branch]{
           \includegraphics[width=.3\linewidth,page=1]{images/branch_cuts.pdf}
           \label{fig:mth_root_principal} }
           \subfloat[product]{ \includegraphics[width=.3\linewidth,page=2]{images/branch_cuts.pdf}\label{fig:mth_root_product} }
-          \subfloat[$y_{a,b}$]{ \includegraphics[width=.3\linewidth,page=3]{images/branch_cuts.pdf}\label{fig:mth_root_signed} }
+          \subfloat[$\yab$]{ \includegraphics[width=.3\linewidth,page=3]{images/branch_cuts.pdf}\label{fig:mth_root_signed} }
       \end{center}
       \caption{Branch cuts of different $m$-th roots.}
   \label{fig:mth_root_pol} \end{figure}
@@ -126,45 +128,47 @@
   transformation
   \begin{equation}
       \label{def:uab}
-      u_{a,b} : x \mapsto \frac{b-a}{2}\left(x+\frac{b+a}{b-a}\right)
+      u_{a,b} : x \mapsto \frac{b-a}{2}\left(x+\frac{b+a}{b-a}\right),
   \end{equation}
   which depends on two branch points $a,b$ and maps $[a,b]$ to $[-1,1]$.
-
+  \todo (CN) define the 'interval' $[a,b]$ here?
+  
   We split the image of branch points into the following subsets
   \begin{equation*}
-      \set{ u_{a,b}(x), x\in X} = \set{-1,1} \cup U^- \cup U^+
+      \set{ u_{a,b}(x), x\in X} = \set{-1,1} \cup U^- \cup U^+,
   \end{equation*}
-  where points in $U^+$ (resp. $U_-$) have strictly positive (resp. negative) real part.
+  where points in $U^+$ (resp. $U^-$) have strictly positive (resp. negative) real part.
 
   Then the product
   \begin{equation}
-      \label{eq:fab}
-      \ft_{a,b}(u) = \prod_{u_k\in U^-} \sqrt[m]{u-u_k}\prod_{u_k\in U^+}\sqrt[m]{u_k-u}
+      \label{eq:ytab}
+      \ytab(u) = \prod_{u_k\in U^-} \sqrt[m]{u-u_k}\prod_{u_k\in U^+}\sqrt[m]{u_k-u}
   \end{equation}
   is holomorphic on a neighborhood $ε_{a,b}$ of $[-1,1]$ which we can take as
-  an ellipse\footnote{we will exhibit such a neighborhood in section \ref{sec:gc_ellipse}}
+  an ellipse \footnote{we will exhibit such a neighborhood in Section \ref{m-sub:gauss_chebychev_integration} \todo (CN) correct Reference? fig:ellipse exists 2 times?} 
   containing no point $u_k\in U^-\cup U^+$, while the term corresponding to $a,b$
   \begin{equation}
       \sqrt[m]{1-u^2}
   \end{equation}
   has two cuts $]-\infty,-1]$ and $[1,\infty[$, and is holomorphic on the complementary
   $\overline U$ of these cuts.
-
+  \todo (CN) Exclude or include 1 resp. -1 in the branch cut?!
+  
   We can now define the local branch
   \begin{equation}
-      \label{def:yab}
-      \yab(x) =   C_{a,b} \ft_{a,b}( u_{a,b}(x) ) \sqrt[m]{1 - u_{a,b}(x)^2}
+      \label{eq:def_yab}
+      \yab(x) =   C_{a,b} \yt_{a,b}( u_{a,b}(x) ) \sqrt[m]{1 - u_{a,b}(x)^2}
   \end{equation}
   where the constant
   \begin{equation}
       C_{a,b} = \left(\frac{b-a}{2}\right)^{\frac{d}{m}} e^{\frac{\pi i(1+\#U^+)}{m}}
   \end{equation}
-  is chosen so that $y_{a,b}^m = f(x)$.
+  is chosen so that $\yab(x)^m = f(x)$.
 
-  $y_{a,b}$ has $d$ branch cuts all parallel to $(a,b)$ in outward direction, and
-  is holomorphic inside $]a,b[$ (see figure \ref{fig:mth_root_signed}).
+  $y_{a,b}$ has $d$ branch cuts all parallel to $[a,b]$ in outward direction, and
+  is holomorphic inside $]a,b[$ (see Figure \ref{fig:mth_root_signed}).
 
-  More precisely, let $V_{a,b} = u_{a,b}^{-1}(ε_{a,b}\cap \overline U)$,
+  More precisely, let $\vab = \uab^{-1}(ε_{a,b}\cap \overline U)$,
   so that $V_{a,b}$ is an ellipse shaped neighborhood of $]a,b[$ with two segments removed
   (see Figure \ref{m-fig:set_vab})
   on which the local branch $\yab$ is well defined and holomorphic.
@@ -176,14 +180,14 @@
 
   \begin{prop}
       Let $a,b\in X$ be two branch points such that $X\cap]a,b[=\varnothing$.
-      Then with the notations above, the functions
-      $\fab$ \eqref{eq:fab} and $y_{a,b}$ \eqref{eq:yab}
+      Then, with the notations above, the functions
+      $\ytab$ \eqref{eq:ytab} and $\yab$ \eqref{eq:def_yab}
       satisfy
      \begin{itemize}
-         \item $\ft_{a,b}$ is holomorphic and does not vanish on $ε_{a,b}$
-         \item $y_{a,b}(x) = C_{a,b} \ft_{a,b}(u(x)) \sqrt[m]{1-u(x)^2}$ is holomorphic
-         on $V_{a,b}$
-         \item $y_{a,b}^m = f(x)$ for all $x\in\C$
+         \item $\ytab$ is holomorphic and does not vanish on $ε_{a,b}$,
+         \item $\yab(x) = C_{a,b} \ytab(\uab(x)) \sqrt[m]{1-u(x)^2}$ is holomorphic
+         on $\vab$,
+         \item $\yab(x)^m = f(x)$ for all $x\in\C$.
      \end{itemize}
      Moreover, we can assume that moving up $l$ sheets on $\cu$
      corresponds to multiplication of $\yab$ by $\zeta^l$.
@@ -192,7 +196,7 @@
 
   \subsection{Cycles and homology}\label{subsec:cycles_homo}
 
-   In this paragraph we present an explicit generating set of $\homo$ that is obtained by connecting the locally analytic branches $\yab$, as defined in \eqref{def:yab},
+   In this paragraph we present an explicit generating set of $\homo$ that is obtained by connecting the locally analytic branches $\yab$, as defined in \eqref{eq:def_yab},
    while also taking advantage of the superelliptic structure of our curve.
    For simplicity we will identify all cycles on $\cu$ with their classes in $\homo$.
 
@@ -212,7 +216,7 @@
    lifts of the line segment $[a,b]$ to $\cu$. \abstand
    In $\pi_1(\cu)$
    they are homotopic to cycles that encirlce  $a$ in negative and $b$ in positive orientation, once each.
-   Assuming the local branch cuts are parallel to $[a,b]$, we have the following useful visualizations of $\cyabl$ on $\cu$.
+   By the definition of $\yab$ the branch cuts at the end points are outward and parallel to $[a,b]$. Thus, we have the following useful visualizations of $\cyabl$ on $\cu$:
    \begin{figure}[H]
       \begin{center}
    \input{images/tikz_pic_13.tex}
@@ -224,7 +228,7 @@
   \bigskip
 
   As it turns out, we do not need all elementary cycles and their shifts to generate $\homo$, but only those that correspond to edges in a \emph{maximal spanning tree}, which is constructed
-  as follows. \abstand
+  as follows: \abstand
    Consider the complete graph on the set of finite branch points $G = (X,E')$, i.e.\ $E' = \{  (a,b)  \mid  a,b \in X \}$.
    Each edge $e = (a,b) \in E$ gets assigned a capacity $\tau_e$ that indicates the cost of numerical integration along the interval $[a,b]$. \abstand
    Here, the integration process ist most favourable
@@ -238,24 +242,22 @@
   For an edge $e = (a,b) \in E$, we denote by $\gamma_e^{(l)}$ the shifts of the corresponding elementary cycle $\cyab$.
 
   \begin{thm}\label{thm:gen_set}
-   The cycles $C = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l <m-1,  e \in E  \right\}$ generate $\homo$.
+   The cycles $\Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l <m-1,  e \in E  \right\}$ generate $\homo$.
   \end{thm}
   \begin{proof}
   Denote by $\alpha_a \in \pi(\P^1 \setminus \hat{X})$ a closed path that encircles the branch point $a \in \hat{X}$ exactly once. Then,  due to the relation $1 = \prod_{a \in \hat{X}} \alpha_a$,
   $\pi(\P^1 \setminus \hat{X})$ is freely generateted by $\{ \alpha_a \}_{a \in X}$, i.e. in the case $\delta \ne m$ we can omit $\alpha_{\infty}$. \abstand
   Since our covering is cyclic, we have that $
-  \pi_1(\cu \setminus \pr^{-1}(\hat{X})) = \ker(\pi_1(\P^1 \setminus \hat{X}) \overset{\Phi}{\To} \Aut(\cu \setminus \pr^{-1}(\hat{X})))$. Moreover, $\Aut(\cu \setminus \pr^{-1}(\hat{X})) = C_m
+  \pi_1(\cu \setminus \pr^{-1}(\hat{X})) \isom \ker(\pi_1(\P^1 \setminus \hat{X}) \overset{\Phi}{\To} \Aut(\cu \setminus \pr^{-1}(\hat{X})))$ where $\Aut(\cu \setminus \pr^{-1}(\hat{X})) = C_m
   \subset S_m$
   and $\Phi(\alpha_a) = (1 \dots m)$ for all $a \in X$. Hence, for every word $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} \in \pi_1(\P^1 \setminus \hat{X})$ we have that
-  $\alpha \in \ker(\Phi) \eq \sum_{i=1}^n s_i = 0 \bmod m$. \abstand
-  Claim: $\pi_1(\cu \setminus \pr^{-1}(\hat{X})) = \langle  \alpha_a^{-s} \alpha_b^{s},  \alpha_a^m   \mid  s \in \Z, a,b \in X  \rangle$. \\
-  Proof: Induction on $n$. For $\alpha = \alpha_1^{s_1}$ $m$ divides $s_1$ and therefore $\alpha$ is generated by $\alpha_1^m$. For $n > 1$ we write
+  $\alpha \in \ker(\Phi) \eq \sum_{i=1}^n s_i \equiv 0 \bmod m$. \abstand
+  We now claim that $\pi_1(\cu \setminus \pr^{-1}(\hat{X})) = \langle  \alpha_a^{-s} \alpha_b^{s},  \alpha_a^m   \mid  s \in \Z, a,b \in X  \rangle$
+  and proof this by induction on $n$: For $\alpha = \alpha_1^{s_1}$ $m$ divides $s_1$ and therefore $\alpha$ is generated by $\alpha_1^m$. For $n > 1$ we write
   $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} = (\alpha_1^{s_1} \dots \alpha_{n-1}^{s_{n-1}+s_n})(\alpha_{n-1}^{-s_n}\alpha_n^{s_n})$. \abstand
   We obtain the fundamental group of $\cu$ as
-  $\pi(\cu) = \pi_1(\cu \setminus \pr^{-1}(\hat{X})) / \langle  \alpha_a^{e_a}  \mid  a \in \hat{X}  \rangle$, which is generated by
-  $\{  \alpha_a^{-s} \alpha_b^{s}  \mid  s \in \Z/m\Z,  a,b \in X  \}$. (In the case where $\delta \ne 1$, filling in the points above infinity will create additional relations among
-  these generators:
-  $1 = (\prod_{a \in X} \alpha_a)^{k \cdot e_{\infty}}$, $k = 1,\dots,\delta-1$.) \abstand
+  $\pi_1(\cu) \isom \pi_1(\cu \setminus \pr^{-1}(\hat{X})) / \langle  \alpha_a^{e_a}  \mid  a \in \hat{X}  \rangle$, which is generated by
+  $\{  \alpha_a^{-s} \alpha_b^{s}  \mid  s \in \Z/m\Z,  a,b \in X  \}$. $(*)$ \abstand
   All branch points $a,b \in X$ are connected by a path $(a,v_1,\dots,v_t,b)$ in the spanning tree, so we can write $\alpha_a^{-s} \alpha_b^{s} = (\alpha_a^{-s}\alpha_{v_1}^{s})
   (\alpha_{v_1}^{-s}\alpha_{v_2}^{s})\dots(\alpha_{v_{t-1}}^{-s}\alpha_{v_t}^{s})(\alpha_{v_t}^{-s}\alpha_b^{s})$ and hence we have that
   $\{ \alpha_a^{-s} \alpha_b^{s}  \mid  s \in \Z/m\Z,  (a,b) \in E \}$ generates $\pi_1(\cu)$ and therefore $\homo$. \abstand
@@ -266,8 +268,8 @@
    In $\homo$ we have that $\alpha_a^{-s}\alpha_b^{s} = ( \alpha_a^{-1}\alpha_b)^s$, so we obtain the other powers by concatenating
   the shifts $\prod_{l = 0}^{s-1} \gamma_e^{(l_0+l)} = (\alpha_a^{-1}\alpha_b)^s$.
   This implies $1 = \prod_{l = 0}^{m-1} \gamma_e^{(l_0+l)} = \prod_{l = 0}^{m-1} \gamma_e^{(l)}$ and
-   $\{  \alpha_a^{-s} \alpha_b^{s}  \mid  s \in \Z/m\Z  \} \subset  \langle  \gamma_e^{(l)} 
-  \mid  l = 0,\dots,m-1 \rangle$ and therefore $\homo = \langle  C  \rangle$.
+   $$\{  \alpha_a^{-s} \alpha_b^{s}  \mid  s \in \Z/m\Z  \} \subset  \langle  \gamma_e^{(l)} 
+  \mid  l = 0,\dots,m-1 \rangle$$ and therefore $\homo = \langle  \Gamma  \rangle$.
 
 %   \todo Include $\infty$.\\
 %    Each cycle $\alpha \in \homo$ can be encoded as $\alpha = \sum_{k = 1}^d n_kx_k$ with $n_1 + \dots n_d = 0 \bmod m$.
@@ -293,9 +295,12 @@
 
   \begin{rmk}
   \begin{itemize}
-   \item[(i)] For $\delta = 1$, we have that $\# C = (d-1)(m-1) = 2g$. Therefore, $C$ is a basis for $\homo$ in that case.
-   \item[(ii)] In the case $\delta = m$, the point at infinity is not a branch point. Leaving out one finite branch point in the spanning tree, results in only $d-2$ edges. Hence,
-   $\#C = (d-2)(m-1) = 2g$ and $C$ is a basis for $\homo$.
+   \item[$\bullet$] For $\delta = 1$, we have that $\# \Gamma = (d-1)(m-1) = 2g$. Therefore, $C$ is a basis for $\homo$ in that case.
+   \item[$\bullet$] In the case $\delta = m$, the point at infinity is not a branch point. Leaving out one finite branch point in the spanning tree results in only $d-2$ edges. Hence,
+   $\# \Gamma = (d-2)(m-1) = 2g$ and $C$ is a basis for $\homo$.
+   \item[$\bullet$] In step $(*)$ of the proof, filling in the points above infinity creates relations among
+  these generators:
+  $1 = (\prod_{a \in X} \alpha_a)^{k \cdot e_{\infty}}$, $k = 1,\dots,\delta$. This corresponds to the term $-\delta$ in the formula \eqref{m-eq:genus}for the genus of $\cu$. 
   \end{itemize}
   \end{rmk}
 
@@ -315,7 +320,7 @@
    \bigskip
 
      \begin{prop}\label{prop:holom_diff}
- Let $\delta = \gcd(m,d)$. The following differentials form  a $\C$-basis of $\hd$.
+ Let $\delta = \gcd(m,d)$. The following differentials form  a $\C$-basis of $\hd$:
  \begin{align}\label{eq:holm_diff}
    \W =  \left\{  \omega_{i,j} \in \WM  \mid  -mi + jd - \delta \ge 0  \right\}
  \end{align}
@@ -332,10 +337,10 @@
      \begin{align}\label{eq:diff_cases}
       v_P(\omega_{i,j}) & = (i-1) v_P(x) + v_P(\dx)  - j v_P(y) =
  \begin{cases}
-  \ge 0, \hfill \text{if}  x_0 \ne x_k,\infty \\
-  = m-1-j \ge 0 , \hfill \text{if}  x_0 = x_k \\
-  = \frac{1}{\delta}(-mi-\delta+jd),\hfill \text{if}  x_0 = \infty
- \end{cases}.
+  \ge 0 \hfill \text{if} \; x_0 \ne x_k,\infty, \\
+  = m-1-j \ge 0 \quad \text{if} \; x_0 = x_k, \\
+  = \frac{(-mi-\delta+jd)}{\delta} \hfill \text{if}\;  x_0 = \infty.
+ \end{cases}
      \end{align}
      We conclude: $\omega_{i,j} \in \WM$ is holomorphic if and only if $\omega_{i,j} \in \W$. \abstand
      Since the differentials in $\W$ are clearly $\C$-linearly independent, it remains to show that
