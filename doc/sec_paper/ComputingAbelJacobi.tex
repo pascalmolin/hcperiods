@@ -46,8 +46,8 @@
   As in \S \ref{m-subsec:roots_branches} we define a local branch of $\cu$ via the functions
   \begin{align}\label{def:yax}
   \begin{split}
-   \yaxp(x)  & =  \left(\frac{x_P-a}{2}\right)^{\frac{d}{m}}  (1 + u(x))^{\frac{j}{m}}  \ft_{a,x_P}(u(x)), \quad \text{with} \\
-   \ft_{a,x_P}(u(x))  & =  \prod_{x_k \ne a} (u(x) - u(x_k))\mr \quad \text{and} \\
+   \yaxp(x)  & =  \left(\frac{x_P-a}{2}\right)^{\frac{d}{m}}  (1 + u(x))^{\frac{j}{m}}  \ytaxp(u(x)), \quad \text{with} \\
+   \ytaxp(u(x))  & =  \prod_{x_k \ne a} (u(x) - u(x_k))\mr \quad \text{and} \\
    u(x) & =  u_{a,x_P}(x) = \frac{2x-x_P-a}{x_P-a}.
    \end{split}
   \end{align}
@@ -59,8 +59,8 @@
   \end{align*}
   Now, we can compute a \emph{shifting number} at the endpoint $x=x_P$
   \begin{align*}
-   \zeta^s & = \frac{y_P}{\yaxp(x_P)} = \frac{y_P}{\left(\frac{x_P-a}{2}\right)^{\frac{d}{m}} 2\mr \ft_{a,x_P}(x_P)} \\
-   \Rightarrow s & = \frac{m}{2\pi} \arg\left(  \frac{y_P}{ (x_P-a)^{\frac{d}{m}} \ft_{a,x_P}(x_P)} \right)
+   \zeta^s & = \frac{y_P}{\yaxp(x_P)} = \frac{y_P}{\left(\frac{x_P-a}{2}\right)^{\frac{d}{m}} 2\mr \ytaxp(x_P)} \\
+   \Rightarrow s & = \frac{m}{2\pi} \arg\left(  \frac{y_P}{ (x_P-a)^{\frac{d}{m}} \ytaxp(x_P)} \right)
   \end{align*}
   and define a smooth path between $P_a$ and $P$ on $\cu$ by
   \begin{align*}
@@ -74,8 +74,8 @@
  \begin{align}\label{eq:aj_int}
   \begin{split}
        \int_{P_a}^P \w_{i,j} & = \left(\frac{x_P-a}{2}\right)^{i-\frac{dj}{m}} \zeta^{-js} \int_{-1}^1
-      \frac{\left(u + \frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}} \ft_{a,x_P}(u)^j}  \du.
-%      \ftaxp(u) & = \prod_{x_k \ne a} ( u - u_{a,x_P}(x_k) )\mr, \\
+      \frac{\left(u + \frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}} \ytaxp(u)^j}  \du.
+%      \ytaxp(u) & = \prod_{x_k \ne a} ( u - u_{a,x_P}(x_k) )\mr, \\
 %      s & = \frac{m}{2\pi}  \arg \left( y_P \cdot (x_P-a)^{-\frac{d}{m}} \right).
    \end{split}
    \end{align}
@@ -85,9 +85,9 @@
     \begin{split}
      \int_{P_a}^P \w_{i,j}  & =  \int_{\gamma_{P,a_P}} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-sj} \int_a^{x_P} \frac{x^{i-1}}{\yaxp(x)^j}  \dx \\  & = 
      \zeta^{-sj} \left(\frac{x_P-a}{2}\right)^{i-1-\frac{dj}{m}}
-     \int_a^{x_P} \frac{\left(u(x)+\frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u(x))^{\frac{j}{m}}\ftaxp(u(x))^j}  \dx \\
+     \int_a^{x_P} \frac{\left(u(x)+\frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u(x))^{\frac{j}{m}}\ytaxp(u(x))^j}  \dx \\
      & =  \zeta^{-sj} \left(\frac{x_P-a}{2}\right)^{i-\frac{dj}{m}}
-     \int_{-1}^{1} \frac{\left(u+\frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}}\ftaxp(u)^j}  \du \\
+     \int_{-1}^{1} \frac{\left(u+\frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}}\ytaxp(u)^j}  \du \\
     \end{split}
   \end{align}
   \end{proof}

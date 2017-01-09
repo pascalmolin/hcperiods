@@ -49,7 +49,7 @@
    \end{equation}
    and 
    \begin{equation}
-    \varphi_{i,j}  = \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\ft_{a,b}(u)^j}
+    \varphi_{i,j}  = \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\ytab(u)^j}
    \end{equation}
    is holomorphic in a neighbourhood of $[-1,1]$.
   \end{thm}
@@ -60,16 +60,16 @@
     \begin{split}
      \int_{\gamma_1} \w_{i,j}  & =  \int_{\gamma_1} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-lj} \int_a^b \frac{x^{i-1}}{\yab(x)^j}  \dx \\  & = 
      \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-1-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}
-     \int_a^b \frac{\left(u(x)+\frac{b+a}{b-a}\right)^{i-1}}{(1-u(x)^2)^{\frac{j}{m}}\ft_{a,b}(u(x))^j}  \dx \\
+     \int_a^b \frac{\left(u(x)+\frac{b+a}{b-a}\right)^{i-1}}{(1-u(x)^2)^{\frac{j}{m}}\ytab(u(x))^j}  \dx \\
       & =    \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}
-     \int_{-1}^1 \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{(1-u^2)^{\frac{j}{m}}\ft_{a,b}(u)^j}  \du \quad \text{and} \\
+     \int_{-1}^1 \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{(1-u^2)^{\frac{j}{m}}\ytab(u)^j}  \du \quad \text{and} \\
     \int_{\gamma_2} w_{i,j}  & =  - \zeta^{-j} \int_{\gamma_1} w_{i,j}.
     \end{split}
   \end{align}
 %   Hence, we obtain the period as
 %   \begin{align}
 %    \int_{\gamma_e^{(l)}} \w_{i,j} & =  c \cdot \int_a^b g(x)\dx, \quad \text{with} \\
-%    \varphi_{i,j}(u) & := \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{(1-u^2)^{\frac{j}{m}}\ft_{a,b}(u)^j} \quad \text{and} \\
+%    \varphi_{i,j}(u) & := \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{(1-u^2)^{\frac{j}{m}}\ytab(u)^j} \quad \text{and} \\
 %       c_{i,j,l} & := (1-\zeta^{-j})  \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}.
 %   \end{align}
   By our discussion in \S \ref{m-subsec:roots_branches} $\varphi_{i,j}$ is
