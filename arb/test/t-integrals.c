@@ -107,6 +107,7 @@ int main() {
 
         for (l = 0, d = 1; d < 4; d ++)
         {
+            sec_t c;
             slong g = (d + 1) / 2;
             slong n, j;
             acb_ptr res;
@@ -132,6 +133,15 @@ int main() {
                     abort();
                 }
             }
+
+            /* de */
+            c.m = 2;
+            c.d = d;
+            c.delta = (d % 2) ? 1 : 2;
+            c.g = g;
+            c.roots = NULL;
+
+            de_integrals(res, u, d, d, c, prec);
 
             _acb_vec_clear(res, g);
         }

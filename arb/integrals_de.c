@@ -7,7 +7,7 @@
 #include "abel_jacobi.h"
 
 void
-de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
+de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
         const cohom_t dz, const de_int_t de, slong prec)
 {
     slong k, l;
@@ -75,6 +75,22 @@ de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
 }
 
 void
+de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec)
+{
+    slong n;
+    double h;
+    cohom_t dz; 
+    de_int_t de;
+    dz = malloc(c.g * sizeof(dform_t));
+    holomorphic_differentials(dz, c.d, c.m);
+    n = de_params(&h, u, d, 0, c.d - 1, c.m, prec);
+    de_int_init(de, h, n, prec);
+    de_integrals_precomp(res, u, d1, d, c, dz, de, prec);
+    de_int_clear(de);
+    free(dz);
+}
+
+void
 integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz, const de_int_t de, slong prec)
 {
     slong d, d1;
@@ -87,7 +103,7 @@ integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz, const de_int
     ab2 = u + d - 2;
     cab = u + d - 1;
 
-    de_integrals(res, u, d1, d - 2, c, dz, de, prec);
+    de_integrals_precomp(res, u, d1, d - 2, c, dz, de, prec);
     integrals_edge_factors(res, cab, ab2, c, dz, prec);
 
     _acb_vec_clear(u, d);
@@ -98,10 +114,10 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t
 {
     slong k;
     ulong n;
-    arf_t h;
+    double h;
     de_int_t de;
 
-    n = de_int_params_tree(h, tree, c, prec);
+    n = de_params_tree(&h, tree, c, prec);
     de_int_init(de, h, n, prec);
 
     for (k = 0; k < c.d - 1; k++)
