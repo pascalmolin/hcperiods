@@ -3,8 +3,8 @@
 int main() {
 
     slong i, prec;
-    acb_ptr u;
-    acb_t y1, y2, y3, y4, z;
+    acb_ptr u, z;
+    acb_t y1, y2, y3, y4;
     arb_t x;
 
     flint_rand_t state;
@@ -22,14 +22,15 @@ int main() {
             d = 3 + n_randint(state, 20);
             m = 2 + n_randint(state, 12);
             u = _acb_vec_init(d);
+	    z = _acb_vec_init(m);
+	    _acb_vec_unit_roots(z, m, prec);
             arb_init(x);
             acb_init(y1);
             acb_init(y2);
             acb_init(y3);
 	    acb_init(y4);
-	    acb_init(z);
-	    acb_unit_root(z, m, prec);
-	   
+	    	   
+
             for (j = 0; j < d; j++)
                 acb_randtest_precise(u + j, state, prec, 4);
 

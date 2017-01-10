@@ -107,20 +107,18 @@ mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_s
         if ( isgn_s != isgn_t )
         {
           if ( isgn_t > 0 )
-            q = q + 2;
+            q++;
           else
-            q = q - 2;
+            q--;
         }
       }
       else
          isgn_s = im_sgn(s);
     } 
 
+    q = (q % m + m) % m;;
     acb_root_ui(s, s, m, prec);
-    acb_set(t, z);
-    acb_root_ui(t, t, 2, prec);
-    acb_pow_si(t, t, q, prec);
-    acb_mul(y, s, t, prec);
+    acb_mul(y, s, z + q, prec);
 
     acb_clear(s);
     acb_clear(t);
