@@ -1,6 +1,6 @@
 /******************************************************************************
 
- Copyright (C) 2016 Pascal Molin
+ Copyright (C) 2016 Pascal Molin, Christian Neurohr
 
  ******************************************************************************/
 
@@ -68,14 +68,60 @@ mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong
     acb_clear(t);
 }
 
+
+int
+im_sgn(const acb_t x)
+{
+        if ( arb_is_nonnegative(acb_imagref(x)) )
+		return 1;
+	else if ( arb_is_negative(acb_imagref(x)) )
+		return -1;
+	else
+		flint_printf("sign cannot be determined\n"); abort();
+}
+
 void
 mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec)
 {
-    slong q; /* integer mod 2m */
+    slong q, k, isgn_s,  isgn_t;
+    acb_t s, t;
+    q = 0;
+    acb_init(s);
+    acb_init(t);
+    
+    acb_one(y);
+    acb_sub_arb(s, u + 0, x, prec); 
+    if ( d1 != 0 )
+          acb_neg(s, s);
+    isgn_s = im_sgn(s);
+    for (k = 1; k < d; k++)
+    { 
+      acb_sub_arb(t, u + k, x, prec);
+      if (k < d1)
+            acb_neg(t, t);
+      isgn_t = im_sgn(t);
+      acb_mul(s, s, t, prec);
+      if ( isgn_s == isgn_t )
+      {
+        isgn_s = im_sgn(s);
+        if ( isgn_s != isgn_t )
+        {
+          if ( isgn_t > 0 )
+            q = q + 2;
+          else
+            q = q - 2;
+        }
+      }
+      else
+         isgn_s = im_sgn(s);
+    } 
 
-    /* make and product and update q */
+    acb_root_ui(s, s, m, prec);
+    acb_set(t, z);
+    acb_root_ui(t, t, 2, prec);
+    acb_pow_si(t, t, q, prec);
+    acb_mul(y, s, t, prec);
 
-    /* multiply by (z^1/2)^q */
-    if (q)
-        acb_mul(y, y, z + q, prec);
+    acb_clear(s);
+    acb_clear(t);
 }
