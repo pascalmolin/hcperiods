@@ -2,7 +2,7 @@
 
 \begin{document}
 
-  \section{Numerical integration}\label{sec:num_int}
+  \section{Numerical integration}\label{sec:numerical_integration}
 
   For $(a,b) \in E$ we want to compute to absolute precision say $e^{-D}$ the elementary integrals
   (see Theorem \ref{m-thm:periods})
@@ -18,7 +18,7 @@ from $1/m$ to $\frac{m-1}m$ depending on the differential form $\omega_{i,j}$ co
 As explained in \S \ref{sec:real_int}, the actual computations will be done on integrals of the form
 \begin{equation}
     \label{eq:elem_num_int}
-    I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{\frac jm}\ft_{a,b}(u)^j}
+    I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{\frac jm}\ytab(u)^j}
 \end{equation}
 so that we restrict the numerical analysis to this case,
 the value of elementary integrals being recovered by polynomial shift
@@ -54,8 +54,8 @@ the integral \eqref{eq:elem_num_int} becomes
 \end{equation}
 with
 \begin{equation}
-   % g(t) = \frac{u(t)^{i-1}}{\fab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
-   g(t) = \frac{u(t)^{i-1}}{\fab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
+   % g(t) = \frac{u(t)^{i-1}}{\ytab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
+   g(t) = \frac{u(t)^{i-1}}{\ytab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
 \end{equation}
 
 Let
@@ -72,8 +72,8 @@ both $[-1,1]$ and its neighborhood $Z_\tau$ (see \S \ref{sec:dist_zt}), we obtai
       constants $M_1$, $M_2$ such
       that
       \begin{itemize}
-          \item for $u\in[-1,1]$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_1$
-          \item for $u\in Z_\tau$, $\abs{\frac{u^{i-1}}{\fab(u)^{j}}}\leq M_2$.
+          \item for $u\in[-1,1]$, $\abs{\frac{u^{i-1}}{\ytab(u)^{j}}}\leq M_1$
+          \item for $u\in Z_\tau$, $\abs{\frac{u^{i-1}}{\ytab(u)^{j}}}\leq M_2$.
       \end{itemize}
   \end{lemma}
 
@@ -103,7 +103,7 @@ we obtain a rigorous integration scheme as follows
         \abs{
             I_{a,b}(i,j)
             - h\sum_{k=-n}^n
-            w_k \frac{u_k^{i-1}}{\fab(u_k)^j}
+            w_k \frac{u_k^{i-1}}{\ytab(u_k)^j}
         } \leq e^{-D}
     \end{equation}
     where
@@ -275,7 +275,7 @@ explicitly controlled
     then there exists an explicitly computable
     constant $M(r)$ such that for all $u\in ε_r$
     \begin{equation}
-        \abs{\frac{u^{i-1}}{\ft_{a,b}(u)}}\leq M(r)
+        \abs{\frac{u^{i-1}}{\ytab(u)}}\leq M(r)
     \end{equation}
 \end{lemma}
 \begin{proof}
@@ -294,7 +294,7 @@ We simply compute the distance
     we have
     \begin{equation}
         \abs{I_{a,b}(i,j)
-        - \frac{π}n\sum_{k=1}^n \frac{u_k^{i-1}}{\fab(u_k)}}
+        - \frac{π}n\sum_{k=1}^n \frac{u_k^{i-1}}{\ytab(u_k)}}
             \leq e^{-D}
     \end{equation}
     where $u_k=\cos(\frac{2k-1}{2n}π)$.

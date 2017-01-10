@@ -54,7 +54,7 @@
       \end{center}
       and where $s(x)\in\Z$ for $x\in\set{a,b}$ is given by
       \begin{equation}
-          s(x) = \frac{(d-1)\rho+m(\arg \ft_{c,d}(x)-\arg\ft_{a,b}(x))}{2π}
+          s(x) = \frac{(d-1)\rho+m(\arg \ytcd(x)-\arg\ytab(x))}{2π}
           +\delta_{a=c}\frac{1}2
       \end{equation}
      and
@@ -63,7 +63,7 @@
       \end{equation}
  \end{thm}
 
- \todo Notice $\ft_{a,b}(a) = \prod_{x\neq a,b}(\frac{2x-2a}{b-a})^{\frac1m}$, and
+ \todo Notice $\ytab(a) = \prod_{x\neq a,b}(\frac{2x-2a}{b-a})^{\frac1m}$, and
  $s(x)$ can also be written
       \begin{equation}
       2π s(x) = (d-1)\rho
@@ -115,10 +115,10 @@
   In the case $[a,b] \cap [c,d] = \{ x_0 \}$ we cannot compute the shifting number at $x_0$ directly, since $x_0 \not\in V = \vab \cap \vcd$. Instead, we choose a point $\xt$ on the bissectrix of
   $[a,b]$ and $[c,d]$, close enough to $x_0$, such that $[\xt,x_0[  \subset  V$. Then, for all $x \in [\xt,x_0[$ we compute the shifting number $s = s(\cyab,\cycd,x)$ as
   \begin{align}
-   \zeta^s & = \frac{\ycd(x)}{\yab(x)} = \frac{(1- \ucd(x)^2)\mr (d-c)^{\frac{d}{m}}\fcd(x) }{(1-\uab(x)^2)\mr (b-a)^{\frac{d}{m}}\fab(x)} \\
-   %\Rightarrow \frac{2\pi s}{m} = \arg \left( \frac{(1- u_{c,d}(x)^2)\mr}{(1-u_{a,b}(x)^2)\mr} \right) + \arg \left( \frac{(d-c)^{\frac{d}{m}} \ft_{c,d}(x)}{(b-a)^{\frac{d}{m}} \ft_{a,b}(x)} \right) \\
-   \Rightarrow  s & = \frac{1}{2\pi} \left( \arg \left( \frac{(1- \ucd(x)^2)}{(1-\uab(x)^2)} \right) + m \cdot \arg \left( \frac{(d-c)^{\frac{d}{m}} \ft_{c,d}(x)}{(b-a)^{\frac{d}{m}}
-   \ft_{a,b}(x)} \right) \right)
+   \zeta^s & = \frac{\ycd(x)}{\yab(x)} = \frac{(1- \ucd(x)^2)\mr (d-c)^{\frac{d}{m}}\ytcd(x) }{(1-\uab(x)^2)\mr (b-a)^{\frac{d}{m}}\ytab(x)} \\
+   %\Rightarrow \frac{2\pi s}{m} = \arg \left( \frac{(1- u_{c,d}(x)^2)\mr}{(1-u_{a,b}(x)^2)\mr} \right) + \arg \left( \frac{(d-c)^{\frac{d}{m}} \ytcd(x)}{(b-a)^{\frac{d}{m}} \ytab(x)} \right) \\
+   \Rightarrow  s & = \frac{1}{2\pi} \left( \arg \left( \frac{(1- \ucd(x)^2)}{(1-\uab(x)^2)} \right) + m \cdot \arg \left( \frac{(d-c)^{\frac{d}{m}} \ytcd(x)}{(b-a)^{\frac{d}{m}}
+   \ytab(x)} \right) \right)
   \end{align}
   Letting $x$ tend to $x_0$ on the bissectrix and taking
   \todo{this must be done actually}
@@ -199,7 +199,7 @@
 %     \begin{thm}\label{thm:shift_numb}
 %     Assume $[a,b] \cap [c,d] = \{x\}$. With notations as above and $\tau = \arg \left( \frac{d-c}{b-a} \right)$ we have that
 %      \begin{align}\label{eq:shift_numb}
-%        s(\alpha,\beta) = \frac{1}{2\pi} \left( \theta +  m \cdot \arg \left( \frac{(b-a)^{\frac{d}{m}} \ft_{a,b}(x)}{(d-c)^{\frac{d}{m}} \ft_{c,d}(x)} \right) \right) \in \Z/m\Z,
+%        s(\alpha,\beta) = \frac{1}{2\pi} \left( \theta +  m \cdot \arg \left( \frac{(b-a)^{\frac{d}{m}} \ytab(x)}{(d-c)^{\frac{d}{m}} \ytcd(x)} \right) \right) \in \Z/m\Z,
 %      \end{align}
 %      where
 %       \begin{align*}\theta = \begin{cases}

@@ -34,13 +34,13 @@
    \subsubsection{Computation of elementary integrals}
 
    For each elementary cycle $\gamma_e\in C$, we evaluate numerically the $g$
-   integrals of differentials from \eqref{eq:thm_periods} as sums of the form
+   integrals of differentials from \eqref{m-eq:thm_periods} as sums of the form
    \begin{equation}
        \int_{-1}^1\frac{\varphi_{i,j}(u)\du}{(1-u^2)^{\frac jm}}
            \approx \sum_{k=1}^n w_k\frac{x_k^{i-1}}{y_k^j}
    \end{equation}
    where $n$ is the number of integration points, $w_k,u_k$ are integration weights and points,
-   $x_k=u_k+\frac{b+a}{b-a}$ and $y_k=\ft_{a,b}(u_k)$.
+   $x_k=u_k+\frac{b+a}{b-a}$ and $y_k=\ytab(u_k)$.
 
    We proceed as follows:
    \begin{itemize}
@@ -48,7 +48,7 @@
    \item for each point $k$, we evaluate the absissa and weights $u_k,w_k$ using
        a few trigonometric or hyperbolic functions\footnote{this can be reduced to only one exponential
        and a few multiplications};
-   \item we compute $y_k=\ft_{a,b}(u_k)$ using $d-3$ multiplications and one $m$th root,
+   \item we compute $y_k=\ytab(u_k)$ using $d-3$ multiplications and one $m$th root,
        as shown in section \ref{sec:computingroots} below;
    \item starting from $\frac{w_k}{y_k}$, we evaluate all $g$ terms $w_k\frac{x_k^{i-1}}{y_k^j}$
        each time either multiplying by $x_k$ or dividing by $y_k$, and add each to the corresponding
@@ -84,7 +84,7 @@
    and $l\in\Z/m\Z$ their shifts,
    and $s_{e,l}\in\Z$ are coefficients of the matrix $S$. 
 
-   We use \eqref{eq:thm_periods} to compute the coefficients of the big period
+   We use \eqref{m-eq:thm_periods} to compute the coefficients of the big period
    matrix $(\OA,\OB)$, so that each term of \eqref{eq:base_change_cycles}
    involves only a fixed number of multiplications.
 
@@ -119,7 +119,7 @@
 
    \subsubsection{Improving branch points}
 
-   As we saw in Section \ref{sec:numerical_integration}, the number of integration points
+   As we saw in Section \ref{m-sec:numerical_integration}, the number of integration points
    closely depends on the configuration of branch points.
 
    In practice the tau constant of double-exponential integration is usually bigger than $0.5$
@@ -133,7 +133,7 @@
   \label{sec:computingroots}
 
   For numerical integration of the integrals in \eqref{m-eq:thm_periods_1}
-  we need to evaluate $\fab(u) = \prod_{x_k \ne a,b} (u-u(x_k))\mr$ at $u
+  we need to evaluate $\ytab(u) = \prod_{x_k \ne a,b} (u-u(x_k))\mr$ at $u
   \in [-1,1]$. Instead of computing $(d-2)$ $m$-th roots for each
   integration point, we compute $q \in \frac12\Z$ such that $$\prod_{x_k \ne a,b}
   \left(u - u(x_k) \right)\mr = \zeta^q \cdot \left( \prod_{x_k \ne a,b}
@@ -166,7 +166,7 @@
    $x_k=u_k-\frac{a+b}2$, which is usually done $g-m-1$ times for each of
    the $n$ integration points.
 
-   More precisely, as we saw in the proof of Proposition \ref{prop:basis}, for each power $j$
+   More precisely, as we saw in the proof of Proposition \ref{prop:holom_diff}, for each power $j$
    we use the powers $0\leq i\leq d_i = \floor{\frac{dj-δ}m}$, with $\sum d_i = g$.
 
    However $x_k$ is a complex number while $u_k$ is real, so it is better to compute
@@ -183,5 +183,5 @@
 
    This saves a factor almost $2$ on the running time.
 
- \biblio
+\biblio
 \end{document}
