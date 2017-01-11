@@ -630,14 +630,6 @@ max_spanning(A,nedges=0)= {
   for(i=1,n,
     for(j=i+1,n,
       tau_v[z++] = [tau_edge(A,i,j),i,j];
-      /*
-      tauij = 4; /* > Pi/2 * /
-      for(k=1,n,
-        if(k==i||k==j,next());
-        tauij = min(tauij,tau_3(A[i],A[j],A[k]));
-        );
-      tau_v[z++] = [tauij,i,j];
-      */
       \\ order edge so that left to right
       if(real(A[i])>real(A[j]),tau_v[z][2]=j;tau_v[z][3]=i);
       );
@@ -1218,7 +1210,7 @@ hcInit(A,provenbounds=0) = {
   my(hcStruct = vector(iMax));
   my(Dcalc,g,tree,tau,h,npoints,IntFactor,IntPoints,AB,Intersection,P);
   my(Omega0,Omega1);
-  if(type(A)=="t_POL",A = polroots(pol));
+  if(type(A)=="t_POL",A = polroots(A));
   g = floor((#A-1)/2);
   hcStruct[iRoots] = A;
   hcStruct[iGenus] = g;  
