@@ -35,10 +35,10 @@ Numerical integration with Gauss Chebychev
  */
 /* sign of the imaginary part with positive zero */
 isign(x) = { my(s);s=sign(imag(x));if(s,s,1);}
-sqrt_affinereduction(u,z,product=0) = {
+sqrt_affinereduction_gc(u,z,flag=0) = {
   my(z1,i1,z2,i2,sgn);
   \\ if we want the long method, or there is only one root
-  if(product||#u==1,
+  if(flag||#u==1,
     prod(i=1,#u, if(real(u[i])>0,I*sqrt(u[i]-z),sqrt(z-u[i])))
     , \\ otherwise
     sgn = 1; \\ track the number of loops
@@ -64,27 +64,26 @@ sqrt_affinereduction(u,z,product=0) = {
  compute the column of period integrals
  [ int x^k/y dx ]
 */
-integrals_gc(u, g, n, product = 0) = {
+integrals_gc(u, g, n, flag=0) = {
   my(res = vector(g));
   for(k=1,n,
     my(xk = cos((2*k-1)*Pi/(2*n)));
-    my(t = 1/sqrt_affinereduction(u,xk,product));
+    my(t = 1/sqrt_affinereduction_gc(u,xk,flag));
     res[1] += t;
     for(i=2,g, res[i] += (t *= xk));
     );
   res * Pi/n;
 }
-
 /* make u vectors : remove one or two roots */
-ab_points(A,ia, ib) = {
+ab_points_gc(A,ia, ib) = {
     my(a = A[ia]); my(b=A[ib]); my(j=0);
     my(u=vector(#A-2));
     for(i=1,#A,i==ia||i==ib||u[j++]=(2*A[i]-a-b)/(b-a));
     u;
 }
-integrals_edge(C, i1, i2, product = 0) = {
+integrals_edge_gc(C, i1, i2, flag=0) = {
   my(g = C[iGenus]);
-  my(u = ab_points(C[iRoots], i1, i2));
+  my(u = ab_points_gc(C[iRoots], i1, i2));
   my(n = gc_n(u));
   my(res = integrals_gc(u, g, n));
   msgdebug(res, "int =", 2);
@@ -103,8 +102,8 @@ integrals_edge(C, i1, i2, product = 0) = {
           res[j] *= fact;
      );
   \\ to track signs, return also the values of the sqrt chosen at end points
-  vplus = sqrt_affinereduction(u,1,flag)*sqrt(geom_factor)^#u/geom_factor;
-  vmoins = sqrt_affinereduction(u,-1,flag)*sqrt(geom_factor)^#u/geom_factor;
+  vplus = sqrt_affinereduction_gc(u,1,flag)*sqrt(geom_factor)^#u/geom_factor;
+  vmoins = sqrt_affinereduction_gc(u,-1,flag)*sqrt(geom_factor)^#u/geom_factor;
   return([res,vmoins,vplus]);
 }
 
@@ -177,7 +176,7 @@ r_tree(A,edges) = {
 /* *************************************************************************
  *  step 1: maximal-flow spanning tree
  * ************************************************************************* */
-max_spanning(A,nedges=0)= {
+max_spanning_gc(A,nedges=0)= {
   /* low precision parameters */
   localprec(19);
   my(n,r_v,z,taken,tree,rmin);
@@ -217,19 +216,20 @@ max_spanning(A,nedges=0)= {
  * ************************************************************************* */
 
 /* end intersection I[ab].I[bd] */
-intersection_abbd(A,ia,ib,ic,id) = {
+intersection_abbd_gc(A,ia,ib,ic,id) = {
+    my(k,a,b,d,tau,Aprim,fad,j);
     k = #A;
     a = A[ia]; b = A[ib]; d = A[id];
     tau = arg((d-b)/(b-a)); 
     /* \frac{\sqrt{d-b}^{k}\prod_{λ\neq b,d}\sqrt{x_β(b)-ψ_β(λ)}} */
     \\fbd = sqrt((d-b))^k
         \\*prod(i=1,k,if(i==ib||i==id,1,sqrt(-1-(2*A[i]-b-d)/(d-b))));
-    Aprim = ab_points(A,ib,id);
-    fbd = sqrt((d-b))^k*sqrt_affinereduction(Aprim,-1);
+    Aprim = ab_points_gc(A,ib,id);
+    fbd = sqrt((d-b))^k*sqrt_affinereduction_gc(Aprim,-1);
     \\fab = sqrt((b-a))^k
         \\*prod(i=1,k,if(i==ib||i==ia,1,sqrt(+1-(2*A[i]-b-a)/(b-a))));
-    Aprim = ab_points(A,ia,ib);
-    fab = sqrt((b-a))^k*sqrt_affinereduction(Aprim,1);
+    Aprim = ab_points_gc(A,ia,ib);
+    fab = sqrt((b-a))^k*sqrt_affinereduction_gc(Aprim,1);
     if(default(debug)>=1,
             endarg = arg(fab/fbd);
             arg1 = -(Pi+tau)/2;
@@ -244,20 +244,21 @@ intersection_abbd(A,ia,ib,ic,id) = {
       );
     if(imag(fbd/fab)<0,return(-1),return(1));
 }
-intersection_abad(A,ia,ib,ic,id) = {
+intersection_abad_gc(A,ia,ib,ic,id) = {
+    my(k,a,b,d,tau,Aprim,fad,j);
     k = #A;
     a = A[ia]; b = A[ib]; d = A[id];
     tau = arg((d-a)/(b-a)); 
     \\ \frac{\sqrt{d-b}^{k}\prod_{λ\neq b,d}\sqrt{x_β(b)-ψ_β(λ)}}
     \\fad = sqrt((d-a))^k
         \\*prod(i=1,k,if(i==ia||i==id,1,sqrt(-1-(2*A[i]-a-d)/(d-a))));
-    Aprim = ab_points(A,ia,id);
-    fad = sqrt((d-a))^k*sqrt_affinereduction(Aprim,-1);
+    Aprim = ab_points_gc(A,ia,id);
+    fad = sqrt((d-a))^k*sqrt_affinereduction_gc(Aprim,-1);
     \\fab = sqrt((b-a))^k
         \\*prod(i=1,k,if(i==ib||i==ia,1,sqrt(-1-(2*A[i]-b-a)/(b-a))));
     Aprim = ab_points(A,ia,ib);
     j=0;for(i=1,k,if(i==ia||i==ib,,Aprim[j++]=(2*A[i]-a-b)/(b-a)));
-    fab = sqrt((b-a))^k*sqrt_affinereduction(Aprim,-1);
+    fab = sqrt((b-a))^k*sqrt_affinereduction_gc(Aprim,-1);
     if(default(debug)>=1,
             endarg = arg(fab/fad);
             arg1 = -tau/2;
@@ -272,24 +273,25 @@ intersection_abad(A,ia,ib,ic,id) = {
     if(imag(fab/fad)<0,return(-1),return(1));
 }
 /* TODO: check aligned points ... */
-intersection(A,ia,ib,ic,id) = {
+intersection_gc(A,ia,ib,ic,id) = {
   \\ do we have a common point ?
   if(ia==ib||ic==id, 0,
     (ia==ic&&ib==id)||(ia==id&&ib==ic), 0,\\ self intersection
     ia!=ic&&ia!=id&&ib!=ic&&ib!=id,0,\\ no intersection
-    ia==ic, +intersection_abad(A,ia,ib,ic,id),
-    ib==ic, +intersection_abbd(A,ia,ib,ic,id),
-    ia==id, -intersection_abbd(A,ic,id,ia,ib),
-    ib==id, +intersection_abcb(A,ia,ib,ic,id),
+    ia==ic, +intersection_abad_gc(A,ia,ib,ic,id),
+    ib==ic, +intersection_abbd_gc(A,ia,ib,ic,id),
+    ia==id, -intersection_abbd_gc(A,ic,id,ia,ib),
+    ib==id, +intersection_abcb_gc(A,ia,ib,ic,id),
     error("this intersection should not occur",[ia,ib,ic,id]);
     );
 }
-intersection_spanning(A,tree) = {
+intersection_spanning_gc(A,tree) = {
+  my(n,res,s);
   n = #tree;
   res = matrix(n,n);
   for(i=1,#tree,
     for(j=i+1,#tree,
-    s = intersection(A,tree[i][1],tree[i][2],tree[j][1],tree[j][2]);
+    s = intersection_gc(A,tree[i][1],tree[i][2],tree[j][1],tree[j][2]);
     res[i,j] =  s;
     res[j,i] = -s;
     );
@@ -300,17 +302,17 @@ intersection_spanning(A,tree) = {
 /* *************************************************************************
  *  step 3 : period matrix of edges + intersection matrix
  * ************************************************************************* */
-periods_spanning(C) = {
+periods_spanning_gc(C) = {
   my(g = C[iGenus]);
   my(tree = C[iTree]);
   my(A = C[iRoots]);
   if(1, /* forget about end points */
-  Mat(vector(#tree,k,2*integrals_edge(C,tree[k][1],tree[k][2])[1]~));
+  Mat(vector(#tree,k,2*integrals_edge_gc(C,tree[k][1],tree[k][2])[1]~));
   ,
   res = vector(#tree);
   endpointsvalues=vector(#tree);
   for(k=1,#tree,
-    tmp = int_periods_affinereduction(A,tree[k][1],tree[k][2]);
+    tmp = integrals_edge_gc(A,tree[k][1],tree[k][2]);
     /* should use final values to find intersection if sure that no
      * crossing edges TODO */
     res[k] = 2*tmp[1]~;
@@ -326,10 +328,11 @@ periods_spanning(C) = {
 
 /* assume M is invertible, antisymetric and of even dimension 2g */
 symplectic_reduction(M) = {
-  g=matsize(M)[1];
+  my(g=matsize(M)[1]);
   if(g%2,return(0),g/=2);
-  N = Vec(M); \\ columns matrices
-  P = Vec(matid(2*g));
+  my(N = Vec(M)); \\ columns matrices
+  my(P = Vec(matid(2*g)));
+  my(i,j,ii,jj);
   /* algorithm similar to snf
      take minimal N[i,j] non-zero value above diagonal
      1. transform it to be the gcd over the line
@@ -506,35 +509,36 @@ hcperiods(f,flag) = {
      type(f)=="t_POL",A=polroots(f)
      );
   my(hcStruct = vector(iMax));
-  my(Dcalc,g,tree,tau,h,npoints,IntFactor,IntPoints,AB,Intersection,P);
+  my(Dcalc,g,tree,AB,Intersection,P);
   my(Omega0,Omega1);
   if(type(A)=="t_POL",A = polroots(pol));
-  g = floor((#A-1)/2);
+  my(g = floor((#A-1)/2));
   hcStruct[iRoots] = A;
   hcStruct[iGenus] = g;  
   gettime();
-  my(tmp = max_spanning(A,2*g));
+  my(tmp = max_spanning_gc(A,2*g));
   msgtimer("tree");
-  hcStruct[iTree] =  tree = tmp[1];
+  my(tree = tmp[1]);
+  hcStruct[iTree] = tree;
   msgdebug(tree,"  ",2);
   /* compute big period matrix of periods C_1,..C_2g */
-  coh1x_homC = periods_spanning(hcStruct);
+  my(coh1x_homC = periods_spanning_gc(hcStruct));
   msgtimer("periods");
   msgdebug(coh1x_homC,"  ",2);
   /* intersection matrix of basis C_1,.. C_2g */
-  IntC = intersection_spanning(A,tree);
+  my(IntC = intersection_spanning_gc(A,tree));
   hcStruct[iIntersection] = IntC;
   msgtimer("intersection");
   msgdebug(IntC,"  ",2);
   /* column base change from (A_i,B_i) to C_i */
   /* that is, P^t * Intersection * P = J_g */
-  ABtoC = symplectic_reduction(IntC);
+  my(ABtoC = symplectic_reduction(IntC));
   hcStruct[iABtoC] = ABtoC;
   /* change basis */
   /* put everything in the struct */
   coh1x_homAB = coh1x_homC * ABtoC; /* now matrix in (A,B) basis */
-  Omega0 = vecextract(coh1x_homAB,Str("1..",g),Str("1..",g));
-  Omega1 = vecextract(coh1x_homAB,Str("1..",g),Str(g+1,".."));
+  my(Omega0 = vecextract(coh1x_homAB,Str("1..",g),Str("1..",g)));
+  my(Omega1 = vecextract(coh1x_homAB,Str("1..",g),Str(g+1,"..")));
   if(flag==0, Omega1^(-1)*Omega0, /* default, tau matrix */
      flag==1, [Omega0,Omega1],
      error("unknown flag"));
