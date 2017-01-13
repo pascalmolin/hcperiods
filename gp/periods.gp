@@ -328,6 +328,7 @@ int_periods_affinereduction(C,i1,i2,decomp=0) = {
   decprim = (b+a)/(b-a);
   /* affine transformation to [-1,1] */
   Aprim = make_Aprim(A,i1,i2);
+  msgdebug([a,b], "=========== de ==========\n    a,b =", 2);
   /* numerical integration with precomputed DE weights */
   \\ init on x = 0, dx=1
   my(g=C[iGenus]);
@@ -347,13 +348,16 @@ int_periods_affinereduction(C,i1,i2,decomp=0) = {
         res[j] += (tp+tm);
       );
      );
+   res *= C[iIntFactor];
    \\ factor due to the change of variable
-   fact = I*C[iIntFactor]/sqrt(geom_factor)^#Aprim;
+   msgdebug(res, "    shifted =", 2);
+   fact = I/sqrt(geom_factor)^#Aprim;
    res[1] *= fact;
    for(j=2,g,
      fact *= geom_factor;
      res[j] *= fact;
      );
+   msgdebug(res, "    factors =", 3);
    \\ to track signs, return also the values of the sqrt chosen at end points
    vplus = sqrt_affinereduction(Aprim,1,decomp)*sqrt(geom_factor)^#Aprim/geom_factor;
    vmoins = sqrt_affinereduction(Aprim,-1,decomp)*sqrt(geom_factor)^#Aprim/geom_factor;
@@ -677,7 +681,7 @@ periods_spanning(C) = {
   my(A = C[iRoots]);
   /* nb : should give tau since already computed.. */
   if(keependpts=1,
-  Mat(vector(#tree,k,2*int_periods_affinereduction(C,tree[k][1],tree[k][2])[1]~));
+  Mat(vector(#tree,k,int_periods_affinereduction(C,tree[k][1],tree[k][2])[1]~));
   ,
   res = vector(#tree);
   endpointsvalues=vector(#tree);
@@ -685,7 +689,7 @@ periods_spanning(C) = {
     tmp = int_periods_affinereduction(A,tree[k][1],tree[k][2]);
     /* should use final values to find intersection if sure that no
      * crossing edges TODO */
-    res[k] = 2*tmp[1]~;
+    res[k] = tmp[1]~;
     endpointsvalues[k] = [tmp[2],tmp[3]];
   );
   Mat(res);
@@ -1208,7 +1212,7 @@ determined during computations.
 */
 hcInit(A,provenbounds=0) = {
   my(hcStruct = vector(iMax));
-  my(Dcalc,g,tree,tau,h,npoints,IntFactor,IntPoints,AB,Intersection,P);
+  my(D,Dcalc,g,tree,tau,h,npoints,IntFactor,IntPoints,AB,Intersection,P);
   my(Omega0,Omega1);
   if(type(A)=="t_POL",A = polroots(A));
   g = floor((#A-1)/2);
@@ -1223,7 +1227,7 @@ hcInit(A,provenbounds=0) = {
   hcStruct[iTree] =  tree = tmp[1];
   hcStruct[iIntTau] = tau = tmp[2];
   /* prepare integration */
-  my(D = Dcalc*log(10));
+  D = Dcalc*log(10);
   tmp = integration_parameters(A,tree,tau,D,provenbounds);
   hcStruct[iIntH] = h = precision(tmp[1],Dcalc);
   hcStruct[iIntNpoints] = npoints = tmp[2];
