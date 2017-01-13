@@ -54,15 +54,19 @@
       \end{center}
       and where $s(x)\in\Z$ for $x\in\set{a,b}$ is given by
       \begin{equation}
-          s(x) = \frac{(d-1)\rho+m(\arg \ytcd(x)-\arg\ytab(x))}{2π}
-          +\delta_{a=c}\frac{1}2
+%           s(x) = \frac{(d-1)\rho+m(\arg \ytcd(x)-\arg\ytab(x))}{2π}
+%           +\delta_{a=c}\frac{1}2
+	    s(x) = \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{(d-c)^{\frac{\deg(f)}{m}}\ytcd(x)}{(b-a)^{\frac{\deg(f)}{m}}\ytab(x)} \right) \right) + \frac{1}{2}(U_{c,d}^+ - U_{a,b}^+
+	    + \delta_{b=c})
       \end{equation}
      and
       \begin{equation}
-          \rho = \arg(d-c) - \arg(b-a).
+          %\rho = \arg(d-c) - \arg(b-a).
+          \rho = \arg \left( \frac{b-a}{d-c} \right).
       \end{equation}
  \end{thm}
 
+ \todo (CN) You have to beware of the branch cut of the $\arg$-function!
  \todo Notice $\ytab(a) = \prod_{x\neq a,b}(\frac{2x-2a}{b-a})^{\frac1m}$, and
  $s(x)$ can also be written
       \begin{equation}
