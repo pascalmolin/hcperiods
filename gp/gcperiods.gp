@@ -14,15 +14,6 @@ msgtimer(s,level=1) = {
 msgdebug(s,header="  ",level=1) = {
   if(default(debug)>=level,printf("%s%s\n",header,s));
 }
-
-global(iMax=0);
-iGenus            =  iMax++;
-iRoots            =  iMax++;
-iTree             =  iMax++;
-iIntersection     =  iMax++;
-iABtoC            =  iMax++;
-iTau              =  iMax++;
-
 /**
 
 Numerical integration with Gauss Chebychev
@@ -38,6 +29,7 @@ isign(x) = { my(s);s=sign(imag(x));if(s,s,1);}
 sqrt_affinereduction_gc(u,z,flag=0) = {
   my(z1,i1,z2,i2,sgn);
   \\ if we want the long method, or there is only one root
+  flag=1; /* FIXME! */
   if(flag||#u==1,
     prod(i=1,#u, if(real(u[i])>0,I*sqrt(u[i]-z),sqrt(z-u[i])))
     , \\ otherwise
@@ -59,7 +51,6 @@ sqrt_affinereduction_gc(u,z,flag=0) = {
     sqrt(z1)*sgn
     );
 }
-
 /*
  compute the column of period integrals
  [ int x^k/y dx ]
@@ -70,29 +61,30 @@ integrals_gc(u, g, n, flag=0) = {
     my(xk = cos((2*k-1)*Pi/(2*n)));
     my(t = 1/sqrt_affinereduction_gc(u,xk,flag));
     res[1] += t;
-    for(i=2,g, res[i] += (t *= xk));
+    for(i=2, g, t *= xk; res[i] += t);
     );
   res * Pi/n;
 }
-/* make u vectors : remove one or two roots */
-ab_points_gc(A,ia, ib) = {
+/* make u vectors : remove two roots */
+ab_points_gc(A, ia, ib) = {
     my(a = A[ia]); my(b=A[ib]); my(j=0);
     my(u=vector(#A-2));
     for(i=1,#A,i==ia||i==ib||u[j++]=(2*A[i]-a-b)/(b-a));
     u;
 }
-integrals_edge_gc(C, i1, i2, flag=0) = {
-  my(g = C[iGenus]);
-  my(u = ab_points_gc(C[iRoots], i1, i2));
+polshift(v,c)=for(i=2,#v,forstep(j=#v,i,-1,v[j]+=c*v[j-1]));v;
+integrals_edge_gc(A, g, i1, i2, flag=0) = {
+  my(u = ab_points_gc(A, i1, i2));
+  msgdebug([A[i1],A[i2]], "=========== gc ==========\n    a,b =", 2);
   my(n = gc_n(u));
   my(res = integrals_gc(u, g, n));
-  msgdebug(res, "int =", 2);
+  msgdebug(res, "    int =", 2);
   /* shift */
-  my(a = C[iRoots][i1]);
-  my(b = C[iRoots][i2]);
-  my(c = (b+a)/(b-a));
-  for(j = 2, g, res[j] += res[j-1] * c);
-  msgdebug(res, "shifted =", 2);
+  my(a,b,c);
+  a = A[i1]; b = A[i2];
+  c = (b+a)/(b-a);
+  res = polshift(res, c);
+  msgdebug(res, "    shifted =", 2);
   /* fix factors */
   my(geom_factor = (b-a)/2);
   my(fact = I/sqrt(geom_factor)^#u);
@@ -101,12 +93,12 @@ integrals_edge_gc(C, i1, i2, flag=0) = {
           fact *= geom_factor;
           res[j] *= fact;
      );
+  msgdebug(res, "    factors =", 3);
   \\ to track signs, return also the values of the sqrt chosen at end points
   vplus = sqrt_affinereduction_gc(u,1,flag)*sqrt(geom_factor)^#u/geom_factor;
   vmoins = sqrt_affinereduction_gc(u,-1,flag)*sqrt(geom_factor)^#u/geom_factor;
   return([res,vmoins,vplus]);
 }
-
 /** == compute integration parameters == */
 dist_ellipse(p,a) = {
     my(b,t);
@@ -178,9 +170,10 @@ r_tree(A,edges) = {
  * ************************************************************************* */
 max_spanning_gc(A,nedges=0)= {
   /* low precision parameters */
-  localprec(19);
   my(n,r_v,z,taken,tree,rmin);
+  localprec(19);
   n = #A;
+  if(n<=0,error(A));
   if(!nedges,nedges=n-1); /* spanning tree */
   r_v=vector(n*(n-1)/2);
   /* build list of edges ordered by r */
@@ -245,20 +238,19 @@ intersection_abbd_gc(A,ia,ib,ic,id) = {
     if(imag(fbd/fab)<0,return(-1),return(1));
 }
 intersection_abad_gc(A,ia,ib,ic,id) = {
-    my(k,a,b,d,tau,Aprim,fad,j);
+    my(k,a,b,d,tau,u,fad,j);
     k = #A;
     a = A[ia]; b = A[ib]; d = A[id];
     tau = arg((d-a)/(b-a)); 
     \\ \frac{\sqrt{d-b}^{k}\prod_{λ\neq b,d}\sqrt{x_β(b)-ψ_β(λ)}}
     \\fad = sqrt((d-a))^k
         \\*prod(i=1,k,if(i==ia||i==id,1,sqrt(-1-(2*A[i]-a-d)/(d-a))));
-    Aprim = ab_points_gc(A,ia,id);
-    fad = sqrt((d-a))^k*sqrt_affinereduction_gc(Aprim,-1);
+    u = ab_points_gc(A,ia,id);
+    fad = sqrt((d-a))^k*sqrt_affinereduction_gc(u,-1);
     \\fab = sqrt((b-a))^k
         \\*prod(i=1,k,if(i==ib||i==ia,1,sqrt(-1-(2*A[i]-b-a)/(b-a))));
-    Aprim = ab_points(A,ia,ib);
-    j=0;for(i=1,k,if(i==ia||i==ib,,Aprim[j++]=(2*A[i]-a-b)/(b-a)));
-    fab = sqrt((b-a))^k*sqrt_affinereduction_gc(Aprim,-1);
+    u = ab_points_gc(A,ia,ib);
+    fab = sqrt((b-a))^k*sqrt_affinereduction_gc(u,-1);
     if(default(debug)>=1,
             endarg = arg(fab/fad);
             arg1 = -tau/2;
@@ -272,50 +264,75 @@ intersection_abad_gc(A,ia,ib,ic,id) = {
       );
     if(imag(fab/fad)<0,return(-1),return(1));
 }
+intersection_abcb_gc(A,ia,ib,ic,id) = {
+    my(k,a,b,c,tau,Aprim,fcb,fab,j);
+    k = #A;
+    a = A[ia]; b = A[ib]; c = A[ic];
+    tau = arg((b-c)/(b-a)); 
+    \\ \frac{\sqrt{d-b}^{k}\prod_{λ\neq b,d}\sqrt{x_β(b)-ψ_β(λ)}}
+    \\fcb = sqrt((b-c))^k
+        \\*prod(i=1,k,if(i==ic||i==ib,1,sqrt(+1-(2*A[i]-c-b)/(b-c))));
+    Aprim = ab_points_gc(A,ic,ib);
+    fcb = sqrt((b-c))^k * sqrt_affinereduction_gc(Aprim,+1);
+    \\fab = sqrt((b-a))^k
+        \\*prod(i=1,k,if(i==ib||i==ia,1,sqrt(+1-(2*A[i]-b-a)/(b-a))));
+    Aprim = ab_points_gc(A,ia,ib);
+    fab = sqrt((b-a))^k*sqrt_affinereduction_gc(Aprim,+1);
+    if(default(debug)>=1,
+            endarg = arg(fab/fcb);
+            \\arg1 = tau/2;
+            arg1 = if(tau>0,Pi-tau/2,-Pi-tau/2);
+            \\arg2 = Pi-tau/2;
+            arg2 = -tau/2;
+            if(abs(endarg-arg1)>0.0001&&abs(endarg-arg2)>0.0001,
+                print("intersection_abcb");
+                print("  tau=",tau);
+                printf("  arg[fab/fcb]=%1.4f should be %1.4f or %1.4f\n",endarg,arg1, arg2);
+                printf("tau/2=%1.3f ; 2*tau=%1.3f ; (Pi-tau)/2=%1.3f ; Pi-2*tau=%1.3f ; Pi-tau/2=%1.3f ; Pi+tau/2=%1.3f \n", tau/2,2*tau,(Pi-tau)/2,Pi-2*tau,Pi-tau/2,Pi+tau/2);
+              );
+      );
+    if(imag(fab/fcb)<0,return(-1),return(1));
+}
 /* TODO: check aligned points ... */
 intersection_gc(A,ia,ib,ic,id) = {
-  \\ do we have a common point ?
-  if(ia==ib||ic==id, 0,
-    (ia==ic&&ib==id)||(ia==id&&ib==ic), 0,\\ self intersection
-    ia!=ic&&ia!=id&&ib!=ic&&ib!=id,0,\\ no intersection
-    ia==ic, +intersection_abad_gc(A,ia,ib,ic,id),
-    ib==ic, +intersection_abbd_gc(A,ia,ib,ic,id),
-    ia==id, -intersection_abbd_gc(A,ic,id,ia,ib),
-    ib==id, +intersection_abcb_gc(A,ia,ib,ic,id),
-    error("this intersection should not occur",[ia,ib,ic,id]);
-    );
+    \\ do we have a common point ?
+        if(ia==ib||ic==id, 0,
+                (ia==ic&&ib==id)||(ia==id&&ib==ic), 0,\\ self intersection
+                ia!=ic&&ia!=id&&ib!=ic&&ib!=id,0,\\ no intersection
+                ia==ic, +intersection_abad_gc(A,ia,ib,ic,id),
+                ib==ic, +intersection_abbd_gc(A,ia,ib,ic,id),
+                ia==id, -intersection_abbd_gc(A,ic,id,ia,ib),
+                ib==id, +intersection_abcb_gc(A,ia,ib,ic,id),
+                error("this intersection should not occur",[ia,ib,ic,id]);
+          );
 }
 intersection_spanning_gc(A,tree) = {
-  my(n,res,s);
-  n = #tree;
-  res = matrix(n,n);
-  for(i=1,#tree,
-    for(j=i+1,#tree,
-    s = intersection_gc(A,tree[i][1],tree[i][2],tree[j][1],tree[j][2]);
-    res[i,j] =  s;
-    res[j,i] = -s;
-    );
-  );
-  res;
+    my(n,res,s);
+    n = #tree;
+    res = matrix(n,n);
+    for(i=1,#tree,
+            for(j=i+1,#tree,
+                s = intersection_gc(A,tree[i][1],tree[i][2],tree[j][1],tree[j][2]);
+                res[i,j] =  s;
+                res[j,i] = -s;
+               );
+       );
+    res;
 }
-
 /* *************************************************************************
  *  step 3 : period matrix of edges + intersection matrix
  * ************************************************************************* */
-periods_spanning_gc(C) = {
-  my(g = C[iGenus]);
-  my(tree = C[iTree]);
-  my(A = C[iRoots]);
+periods_spanning_gc(A,tree,g) = {
   if(1, /* forget about end points */
-  Mat(vector(#tree,k,2*integrals_edge_gc(C,tree[k][1],tree[k][2])[1]~));
+  Mat(vector(#tree,k,integrals_edge_gc(A,g,tree[k][1],tree[k][2])[1]~));
   ,
   res = vector(#tree);
   endpointsvalues=vector(#tree);
   for(k=1,#tree,
-    tmp = integrals_edge_gc(A,tree[k][1],tree[k][2]);
+    tmp = integrals_edge_gc(A,g,tree[k][1],tree[k][2]);
     /* should use final values to find intersection if sure that no
      * crossing edges TODO */
-    res[k] = 2*tmp[1]~;
+    res[k] = tmp[1]~;
     endpointsvalues[k] = [tmp[2],tmp[3]];
   );
   Mat(res);
@@ -506,121 +523,212 @@ determined during computations.
 hcperiods(f,flag) = {
   my(A);
   if(type(f)=="t_VEC",A=f,
-     type(f)=="t_POL",A=polroots(f)
+     type(f)=="t_COL",A=Vec(f),
+     type(f)=="t_POL",A=polroots(f),
+     error("unrecognized type for f ", f);
      );
-  my(hcStruct = vector(iMax));
-  my(Dcalc,g,tree,AB,Intersection,P);
-  my(Omega0,Omega1);
-  if(type(A)=="t_POL",A = polroots(pol));
-  my(g = floor((#A-1)/2));
-  hcStruct[iRoots] = A;
-  hcStruct[iGenus] = g;  
+  my(g,tree,tmp,ABtoC,IntC);
+  g = floor((#A-1)/2);
   gettime();
-  my(tmp = max_spanning_gc(A,2*g));
+  tmp = max_spanning_gc(A,2*g);
+  tmp = max_spanning(A,2*g);
   msgtimer("tree");
-  my(tree = tmp[1]);
-  hcStruct[iTree] = tree;
+  tree = tmp[1];
   msgdebug(tree,"  ",2);
   /* compute big period matrix of periods C_1,..C_2g */
-  my(coh1x_homC = periods_spanning_gc(hcStruct));
+  my(coh1x_homC = periods_spanning_gc(A,tree,g));
   msgtimer("periods");
   msgdebug(coh1x_homC,"  ",2);
   /* intersection matrix of basis C_1,.. C_2g */
-  my(IntC = intersection_spanning_gc(A,tree));
-  hcStruct[iIntersection] = IntC;
+  IntC = intersection_spanning_gc(A,tree);
   msgtimer("intersection");
   msgdebug(IntC,"  ",2);
   /* column base change from (A_i,B_i) to C_i */
   /* that is, P^t * Intersection * P = J_g */
-  my(ABtoC = symplectic_reduction(IntC));
-  hcStruct[iABtoC] = ABtoC;
+  ABtoC = symplectic_reduction(IntC);
   /* change basis */
   /* put everything in the struct */
   coh1x_homAB = coh1x_homC * ABtoC; /* now matrix in (A,B) basis */
-  my(Omega0 = vecextract(coh1x_homAB,Str("1..",g),Str("1..",g)));
-  my(Omega1 = vecextract(coh1x_homAB,Str("1..",g),Str(g+1,"..")));
+  my(Omega0,Omega1);
+  Omega0 = vecextract(coh1x_homAB,Str("1..",g),Str("1..",g));
+  Omega1 = vecextract(coh1x_homAB,Str("1..",g),Str(g+1,".."));
   if(flag==0, Omega1^(-1)*Omega0, /* default, tau matrix */
-     flag==1, [Omega0,Omega1],
+     flag==1, concat(Omega0,Omega1),
      error("unknown flag"));
 }
 
-/**
-action of an Moebius transformation on x
-*/
+/* *************************************************************************
+ * tests
+ * ************************************************************************* */
 
-homog(H,pts) = {
-  res = [];
-  for(k=1,#pts,
-    my(den = H[2,1]*pts[k]+H[2,2]);
-    if(den,res = concat(res,(H[1,1]*pts[k]+H[1,2])/den));
+\\step(z) = if(z,z,1);
+\\checkint() = {
+\\  A = polroots(x^7-x-1);
+\\  u = ab_points_gc(A,6,7);
+\\  a = A[6]; b = A[7];
+\\  ref = intnum(x=[-1,-.5],[1,-.5],[1,x,x^2]/(sqrt(1-x^2)*sqrt_affinereduction_gc(u,x)));
+\\  r1 = integrals_gc(u, 3, 100);
+\\  r2 = sqrt(I)*intnum(x=[a,-.5],[b,-.5],[1,x,x^2]/step(sqrt_affinereduction_gc(A,x)));
+\\  print(ref);
+\\  print(r1);
+\\  print(r2);
+\\}
+
+
+/* check if same as older DE code */
+check(f) = {
+  my(c,tree,g,p1,p2);
+  c = hcInit(f);
+  tree = c[iTree];
+  g = c[iGenus];
+  p1 = Vec(periods_spanning(c));
+  p2 = Vec(periods_spanning_gc(c[iRoots],tree,g));
+  for (i=1,#p1,
+    if(vecsum(abs(p1[i]-p2[i]))>.0000001,
+    my(u = ab_points_gc(c[iRoots], tree[i][1], tree[i][2]));
+    print("i=",i);
+    print("a,b=",[c[iRoots][tree[i][1]],c[iRoots][tree[i][2]]]);
+    print("u=",u);
+    print(p1[i]);
+    print(p2[i]);
+    ));
+}
+/* test if Omega is symetric to current prec */
+Riemann_symmetry(Omega) = {
+  my(Sym);
+  Sym = abs(Omega - mattranspose(Omega));
+  if(trace(Sym*mattranspose(Sym))>1e-20,
+      print("## Riemann_symmetry violated : Omega^t != Omega");0,1);
+}
+/* test whether Im(Omega) > 0 */
+/* this is true if and only if
+   IOmega = M^t*M
+   suppose Omega already tested for symmetry
+ */
+Riemann_positivity(Omega,n=5) = {
+  my(IOmega,g,X);
+  IOmega=imag(Omega);
+  g = matsize(IOmega)[1];
+  for(i=1,g,if(IOmega[i,i]<=0,
+           msgdebug(Strprintf("tau[%i,%i]<=0",i,i),"  *** ");
+   return(0)));
+  for(i=1,g,
+      for(j=i+1,g,
+        if(IOmega[i,i]<=abs(IOmega[i,j]),
+           msgdebug(Strprintf("tau[%i,%i]<=|tau[%i,%i]|",i,i,i,j),"  *** ");
+           return(0));
+        if(IOmega[i,i]+IOmega[j,j]<=2*abs(real(IOmega[i,j])),
+           msgdebug(Strprintf("tau[%i,%i]+tau[%i,%i]<=2|Re tau[%i,%i]|",
+           i,i,j,j,i,j),"  *** ");
+           return(0));
+        );
      );
-  \\ infinity ?
-  if(#pts%2,res=concat(res,0));
-  return(res);
-  \\return(vector(#pts,k,(H[1,1]*pts[k]+H[1,2])/(H[2,1]*pts[k]+H[2,2])));
+  /* plus some random tests */
+  X = vector(g,i,tan(3.14*random(1.)-1.55));
+  for(k=1,n,
+      if(X*IOmega*X~<0,
+        msgdebug(Str("X*tau*X~<0 for X=",X),"  *** ");
+       return(0));
+      for(i=1,g,X[i] = tan(3.14*random(1.)-1.55););
+     );
+  return(1)
+} 
+test_Riemannrelations(pts) = {
+  my(Omega = hcperiods(pts));
+  /* test if the small period matrix is symetric */
+  if(!Riemann_symmetry(Omega),error("symmetry : ",pts));
+  if(!Riemann_positivity(Omega),error("positivity : ",pts));
+  return(1);
 }
-HS=[0,1;1,0];
-HT=[1,1;0,1];
-H1=[3,7;2,5];
-H2=[8,-3;11,-4];
-H3=[13,892;5,343];
-H4=[1729,138; 213,17];
-
-/** GL(g) action of a SL(2) moebius transform :
-we decompose
-(ax+b)/(cx+d) = (b-ad/c)/(cx+d) + a/c
-i.e.
-[a,b;c,d] = [b-a*d/c,a/c;0,1]*[0,1;1,0]*[c,d;0,1]
+ptsRandom(g=2) = {
+  vector(2*g+1,k,tan(3.1*(random(1.)-.5))+I*tan(3.1*(random(1.)-.5)));
+}
+test_Riemannrelations_random(n=100) = {
+  my(pts);
+  for(i=1,n,
+    pts = ptsRandom(random(7)+1);
+    test_Riemannrelations(pts) || return(0);
+    );
+  return(1);
+}
+/* Gauss's AGM
+   I = int_a^b dx/sqrt((x-a)(x-b)(x-c))
+     = Pi/agm(sqrt(c-a),sqrt(c-b))
 */
-/* left matrix corresponding to inversion [0,1;1,0] */
-invert_mat(g) = {
-  matrix(g,g,i,j,if(i+j==g+1,-1,0));
-}
-/* left matrix corresponding to homothety ax+b */
-homot_mat(g,a,b,degree) = {
-  matrix(g,g,i,j,if(i>=j,binomial(i-1,j-1)*a^j*b^(i-j)))/sqrt(a^degree);
-}
-moebius_matrix_old(m,g,degree) = {
-  my(a = m[1,1]);
-  my(b = m[1,2]);
-  my(c = m[2,1]);
-  my(d = m[2,2]);
-  if(c,
-  return(
-homot_mat(g,b-a*d/c,a/c,degree)*invert_mat(g)*homot_mat(g,c,d,degree))
+gauss_agm(P) = {
+  my(a,b,c);
+  [a,b,c] = P;
+  /* a>b>c */
+  if(0,
+  Mat([Pi/agm(a,b),I*Pi/agm(a,c)]);
   ,
-  if(d,
-  return(homot_mat(g,a/d,b/d,degree))
-  ,
-  return(homot_mat(g,a,b,degree))
-  ));
-  
+  Mat([I*Pi/agm(sqrt(b-c),sqrt(a-c)),Pi/agm(sqrt(a-b),sqrt(a-c))]);
+  );
 }
-/* computed all at once */
-moebius_matrix(m,g) = {
-  my(a = m[1,1]);
-  my(b = m[1,2]);
-  my(c = m[2,1]);
-  my(d = m[2,2]);
-/* line k represents (ax+b)^k (cx+d)^(g-k-1) on basis 1,x,...x^{g-1} */
-  P1=Pol([a,b]); P2=Pol([c,d]);
-  lines = vector(g,kk,
-  my(k=kk-1);
-  P1^k*P2^(g-1-k)
- );
-(a*d-b*c)*
-matrix(g,g,k,l,
-  polcoeff(lines[k],l-1)
-);
+
+/* Richelot's algorithm
+   Iu=int_u^u' S(x)/sqrt(-P(x)) dx
+   u<u'<v<v'<w<w'
+   P(x)=(x-u)(x-u')(x-v)(x-v')(x-w)(x-w')
+   S(x)=lx+m
+   P=[u,u',v,v',w,w']
+   S=[l,m]
+*/
+richelot(P,S)= {
+  my(a,b,c,ap,bp,cp,D,A,B,C,dba,dcb,dca,a1,a1p,b1,b1p,c1,c1p,D1);
+  a=P[1];ap=P[2];b=P[3];bp=P[4];c=P[5];cp=P[6];
+  D=1;
+  prec = default(realprecision);
+  epsilon=10^-(default(realprecision));
+  while(1,
+    A=sqrt((c-b)*(c-bp)*(cp-b)*(cp-bp));
+    B=sqrt((c-a)*(c-ap)*(cp-a)*(cp-ap));
+    C=sqrt((b-a)*(b-ap)*(bp-a)*(bp-ap));
+    dba = b+bp-a-ap;
+    dcb = c+cp-b-bp;
+    dca = c+cp-a-ap;
+    a1 = (c*cp-a*ap-B)/dca;
+    a1p= (b*bp-a*ap-C)/dba;
+    b1 = (b*bp-a*ap+C)/dba;
+    b1p= (c*cp-b*bp-A)/dcb;
+    c1 = (c*cp-b*bp+A)/dcb;
+    c1p= (c*cp-a*ap+B)/dca;
+    D1 = 4*D*(a*ap*dcb-b*bp*dca+c*cp*dba)/(dba*dcb*dca);
+    a=a1; ap=a1p; b=b1; bp=b1p; c=c1; cp=c1p; D=D1;
+    /* test */
+    if(abs(a-ap)<epsilon && abs(b-bp)<epsilon && abs(c-cp)<epsilon,
+			return(Pi*sqrt(D)*(S[1]*a+S[2])/((a-b)*(a-c)))
+    )
+  );
 }
-/** action on the curve */
-moebius_action(C,m) = {
-  g = C[iGenus];
-  A = C[iRoots];
-  degree = #A;
-  Omega0 = hcBigperiods(C);
-  Omega1 = moebius_matrix(m,g)*Omega0;
-  Omega2 = hcBigperiods(hcInit(homog(m,A)));
-  print("Omega1=",Omega1);
-  print("Omega2=",Omega2);
+/* period([a,b,c]) ~ agm()
+   period([a,b,c,d,e,f])~richelot([a,b,c,d,e,f],[0,1])
+*/
+gccompare(P) = {
+  my(g,p,i);
+  if(type(P)=="t_POL",P=polroots(P));
+  if(#P==3,
+    gettime();
+    g = gauss_agm(P);
+    print("temps agm : ",gettime(),"ms.");
+    g = gauss_agm(P);
+    print(g);
+    print("temps agm : ",gettime(),"ms.");
+    p = hcperiods(P,1);
+    print("temps integration : ",gettime(),"ms.");
+    print(p);
+    print("erreur : ",g-p);
+    g,
+    #P==6,
+    gettime();
+    g = richelot(P,[0,1]);
+    print("temps richelot : ",gettime(),"ms.");
+    p = hcperiods(P,1);
+    print("temps integration : ",gettime(),"ms.");
+    print("erreur : ",g-I*p);
+    i = period_intnum(P);
+    print("temps pari intnum : ",gettime(),"ms.");
+    print("erreur : ",g-I*i);
+    g,
+    period_old(P));
 }
