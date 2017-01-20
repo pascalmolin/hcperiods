@@ -18,7 +18,6 @@ msgdebug(s,header="  ",level=1) = {
 
 Numerical integration with Gauss Chebychev
 ------------------------------------------
-
 */
 /* compute prod sqrt(z-u_i) as sqrt prod(z-u_i)
    track the number of loops around 0
@@ -103,14 +102,16 @@ integrals_edge_gc(A, g, i1, i2, flag=0) = {
 dist_ellipse(p,a) = {
     my(b,t);
     my(x,y);
-    my(eps=0.*1e6);
+    my(eps=0.*1e8);
     b = sqrt(a^2-1);
-    x=real(p);y=imag(p);
+    x=abs(real(p));y=abs(imag(p));
     if(x==0,abs(b-y),
             y==0,abs(a-x),
             t = atan(a*y/(b*x));
             ft = 1;
+            my(i);
             while(abs(ft) > eps,
+                \\if(i++ % 8 == 0,print(i,[p, a ,t]));
                 st = sin(t);
                 ct = cos(t);
                 ft = ct*st-x*a*st+y*b*ct;
@@ -217,12 +218,12 @@ intersection_abbd_gc(A,ia,ib,ic,id) = {
     /* \frac{\sqrt{d-b}^{k}\prod_{λ\neq b,d}\sqrt{x_β(b)-ψ_β(λ)}} */
     \\fbd = sqrt((d-b))^k
         \\*prod(i=1,k,if(i==ib||i==id,1,sqrt(-1-(2*A[i]-b-d)/(d-b))));
-    Aprim = ab_points_gc(A,ib,id);
-    fbd = sqrt((d-b))^k*sqrt_affinereduction_gc(Aprim,-1);
+    u = ab_points_gc(A,ib,id);
+    fbd = sqrt((d-b))^k*sqrt_affinereduction_gc(u,-1);
     \\fab = sqrt((b-a))^k
         \\*prod(i=1,k,if(i==ib||i==ia,1,sqrt(+1-(2*A[i]-b-a)/(b-a))));
-    Aprim = ab_points_gc(A,ia,ib);
-    fab = sqrt((b-a))^k*sqrt_affinereduction_gc(Aprim,1);
+    u = ab_points_gc(A,ia,ib);
+    fab = sqrt((b-a))^k*sqrt_affinereduction_gc(u,1);
     if(default(debug)>=1,
             endarg = arg(fab/fbd);
             arg1 = -(Pi+tau)/2;
@@ -233,6 +234,7 @@ intersection_abbd_gc(A,ia,ib,ic,id) = {
                 printf("  arg[fab/fbd]=%1.4f should be %1.4f or %1.4f\n",endarg,arg1, arg2);
                 printf("tau/2=%1.3f ; 2*tau=%1.3f ; (Pi-tau)/2=%1.3f ; Pi-2*tau=%1.3f ; \n",
                     tau/2,2*tau,(Pi-tau)/2,Pi-2*tau);
+                error();
               );
       );
     if(imag(fbd/fab)<0,return(-1),return(1));
@@ -260,6 +262,7 @@ intersection_abad_gc(A,ia,ib,ic,id) = {
                 print("  tau=",tau);
                 printf("  arg[fab/fad]=%1.4f should be %1.4f or %1.4f\n",endarg,arg1, arg2);
                 printf("tau/2=%1.3f ; 2*tau=%1.3f ; (Pi-tau)/2=%1.3f ; Pi-2*tau=%1.3f ; Pi-tau/2=%1.3f ; Pi+tau/2=%1.3f \n", tau/2,2*tau,(Pi-tau)/2,Pi-2*tau,Pi-tau/2,Pi+tau/2);
+                error();
               );
       );
     if(imag(fab/fad)<0,return(-1),return(1));
@@ -289,6 +292,7 @@ intersection_abcb_gc(A,ia,ib,ic,id) = {
                 print("  tau=",tau);
                 printf("  arg[fab/fcb]=%1.4f should be %1.4f or %1.4f\n",endarg,arg1, arg2);
                 printf("tau/2=%1.3f ; 2*tau=%1.3f ; (Pi-tau)/2=%1.3f ; Pi-2*tau=%1.3f ; Pi-tau/2=%1.3f ; Pi+tau/2=%1.3f \n", tau/2,2*tau,(Pi-tau)/2,Pi-2*tau,Pi-tau/2,Pi+tau/2);
+                error();
               );
       );
     if(imag(fab/fcb)<0,return(-1),return(1));
@@ -561,6 +565,78 @@ hcperiods(f,flag) = {
  * tests
  * ************************************************************************* */
 
+/* Gauss's AGM
+   I = int_a^b dx/sqrt((x-a)(x-b)(x-c))
+     = Pi/agm(sqrt(c-a),sqrt(c-b))
+*/
+gauss_agm(P) = {
+  my(a,b,c);
+  [a,b,c] = P;
+  /* a>b>c */
+  if(0,
+  Mat([Pi/agm(a,b),I*Pi/agm(a,c)]);
+  ,
+  Mat([I*Pi/agm(sqrt(b-c),sqrt(a-c)),Pi/agm(sqrt(a-b),sqrt(a-c))]);
+  );
+}
+
+/* Richelot's algorithm
+   Iu=int_u^u' S(x)/sqrt(-P(x)) dx
+   u<u'<v<v'<w<w'
+   P(x)=(x-u)(x-u')(x-v)(x-v')(x-w)(x-w')
+   S(x)=lx+m
+   P=[u,u',v,v',w,w']
+   S=[l,m]
+*/
+richelot(P,S)= {
+  my(a,b,c,ap,bp,cp,D,A,B,C,dba,dcb,dca,a1,a1p,b1,b1p,c1,c1p,D1);
+  a=P[1];ap=P[2];b=P[3];bp=P[4];c=P[5];cp=P[6];
+  D=1;
+  prec = default(realprecision);
+  localprec(prec+5);
+  epsilon=10^-(default(realprecision));
+  while(1,
+    print([a,ap,b,bp,c,cp]);
+    A=sqrt((c-b)*(c-bp)*(cp-b)*(cp-bp));
+    B=sqrt((c-a)*(c-ap)*(cp-a)*(cp-ap));
+    C=sqrt((b-a)*(b-ap)*(bp-a)*(bp-ap));
+    dba = b+bp-a-ap;
+    dcb = c+cp-b-bp;
+    dca = c+cp-a-ap;
+    a *= ap; b *= bp; c *= cp;
+    a1 = (c-a-B)/dca;
+    a1p= (b-a-C)/dba;
+    b1 = (b-a+C)/dba;
+    b1p= (c-b-A)/dcb;
+    c1 = (c-b+A)/dcb;
+    c1p= (c-a+B)/dca;
+    D1 = 4*D*(a*dcb-b*dca+c*dba)/(dba*dcb*dca);
+    a=a1; ap=a1p; b=b1; bp=b1p; c=c1; cp=c1p; D=D1;
+    /* test */
+    if(vecmax(abs([a,b,c]-[ap,bp,cp]))<epsilon,
+			return(Pi*sqrt(D)*(S[1]*a+S[2])/((a-b)*(a-c)))
+    )
+  );
+}
+/* 0.4357814509980649277362248425469236 */
+intnum(x=[1,-.5],[2,-.5],1/sqrt(-prod(j=1,6,x-j)))
+richelot([1..6],[0,1])
+/* 0.6969159933749301638525527624477020 */
+intnum(x=[1,-.5],[2,-.5],x/sqrt(-prod(j=1,6,x-j)))
+richelot([1..6],[1,0])
+
+X1 = [-1,I,-I,1,1+I]; \\ house
+intnum(x=[-1,-.5],[1,-.5],1/sqrt(-prod(j=1,#X1,x-X1[j])))
+
+X2 = [-1,0,-I,1-I,I,1+I];
+intnum(x=[-1,-.5],[0,-.5],1/sqrt(-prod(j=1,#X2,x-X2[j])))
+
+
+
+
+
+
+
 \\step(z) = if(z,z,1);
 \\checkint() = {
 \\  A = polroots(x^7-x-1);
@@ -651,56 +727,7 @@ test_Riemannrelations_random(n=100) = {
     );
   return(1);
 }
-/* Gauss's AGM
-   I = int_a^b dx/sqrt((x-a)(x-b)(x-c))
-     = Pi/agm(sqrt(c-a),sqrt(c-b))
-*/
-gauss_agm(P) = {
-  my(a,b,c);
-  [a,b,c] = P;
-  /* a>b>c */
-  if(0,
-  Mat([Pi/agm(a,b),I*Pi/agm(a,c)]);
-  ,
-  Mat([I*Pi/agm(sqrt(b-c),sqrt(a-c)),Pi/agm(sqrt(a-b),sqrt(a-c))]);
-  );
-}
 
-/* Richelot's algorithm
-   Iu=int_u^u' S(x)/sqrt(-P(x)) dx
-   u<u'<v<v'<w<w'
-   P(x)=(x-u)(x-u')(x-v)(x-v')(x-w)(x-w')
-   S(x)=lx+m
-   P=[u,u',v,v',w,w']
-   S=[l,m]
-*/
-richelot(P,S)= {
-  my(a,b,c,ap,bp,cp,D,A,B,C,dba,dcb,dca,a1,a1p,b1,b1p,c1,c1p,D1);
-  a=P[1];ap=P[2];b=P[3];bp=P[4];c=P[5];cp=P[6];
-  D=1;
-  prec = default(realprecision);
-  epsilon=10^-(default(realprecision));
-  while(1,
-    A=sqrt((c-b)*(c-bp)*(cp-b)*(cp-bp));
-    B=sqrt((c-a)*(c-ap)*(cp-a)*(cp-ap));
-    C=sqrt((b-a)*(b-ap)*(bp-a)*(bp-ap));
-    dba = b+bp-a-ap;
-    dcb = c+cp-b-bp;
-    dca = c+cp-a-ap;
-    a1 = (c*cp-a*ap-B)/dca;
-    a1p= (b*bp-a*ap-C)/dba;
-    b1 = (b*bp-a*ap+C)/dba;
-    b1p= (c*cp-b*bp-A)/dcb;
-    c1 = (c*cp-b*bp+A)/dcb;
-    c1p= (c*cp-a*ap+B)/dca;
-    D1 = 4*D*(a*ap*dcb-b*bp*dca+c*cp*dba)/(dba*dcb*dca);
-    a=a1; ap=a1p; b=b1; bp=b1p; c=c1; cp=c1p; D=D1;
-    /* test */
-    if(abs(a-ap)<epsilon && abs(b-bp)<epsilon && abs(c-cp)<epsilon,
-			return(Pi*sqrt(D)*(S[1]*a+S[2])/((a-b)*(a-c)))
-    )
-  );
-}
 /* period([a,b,c]) ~ agm()
    period([a,b,c,d,e,f])~richelot([a,b,c,d,e,f],[0,1])
 */
