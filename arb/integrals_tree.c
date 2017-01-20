@@ -51,13 +51,14 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec)
     return l;
 }
 
-/* returns x0, c.x0 + x1, c^2.x0 + c.x1 + x2, ... */
+/* returns x0, c.x0 + x1, c^2.x0 + 2.c.x1 + x2, ... */
 void
 acb_vec_polynomial_shift(acb_ptr x, const acb_t c, slong len, slong prec)
 {
-    slong k;
+    slong k, l;
     for (k = 1; k < len; k++)
-        acb_addmul(x + k, x + k - 1, c, prec);
+        for (l = len - 1; l >= k; l--)
+            acb_addmul(x + l, x + l - 1, c, prec);
 }
 
 void
