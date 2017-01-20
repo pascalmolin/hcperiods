@@ -10,8 +10,8 @@
 #define c(i,j) fmpz_mat_entry(c,i,j)
 
 /* set
-   c[i+k][j+l] = 1 if k-l = sp mod m
-   c[i+k][j+l] = -1 if k-l = sm mod m
+   c[i+k][j+l] = 1 if l-k = sp mod m
+   c[i+k][j+l] = -1 if l-k = sm mod m
  */
 
 static void
@@ -21,16 +21,16 @@ fill_block(fmpz_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
     /* important: make sp and sm positive */
     sp = (sp % m + m) % m;
     sm = (sm % m + m) % m;
-    for (l = 0; l < m - 1; l++)
+    for (k = 0; k < m - 1; k++)
     {
-        k = (l + sp) % m;
-        if (k < m - 1)
+        l = (k + sp) % m;
+        if (l < m - 1)
         {
             *c(i + k, j + l) = 1;
             *c(j + l, i + k) = -1;
         }
-        k = (l + sm) % m;
-        if (k < m - 1)
+        l = (k + sm) % m;
+        if (l < m - 1)
         {
             *c(i + k, j + l) = -1;
             *c(j + l, i + k) = 1;
@@ -53,7 +53,6 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
         edge_t ek = tree->e[k];
 
         /* intersection with self shifts */
-
         fill_block(c, k * size, k * size, 1, -1, m);
 
         /* intersection with other shifts */

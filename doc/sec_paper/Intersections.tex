@@ -4,35 +4,37 @@
 
   \section{Intersections}\label{sec:intersections}
 
-  In \S \ref{m-subsec:cycles_homo} we presented a generating set $C$ for $\homo$.
+  In \S \ref{m-subsec:cycles_homo} we presented a generating set $\Gamma$ for $\homo$.
   The formulas in Theorem \ref{m-thm:intsec_numb} explicitly determine the
-  intersection matrix $K_C$ and
+  intersection matrix $K_{\Gamma}$ and
   the rest of the section is concerned with its proof.
 
 
-  Since we generate $\homo$ with elementary cycles $\cyab$ and their shifts $\cyab^{(k)}$,
-  we only need to know intersections between them. A further restriction is that by construction
-  of the spanning tree we only need to
-  consider intersections $\cyab\circ\cycd$ such that $c$ is either $a$ or $b$
+%   Since we generate $\homo$ with elementary cycles $\cyab$ and their shifts $\cyab^{(k)}$,
+%   we only need to know intersections between them. A further restriction is that by construction
+%   of the spanning tree we only need to
+%   consider intersections $\cyab\circ\cycd$ such that $c$ is either $a$ or $b$
+
+  Since we generate $\homo$ with shifts of elementary cycles $\cyabk$ corresponding to edges $(a,b) \in E$ in a spanning tree, we only need to know the intersection between them.
+  By construction of the spanning tree we can restrict to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$ such that $c$ is either $a$ or $b$.
 
   \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
-      Let $a,b,c,d\in X$ be branch points, and $\cyabl, \cycdk$ be in $C$.
-
-      Then
+      Let $(a,b),(c,d) \in E$. The intersections of the corresponding cycles $\cyabk, \cycdl \in \Gamma$ are given by
       \begin{equation}
           \left(\cyab^{(k)} \circ \cycd^{(l)}\right)
           = \begin{cases}
-              1  &\text{ if } l-k \equiv s_+ \bmod m\\
-              -1 &\text{ if } l-k \equiv s_- \bmod m\\
-              0 \text{ otherwise}
+              1  &\text{ if } l-k \equiv s_+ \bmod m,\\
+              -1 &\text{ if } l-k \equiv s_- \bmod m,\\
+              0 &\text{ otherwise,}
           \end{cases}
       \end{equation}
       where $s_+$, $s_-$ are given by the following table, which covers all
       cases occuring in the algorithm
       \begin{center}
-      \begin{tabular}{lll}
+      \begin{tabular}{ccc}
           \toprule
-          $(a,b),(c,d)$
+          Case
+          %$(a,b),(c,d)$
           %$\cyab \circ \cycd$
           & $s_+$ & $s_-$ \\
           \midrule
@@ -54,29 +56,33 @@
       \end{center}
       and where $s(x)\in\Z$ for $x\in\set{a,b}$ is given by
       \begin{equation}
-          s(x) = \frac{(d-1)\rho+m(\arg \ytcd(x)-\arg\ytab(x))}{2π}
-          +\delta_{a=c}\frac{1}2
+%           s(x) = \frac{(d-1)\rho+m(\arg \ytcd(x)-\arg\ytab(x))}{2π}
+%           +\delta_{a=c}\frac{1}2
+	    s(x) = \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{(d-c)^{\frac{\deg(f)}{m}}\ytcd(x)}{(b-a)^{\frac{\deg(f)}{m}}\ytab(x)} \right) \right) + \frac{1}{2}
+	    \left( U_{c,d}^+ - U_{a,b}^+
+	    + \delta_{b=c}\right)
       \end{equation}
      and
       \begin{equation}
-          \rho = \arg(d-c) - \arg(b-a).
+          %\rho = \arg(d-c) - \arg(b-a).
+          \rho = \arg \left( \frac{b-a}{d-c} \right).
       \end{equation}
  \end{thm}
 
- \todo Notice $\ytab(a) = \prod_{x\neq a,b}(\frac{2x-2a}{b-a})^{\frac1m}$, and
- $s(x)$ can also be written
-      \begin{equation}
-      2π s(x) = (d-1)\rho
-      + \sum_{x_k\neq c,d}\arg \frac{c-x_k}{d-c}
-      - \sum_{x_k\neq a,b}\arg \frac{x-x_k}{b-a}
-      \end{equation}
+%  \todo This is wrong. Notice $\ytab(a) = \prod_{x\neq a,b}(\frac{2x-2a}{b-a})^{\frac1m}$, and
+%  $s(x)$ can also be written
+%       \begin{equation}
+%       2π s(x) = (d-1)\rho
+%       + \sum_{x_k\neq c,d}\arg \frac{c-x_k}{d-c}
+%       - \sum_{x_k\neq a,b}\arg \frac{x-x_k}{b-a}
+%       \end{equation}
 
   \begin{proof}\let\qed\relax
    \begin{itemize}
-    \item[($i$)] $P = (x,y) \in \cyabl \cap \cycdk   \Rightarrow  x \in [a,b] \cap [c,d]$.
+    \item[($i$)] If there exists $P = (x,y) \in \cyabl \cap \cycdk$, then  $x \in [a,b] \cap [c,d]$.
    \end{itemize}
   \end{proof}
-
+  \todo Adjust proof.
   In order to prove ($ii$) and ($iii$) we have to introduce some more machinery. Recall from \S \ref{m-subsec:roots_branches} that $\yab$ and $\ycd$ are analytic branches of $\cu$ on the open sets
   $\vab$ and $\vcd$ respectively. \abstandl
   We choose a common point $x \in V = \vab \cap \vcd$ and determine $s  = s(\cyab,\cycd,x) \in \Z/m\Z$  such that
@@ -170,7 +176,6 @@
     \label{fig:int_b=c}
 \end{figure}
  \end{itemize}
- \todo Other cases?
   \end{proof}
 
 
