@@ -75,7 +75,7 @@ int main() {
     for (prec = 60; prec < 150; prec *= 2)
     {
         /* start with m = 2 only */
-        slong j, l, d; /*, m = 2;*/
+        slong j, l, d2; /*, m = 2;*/
         acb_ptr u, ref;
         arb_t s2;
         u = _acb_vec_init(dmax);
@@ -105,26 +105,27 @@ int main() {
 
         }
 
-        for (l = 0, d = 1; d < 4; d ++)
+        /* f has d2 + 2 roots */
+        for (l = 0, d2 = 1; d2 < 4; d2++)
         {
             sec_t c;
-            slong g = (d + 1) / 2;
+            slong g = (d2 + 1) / 2;
             slong n, j;
             acb_ptr res;
 
             res = _acb_vec_init(g);
 
-            n = gc_params(u, d, -1, g - 1, prec);
+            n = gc_params(u, d2, -1, g - 1, prec);
 
             /* take d1 = d ie sqrt(x-u[i]) for all */
-            gc_integrals(res, u, d, d, g, n, prec);
+            gc_integrals(res, u, d2, d2, g, n, prec);
 
             for (j = 0; j < g && l < nref; j++, l++)
             {
                 if (!acb_overlaps(res + j, ref + l))
                 {
                     flint_printf("FAIL:\n\n");
-                    flint_printf("d = %ld, i = %ld, prec = %ld\n", d, j, prec);
+                    flint_printf("d = %ld, i = %ld, prec = %ld\n", d2 + 2, j, prec);
                     flint_printf("\nref = ");
                     acb_printd(ref + l, 20);
                     flint_printf("\ngc_integral = ");
@@ -136,12 +137,12 @@ int main() {
 
             /* de */
             c.m = 2;
-            c.d = d;
-            c.delta = (d % 2) ? 1 : 2;
+            c.d = d2 + 2;
+            c.delta = (d2 % 2) ? 1 : 2;
             c.g = g;
             c.roots = NULL;
 
-            de_integrals(res, u, d, d, c, prec);
+            de_integrals(res, u, d2, d2, c, prec);
 
             _acb_vec_clear(res, g);
         }

@@ -24,4 +24,6 @@ holomorphic_differentials(cohom_t dz, slong d, slong m)
             }
         }
     }
+    if (2 * k != (d-1)*(m-1) - delta + 1)
+        abort();
 }

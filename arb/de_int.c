@@ -25,16 +25,17 @@ de_int_init(de_int_t de, double h, ulong n, slong prec)
     arb_init(de->factor);
     arb_mul_arf(de->factor, lambda, de->h, prec);
 
-    flint_printf("\n\nde_init_init(h = %lf, n = %wu)\n\n", h, n);
     de->x = _arb_vec_init(n);
     de->dx = _arb_vec_init(n);
 
+    arb_init(ah);
     arb_init(sh);
     arb_init(ch);
     arb_init(shsh);
     arb_init(chsh);
     arb_init(kh);
 
+    arb_set_arf(ah, de->h);
     arb_zero(de->x + 0);
     arb_set(de->dx + 0, de->factor);
 
