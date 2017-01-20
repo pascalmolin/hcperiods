@@ -26,14 +26,14 @@ fill_block(fmpz_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
         k = (l + sp) % m;
         if (k < m - 1)
         {
-            *c(i + k, j + l) = 1;
-            *c(j + l, i + k) = -1;
+            *c(i + l, j + k) = 1;
+            *c(j + k, i + l) = -1;
         }
         k = (l + sm) % m;
         if (k < m - 1)
         {
-            *c(i + k, j + l) = -1;
-            *c(j + l, i + k) = 1;
+            *c(i + l, j + k) = -1;
+            *c(j + k, i + l) = 1;
         }
     }
 }
@@ -53,7 +53,6 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
         edge_t ek = tree->e[k];
 
         /* intersection with self shifts */
-
         fill_block(c, k * size, k * size, 1, -1, m);
 
         /* intersection with other shifts */
@@ -77,7 +76,8 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
             else if (el.a == ek.b)
             {
                 /* case ab.bd */
-                s = lrint(.5 + (el.va - ek.vb ) / TWOPI);
+                s = lrint(0.5 + (el.va - ek.vb ) / TWOPI);
+		printf("sint = %ld\n",s);
                 fill_block(c, k * size, l * size, -s, 1-s, m);
             }
             else
