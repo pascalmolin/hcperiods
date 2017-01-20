@@ -6,6 +6,17 @@
 
 #include "abel_jacobi.h"
 
+typedef slong entry[3];
+
+static void
+fmpz_mat_set_entries(fmpz_mat_t m, entry * v, slong len)
+{
+    slong k;
+    fmpz_mat_zero(m);
+    for (k = 0; k < len; k++)
+        fmpz_set_si(fmpz_mat_entry(m,v[k][0],v[k][1]),v[k][2]);
+}
+
 int main() {
 
     flint_printf("intersection matrix examples...");
