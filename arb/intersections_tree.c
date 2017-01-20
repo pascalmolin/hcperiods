@@ -76,8 +76,7 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
             else if (el.a == ek.b)
             {
                 /* case ab.bd */
-                s = lrint(0.5 + (el.va - ek.vb ) / TWOPI);
-		printf("sint = %ld\n",s);
+                s = lrint(.5 + (el.va - ek.vb ) / TWOPI);
                 fill_block(c, k * size, l * size, -s, 1-s, m);
             }
             else

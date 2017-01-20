@@ -10,7 +10,7 @@ int main() {
 
     flint_printf("intersection matrix examples...");
     fflush(stdout);
-    slong d, m, len, k;
+    slong n, m, len;
     acb_ptr x;
     tree_t tree;
     fmpz_mat_t c;
@@ -18,17 +18,17 @@ int main() {
     acb_poly_t f;
 	
     /* Example 1 : y^2 = (x+3)(x+1)(x-2), g = 1 */
-    d = 3;
+    n = 3;
     m = 2;
-    x = _acb_vec_init(d);
+    x = _acb_vec_init(n);
     acb_set_si(x + 0, -3);
     acb_set_si(x + 1, -1);
     acb_set_si(x + 2, 2);
-    tree_init(tree,d-1);
-    spanning_tree(tree, x, d, INT_DE);
-    len = (d-1)*(m-1);
+    tree_init(tree,n-1);
+    spanning_tree(tree, x, n, INT_DE);
+    len = (n-1)*(m-1);
     fmpz_mat_init(c, len, len);
-    intersection_tree(c, tree, d, m);
+    intersection_tree(c, tree, n, m);
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);
@@ -49,21 +49,21 @@ int main() {
     fmpz_mat_clear(c);
     fmpz_mat_clear(cm);
     tree_clear(tree);
-    _acb_vec_clear(x, d);
+    _acb_vec_clear(x, n);
     
 
     /* Example 2 : y^4 = (x+1)(x)(x-1), g = 3 */
-    d = 3;
+    n = 3;
     m = 4;
-    x = _acb_vec_init(d);
+    x = _acb_vec_init(n);
     acb_set_si(x + 0, -1);
     acb_set_si(x + 1, 0);
     acb_set_si(x + 2, 1);
-    tree_init(tree,d-1);
-    spanning_tree(tree, x, d, INT_DE);
-    len = (d-1)*(m-1);
+    tree_init(tree,n-1);
+    spanning_tree(tree, x, n, INT_DE);
+    len = (n-1)*(m-1);
     fmpz_mat_init(c, len, len);
-    intersection_tree(c, tree, d, m);
+    intersection_tree(c, tree, n, m);
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);
@@ -88,22 +88,22 @@ int main() {
     fmpz_mat_clear(c);
     fmpz_mat_clear(cm);
     tree_clear(tree);
-    _acb_vec_clear(x, d);
+    _acb_vec_clear(x, n);
 
    
     /* Example 3 : y^4 = (x+5+i)(x)(x+i)(x-2i), g = 3 */
-    d = 4;
+    n = 4;
     m = 4;
-    x = _acb_vec_init(d);
+    x = _acb_vec_init(n);
     acb_onei( x + 0 ); acb_add_si( x+0, x+0, 5, 30); acb_neg(x+0,x+0);
     acb_set_si( x+1, 0);
     acb_onei( x + 2 ); acb_neg(x+2,x+2);
     acb_onei( x + 3 ); acb_mul_si(x+3,x+3,2,30);
-    tree_init(tree,d-1);
-    spanning_tree(tree, x, d, INT_DE);
-    len = (d-1)*(m-1);
+    tree_init(tree,n-1);
+    spanning_tree(tree, x, n, INT_DE);
+    len = (n-1)*(m-1);
     fmpz_mat_init(c, len, len);
-    intersection_tree(c, tree, d, m);
+    intersection_tree(c, tree, n, m);
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);
@@ -131,12 +131,12 @@ int main() {
     fmpz_mat_clear(c);
     fmpz_mat_clear(cm);
     tree_clear(tree);
-    _acb_vec_clear(x, d);
+    _acb_vec_clear(x, n);
 
     /* Example 4 : y^4 = x^4 + 84x^3 - 40x^2 + 92x + 8, g = 3 */
-    d = 4;
+    n = 4;
     m = 4;
-    x = _acb_vec_init(d);
+    x = _acb_vec_init(n);
     acb_poly_init(f);
     acb_poly_set_coeff_si(f,0,8);
     acb_poly_set_coeff_si(f,1,92);
@@ -147,11 +147,11 @@ int main() {
     acb_swap(x+1,x+2);
     acb_swap(x+2,x+3);
     
-    tree_init(tree,d-1);
-    spanning_tree(tree, x, d, INT_DE);
-    len = (d-1)*(m-1);
+    tree_init(tree,n-1);
+    spanning_tree(tree, x, n, INT_DE);
+    len = (n-1)*(m-1);
     fmpz_mat_init(c, len, len);
-    intersection_tree(c, tree, d, m);
+    intersection_tree(c, tree, n, m);
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);
@@ -179,15 +179,15 @@ int main() {
     fmpz_mat_clear(c);
     fmpz_mat_clear(cm);
     tree_clear(tree);
-    _acb_vec_clear(x, d);
+    _acb_vec_clear(x, n);
     acb_poly_clear(f);
 
 
 
     /* Example 5 (s1) : y^6 = x^5 - 7*x^4 - 3*x^3 + 3*x^2 + 13*x + 20, g = 10 */
-    d = 5;
+    n = 5;
     m = 6;
-    x = _acb_vec_init(d);
+    x = _acb_vec_init(n);
     acb_poly_init(f);
     acb_poly_set_coeff_si(f,0,20);
     acb_poly_set_coeff_si(f,1,13);
@@ -201,11 +201,11 @@ int main() {
     acb_swap(x+0,x+2);
     acb_swap(x+2,x+1);
     
-    tree_init(tree,d-1);
-    spanning_tree(tree, x, d, INT_DE);
-    len = (d-1)*(m-1);
+    tree_init(tree,n-1);
+    spanning_tree(tree, x, n, INT_DE);
+    len = (n-1)*(m-1);
     fmpz_mat_init(c, len, len);
-    intersection_tree(c, tree, d, m);
+    intersection_tree(c, tree, n, m);
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);
@@ -252,7 +252,7 @@ int main() {
     fmpz_mat_clear(c);
     fmpz_mat_clear(cm);
     tree_clear(tree);
-    _acb_vec_clear(x, d);
+    _acb_vec_clear(x, n);
     acb_poly_clear(f);
 
 
