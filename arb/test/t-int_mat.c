@@ -43,9 +43,8 @@ int main() {
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);
-    fmpz_mat_zero(cm);
-    fmpz_set_si(fmpz_mat_entry(cm,0,1),1); 
-    fmpz_set_si(fmpz_mat_entry(cm,1,0),-1);
+    entry mat_1[2] = { {0,1,1}, {1,0,-1} };
+    fmpz_mat_set_entries(cm, mat_1, 2);
   
     if ( fmpz_mat_equal(c,cm) == 0 )
     {
@@ -78,13 +77,8 @@ int main() {
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);
-    fmpz_mat_zero(cm);
-    fmpz_set_si(fmpz_mat_entry(cm,0,1),1); fmpz_set_si(fmpz_mat_entry(cm,0,5),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,1,0),-1); fmpz_set_si(fmpz_mat_entry(cm,1,2),1); fmpz_set_si(fmpz_mat_entry(cm,1,3),1);
-    fmpz_set_si(fmpz_mat_entry(cm,2,1),-1); fmpz_set_si(fmpz_mat_entry(cm,2,3),-1); fmpz_set_si(fmpz_mat_entry(cm,2,4),1);
-    fmpz_set_si(fmpz_mat_entry(cm,3,1),-1); fmpz_set_si(fmpz_mat_entry(cm,3,2),1);fmpz_set_si(fmpz_mat_entry(cm,3,4),1);
-    fmpz_set_si(fmpz_mat_entry(cm,4,2),-1); fmpz_set_si(fmpz_mat_entry(cm,4,3),-1);fmpz_set_si(fmpz_mat_entry(cm,4,5),1);
-    fmpz_set_si(fmpz_mat_entry(cm,5,0),1); fmpz_set_si(fmpz_mat_entry(cm,5,4),-1);
+    entry mat_2[16] = { {0,1,1}, {0,5,-1}, {1,0,-1}, {1,2,1}, {1,3,1}, {2,1,-1}, {2,3,-1}, {2,4,1}, {3,1,-1}, {3,2,1}, {3,4,1}, {4,2,-1}, {4,3,-1}, {4,5,1}, {5,0,1}, {5,4,-1} };
+    fmpz_mat_set_entries(cm, mat_2, 16);
     
     if ( fmpz_mat_equal(c,cm) == 0 )
     {
@@ -118,16 +112,9 @@ int main() {
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);
-    fmpz_mat_zero(cm);
-    fmpz_set_si(fmpz_mat_entry(cm,0,1),1); fmpz_set_si(fmpz_mat_entry(cm,0,5),-1); fmpz_set_si(fmpz_mat_entry(cm,0,6),1); fmpz_set_si(fmpz_mat_entry(cm,0,7),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,1,0),-1); fmpz_set_si(fmpz_mat_entry(cm,1,2),1); fmpz_set_si(fmpz_mat_entry(cm,1,3),1);fmpz_set_si(fmpz_mat_entry(cm,1,7),1); fmpz_set_si(fmpz_mat_entry(cm,1,8),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,2,1),-1); fmpz_set_si(fmpz_mat_entry(cm,2,3),-1); fmpz_set_si(fmpz_mat_entry(cm,2,4),1); fmpz_set_si(fmpz_mat_entry(cm,2,8),1);
-    fmpz_set_si(fmpz_mat_entry(cm,3,1),-1); fmpz_set_si(fmpz_mat_entry(cm,3,2),1); fmpz_set_si(fmpz_mat_entry(cm,3,4),1); 
-    fmpz_set_si(fmpz_mat_entry(cm,4,2),-1); fmpz_set_si(fmpz_mat_entry(cm,4,3),-1);fmpz_set_si(fmpz_mat_entry(cm,4,5),1);
-    fmpz_set_si(fmpz_mat_entry(cm,5,0),1); fmpz_set_si(fmpz_mat_entry(cm,5,4),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,6,0),-1); fmpz_set_si(fmpz_mat_entry(cm,6,7),1);
-    fmpz_set_si(fmpz_mat_entry(cm,7,0),1); fmpz_set_si(fmpz_mat_entry(cm,7,1),-1); fmpz_set_si(fmpz_mat_entry(cm,7,6),-1); fmpz_set_si(fmpz_mat_entry(cm,7,8),1);
-    fmpz_set_si(fmpz_mat_entry(cm,8,1),1); fmpz_set_si(fmpz_mat_entry(cm,8,2),-1);fmpz_set_si(fmpz_mat_entry(cm,8,7),-1);
+    entry mat_3[30] = { {0,1,1}, {0,5,-1}, {0,6,1}, {0,7,-1}, {1,0,-1}, {1,2,1}, {1,3,1}, {1,7,1}, {1,8,-1}, {2,1,-1}, {2,3,-1}, {2,4,1}, {2,8,1}, {3,1,-1}, {3,2,1}, {3,4,1}, {4,2,-1}, {4,3,-1}, {4,5,1},
+    {5,0,1}, {5,4,-1}, {6,0,-1}, {6,7,1}, {7,0,1}, {7,1,-1}, {7,6,-1}, {7,8,1}, {8,1,1}, {8,2,-1},{8,7,-1} };
+    fmpz_mat_set_entries(cm, mat_3, 30);
 
     if ( fmpz_mat_equal(c,cm) == 0 )
     {
@@ -166,17 +153,9 @@ int main() {
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);
-    fmpz_mat_zero(cm);
-    fmpz_set_si(fmpz_mat_entry(cm,0,1),1); fmpz_set_si(fmpz_mat_entry(cm,0,4),-1); fmpz_set_si(fmpz_mat_entry(cm,0,5),1); fmpz_set_si(fmpz_mat_entry(cm,0,8),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,1,0),-1); fmpz_set_si(fmpz_mat_entry(cm,1,2),1); fmpz_set_si(fmpz_mat_entry(cm,1,5),-1); fmpz_set_si(fmpz_mat_entry(cm,1,6),1);
-    fmpz_set_si(fmpz_mat_entry(cm,2,1),-1); fmpz_set_si(fmpz_mat_entry(cm,2,3),1); fmpz_set_si(fmpz_mat_entry(cm,2,6),-1); fmpz_set_si(fmpz_mat_entry(cm,2,7),1);
-    fmpz_set_si(fmpz_mat_entry(cm,3,2),-1); fmpz_set_si(fmpz_mat_entry(cm,3,4),1); fmpz_set_si(fmpz_mat_entry(cm,3,7),-1); fmpz_set_si(fmpz_mat_entry(cm,3,8),1);
-    fmpz_set_si(fmpz_mat_entry(cm,4,0),1); fmpz_set_si(fmpz_mat_entry(cm,4,3),-1); fmpz_set_si(fmpz_mat_entry(cm,4,5),1); fmpz_set_si(fmpz_mat_entry(cm,4,8),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,5,0),-1); fmpz_set_si(fmpz_mat_entry(cm,5,1),1); fmpz_set_si(fmpz_mat_entry(cm,5,4),-1); fmpz_set_si(fmpz_mat_entry(cm,5,6),1);
-    fmpz_set_si(fmpz_mat_entry(cm,6,1),-1); fmpz_set_si(fmpz_mat_entry(cm,6,2),1); fmpz_set_si(fmpz_mat_entry(cm,6,5),-1); fmpz_set_si(fmpz_mat_entry(cm,6,7),1);
-    fmpz_set_si(fmpz_mat_entry(cm,7,2),-1); fmpz_set_si(fmpz_mat_entry(cm,7,3),1); fmpz_set_si(fmpz_mat_entry(cm,7,6),-1); fmpz_set_si(fmpz_mat_entry(cm,7,8),1);
-    fmpz_set_si(fmpz_mat_entry(cm,8,0),1); fmpz_set_si(fmpz_mat_entry(cm,8,3),-1); fmpz_set_si(fmpz_mat_entry(cm,8,4),1); fmpz_set_si(fmpz_mat_entry(cm,8,7),-1);
-
+    entry mat_4[36] = { {0,1,1}, {0,4,-1}, {0,5,1}, {0,8,-1}, {1,0,-1}, {1,2,1}, {1,5,-1}, {1,6,1}, {2,1,-1}, {2,3,1}, {2,6,-1}, {2,7,1}, {3,2,-1}, {3,4,1}, {3,7,-1}, {3,8,1}, {4,0,1}, {4,3,-1}, 		{4,5,1}, {4,8,-1}, {5,0,-1}, {5,1,1}, {5,4,-1}, {5,6,1}, {6,1,-1}, {6,2,1}, {6,5,-1}, {6,7,1}, {7,2,-1}, {7,3,1}, {7,6,-1}, {7,8,1},  {8,0,1}, {8,3,-1}, {8,4,1}, {8,7,-1} };
+    fmpz_mat_set_entries(cm, mat_4, 36);
+    
     if ( fmpz_mat_equal(c,cm) == 0 )
     {
       flint_printf("Example 4; invalid intersection matrix\n");
@@ -220,36 +199,12 @@ int main() {
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);
-    fmpz_mat_zero(cm);
-    fmpz_set_si(fmpz_mat_entry(cm,0,1),1); fmpz_set_si(fmpz_mat_entry(cm,0,6),-1); fmpz_set_si(fmpz_mat_entry(cm,0,7),1);
-    fmpz_set_si(fmpz_mat_entry(cm,1,0),-1); fmpz_set_si(fmpz_mat_entry(cm,1,2),1); fmpz_set_si(fmpz_mat_entry(cm,1,7),-1); fmpz_set_si(fmpz_mat_entry(cm,1,8),1);
-    fmpz_set_si(fmpz_mat_entry(cm,2,1),-1); fmpz_set_si(fmpz_mat_entry(cm,2,3),1); fmpz_set_si(fmpz_mat_entry(cm,2,8),-1); fmpz_set_si(fmpz_mat_entry(cm,2,9),1);
-    fmpz_set_si(fmpz_mat_entry(cm,3,2),-1); fmpz_set_si(fmpz_mat_entry(cm,3,4),1); fmpz_set_si(fmpz_mat_entry(cm,3,9),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,4,3),-1); fmpz_set_si(fmpz_mat_entry(cm,4,5),1);
-    fmpz_set_si(fmpz_mat_entry(cm,5,4),-1); fmpz_set_si(fmpz_mat_entry(cm,5,6),1); fmpz_set_si(fmpz_mat_entry(cm,5,10),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,6,0),1); fmpz_set_si(fmpz_mat_entry(cm,6,5),-1); fmpz_set_si(fmpz_mat_entry(cm,6,7),1);  fmpz_set_si(fmpz_mat_entry(cm,6,10),1);  
-    fmpz_set_si(fmpz_mat_entry(cm,6,11),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,7,0),-1); fmpz_set_si(fmpz_mat_entry(cm,7,1),1); fmpz_set_si(fmpz_mat_entry(cm,7,6),-1); fmpz_set_si(fmpz_mat_entry(cm,7,8),1);
-    fmpz_set_si(fmpz_mat_entry(cm,7,11),1);  fmpz_set_si(fmpz_mat_entry(cm,7,12),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,8,1),-1); fmpz_set_si(fmpz_mat_entry(cm,8,2),1); fmpz_set_si(fmpz_mat_entry(cm,8,7),-1); fmpz_set_si(fmpz_mat_entry(cm,8,9),1);
-    fmpz_set_si(fmpz_mat_entry(cm,8,12),1); fmpz_set_si(fmpz_mat_entry(cm,8,13),1);
-    fmpz_set_si(fmpz_mat_entry(cm,9,2),-1); fmpz_set_si(fmpz_mat_entry(cm,9,3),1); fmpz_set_si(fmpz_mat_entry(cm,9,8),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,9,13),1); fmpz_set_si(fmpz_mat_entry(cm,9,14),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,10,5),1); fmpz_set_si(fmpz_mat_entry(cm,10,6),-1); fmpz_set_si(fmpz_mat_entry(cm,10,11),1); fmpz_set_si(fmpz_mat_entry(cm,10,16),1); 
-    fmpz_set_si(fmpz_mat_entry(cm,10,17),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,11,6),1); fmpz_set_si(fmpz_mat_entry(cm,11,7),-1); fmpz_set_si(fmpz_mat_entry(cm,11,10),-1); fmpz_set_si(fmpz_mat_entry(cm,11,12),1);
-    fmpz_set_si(fmpz_mat_entry(cm,11,17),1); fmpz_set_si(fmpz_mat_entry(cm,11,18),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,12,7),1); fmpz_set_si(fmpz_mat_entry(cm,12,8),-1); fmpz_set_si(fmpz_mat_entry(cm,12,11),-1); fmpz_set_si(fmpz_mat_entry(cm,12,13),1);
-    fmpz_set_si(fmpz_mat_entry(cm,12,18),1); fmpz_set_si(fmpz_mat_entry(cm,12,19),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,13,8),1); fmpz_set_si(fmpz_mat_entry(cm,13,9),-1); fmpz_set_si(fmpz_mat_entry(cm,13,12),-1); fmpz_set_si(fmpz_mat_entry(cm,13,14),1);
-    fmpz_set_si(fmpz_mat_entry(cm,13,19),1);
-    fmpz_set_si(fmpz_mat_entry(cm,14,9),1); fmpz_set_si(fmpz_mat_entry(cm,14,13),-1); fmpz_set_si(fmpz_mat_entry(cm,14,15),-1);
-    fmpz_set_si(fmpz_mat_entry(cm,15,14),1); fmpz_set_si(fmpz_mat_entry(cm,15,16),1);
-    fmpz_set_si(fmpz_mat_entry(cm,16,10),-1); fmpz_set_si(fmpz_mat_entry(cm,16,15),-1); fmpz_set_si(fmpz_mat_entry(cm,16,17),1);
-    fmpz_set_si(fmpz_mat_entry(cm,17,10),1); fmpz_set_si(fmpz_mat_entry(cm,17,11),-1); fmpz_set_si(fmpz_mat_entry(cm,17,16),-1); fmpz_set_si(fmpz_mat_entry(cm,17,18),1);
-    fmpz_set_si(fmpz_mat_entry(cm,18,11),1); fmpz_set_si(fmpz_mat_entry(cm,18,12),-1); fmpz_set_si(fmpz_mat_entry(cm,18,17),-1); fmpz_set_si(fmpz_mat_entry(cm,18,19),1);
-    fmpz_set_si(fmpz_mat_entry(cm,19,12),1); fmpz_set_si(fmpz_mat_entry(cm,19,13),-1); fmpz_set_si(fmpz_mat_entry(cm,19,18),-1);
-   
+    entry mat_5[82] = { {0,1,1}, {0,6,-1}, {0,7,1}, {1,0,-1}, {1,2,1}, {1,7,-1}, {1,8,1}, {2,1,-1}, {2,3,1}, {2,8,-1}, {2,9,1}, {3,2,-1}, {3,4,1}, {3,9,-1}, {4,3,-1}, {4,5,1}, {5,4,-1}, {5,6,1}, 		{5,10,-1}, {6,0,1}, {6,5,-1}, {6,7,1},  {6,10,1}, {6,11,-1}, {7,0,-1}, {7,1,1}, {7,6,-1}, {7,8,1}, {7,11,1},  {7,12,-1}, {8,1,-1}, {8,2,1}, {8,7,-1}, {8,9,1}, {8,12,1}, {8,13,1},
+	{9,2,-1}, {9,3,1}, {9,8,-1}, {9,13,1}, {9,14,-1}, {10,5,1}, {10,6,-1}, {10,11,1}, {10,16,1}, {10,17,-1}, {11,6,1}, {11,7,-1}, {11,10,-1}, {11,12,1}, {11,17,1}, {11,18,-1},
+        {12,7,1}, {12,8,-1}, {12,11,-1}, {12,13,1}, {12,18,1}, {12,19,-1}, {13,8,1}, {13,9,-1}, {13,12,-1}, {13,14,1}, {13,19,1}, {14,9,1}, {14,13,-1}, {14,15,-1}, {15,14,1}, {15,16,1},
+        {16,10,-1}, {16,15,-1}, {16,17,1}, {17,10,1}, {17,11,-1}, {17,16,-1}, {17,18,1}, {18,11,1}, {18,12,-1}, {18,17,-1}, {18,19,1}, {19,12,1}, {19,13,-1}, {19,18,-1} };
+   fmpz_mat_set_entries(cm, mat_5, 82);
+
     if ( fmpz_mat_equal(c,cm) == 0 )
     {
       flint_printf("Example 5: invalid intersection matrix\n");
