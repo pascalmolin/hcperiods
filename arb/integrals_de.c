@@ -24,6 +24,7 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
     for (l = 0; l < de->n; l++)
     {
         slong ix, iy;
+
         /* compute 1/y(x) */
         mth_root_pol_def(y, u, d1, d, de->x + l, c.m, prec);
         acb_inv(y, y, prec);

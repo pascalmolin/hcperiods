@@ -59,22 +59,20 @@ de_params_d(double * h, const cdouble * w, slong len, double r, slong i, slong m
     if (r <= 0)
     {
         slong k;
-        r = cabs(w[0] + 1) + cabs(w[0] - 1);
+        r = fabs(cimag(casinh(catanh(w[0])/LAMBDA)));
         for (k = 1; k < len; k++)
         {
-            double rk = cabs(w[k] + 1) + cabs(w[k] - 1);
+            double rk = fabs(cimag(casinh(catanh(w[k])/LAMBDA)));
             if (rk < r)
                 r = rk;
         }
         r *= .9;
+        //flint_printf("### r was not set, choose r = %lf\n",r);
     }
     B = de_constant_b(r, alpha);
-    flint_printf("\n\nD = %lf, alpha = %lf, B = %lf\n", D, alpha, B);
 
-    * h = 2*PI*r / (D + log(2*M2*B+1));
-    flint_printf("\n\nh = %lf\n", *h);
-    n = asinh((D+log(32*M1/alpha))/(2*alpha*LAMBDA));
-    flint_printf("\n\nh = %ld\n", n);
+    *h = 2*PI*r / (D + log(2*M2*B+1));
+    n = (slong)(ceil(asinh((D+log(32*M1/alpha))/(2*alpha*LAMBDA)) / *h));
 
     return n;
 }
