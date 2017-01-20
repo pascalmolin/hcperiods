@@ -5,7 +5,6 @@
  ******************************************************************************/
 
 #include "abel_jacobi.h"
-#include "complex_extras.h"
 
 #define edge_flip(e) do { \
     slong a = e.a; e.a = e.b; e.b = a; \
