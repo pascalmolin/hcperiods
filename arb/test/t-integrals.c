@@ -111,29 +111,15 @@ int main() {
             sec_t c;
             slong g = (d2 + 1) / 2;
             slong n, j;
-            acb_ptr res;
+            acb_ptr rg, rd;
 
-            res = _acb_vec_init(g);
+            rg = _acb_vec_init(g);
+            rd = _acb_vec_init(g);
 
             n = gc_params(u, d2, -1, g - 1, prec);
 
             /* take d1 = d ie sqrt(x-u[i]) for all */
-            gc_integrals(res, u, d2, d2, g, n, prec);
-
-            for (j = 0; j < g && l < nref; j++, l++)
-            {
-                if (!acb_overlaps(res + j, ref + l))
-                {
-                    flint_printf("FAIL:\n\n");
-                    flint_printf("d = %ld, i = %ld, prec = %ld\n", d2 + 2, j, prec);
-                    flint_printf("\nref = ");
-                    acb_printd(ref + l, 20);
-                    flint_printf("\ngc_integral = ");
-                    acb_printd(res + j, 20);
-                    flint_printf("\n\n");
-                    abort();
-                }
-            }
+            gc_integrals(rg, u, d2, d2, g, n, prec);
 
             /* de */
             c.m = 2;
@@ -142,9 +128,36 @@ int main() {
             c.g = g;
             c.roots = NULL;
 
-            de_integrals(res, u, d2, d2, c, prec);
+            de_integrals(rd, u, d2, d2, c, prec);
 
-            _acb_vec_clear(res, g);
+            for (j = 0; j < g && l < nref; j++, l++)
+            {
+                if (!acb_overlaps(rg + j, ref + l))
+                {
+                    flint_printf("FAIL:\n\n");
+                    flint_printf("d = %ld, i = %ld, prec = %ld\n", d2 + 2, j, prec);
+                    flint_printf("\nref = ");
+                    acb_printd(ref + l, 20);
+                    flint_printf("\ngc_integral = ");
+                    acb_printd(rg + j, 20);
+                    flint_printf("\n\n");
+                    abort();
+                }
+                if (!acb_overlaps(rd + j, ref + l))
+                {
+                    flint_printf("FAIL:\n\n");
+                    flint_printf("d = %ld, i = %ld, prec = %ld\n", d2 + 2, j, prec);
+                    flint_printf("\nref = ");
+                    acb_printd(ref + l, 20);
+                    flint_printf("\nde_integral = ");
+                    acb_printd(rd + j, 20);
+                    flint_printf("\n\n");
+                    abort();
+                }
+            }
+
+            _acb_vec_clear(rg, g);
+            _acb_vec_clear(rd, g);
         }
         _acb_vec_clear(u, dmax);
         _acb_vec_clear(ref, nref);

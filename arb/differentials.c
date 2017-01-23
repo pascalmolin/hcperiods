@@ -6,6 +6,7 @@
 
 #include "abel_jacobi.h"
 
+/* i,j s.t. dj >= mi + delta */
 void
 holomorphic_differentials(cohom_t dz, slong d, slong m)
 {

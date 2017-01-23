@@ -41,8 +41,9 @@ typedef struct
     ulong n;       /* number of points */
     slong prec;    /* precision */
     arb_t factor;  /* lambda*h, lambda=Pi/2 */
-    arb_ptr x;
-    arb_ptr dx;
+    arb_ptr x;     /* tanh(lambda*sinh(k*h)) */
+    arb_ptr dx;    /* cosh(k*h)/cosh(lambda*sinh(k*h))^2 */
+    arb_ptr ch2m;  /* cosh(lambda*sinh(k*h))^(2/m) */
 }
 de_integration_struct;
 typedef de_integration_struct de_int_t[1];
@@ -141,7 +142,7 @@ void abel_jacobi_clear(abel_jacobi_t aj);
 slong de_params_d(double *ph, const cdouble * w, slong len, double r, slong i, slong m, slong prec);
 slong de_params(double * h, acb_srcptr u, slong len, double r, slong i, slong m, slong prec);
 slong de_params_tree(double * h, const tree_t tree, sec_t c, slong prec);
-void de_int_init(de_int_t de, double h, ulong n, slong prec);
+void de_int_init(de_int_t de, double h, ulong n, ulong m, slong prec);
 void de_int_clear(de_int_t de);
 
 /* parameters for GC integration */

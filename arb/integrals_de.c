@@ -27,12 +27,14 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
 
         /* compute 1/y(x) */
         mth_root_pol_def(y, u, d1, d, de->x + l, c.m, prec);
-        acb_inv(y, y, prec);
+        acb_set_arb(wy, de->ch2m + l);
+        acb_div(y, wy, y, prec);
 
         /* all differentials for x */
         iy = 1; ix = 0;
-        acb_set_arb(wy, de->dx + l);
         acb_mul_arb(wy, y, de->dx + l, prec);
+        acb_set(wyx, wy);
+
         for (k = 0; k < c.g; k++)
         {
             for (; iy < dz[k].y; ix = 0, iy++)
@@ -43,16 +45,21 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
             for (; ix < dz[k].x; ix++)
                 acb_mul_arb(wyx, wyx, de->x + l, prec);
             acb_add(res + k, res + k, wyx, prec);
+
         }
+
         if (l == 0)
             continue;
+
         /* now on -x */
         arb_neg(x, de->x + l);
-        mth_root_pol_def(y, u, d1, d, de->x + l, c.m, prec);
-        acb_inv(y, y, prec);
+        mth_root_pol_def(y, u, d1, d, x, c.m, prec);
+        acb_set_arb(wy, de->ch2m + l);
+        acb_div(y, wy, y, prec);
+
         iy = 1; ix = 0;
-        acb_set_arb(wy, de->dx + l);
         acb_mul_arb(wy, y, de->dx + l, prec);
+        acb_set(wyx, wy);
         for (k = 0; k < c.g; k++)
         {
             for (; iy < dz[k].y; ix = 0, iy++)
@@ -69,6 +76,8 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
         }
     }
 
+    _acb_vec_scalar_mul_arb(res, res, c.g, de->factor, prec);
+
     arb_clear(x);
     acb_clear(y);
     acb_clear(wy);
@@ -80,12 +89,12 @@ de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec)
 {
     slong n;
     double h;
-    cohom_t dz; 
+    cohom_t dz;
     de_int_t de;
     dz = malloc(c.g * sizeof(dform_t));
     holomorphic_differentials(dz, c.d, c.m);
     n = de_params(&h, u, d, 0, c.d - 1, c.m, prec);
-    de_int_init(de, h, n, prec);
+    de_int_init(de, h, n, c.m, prec);
     de_integrals_precomp(res, u, d1, d, c, dz, de, prec);
     de_int_clear(de);
     free(dz);
@@ -119,7 +128,7 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t
     de_int_t de;
 
     n = de_params_tree(&h, tree, c, prec);
-    de_int_init(de, h, n, prec);
+    de_int_init(de, h, n, c.m, prec);
 
     for (k = 0; k < c.d - 1; k++)
         integrals_edge_de(integrals->rows[k], c, tree->e[k], dz, de, prec);

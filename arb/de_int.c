@@ -6,8 +6,31 @@
 
 #include "abel_jacobi.h"
 
+static void
+arb_tanh_cosh2(arb_t t, arb_t c, const arb_t x, slong prec)
+{
+    arb_t e2x, p, m;
+    arb_init(e2x);
+    arb_init(m);
+    arb_init(p);
+    arb_mul_2exp_si(e2x, x, 1);
+    arb_exp(e2x, e2x, prec);
+    arb_add_si(p, e2x, 1, prec);
+
+    arb_inv(e2x, e2x, prec);
+    arb_one(m);
+    arb_sub(m, m, e2x, prec);
+
+    arb_add(c, p, m, prec);
+    arb_div(t, m, p, prec);
+
+    arb_clear(e2x);
+    arb_clear(m);
+    arb_clear(p);
+}
+
 void
-de_int_init(de_int_t de, double h, ulong n, slong prec)
+de_int_init(de_int_t de, double h, ulong n, ulong m, slong prec)
 {
     slong k;
     arb_t ah, lambda;
@@ -27,6 +50,7 @@ de_int_init(de_int_t de, double h, ulong n, slong prec)
 
     de->x = _arb_vec_init(n);
     de->dx = _arb_vec_init(n);
+    de->ch2m = _arb_vec_init(n);
 
     arb_init(ah);
     arb_init(sh);
@@ -37,16 +61,25 @@ de_int_init(de_int_t de, double h, ulong n, slong prec)
 
     arb_set_arf(ah, de->h);
     arb_zero(de->x + 0);
-    arb_set(de->dx + 0, de->factor);
+    arb_one(de->dx + 0);
+    arb_one(de->ch2m + 0);
 
     for (k = 1; k < n; k++)
     {
         arb_mul_si(kh, ah, k, prec);
         arb_sinh_cosh(sh, ch, kh, prec);
         arb_mul(sh, sh, lambda, prec);
+#if 1
         arb_sinh_cosh(shsh, chsh, sh, prec);
         arb_div(de->x + k, shsh, chsh, prec);
-        arb_div(de->dx, ch, shsh, prec);
+        arb_mul(chsh, chsh, chsh, prec);
+        arb_div(de->dx + k, ch, chsh, prec);
+        arb_root_ui(de->ch2m + k, chsh, m, prec);
+#else
+        arb_tanh_cosh2(de->x + k, de->ch2m + k, sh, prec);
+        arb_div(de->dx + k, ch, de->ch2m + k, prec);
+        arb_root_ui(de->ch2m + k, de->ch2m + k, m, prec);
+#endif
     }
 
     arb_clear(sh);
