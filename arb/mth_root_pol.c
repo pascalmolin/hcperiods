@@ -69,57 +69,62 @@ mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong
 }
 
 
-int
+static int
 im_sgn(const acb_t x)
 {
-        if ( arb_is_nonnegative(acb_imagref(x)) )
-		return 1;
-	else if ( arb_is_negative(acb_imagref(x)) )
-		return -1;
-	else
-		flint_printf("sign cannot be determined\n"); abort();
+    if ( arb_is_nonnegative(acb_imagref(x)) )
+        return 1;
+    else if ( arb_is_negative(acb_imagref(x)) )
+        return -1;
+    flint_printf("sign cannot be determined\n");
+    abort();
 }
 
 void
 mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec)
 {
-    slong q, k, isgn_s,  isgn_t;
-    acb_t s, t;
+    int isgn_y,  isgn_t;
+    slong q, k;
+    acb_t t;
+
     q = 0;
-    acb_init(s);
     acb_init(t);
-    
     acb_one(y);
-    acb_sub_arb(s, u + 0, x, prec); 
-    if ( d1 != 0 )
-          acb_neg(s, s);
-    isgn_s = im_sgn(s);
+
+    acb_sub_arb(y, u + 0, x, prec); 
+    if (d1)
+          acb_neg(y, y);
+
+    isgn_y = im_sgn(y);
     for (k = 1; k < d; k++)
     { 
+
       acb_sub_arb(t, u + k, x, prec);
       if (k < d1)
             acb_neg(t, t);
+
+      acb_mul(y, y, t, prec);
+
       isgn_t = im_sgn(t);
-      acb_mul(s, s, t, prec);
-      if ( isgn_s == isgn_t )
+      if (isgn_y == isgn_t)
       {
-        isgn_s = im_sgn(s);
-        if ( isgn_s != isgn_t )
+        isgn_y = im_sgn(y);
+        if (isgn_y != isgn_t)
         {
-          if ( isgn_t > 0 )
+          if (isgn_t > 0)
             q++;
           else
             q--;
         }
       }
       else
-         isgn_s = im_sgn(s);
+         isgn_y = im_sgn(y);
     } 
+    acb_root_ui(y, y, m, prec);
 
-    q = (q % m + m) % m;;
-    acb_root_ui(s, s, m, prec);
-    acb_mul(y, s, z + q, prec);
+    q = (q % m + m) % m;
+    if (q)
+        acb_mul(y, y, z + q, prec);
 
-    acb_clear(s);
     acb_clear(t);
 }

@@ -22,14 +22,14 @@ int main() {
             d = 3 + n_randint(state, 20);
             m = 2 + n_randint(state, 12);
             u = _acb_vec_init(d);
-	    z = _acb_vec_init(m);
-	    _acb_vec_unit_roots(z, m, prec);
+            z = _acb_vec_init(m);
+            _acb_vec_unit_roots(z, m, prec);
             arb_init(x);
             acb_init(y1);
             acb_init(y2);
             acb_init(y3);
-	    acb_init(y4);
-	    	   
+            acb_init(y4);
+
 
             for (j = 0; j < d; j++)
                 acb_randtest_precise(u + j, state, prec, 4);
@@ -43,8 +43,8 @@ int main() {
                 {
                     mth_root_pol_def(y1, u, d1, d, x, m, prec);
                     mth_root_pol_prod(y2, u, d1, d, x, m, prec);
-		    mth_root_pol_turn(y3, u, d1, d, x, z, m, prec);
-		    if (!acb_overlaps(y1, y2) || !acb_overlaps(y2,y3) || !acb_overlaps(y1,y3))
+                    mth_root_pol_turn(y3, u, d1, d, x, z, m, prec);
+                    if (!acb_overlaps(y1, y2) || !acb_overlaps(y2,y3) || !acb_overlaps(y1,y3))
                     {
                         flint_printf("FAIL:\n\n");
                         flint_printf("d = %ld, m = %ld, prec = %ld\n", d, m, prec);
@@ -54,9 +54,9 @@ int main() {
                         acb_printd(y2, 20); 
                         flint_printf("\nmth_root_turn = ");
                         acb_printd(y3, 20);
-		        flint_printf("\n\n");
+                        flint_printf("\n\n");
                         abort();
-		    }
+                    }
                     if (m == 2)
                     {
                         sqrt_pol_def(y4, u, d1, d, x, prec);

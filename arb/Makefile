@@ -98,4 +98,7 @@ build/bench/%$(EXEEXT): bench/%.c $(HEADERS) $(LIBRARY) | build/bench
 $(LIBRARY): $(LOBJS) $(HEADERS) | build
 	$(CC) $(ABI_FLAG) -shared $(EXTRA_SHARED_FLAGS) $(LOBJS) -o $(LIBRARY) $(LDFLAGS) $(LIBS2);
 
+tags: $(HEADERS) $(SOURCES)
+	ctags $+
+
 .PHONY: library clean examples check test distclean all valgrind
