@@ -120,7 +120,7 @@ integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz, const de_int
 }
 
 void
-integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec)
+integrals_tree_de(acb_mat_t integrals, const acb_mat_t upoints, const slong * d1, sec_t c, const tree_t tree, const cohom_t dz, slong prec)
 {
     slong k;
     ulong n;
@@ -131,7 +131,17 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t
     de_int_init(de, h, n, c.m, prec);
 
     for (k = 0; k < c.d - 1; k++)
-        integrals_edge_de(integrals->rows[k], c, tree->e[k], dz, de, prec);
+    {
+        acb_ptr res, u, cab, ab2;
+
+        res = integrals->rows[k];
+        u = upoints->rows[k];
+        ab2 = u + c.d - 2;
+        cab = u + c.d - 1;
+
+        de_integrals_precomp(res, u, d1[k], c.d - 2, c, dz, de, prec);
+        integrals_edge_factors(res, cab, ab2, c, dz, prec);
+    }
 
     de_int_clear(de);
 }

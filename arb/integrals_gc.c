@@ -106,13 +106,24 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, slong n, slong prec)
 }
 
 void
-integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec)
+integrals_tree_gc(acb_mat_t integrals, const acb_mat_t upoints, const slong * d1, sec_t c, const tree_t tree, slong prec)
 {
     slong k, n;
 
     n = gc_params_tree(tree, c, prec);
 
     for (k = 0; k < c.d - 1; k++)
-        integrals_edge_gc(integrals->rows[k], c, tree->e[k], n, prec);
+    {
+        acb_ptr res, u, cab, ab2;
+
+        res = integrals->rows[k];
+        u = upoints->rows[k];
+        ab2 = u + c.d - 2;
+        cab = u + c.d - 1;
+
+        gc_integrals(res, u, d1[k], c.d - 2, c.g, n, prec);
+        integrals_edge_factors_gc(res, cab, ab2, c, prec);
+    }
+
 
 }

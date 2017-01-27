@@ -184,8 +184,8 @@ void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
 void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec);
 void integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec);
 void integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, const cohom_t dz, slong prec);
-void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
-void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
+void integrals_tree_de(acb_mat_t integrals, const acb_mat_t upoints, const slong * d1, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
+void integrals_tree_gc(acb_mat_t integrals, const acb_mat_t upoints, const slong * d1, sec_t c, const tree_t tree, slong prec);
 void acb_vec_polynomial_shift(acb_ptr x, const acb_t c, slong len, slong prec);
 
 /* get all periods on a, b basis */
