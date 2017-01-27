@@ -51,6 +51,15 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec)
     return l;
 }
 
+void
+ab_points_tree(acb_mat_t u, slong * d, const tree_t tree, sec_t c, slong prec)
+{
+    slong k;
+
+    for (k = 0; k < tree->n; k++)
+        d[k] = ab_points(u->rows[k], c.roots, tree->e[k], c.d, prec);
+}
+
 /* returns x0, c.x0 + x1, c^2.x0 + 2.c.x1 + x2, ... */
 void
 acb_vec_polynomial_shift(acb_ptr x, const acb_t c, slong len, slong prec)

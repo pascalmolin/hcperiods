@@ -45,7 +45,7 @@ abel_jacobi_init_poly(abel_jacobi_t aj, slong n, acb_srcptr f, slong len, slong 
     _acb_vec_clear(x, d);
 }
 
-void
+    void
 abel_jacobi_clear(abel_jacobi_t aj)
 {
     sec_clear(aj->c);
@@ -59,14 +59,21 @@ abel_jacobi_clear(abel_jacobi_t aj)
     free(aj->dz);
 }
 
-void
+    void
 abel_jacobi_compute(abel_jacobi_t aj, slong prec)
 {
     sec_t c = aj->c;
+    acb_mat_t u;
     acb_mat_t integrals;
+    slong * d1;
 
     /* homology */
     spanning_tree(aj->tree, c.roots, c.d, aj->type);
+
+    acb_mat_init(u, c.d-1, c.d);
+    d1 = flint_malloc((c.d-1) * sizeof(slong));
+    ab_points_tree(u, d1, aj->tree, c, prec);
+
     symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
 
     /* cohomology */
@@ -84,6 +91,8 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
     period_matrix(aj->omega1, aj->loop_b, aj->dz, integrals, c, prec);
 
     acb_mat_clear(integrals);
+    acb_mat_clear(u);
+    flint_free(d1);
 
     tau_matrix(aj->tau, aj->omega0, aj->omega1, prec);
 
