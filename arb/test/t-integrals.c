@@ -118,8 +118,8 @@ int main() {
 
             n = gc_params(u, d2, -1, g - 1, prec);
 
-            /* take d1 = d ie sqrt(x-u[i]) for all */
-            gc_integrals(rg, u, d2, d2, g, n, prec);
+            /* take d1 = 0 ie sqrt(x-u[i]) for all */
+            gc_integrals(rg, u, 0, d2, g, n, prec);
 
             /* de */
             c.m = 2;
@@ -128,7 +128,7 @@ int main() {
             c.g = g;
             c.roots = NULL;
 
-            de_integrals(rd, u, d2, d2, c, prec);
+            de_integrals(rd, u, 0, d2, c, prec);
 
             for (j = 0; j < g && l < nref; j++, l++)
             {

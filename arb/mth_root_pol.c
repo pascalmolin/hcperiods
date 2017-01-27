@@ -17,7 +17,7 @@ sqrt_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong prec
     for (k = 0; k < d; k++)
     {
         acb_sub_arb(t, u + k, x, prec);
-        if (k < d1)
+        if (k >= d1)
             acb_neg(t, t);
         acb_sqrt(t, t, prec);
         acb_mul(y, y, t, prec);
@@ -37,7 +37,7 @@ mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong 
     for (k = 0; k < d; k++)
     {
         acb_sub_arb(t, u + k, x, prec);
-        if (k < d1)
+        if (k >= d1)
             acb_neg(t, t);
         acb_root_ui(t, t, m, prec);
         acb_mul(y, y, t, prec);
@@ -57,7 +57,7 @@ mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong
     for (k = 0; k < d; k++)
     {
         acb_sub_arb(t, u + k, x, prec);
-        if (k < d1)
+        if (k >= d1)
             acb_neg(t, t);
         acb_log(t, t, prec + 4);
         acb_add(y, y, t, prec + 4);
@@ -92,7 +92,7 @@ mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_s
     acb_one(y);
 
     acb_sub_arb(y, u + 0, x, prec); 
-    if (d1)
+    if (!d1)
           acb_neg(y, y);
 
     isgn_y = im_sgn(y);
@@ -100,7 +100,7 @@ mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_s
     { 
 
       acb_sub_arb(t, u + k, x, prec);
-      if (k < d1)
+      if (k >= d1)
             acb_neg(t, t);
 
       acb_mul(y, y, t, prec);

@@ -6,8 +6,8 @@
 
 #include "abel_jacobi.h"
 
-/* u[0..l1[ contains roots re(ui)<=0
-   u[l1..d-2[ roots with re(ui) > 0
+/* u[0..l1[ contains roots re(ui)>0
+   u[l1..d-2[ roots with re(ui) <= 0
    the last two components are set to
    (b-a)/2 and (a+b)/(b-a)
    returns l1
@@ -43,7 +43,7 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec)
 
     /* reorder */
     for (k = 0; k < l; k++)
-        if (arb_is_positive(acb_realref(u + k)))
+        if (arb_is_nonpositive(acb_realref(u + k)))
             acb_swap(u + k--, u + l--);
     acb_clear(ab);
     acb_clear(ba);
