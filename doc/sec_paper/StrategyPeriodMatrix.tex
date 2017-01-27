@@ -49,7 +49,6 @@
    \end{equation}
    and 
    \begin{equation}
-    %\varphi_{i,j}  = \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\ytab(u)^j}
     \varphi_{i,j}  = \left(u+\frac{b+a}{b-a}\right)^{i-1} \ytab(u)^{-j}
    \end{equation}
    is holomorphic in a neighbourhood $\epsilon_{a,b}$ of $[-1,1]$.
@@ -60,11 +59,6 @@
     \begin{align}\label{eq:thm_periods_2}
      \int_{\gamma_1} \w_{i,j}  & =  \int_{\gamma_1} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-lj} \int_a^b \frac{x^{i-1}}{\yab(x)^j}  \dx \\  & =
      \zeta^{-lj} C_{a,b}^{-j}   \int_a^b \frac{x^{i-1}}{\ytab(\uab^{-1}(x))^j (1-\uab^{-1}(x)^2)^{\frac{j}{m}}}  \dx
-%      \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-1-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}
-%      \int_a^b \frac{\left(u(x)+\frac{b+a}{b-a}\right)^{i-1}}{(1-u(x)^2)^{\frac{j}{m}}\ytab(u(x))^j}  \dx \\
-%       & =    \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}
-%      \int_{-1}^1 \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{(1-u^2)^{\frac{j}{m}}\ytab(u)^j}  \du \quad \text{and} \\
-%     \int_{\gamma_2} w_{i,j}  & =  - \zeta^{-j} \int_{\gamma_1} w_{i,j}.
   \end{align}
   Applying the transformation $x \mapsto \uab(u)$ introduces the derivative $\dx = \left(\frac{b-a}{2}\right) \du$.
   \begin{align}
@@ -77,21 +71,8 @@
   \end{align}
   By Proposition \ref{m-prop:yab} $\ytab$ is holomorphic and has no zeros on $\epsilon_{a,b}$, therefore \\ $\varphi_{i,j}  = \left(u+\frac{b+a}{b-a}\right)^{i-1} \ytab(u)^{-j}$
   is holomorphic on $\epsilon_{a,b}$.
-
-%   Hence, we obtain the period as
-%   \begin{align}
-%    \int_{\gamma_e^{(l)}} \w_{i,j} & =  c \cdot \int_a^b g(x)\dx, \quad \text{with} \\
-%    \varphi_{i,j}(u) & := \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{(1-u^2)^{\frac{j}{m}}\ytab(u)^j} \quad \text{and} \\
-%       c_{i,j,l} & := (1-\zeta^{-j})  \zeta^{-lj} \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}.
-%   \end{align}
-%   By our discussion in \S \ref{m-subsec:roots_branches} $\varphi_{i,j}$ is
-%   well-defined and holomorphic on $[-1,1]$ with the principal value of the
-%       $m$-th root.
   \end{proof}
 
-%   \begin{coro}
-%    The period matrix $\OC = \left( \int_{\gamma} \w \right)_{\substack{\w \in \W, \\ \gamma \in C}}$ can be obtained from computing $d-1$ integrals in $\C$.
-%   \end{coro}
 
   \subsection{Symplectic basis}\label{subsec:symp_basis}
 
