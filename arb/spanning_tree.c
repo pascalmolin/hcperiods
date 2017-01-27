@@ -71,28 +71,6 @@ edge_cmp(const edge_t * x, const edge_t * y)
         return (x->r < y->r) ? -1 : (x->r > y->r);
 }
 
-static void
-endvalues_edge(double * va, double * vb, double * dir,
-        const cdouble * w, slong ia, slong ib, slong d)
-{
-    slong k;
-    double a, b;
-    cdouble ba = w[ib] - w[ia];
-
-    *dir = carg(ba);
-    a = b = (d - 1) * (*dir);
-    
-    for (k = 0; k < d; k++)
-    {
-        if (k == ia || k == ib)
-            continue;
-        a += carg((w[ia] - w[k]) / ba);
-        b += carg((w[ib] - w[k]) / ba);
-    }
-    *va = a;
-    *vb = b;
-}
-
 void
 spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
 {
@@ -139,9 +117,6 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
         t[e[i].a] = 1;
         t[e[i].b] = 1;
 
-        /* compute endvalues for shifting numbers */
-        endvalues_edge(&e[i].va, &e[i].vb, &e[i].dir, w, e[i].a, e[i].b, len);
-
         tree->e[k] = e[i];
 
         /* save worst edge and complexity estimate */
@@ -151,6 +126,8 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
             tree->min = k;
         }
     }
+
+    shift_info_tree(tree, w, len);
 
     free(w);
     free(e);

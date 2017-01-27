@@ -154,6 +154,7 @@ slong gc_params_tree(const tree_t tree, sec_t c, slong prec);
 void tree_init(tree_t tree, slong d);
 void tree_clear(tree_t tree);
 void spanning_tree(tree_t tree, acb_srcptr x, slong d, int type);
+void shift_info_tree(tree_t tree, cdouble * w, slong d);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
