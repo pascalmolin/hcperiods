@@ -30,10 +30,10 @@ gc_params_tree(const tree_t tree, sec_t c, slong prec)
 
     r = tree->r;
 
-    w = malloc(c.d * sizeof(cdouble));
+    w = malloc(c.n * sizeof(cdouble));
     ab_points_worst(w, tree, c);
 
-    n = gc_params_d(w, c.d - 2, r, c.g - 1, prec);
+    n = gc_params_d(w, c.n - 2, r, c.g - 1, prec);
 
     free(w);
 

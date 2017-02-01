@@ -38,12 +38,12 @@ set_loops(gamma_t * l, slong n, fmpz * row, slong m1, slong len)
 void
 symplectic_basis(homol_t alpha, homol_t beta, const tree_t tree, sec_t c)
 {
-    slong i, len = (c.d-1)*(c.m-1);
+    slong i, len = (c.n-1)*(c.m-1);
     fmpz_mat_t m, p;
     fmpz_mat_init(m, len, len);
     fmpz_mat_init(p, len, len);
     /* compute big intersection matrix, size len = (d-1)*(m-1) */
-    intersection_tree(m, tree, c.d, c.m);
+    intersection_tree(m, tree, c.n, c.m);
     symplectic_reduction(p, m, c.g);
     fmpz_mat_clear(m);
 

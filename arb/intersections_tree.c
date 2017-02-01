@@ -38,10 +38,76 @@ fill_block(fmpz_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
     }
 }
 
+slong
+shift_abbd(const acb_ptr uab, slong nab, const acb_ptr ucd, slong ncd, slong n, slong m)
+{
+    slong prec = 40;
+    arb_t one, m_one;
+    acb_t r, yab, ycd;
+    arb_t a, pi;
+    arb_init(one);
+    arb_init(m_one);
+    acb_init(r);
+    acb_init(yab);
+    acb_init(ycd);
+    slong s;
+    fmpz_t sz;
+
+    arb_one(one);
+    arb_neg(m_one, one);
+
+    mth_root_pol_def(ycd, ucd, ncd, n, m_one, m, prec);
+    acb_mul(ycd, ycd, ucd + n, prec);
+    acb_div(r, uab + n - 2, ucd + n -2, prec);
+    acb_sub_arb(r, r, one, prec);
+    acb_neg(r, r);
+    acb_root_ui(r, r, m, prec);
+    acb_mul(ycd, ycd, r, prec);
+
+    mth_root_pol_def(yab, uab, nab, n, one, m, prec);
+    acb_mul(yab, yab, uab + n, prec);
+    acb_div(r, ucd + n - 2, uab + n -2, prec);
+    acb_sub_arb(r, r, one, prec);
+    acb_neg(r, r);
+    acb_root_ui(r, r, m, prec);
+    acb_mul(yab, yab, r, prec);
+
+    acb_div(r, ycd, yab, prec);
+
+    arb_init(a);
+    arb_init(pi);
+    acb_arg(a, r, prec);
+
+    arb_const_pi(pi, prec);
+    arb_mul_2exp_si(pi, pi, 1);
+    arb_div(a, a, pi, prec);
+    arb_mul_ui(a, a, m, prec);
+
+    fmpz_init(sz);
+    if (!arb_get_unique_fmpz(sz, a))
+        abort();
+    s = fmpz_get_si(sz);
+    fmpz_clear(sz);
+
+    arb_clear(a);
+    arb_clear(pi);
+
+    arb_clear(one);
+    arb_clear(m_one);
+    acb_clear(r);
+    acb_clear(yab);
+    acb_clear(ycd);
+
+    return s;
+}
+
 void
 intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
 {
     slong k, l, size = m - 1;
+    arb_t one, m_one;
+    arb_init(one);
+    arb_init(m_one);
 
     fmpz_mat_zero(c);
 

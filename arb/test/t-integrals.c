@@ -134,7 +134,7 @@ int main() {
 
             /* de */
             c.m = 2;
-            c.d = d2 + 2;
+            c.n = d2 + 2;
             c.delta = (d2 % 2) ? 1 : 2;
             c.g = g;
             c.roots = NULL;

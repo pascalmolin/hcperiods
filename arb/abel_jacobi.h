@@ -23,7 +23,7 @@ typedef struct
 {
     /* y^m = prod_{i=1}^d x - roots[i] */
     slong m;             /* degree in y */
-    slong d;             /* degree in x */
+    slong n;             /* degree in x */
     acb_ptr roots;       /* branch points */
     slong delta;         /* default = gcd(m, d) */
     slong g;             /* genus, 2g = (m-1)(d-1) - delta + 1 */
@@ -66,6 +66,16 @@ typedef struct
     edge_t * e;
 } tree_struct;
 typedef tree_struct tree_t[1];
+
+typedef struct
+{
+    slong n;
+    slong m;
+    slong delta;
+    acb_mat_t upoints;
+    slong * n1;
+} tree_data_struct;
+typedef tree_data_struct data_t[1];
 
 /* represents the loop_t(coeff * zeta^shift * tree[index]) */
 typedef struct
@@ -158,8 +168,9 @@ void shift_info_tree(tree_t tree, cdouble * w, slong d);
 
 /* reduced points of spanning tree */
 void ab_points_worst(cdouble * w, const tree_t tree, sec_t c);
-slong ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec);
-void ab_points_tree(acb_mat_t u, slong * d, const tree_t tree, sec_t c, slong prec);
+slong ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong m, slong prec);
+void data_init(data_t data, const tree_t tree, sec_t c, slong prec);
+void data_clear(data_t data);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
@@ -184,8 +195,8 @@ void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
 void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec);
 void integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec);
 void integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, const cohom_t dz, slong prec);
-void integrals_tree_de(acb_mat_t integrals, const acb_mat_t upoints, const slong * d1, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
-void integrals_tree_gc(acb_mat_t integrals, const acb_mat_t upoints, const slong * d1, sec_t c, const tree_t tree, slong prec);
+void integrals_tree_de(acb_mat_t integrals, const data_t data, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
+void integrals_tree_gc(acb_mat_t integrals, const data_t data, sec_t c, const tree_t tree, slong prec);
 void acb_vec_polynomial_shift(acb_ptr x, const acb_t c, slong len, slong prec);
 
 /* get all periods on a, b basis */

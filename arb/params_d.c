@@ -13,7 +13,7 @@ ab_points_worst(cdouble * w, const tree_t tree, sec_t c)
     cdouble a, b;
 
     /* small approx of points */
-    for (k = 0; k < c.d; k++)
+    for (k = 0; k < c.n; k++)
         w[k] = acb_get_cdouble(c.roots + k);
 
     /* get worst edge */
@@ -25,7 +25,7 @@ ab_points_worst(cdouble * w, const tree_t tree, sec_t c)
     a = w[i];
     b = w[j];
 
-    for (k = 0, l = 0; k < c.d; k++)
+    for (k = 0, l = 0; k < c.n; k++)
     {
         if (k == i || k == j)
             continue;

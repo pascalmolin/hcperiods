@@ -92,8 +92,8 @@ de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec)
     cohom_t dz;
     de_int_t de;
     dz = malloc(c.g * sizeof(dform_t));
-    holomorphic_differentials(dz, c.d, c.m);
-    n = de_params(&h, u, d, 0, c.d - 1, c.m, prec);
+    holomorphic_differentials(dz, c.n, c.m);
+    n = de_params(&h, u, d, 0, c.n - 1, c.m, prec);
     de_int_init(de, h, n, c.m, prec);
     de_integrals_precomp(res, u, d1, d, c, dz, de, prec);
     de_int_clear(de);
@@ -103,24 +103,23 @@ de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec)
 void
 integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz, const de_int_t de, slong prec)
 {
-    slong d, d1;
+    slong n1;
     acb_ptr u, cab, ab2;
 
     /* reduce roots */
-    d = c.d;
-    u = _acb_vec_init(d);
-    d1 = ab_points(u, c.roots, e, d, prec);
-    ab2 = u + d - 2;
-    cab = u + d - 1;
+    u = _acb_vec_init(c.n);
+    n1 = ab_points(u, c.roots, e, c.n, c.m, prec);
+    ab2 = u + c.n - 2;
+    cab = u + c.n - 1;
 
-    de_integrals_precomp(res, u, d1, d - 2, c, dz, de, prec);
+    de_integrals_precomp(res, u, n1, c.n - 2, c, dz, de, prec);
     integrals_edge_factors(res, cab, ab2, c, dz, prec);
 
-    _acb_vec_clear(u, d);
+    _acb_vec_clear(u, c.n);
 }
 
 void
-integrals_tree_de(acb_mat_t integrals, const acb_mat_t upoints, const slong * d1, sec_t c, const tree_t tree, const cohom_t dz, slong prec)
+integrals_tree_de(acb_mat_t integrals, const data_t data, sec_t c, const tree_t tree, const cohom_t dz, slong prec)
 {
     slong k;
     ulong n;
@@ -130,16 +129,18 @@ integrals_tree_de(acb_mat_t integrals, const acb_mat_t upoints, const slong * d1
     n = de_params_tree(&h, tree, c, prec);
     de_int_init(de, h, n, c.m, prec);
 
-    for (k = 0; k < c.d - 1; k++)
+    for (k = 0; k < c.n - 1; k++)
     {
+        slong n1;
         acb_ptr res, u, cab, ab2;
 
         res = integrals->rows[k];
-        u = upoints->rows[k];
-        ab2 = u + c.d - 2;
-        cab = u + c.d - 1;
+        u = data->upoints->rows[k];
+        n1 = data->n1[k];
+        ab2 = u + c.n - 2;
+        cab = u + c.n - 1;
 
-        de_integrals_precomp(res, u, d1[k], c.d - 2, c, dz, de, prec);
+        de_integrals_precomp(res, u, n1, c.n - 2, c, dz, de, prec);
         integrals_edge_factors(res, cab, ab2, c, dz, prec);
     }
 
