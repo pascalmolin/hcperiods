@@ -2,7 +2,7 @@
 
 \begin{document}
 
-  \section{The Abel-Jacobi map}
+  \section{The Abel-Jacobi map}\label{sec:ajm}
 
   We recall, without proof, the main objects we are interested in, and which
   will become completely explicit in the case of superelliptic curves.
@@ -15,16 +15,16 @@
   a basis $ω_1,\dots ω_g$ and denote by $\bar\w$ the vector
   $(ω_1,\dots ω_g)$.
 
-  For any two points $P,Q$ we can
-  consider the vector integral $\int_{P}^Q\bar\w\in\C^g$, however its value
+  For any two points $P,Q \in \cu$ we can
+  consider the vector integral $\int_{P}^Q\bar\w\in\C^g$, whose value
   depends on the chosen path from $P$ to $Q$.
 
-  In fact the integral depends on the path up to homology,
+  In fact, the integral depends on the path up to homology,
   so we introduce the {\em period lattice} of $\cu$
   \begin{equation}
-      \Lambda = \set{\int_γ ω_j, γ\in\homo} \subset\C^g
+      \Lambda = \set{\int_γ ω_j, γ\in\homo} \subset\C^g,
   \end{equation}
-  where $\homo \simeq\Z^{2g}$ is the first homology group
+  where $\homo \isom\Z^{2g}$ is the first homology group
   of the curve.
 
   Now the integral
@@ -33,9 +33,9 @@
   \end{equation}
   is well defined, and the definition can be extended
   by linearity to the group of
-  zero degree divisors
+  degree zero divisors
   \begin{equation}
-      \Div^0(\cu)=\set{ \sum a_i P_i, a_i\in\Z, \sum a_i = 0}
+      \Div^0(\cu)=\set{ \sum a_i P_i, a_i\in\Z, \sum a_i = 0}.
   \end{equation}
 
   The Abel-Jacobi theorem states that one obtains a
@@ -46,7 +46,7 @@
   \begin{equation}\label{eq:ajm_def}
       \AJ:\left\{\begin{array}{ccc}
               \Jac(\cu) = \Div^0(\cu)/\Prin^0(\cu) &\To &\C^g/\Lambda \\
-              \sum_k [Q_k-P_k] &\mapsto & \sum_k \int_{P_k}^{Q_k} \bar\w \mod \Lambda
+              \sum_i [Q_i-P_i] &\mapsto & \sum_k \int_{P_i}^{Q_i} \bar\w \mod \Lambda
   \end{array}\right.
   \end{equation}
   between the Jacobian variety and the complex torus. \\
@@ -54,7 +54,6 @@
 
   \subsection{Explicit basis and standard matrices}\label{subsec:bases_matrices}
 
-  %There exist a skew-symmetric intersection product on paths
   Let us choose a symplectic basis of $\homo$, that is two
   families of cycles $α_i$, $β_j$ for $1\leq i,j\leq g$ such that
   the intersections satisfy
@@ -64,7 +63,7 @@
   \end{equation}
   the other intersections being all zero.
 
-  We define the period matrices on those loops
+  We define the period matrices on those cycles
   \begin{equation}
       \OA = \left(\int_{α_i}ω_j\right)_{1\leq i,j\leq g}
       \text{ and }
@@ -76,13 +75,12 @@
   \end{equation}
   such that $\Lambda = \Omega\Z^{2g}$.
 
-  If one takes as basis of differentials the dual basis of,
-  the loops $α_i$ the matrix becomes
+  If one takes as basis of differentials the dual basis of
+  the cycles $α_i$ the matrix becomes
   \begin{equation}
       \OA^{-1}\Omega = (I_g, \tau),
   \end{equation}
-  where $\tau = \OA^{-1}\OB \in \C^{g \times g}$ is in the Siegel space
+  where $\tau = \OA^{-1}\OB \in \C^{g \times g}$, called  {\em small period matrix}, and is in the Siegel space
   $\mathfrak{H}_g$ of symmetric matrices with positive definite imaginary part.
-
 \biblio
 \end{document}

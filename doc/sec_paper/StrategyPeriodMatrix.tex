@@ -4,18 +4,20 @@
 
   \section{Strategy for the period matrix}\label{sec:strat_pm}
 
-  In this section we present our strategy to obtain period matrices $\OC, \OA, \OB$ and $\tau$ as defined in \S \ref{m-subsec:bases_matrices}. In order to simplify notation,
-  we briefly assume $\delta = 1$ here. The main ingredients were already described in
-  Section \ref{m-sec:se_curves}: \abstand We integrate the holomorphic differentials in $\W$ (see \S \ref{m-subsec:diff_forms})
-  over the cycles in $\Gamma$ (see  \S \ref{m-subsec:cycles_homo}) using numerical integration (see \S \ref{m-sec:de_int}), which results in a period matrix (see \S \ref{m-subsec:comp_of_periods})
+  In this section we present our strategy to obtain period matrices $\OC, \OA, \OB$ and $\tau$ as defined in \S \ref{m-subsec:bases_matrices}. Although our algorithm is no way restricted to the
+  case $\delta = 1$, we will briefly assume it to simplify notation.
+  
+  The main ingredients were already described in
+  Section \ref{m-sec:se_curves}: we integrate the holomorphic differentials in $\W$ (\S \ref{m-subsec:diff_forms})
+  over the cycles in $\Gamma$ (\S \ref{m-subsec:cycles_homo}) using numerical integration (\S \ref{m-sec:de_int}), which results in a period matrix (\S \ref{m-subsec:comp_of_periods})
   \begin{equation}
       \label{eq:OC}
     \OC = \left( \int_{\gamma} \w \right)_{\substack{\w \in \W, \\ \gamma \in \Gamma}} \in \C^{g \times 2g}.
   \end{equation}
   The matrices $\OA$ and $\OB$ require a symplectic basis of $\homo$.
-  So, we compute the intersection pairing between the cycles in $\Gamma$, as explained in Section \ref{m-sec:intersections}, which results in an
-  intersection matrix $K_{\Gamma} \in \Z^{2g \times 2g}$. \abstand
-  Applying an algorithm for symplectic reduction (see \S \ref{m-subsec:symp_basis}) to $K_{\Gamma}$, we obtain a unimodular matrix $S \in \Z^{2g \times 2g}$, such that
+  So, we compute the intersection pairing on $\Gamma$, as explained in Section \ref{m-sec:intersections}, which results in a
+  intersection matrix $K_{\Gamma} \in \Z^{2g \times 2g}$.
+  After computing a symplectic basis $S \in \GL(\Z,2g)$ for $K_{\Gamma}$ (\S \ref{m-subsec:symp_basis}), we obtain a big period matrix
   \begin{equation}
       \label{eq:OAOB}
       (\OA,\OB) = \OC S,
@@ -23,7 +25,7 @@
    and finally a small period matrix in the Siegel upper half-space
   \begin{equation}
       \label{eq:tau}
-   \tau = \OA^{-1} \OB \in \mathfrak{H}_g \subset \C^{g \times g}.
+   \tau = \OA^{-1} \OB \in \mathfrak{H}_g.
   \end{equation}
 
   \bigskip
@@ -39,8 +41,7 @@
   \begin{thm}\label{thm:periods}
    Let $\gamma_e^{(l)} \in \Gamma$ be a shift of an elementary cycle corresponding
    to an edge $e = (a,b) \in E$. Then, for all differentials $w_{i,j} \in \WM$, we have
-   \begin{equation}
-      \label{eq:thm_periods_1} 
+   \begin{equation}\label{eq:periods} 
       \int_{\gamma_e^{(l)}} \w_{i,j}  =  \zeta^{-lj} C_{i,j} \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du
    \end{equation}
    where
@@ -73,20 +74,31 @@
   is holomorphic on $\epsilon_{a,b}$.
   \end{proof}
 
-
+  \begin{rmk}\label{rmk:elem_ints}
+   From Theorem \ref{m-thm:periods} it follows that we can obtain a period matrix by computing the \emph{elementary integrals}
+   \begin{equation}\label{eq:elem_ints}
+       \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du
+   \end{equation}
+   for all $\w_{i,j} \in \W$ and $e \in E$. All other integrals are obtained by multiplication with constants.
+   \end{rmk}
+ 
+  
+  
   \subsection{Symplectic basis}\label{subsec:symp_basis}
 
   For a period matrix $\tau$, we need to integrate over a symplectic basis of $\homo$. In Section \ref{m-subsec:cycles_homo}, we chose a generating set $\Gamma$ for $\homo$, that is in general not
   a (symplectic) basis. We ressolve this by computing the intersection pairing on $\Gamma$, as explained in Section \ref{m-sec:intersections}. 
   
   The resulting intersection matrix $K_{\Gamma}$
-   is a skew-symmetric matrix of dimension \\ $(n-1)(m-1)$ with entries in $\{ 0,\pm 1\}$ of rank $2g$. Hence, we can apply an algorithm
-  for symplectic reduction over $\Z$ based on
-    \cite[Theorem 18]{KB2002} to obtain a unimodular matrix $S$ such that
+   is a skew-symmetric matrix of dimension \\ $(n-1)(m-1)$ with entries in $\{ 0,\pm 1\}$ and has rank $2g$. Hence, we can apply an algorithm, based on
+    \cite[Theorem 18]{KB2002}, that computes a symplectic basis
+   for $K_{\Gamma}$ over $\Z$, i.e. a unimodular matrix $S$ such that
   $$S^T K_{\Gamma}  S = J, \quad \text{where} \quad J = \begin{pmatrix} 0 & I_g & 0 \\ -I_g & 0 & 0 \\ 0 & 0 & 0_{\delta-1} \end{pmatrix}.$$
-  The linear combinations of cycles given by $\OC S$ then correspond to a symplectic homology basis, i.e. $(\OA,\OB) = \OC S$.
-  In the case $\delta > 1$,
-  the last $\delta-1$ columns of $\OC S$ will be zero and can be ignored, as they correspond to the dependent cycles
+  The linear combinations of cycles given by $\OC S$ then yield a symplectic homology basis
+  \begin{equation}\label{eq:symp_basis}
+   (\OA,\OB, 0_{\delta-1}) = \OC S.
+  \end{equation}
+  Note that the last $\delta-1$ columns of $\OC S$ are zero and can be ignored, as they correspond to the dependent cycles
   in $\Gamma$ and contribute nothing.
 
 

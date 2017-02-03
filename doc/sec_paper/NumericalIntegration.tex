@@ -5,7 +5,7 @@
   \section{Numerical integration}\label{sec:numerical_integration}
 
   For $(a,b) \in E$ we want to compute to absolute precision say $e^{-D}$ the elementary integrals
-  (see Theorem \ref{m-thm:periods})
+  (see Remark \ref{m-rmk:elem_ints})
 \begin{align*}
  \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du.
 \end{align*}
@@ -15,16 +15,16 @@ Notice that $α=1/2$ for hyperelliptic curves, while for general superelliptic c
 from $1/m$ to $\frac{m-1}m$ depending on the differential form $\omega_{i,j}$ considered.
 
 
-As explained in \S \ref{sec:real_int}, the actual computations will be done on integrals of the form
+As explained in \S \ref{m-subsec:real_mult}, the actual computations will be done on integrals of the form
 \begin{equation}
     \label{eq:elem_num_int}
     I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{\frac jm}\ytab(u)^j}
 \end{equation}
 so that we restrict the numerical analysis to this case,
-the value of elementary integrals being recovered by polynomial shift
+the value of elementary integrals being recovered by the polynomial shift
 \begin{equation}
     \int_{-1}^1\frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac jm}}\du
-    = \sum_{l=0}^{i-1} \left(\frac{b+a}{b-a}\right)^{i-1-l} I_{a,b}(l,j).
+    = \sum_{l=0}^{i-1} {i-1 \choose l} \left(\frac{b+a}{b-a}\right)^{i-1-l} I_{a,b}(l,j).
 \end{equation}
 
 We study here two numerical integration schemes:
@@ -48,7 +48,7 @@ Using the double-exponential change of variable
 u=\tanh(λ\sinh(t)),
 \end{equation}
 the singularities at $\pm1$ are pushed to infinity and
-the integral \eqref{eq:elem_num_int} becomes
+the integral \eqref{m-eq:elem_num_int} becomes
 \begin{equation}
     I_{a,b}(i,j) = \int_\R g(t)\dt
 \end{equation}
@@ -66,7 +66,7 @@ be the image of the strip $\Delta_τ$ under the change of
 variable $u=\tanh(λ\sinh(t))$.
 
 Since we can compute the distance of each branch point $u_i$ to
-both $[-1,1]$ and its neighborhood $Z_\tau$ (see \S \ref{sec:dist_zt}), we obtain
+both $[-1,1]$ and its neighborhood $Z_\tau$ (see \S \ref{m-sec:dist_zt}), we obtain
   \begin{lemma}
       There exist explicitly computable
       constants $M_1$, $M_2$ such
@@ -124,8 +124,8 @@ we write the Poisson formula on $h\Z$ for the function $g$
  +
      \underbrace{\sum_{k\in\Z^\ast} \hat g(\frac{k}{h})}_{e_Q}
 \end{equation}
-and control both error terms $e_T$ and $e_q$ by lemma \ref{lem:de_error_trunc}
-and \ref{lem:de_error_quad} below. The actual parameters $h$ and $n$ follow
+and control both error terms $e_T$ and $e_q$ by lemma \ref{m-lem:de_error_trunc}
+and \ref{m-lem:de_error_quad} below. The actual parameters $h$ and $n$ follow
 by bounding each error by $e^{-D}/2$.
 
 \begin{lemma}[truncation error]
@@ -224,7 +224,7 @@ In the case of hyperelliptic curves, we have $α=\frac12$ and the integral
     \int_{-1}^1\frac{\varphi_{i,j}(u)}{\sqrt{1-u^2}}\du
 \end{equation}
 can be efficiently handled by Gaussian integration with weight
-$\sqrt{1-u^2}^{-1}$,
+$1/\sqrt{1-u^2}$,
 for which the corresponding orthogonal polynomials are
 Chebychev polynomials.
 
@@ -255,7 +255,7 @@ theorem on an ellipse $ε_r$ of the form
   \end{center} \caption{Ellipse parameters.}
   \label{fig:ellipse} \end{figure}
 
-\begin{thm}[\cite{ChawlaJain68},thm 5]
+\begin{thm}[\cite{ChawlaJain68},Theorem 5]
     Let $r>1$ such that $g$ is holomorphic on $ε_r$. Then
     \begin{equation}
         \abs{E(n)}\leq \frac{2πM(r)}{(r+\sqrt{r^2-1})^{2n}-1}
@@ -286,7 +286,7 @@ We simply compute the distance
 \end{proof}
 
 \begin{prop}
-    With $r$ and $M(r)$ satisfying lemme \ref{lem:param_r},
+    With $r$ and $M(r)$ satisfying lemme \ref{m-lem:param_r},
     for all $n$ such that
     \begin{equation}
         n \geq \frac{D+\log(2πM(r))+1}{2\log(r+\sqrt{r^2-1})}
@@ -301,7 +301,7 @@ We simply compute the distance
 \end{prop}
 
 More details on the choice of $r$ and the computation of $M(r)$
-are given in section \ref{choice_r_ellipse}.
+are given in section \ref{m-choice_r_ellipse}.
 
 \iffalse
 the $2n$-th derivative can be

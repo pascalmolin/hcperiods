@@ -14,16 +14,23 @@
 %         decoration={markings,mark=at position .5 with
 %         {\arrow[line width=0.4mm]{<}}}} }
 % \begin{document}
-\begin{tikzpicture}
-
+\begin{tikzpicture}[scale=0.8, every node/.style={scale=0.8}]
   \draw (-1.5,0) node {$a$};  \draw (1.5,0) node {$b$}; \draw (0,0) node {$V_{a,b}$};
-  \filldraw [black] (-1.8,0) circle (1pt); \filldraw [black] (1.8,0) circle (1pt);
-    \draw [dashed] (-2.8,0) -- (-1.8,0);   \draw [dashed] (2.8,0) -- (1.8,0);
+  \draw (-1.8,0) circle (1.3pt); \draw (1.8,0) circle (1.3pt);
+    \draw [densely dashed] (-3,0) -- (-1.8,0);   \draw [densely dashed] (3,0) -- (1.8,0);
     \draw (-2.4,0.1) .. controls (-2,1.5) and (2,1.5) .. (2.4,0.1);
     \draw (-2.4,-0.1) .. controls (-2,-1.5) and (2,-1.5) .. (2.4,-0.1);
     \draw (-2.4,-0.1) -- (-1.7,-0.1); \draw (2.4,-0.1) -- (1.7,-0.1);
     \draw (-2.4,0.1) -- (-1.7,0.1); \draw (2.4,0.1) -- (1.7,0.1);
     \draw (-1.7,0.1) -- (-1.7,-0.1); \draw (1.7,0.1) -- (1.7,-0.1);
-
+    % Other branch points
+    \draw (-1,1.1) circle (1.3pt);
+    \draw [densely dashed] (-1.1,1.1) -- (-3,1.1);
+    \draw (-0.4,-1.18) circle (1.3pt);
+    \draw [densely dashed] (-0.4,-1.18) -- (-3,-1.18);
+    \draw (1.85,0.8) circle (1.3pt);
+    \draw [densely dashed] (1.85,0.8) -- (3,0.8);
+    \draw (0.93,-1.1) circle (1.3pt);
+    \draw [densely dashed] (0.93,-1.1) -- (3,-1.1);
 \end{tikzpicture}
 
