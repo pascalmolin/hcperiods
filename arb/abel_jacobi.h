@@ -13,6 +13,9 @@
 #include "complex_extras.h"
 #include "mag_func.h"
 
+#define VBS 0
+#define progress(...) if (VBS) flint_printf(__VA_ARGS__);
+
 /******************************************************************************
 
   data structures

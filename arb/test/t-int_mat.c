@@ -9,6 +9,7 @@
 #define SKIP 1
 
 typedef slong entry[3];
+typedef slong gauss[2];
 
 static void
 fmpz_mat_set_entries(fmpz_mat_t m, entry * v, slong len)
@@ -20,24 +21,14 @@ fmpz_mat_set_entries(fmpz_mat_t m, entry * v, slong len)
 }
 
 void
-do_example(slong m, slong n, cdouble * coeff, entry * ref, slong size, int flag)
+do_example(slong m, slong n, acb_srcptr x, entry * ref, slong size, int flag)
 {
-    slong k, len;
-    acb_ptr x;
+    slong len;
     sec_t c;
     data_t data;
     tree_t tree;
     fmpz_mat_t ca;
     fmpz_mat_t cm;
-    acb_poly_t f;
-
-    acb_poly_init(f);
-    acb_poly_fit_length(f, n + 1);
-    for (k = 0; k < n; k++)
-        acb_set_d_d(acb_poly_get_coeff_ptr(f, k), creal(coeff[k]), cimag(coeff[k]));
-    x = _acb_vec_init(n);
-    acb_poly_find_roots(x, f, NULL, 0, 20);
-
     sec_init(&c, m, x, n);
     tree_init(tree,n-1);
     spanning_tree(tree, x, n, INT_DE);
@@ -52,7 +43,7 @@ do_example(slong m, slong n, cdouble * coeff, entry * ref, slong size, int flag)
 
     if (!flag && !fmpz_mat_equal(ca,cm))
     {
-      flint_printf("Example 1: invalid intersection matrix\n");
+      flint_printf("invalid intersection matrix\n");
       flint_printf("\nintersection matrix arb:\n");
       fmpz_mat_print_pretty(ca);
       flint_printf("\nintersection matrix magma:\n");
@@ -64,33 +55,70 @@ do_example(slong m, slong n, cdouble * coeff, entry * ref, slong size, int flag)
     fmpz_mat_clear(cm);
     tree_clear(tree);
     data_clear(data);
+}
+
+void
+do_example_pol(slong m, slong n, acb_poly_t f, entry * ref, slong size, int flag)
+{
+    acb_ptr x;
+    x = _acb_vec_init(n);
+    acb_poly_find_roots(x, f, NULL, 0, 20);
+    do_example(m, n, x, ref, size, flag);
     _acb_vec_clear(x, n);
+}
+
+void
+do_example_si(slong m, slong n, slong * coeff, entry * ref, slong size, int flag)
+{
+    slong k;
+    acb_poly_t f;
+    acb_poly_init(f);
+    acb_poly_fit_length(f, n + 1);
+    _acb_poly_set_length(f, n + 1);
+    acb_one(f->coeffs + n);
+    for (k = 0; k < n; k++)
+        acb_set_si(f->coeffs + k, coeff[k]);
+    do_example_pol(m, n, f, ref, size, flag);
+    acb_poly_clear(f);
+}
+
+void
+do_example_si_si(slong m, slong n, gauss * coeff, entry * ref, slong size, int flag)
+{
+    slong k;
+    acb_poly_t f;
+    acb_poly_init(f);
+    acb_poly_fit_length(f, n + 1);
+    _acb_poly_set_length(f, n + 1);
+    acb_one(f->coeffs + n);
+    for (k = 0; k < n; k++)
+        acb_set_si_si(f->coeffs + k, coeff[k][0], coeff[k][1]);
+    do_example_pol(m, n, f, ref, size, flag);
     acb_poly_clear(f);
 }
 
 int main()
 {
-
-    cdouble pol_1[3] = {-6, -5, 2};
+    slong pol_1[3] = {-6, -5, 2};
     entry mat_1[2] = { {0,1,1}, {1,0,-1} };
-    cdouble pol_2[3] = {0, -1, 0};
+    slong pol_2[3] = {0, -1, 0};
     entry mat_2[16] = { {0,1,1}, {0,5,-1}, {1,0,-1}, {1,2,1}, {1,3,1},
         {2,1,-1}, {2,3,-1}, {2,4,1}, {3,1,-1}, {3,2,1}, {3,4,1}, {4,2,-1},
         {4,3,-1}, {4,5,1}, {5,0,1}, {5,4,-1} };
-    cdouble pol_3[4] = {0, 10+2*I, 3-5*I, 5};
+    gauss pol_3[4] = {{0,0}, {10,2}, {3,-5}, {5,0}};
     entry mat_3[30] = { {0,1,1}, {0,5,-1}, {0,6,1}, {0,7,-1}, {1,0,-1},
         {1,2,1}, {1,3,1}, {1,7,1}, {1,8,-1}, {2,1,-1}, {2,3,-1}, {2,4,1},
         {2,8,1}, {3,1,-1}, {3,2,1}, {3,4,1}, {4,2,-1}, {4,3,-1}, {4,5,1},
         {5,0,1}, {5,4,-1}, {6,0,-1}, {6,7,1}, {7,0,1}, {7,1,-1}, {7,6,-1},
         {7,8,1}, {8,1,1}, {8,2,-1},{8,7,-1} };
-    cdouble pol_4[4] = {8, 92, -40, 84};
+    slong pol_4[4] = {8, 92, -40, 84};
     entry mat_4[36] = { {0,1,1}, {0,4,-1}, {0,5,1}, {0,8,-1}, {1,0,-1},
         {1,2,1}, {1,5,-1}, {1,6,1}, {2,1,-1}, {2,3,1}, {2,6,-1}, {2,7,1},
         {3,2,-1}, {3,4,1}, {3,7,-1}, {3,8,1}, {4,0,1}, {4,3,-1},
         {4,5,1}, {4,8,-1}, {5,0,-1}, {5,1,1}, {5,4,-1}, {5,6,1}, {6,1,-1},
         {6,2,1}, {6,5,-1}, {6,7,1}, {7,2,-1}, {7,3,1}, {7,6,-1}, {7,8,1},
         {8,0,1}, {8,3,-1}, {8,4,1}, {8,7,-1} };
-    cdouble pol_5[5] = {20, 13, 3, -3, -7};
+    slong pol_5[5] = {20, 13, 3, -3, -7};
     entry mat_5[82] = { {0,1,1}, {0,6,-1}, {0,7,1}, {1,0,-1}, {1,2,1},
         {1,7,-1}, {1,8,1}, {2,1,-1}, {2,3,1}, {2,8,-1}, {2,9,1}, {3,2,-1},
         {3,4,1}, {3,9,-1}, {4,3,-1}, {4,5,1}, {5,4,-1}, {5,6,1},
@@ -110,25 +138,30 @@ int main()
 
     /* Example 1 : y^2 = (x+3)(x+1)(x-2), g = 1 */
     /*do_example(2, 3, {-3, -1, 2}, mat_1, 2);*/
-    do_example(2, 3, pol_1, mat_1, 2, 0);
+    progress("example 1\n");
+    do_example_si(2, 3, pol_1, mat_1, 2, 0);
 
     /* Example 2 : y^4 = (x+1)(x)(x-1), g = 3 */
     /*do_example(4, 3, {-1, 0, 1}, mat_2, 16);*/
-    do_example(4, 3, pol_2, mat_2, 16, 0);
+    progress("example 2\n");
+    do_example_si(4, 3, pol_2, mat_2, 16, 0);
 
     /* Example 3 : y^4 = (x+5+i)(x)(x+i)(x-2i), g = 3 */
     /*do_example(4, 4, {-5-I, 0, -I, 2*I}, mat_3, 30);*/
-    do_example(4, 4, pol_3, mat_3, 30, 0);
+    progress("example 3\n");
+    do_example_si_si(4, 4, pol_3, mat_3, 30, SKIP);
 
     /* Example 4 : y^4 = x^4 + 84x^3 - 40x^2 + 92x + 8, g = 3 */
-    do_example(4, 4, pol_4, mat_4, 36, SKIP);
+    progress("example 4\n");
+    do_example_si(4, 4, pol_4, mat_4, 36, SKIP);
     /* ugly
     acb_swap(x+1,x+2);
     acb_swap(x+2,x+3);
     */
 
     /* Example 5 (s1) : y^6 = x^5 - 7*x^4 - 3*x^3 + 3*x^2 + 13*x + 20, g = 10 */
-    do_example(6, 5, pol_5, mat_5, 82, SKIP);
+    progress("example 5\n");
+    do_example_si(6, 5, pol_5, mat_5, 82, SKIP);
     /* ugly
     acb_swap(x+0,x+4);
     acb_swap(x+0,x+3);

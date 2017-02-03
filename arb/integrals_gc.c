@@ -93,7 +93,7 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, slong n, slong prec)
     acb_ptr u, cab, ab2;
 
     /* reduce roots */
-    u = _acb_vec_init(c.n);
+    u = _acb_vec_init(c.n + 1);
     n1 = ab_points(u, c.roots, e, c.n, c.m, prec);
     ab2 = u + c.n - 2;
     cab = u + c.n - 1;
@@ -101,7 +101,7 @@ integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, slong n, slong prec)
     gc_integrals(res, u, n1, c.n - 2, c.g, n, prec);
     integrals_edge_factors_gc(res, cab, ab2, c, prec);
 
-    _acb_vec_clear(u, c.n);
+    _acb_vec_clear(u, c.n + 1);
 }
 
 void

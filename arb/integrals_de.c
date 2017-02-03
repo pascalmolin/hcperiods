@@ -107,7 +107,7 @@ integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz, const de_int
     acb_ptr u, cab, ab2;
 
     /* reduce roots */
-    u = _acb_vec_init(c.n);
+    u = _acb_vec_init(c.n + 1);
     n1 = ab_points(u, c.roots, e, c.n, c.m, prec);
     ab2 = u + c.n - 2;
     cab = u + c.n - 1;
@@ -115,7 +115,7 @@ integrals_edge_de(acb_ptr res, sec_t c, edge_t e, const cohom_t dz, const de_int
     de_integrals_precomp(res, u, n1, c.n - 2, c, dz, de, prec);
     integrals_edge_factors(res, cab, ab2, c, dz, prec);
 
-    _acb_vec_clear(u, c.n);
+    _acb_vec_clear(u, c.n + 1);
 }
 
 void

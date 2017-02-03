@@ -2,7 +2,7 @@
 
 int main() {
 
-    slong d, i, m;
+    slong n, i, m;
     slong prec = 200;
     flint_rand_t state;
     
@@ -10,34 +10,29 @@ int main() {
     fflush(stdout);
     flint_randinit(state);
 
-    for (d = 3; d < 10; d++)
+    for (n = 3; n < 10; n++)
     {
         for (i = 0; i < 5; i++)
         {
             acb_ptr x;
             slong i;
  
-            x = _acb_vec_init(d);
-            for (i = 0; i < d; i++)
-            {
+            x = _acb_vec_init(n);
+            for (i = 0; i < n; i++)
                 acb_randtest_precise(x + i, state, prec, 4);
-                /*
-                flint_printf("\nx[%ld] = ", i);
-                acb_printd(x + i, 10);
-                */
-            }
 
             for (m = 2; m < 7; m++)
             {
                 abel_jacobi_t aj;
-                abel_jacobi_init_roots(aj, m, x, d);
 
+                progress("[n=%ld, m=%ld]",n,m);
+                abel_jacobi_init_roots(aj, m, x, n);
                 abel_jacobi_compute(aj, prec);
 
                 abel_jacobi_clear(aj);
             }
 
-            _acb_vec_clear(x, d);
+            _acb_vec_clear(x, n);
         }
     }
 
