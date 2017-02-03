@@ -3,47 +3,54 @@
 \begin{document}
 
   \section{Computing the Abel-Jacobi map}\label{sec:comp_ajm}
-
-   Assume for this section that we already computed a period matrix following the strategy described in \ref{m-sec:strat_pm}.
-   Then, in order to compute the Abel-Jacobi map  $\AJ$ of divisors on $\cu$, as defined in \eqref{m-eq:ajm_def}, it is sufficient to compute integrals of the form
+  
+   %Assume for this section that we already computed a period matrix following the strategy described in Section \ref{m-sec:strat_pm}.
+   Here we are concerned with explicitly computing the Abel-Jacobi map of degree zero divisors, for a general introduction see Section \ref{m-sec:ajm}.
+   
+   Let $D = \sum_{P \in \cu} a_P P \in \Div^0(\cu)$. Choosing a basepoint $P_0 \in \cu$, the computation of $\AJ$ reduces to (using linearity)
+   \begin{equation}
+     \AJ([D]) \equiv \sum_{P \in \cu} a_P \int_{P_0}^P \bar\w \mod \Lambda.
+   \end{equation}
+  For every $P \in \cu$, $\int_{P_0}^P \bar\w$ is a linear combination of vector integrals of the form
   \begin{align*}
-    \int_{P_0}^{P_k} \w\quad \text{(see \S \ref{m-subsec:ajm_bp}),} \quad
-    \int_{P_k}^{P} \w \quad \text{(see \S \ref{m-subsec:ajm_finite}),}
-    \quad \text{and} \quad \int_{P_0}^{P_{\infty}} \w\quad \text{(see \S \ref{m-subsec:ajm_infty}),} \quad \text{where}
+    \int_{P_0}^{P_k} \bar\w\quad \text{(see \S \ref{m-subsec:ajm_bp}),} \quad
+    \int_{P_k}^{P} \bar\w \quad \text{(see \S \ref{m-subsec:ajm_finite})}
+    \quad \text{and} \quad \int_{P_0}^{P_{\infty}} \bar\w\quad \text{(see \S \ref{m-subsec:ajm_infty}),} \quad \text{where}
   \end{align*}
-
   \begin{itemize}
-   \item $\w = \w_{i,j}\in \W$ is a holomorphic differential,
    \item $P = (x_P,y_P) \in \cu$ is a finite point on the curve,
-   \item $P_0$ is a basepoint for $\AJ$,
-   \item $P_k = (x_k,0) \in \cu$ is a ramification point, i.e.\ $x_k \in X$,
+   \item $P_k = (x_k,0) \in \cu$ is a ramification point, i.e.\ $x_k \in X$, and
    \item $P_{\infty} \in \cu$ is a point above infinity.
   \end{itemize}
+  Finally, the resulting vector integral has to reduced modulo the period lattice, which is covered in \S \ref{m-subsec:lat_red}.
+  
+  Assume for this section that we already computed a period matrix (and all related data) following the Strategy from Section \ref{m-sec:strat_pm}. 
+  
+  Typically, we choose as basepoint the ramification point $P_0 = (x_0,0)$, where $x_0 \in X$ is the root of the spanning tree $T = (X,E)$.
 
-  Typically, we choose as basepoint the point $P_0 = (x_0,0)$, where $x_0 \in X$ is the root of the spanning tree $T = (X,E)$.
+  
+   
+  \subsection{Between ramification points}\label{subsec:ajm_bp}
 
-  \subsection{Between branch points}\label{subsec:ajm_bp}
-
-  Consider a path $(x_0=x_{k_0},x_{k_1},\dots,x_{k_{n-1}},x_{k_n}=x_k)$ in the spanning tree connecting $x_0$ and $x_k$. Then we have that
+  Consider a path $(x_0=x_{k_0},x_{k_1},\dots,x_{k_{n-1}},x_{k_t}=x_k)$ in the spanning tree connecting $x_0$ and $x_k$. Then we have that
   \begin{align}
-    \int_{P_0}^{P_k} \w_{i,j} = \sum_{j = 0}^{n-1}  \int_{P_{k_j}}^{P_{k_{j+1}}} \w_{i,j}.
+    \int_{P_0}^{P_k} \bar\w = \sum_{j = 0}^{t-1}  \int_{P_{k_j}}^{P_{k_{j+1}}} \bar\w.
   \end{align}
-  Denote $a = x_{k_j}, b = x_{k_{j+1}} \in X$. From \S \ref{m-subsec:cycles_homo} we know that for $(a,b) \in E$ a smooth path between $a$ and $b$ is given by
+  Denote $a = x_{k_j}, b = x_{k_{j+1}} \in X$. From \S \ref{m-subsec:cycles_homo} we know that for $(a,b) \in E$ a smooth path between $P_a=(a,0)$ and $P_b=(b,0)$ is given by
   \begin{align*}
    \gamma = \{  (x,\yab(x))  \mid  x \in [a,b]  \}.
   \end{align*}
-  According to the proof of Theorem \ref{m-thm:periods} the corresponding integral is
+  Fix a differential $\w_{i,j} \in \W$. Then, according to the proof of Theorem \ref{m-thm:periods} the corresponding integral is just an elementary integral
   \begin{align}
-   \int_{\gamma} \w_{i,j}  & =  \left(\frac{b-a}{2}\right)^{i-\frac{dj}{m}} e^{-\frac{\pi i j}{m}}  \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}} \du ,
+   \int_{\gamma} \w_{i,j}  & =  C_{i,j}  \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}} \du,
   \end{align}
   which has already been evaluated during the period matrix computation.
 
 
-  \subsection{From ramification point to regular point}\label{subsec:ajm_finite}
+  \subsection{Reaching non-ramification points}\label{subsec:ajm_finite}
 
-   Let $P = (x_P,y_P) \in \cu$ be a finite regular point and $a \in X$ be a branch point such that $x_k \not\in [a,x_P]$ for all $x_k \ne a$.
-
-  As in \S \ref{m-subsec:roots_branches} we define a local branch of $\cu$ via the functions
+   \todo Rework
+   Let $P = (x_P,y_P) \in \cu$ and $a \in X$ such that $X\cap]a,x_P]=\varnothing$. As in \S \ref{m-subsec:roots_branches} we define a locally analytic branch of $\cu$ via the functions
   \begin{align}\label{def:yax}
   \begin{split}
    \yaxp(x)  & =  \left(\frac{x_P-a}{2}\right)^{\frac{d}{m}}  (1 + u(x))^{\frac{j}{m}}  \ytaxp(u(x)), \quad \text{with} \\
@@ -107,17 +114,17 @@
     \end{align}
     Integrating from $P_0$ to $P_{\infty}$ is equivalent to computing the Abel-Jacobi map of the divisor $D_{\infty} =  P_{\infty} - P_0 $. Therefore,
     \begin{align}
-     \AJ( D_{\infty} )  & \equiv  \AJ(D_{\infty} + D)  =  \AJ(  \nu \sum_{k = 1}^d P_k + (\mu m - 1) P_0  ) \\  & \equiv  \AJ(  \nu \sum_{k = 1}^d P_k  )
-      =   \left( \nu \sum_{k=1}^d \int_{P_0}^{P_k} \w \right)_{w \in W} \mod \Lambda.
+     \AJ( [D_{\infty}] )  & \equiv  \AJ([D_{\infty} + D])  =  \AJ( [ \nu \sum_{k = 1}^d P_k + (\mu m - 1) P_0 ]  ) \\  & \equiv  \AJ( [ \nu \sum_{k = 1}^d P_k ] )
+      \equiv   \nu \sum_{k=1}^d \int_{P_0}^{P_k} \bar\w \mod \Lambda.
     \end{align}
 
+    \todo Add case $\delta > 1$.
 
 
 
+  \subsection{Lattice reduction}\label{subsec:lat_red}
 
-  \subsection{Lattice reduction}
-
-    Necessary?
+    Necessary? Yes. \todo Explain reduction.
 
 \biblio
 \end{document}
