@@ -71,7 +71,7 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
 
     data_init(data, aj->tree, c, prec);
 
-    symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
+    symplectic_basis(aj->loop_a, aj->loop_b, data, aj->tree, c);
 
     /* cohomology */
     holomorphic_differentials(aj->dz, c.n, c.m);

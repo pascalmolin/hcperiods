@@ -174,7 +174,7 @@ void data_clear(data_t data);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
-void intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m);
+void intersection_tree(fmpz_mat_t c, const data_t data, const tree_t tree, slong n, slong m);
 
 /* find g+g symplectic homology basis from tree */
 /* two lists of g loops */
@@ -182,7 +182,7 @@ void loop_init(loop_t * l, slong len);
 void homol_init(homol_t * cyc, slong len);
 void homol_clear(homol_t l, slong len);
 void symplectic_reduction(fmpz_mat_t p, fmpz_mat_t m, slong g);
-void symplectic_basis(homol_t loop_a, homol_t loop_b, const tree_t tree, sec_t c);
+void symplectic_basis(homol_t alpha, homol_t beta, const data_t data, const tree_t tree, sec_t c);
 
 /* find basis of holomorphic differentials */
 /* g elementary differentials */

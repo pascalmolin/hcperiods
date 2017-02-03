@@ -38,49 +38,20 @@ fill_block(fmpz_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
     }
 }
 
-slong
-shift_abbd(acb_srcptr uab, slong nab, acb_srcptr ucd, slong ncd, slong n, slong m)
+static slong
+shift_ratio(const acb_t r, slong m, slong prec)
 {
-    slong prec = 40;
-    arb_t one, m_one;
-    acb_t r, yab, ycd;
-    arb_t a, pi;
-    arb_init(one);
-    arb_init(m_one);
-    acb_init(r);
-    acb_init(yab);
-    acb_init(ycd);
     slong s;
     fmpz_t sz;
-
-    arb_one(one);
-    arb_neg(m_one, one);
-
-    mth_root_pol_def(ycd, ucd, ncd, n, m_one, m, prec);
-    acb_mul(ycd, ycd, ucd + n, prec);
-    acb_div(r, uab + n - 2, ucd + n -2, prec);
-    acb_sub_arb(r, r, one, prec);
-    acb_neg(r, r);
-    acb_root_ui(r, r, m, prec);
-    acb_mul(ycd, ycd, r, prec);
-
-    mth_root_pol_def(yab, uab, nab, n, one, m, prec);
-    acb_mul(yab, yab, uab + n, prec);
-    acb_div(r, ucd + n - 2, uab + n -2, prec);
-    acb_sub_arb(r, r, one, prec);
-    acb_neg(r, r);
-    acb_root_ui(r, r, m, prec);
-    acb_mul(yab, yab, r, prec);
-
-    acb_div(r, ycd, yab, prec);
+    arb_t a, pi2;
 
     arb_init(a);
-    arb_init(pi);
-    acb_arg(a, r, prec);
+    arb_init(pi2);
+     acb_arg(a, r, prec);
 
-    arb_const_pi(pi, prec);
-    arb_mul_2exp_si(pi, pi, 1);
-    arb_div(a, a, pi, prec);
+    arb_const_pi(pi2, prec);
+    arb_mul_2exp_si(pi2, pi2, 1);
+    arb_div(a, a, pi2, prec);
     arb_mul_ui(a, a, m, prec);
 
     fmpz_init(sz);
@@ -90,39 +61,117 @@ shift_abbd(acb_srcptr uab, slong nab, acb_srcptr ucd, slong ncd, slong n, slong 
     fmpz_clear(sz);
 
     arb_clear(a);
-    arb_clear(pi);
+    arb_clear(pi2);
+    return s;
+}
 
-    arb_clear(one);
-    arb_clear(m_one);
+/* (1 + sgn*(d-c)/(b-a)) * Cab * yab(x), x = +/-1, sgn = +/- 1 */
+static void
+limit_edge(acb_t z, acb_srcptr uab, slong nab, slong n, slong m, const acb_t cd2, int x, int sgn, slong prec)
+{
+    arb_t u;
+    acb_t r;
+
+    acb_init(r);
+    arb_init(u);
+
+    /* yab(x) * Cab */
+    arb_set_si(u, x);
+    mth_root_pol_def(z, uab, nab, n, u, m, prec);
+    acb_mul(z, z, uab + n, prec);
+
+    acb_div(r, cd2, uab + n -2, prec);
+    acb_add_si(r, r, sgn, prec);
+    if (sgn < 0)
+        acb_neg(r, r);
+    acb_root_ui(r, r, m, prec);
+    acb_mul(z, z, r, prec);
+
     acb_clear(r);
-    acb_clear(yab);
-    acb_clear(ycd);
+    arb_clear(u);
+}
 
+static slong
+shift_abad(acb_srcptr uab, slong nab, acb_srcptr ucd, slong ncd, slong n, slong m)
+{
+    slong s, prec = 40;
+    acb_t yab, yad;
+
+    acb_init(yab);
+    acb_init(yad);
+
+    limit_edge(yab, uab, nab, n, m, ucd + n - 2,  -1, 1, prec);
+    limit_edge(yad, ucd, ncd, n, m, uab + n - 2,  -1, 1, prec);
+    acb_div(yab, yad, yab, prec);
+
+    s = shift_ratio(yab, m, prec);
+
+    acb_clear(yab);
+    acb_clear(yad);
+    return s;
+}
+
+static slong
+shift_abbd(acb_srcptr uab, slong nab, acb_srcptr ucd, slong ncd, slong n, slong m)
+{
+    slong s, prec = 40;
+    acb_t yab, ybd;
+
+    acb_init(yab);
+    acb_init(ybd);
+
+    limit_edge(yab, uab, nab, n, m, ucd + n - 2,  1, -1, prec);
+    limit_edge(ybd, ucd, ncd, n, m, uab + n - 2, -1, -1, prec);
+    acb_div(yab, ybd, yab, prec);
+
+    s = shift_ratio(yab, m, prec);
+
+    acb_clear(yab);
+    acb_clear(ybd);
+    return s;
+}
+
+static int
+is_neg_abad(const acb_t ab2, const acb_t cd2)
+{
+    int s;
+    slong prec = 40;
+    acb_t r;
+
+    acb_init(r);
+    acb_div(r, ab2, cd2, prec);
+    s = arb_is_nonpositive(acb_imagref(r));
+    acb_clear(r);
     return s;
 }
 
 void
-intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
+intersection_tree(fmpz_mat_t c, const data_t data, const tree_t tree, slong n, slong m)
 {
     slong k, l, size = m - 1;
     arb_t one, m_one;
     arb_init(one);
     arb_init(m_one);
+    acb_ptr uab, ucd;
+    slong nab, ncd;
 
     fmpz_mat_zero(c);
 
     /* the entry c[ k * (m-1) + s ] corresponds to the
        loop gamma_k^(s) */
-    for (k = 0; k < d - 1; k++)
+    for (k = 0; k < n - 1; k++)
     {
         slong s;
         edge_t ek = tree->e[k];
+
+        uab = data->upoints->rows[k];
+        nab = data->n1[k];
 
         /* intersection with self shifts */
         fill_block(c, k * size, k * size, 1, -1, m);
 
         /* intersection with other shifts */
-        for (l = k + 1; l < d - 1; l++)
+        for (l = k + 1; l < n - 1; l++)
         {
             edge_t el = tree->e[l];
 
@@ -130,11 +179,19 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
                 /* no intersection */
                 continue;
 
+            ucd = data->upoints->rows[l];
+            ncd = data->n1[l];
+
             if(el.a == ek.a)
             {
                 /* case ab.ad */
+#if 1
                 s = lrint((el.va - ek.va ) / TWOPI);
                 if (el.dir > ek.dir)
+#else
+                s = shift_abad(uab, nab, ucd, ncd, n, m);
+                if (is_neg_abad(uab + n -2, ucd + n -2))
+#endif
                     fill_block(c, k * size, l * size, -s, -1-s, m);
                 else
                     fill_block(c, k * size, l * size, 1-s, -s, m);
@@ -142,7 +199,11 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
             else if (el.a == ek.b)
             {
                 /* case ab.bd */
+#if 1
                 s = lrint(.5 + (el.va - ek.vb ) / TWOPI);
+#else
+                s = shift_abbd(uab, nab, ucd, ncd, n, m);
+#endif
                 fill_block(c, k * size, l * size, -s, 1-s, m);
             }
             else
@@ -152,4 +213,5 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong d, slong m)
             }
         }
     }
+
 }

@@ -33,19 +33,21 @@ int main() {
             for (m = 2; m < 7; m++)
             {
                 sec_t c;
+                data_t data;
                 homol_t alpha, beta;
 
                 sec_init(&c, m, x, d);
+                data_init(data, tree, c, 40);
 
                 alpha = malloc(c.g * sizeof(loop_t));
                 beta = malloc(c.g * sizeof(loop_t));
 
-                symplectic_basis(alpha, beta, tree, c);
-
+                symplectic_basis(alpha, beta, data, tree, c);
 
                 homol_clear(alpha, c.g);
                 homol_clear(beta, c.g);
 
+                data_clear(data);
                 sec_clear(c);
             }
 

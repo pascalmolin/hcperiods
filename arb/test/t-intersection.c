@@ -2,14 +2,14 @@
 
 int main() {
 
-    slong d, i, m;
+    slong n, i, m;
     flint_rand_t state;
     
     flint_printf("intersection matrix...");
     fflush(stdout);
     flint_randinit(state);
 
-    for (d = 3; d < 10; d++)
+    for (n = 3; n < 10; n++)
     {
         for (i = 0; i < 5; i++)
         {
@@ -17,8 +17,8 @@ int main() {
             acb_ptr x;
             slong i;
  
-            x = _acb_vec_init(d);
-            for (i = 0; i < d; i++)
+            x = _acb_vec_init(n);
+            for (i = 0; i < n; i++)
             {
                 acb_randtest_precise(x + i, state, 100, 4);
                 /*
@@ -27,28 +27,35 @@ int main() {
                 */
             }
 
-            tree_init(tree, d - 1);
+            tree_init(tree, n - 1);
 
-            spanning_tree(tree, x, d, INT_DE);
+            spanning_tree(tree, x, n, INT_DE);
 
             for (m = 2; m < 7; m++)
             {
-                fmpz_mat_t c;
-                slong len = (d-1)*(m-1);
-                fmpz_mat_init(c, len, len);
+                sec_t c;
+                fmpz_mat_t ca;
+                data_t data;
+                slong len = (n-1)*(m-1);
 
-                intersection_tree(c, tree, d, m);
+                sec_init(&c, m, x, n);
+                data_init(data, tree, c, 100);
+
+                fmpz_mat_init(ca, len, len);
+
+                intersection_tree(ca, data, tree, n, m);
 
 #if 0
                 flint_printf("\n\n ======= d = %ld, m = %ld ===== \n", d, m);
                 fmpz_mat_print_pretty(c);
 #endif
 
-                fmpz_mat_clear(c);
+                data_clear(data);
+                fmpz_mat_clear(ca);
             }
 
             tree_clear(tree);
-            _acb_vec_clear(x, d);
+            _acb_vec_clear(x, n);
         }
     }
 

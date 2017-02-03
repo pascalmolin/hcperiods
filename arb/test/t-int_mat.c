@@ -19,30 +19,78 @@ fmpz_mat_set_entries(fmpz_mat_t m, entry * v, slong len)
         fmpz_set_si(fmpz_mat_entry(m,v[k][0],v[k][1]),v[k][2]);
 }
 
+void
+do_example(slong m, slong n, cdouble * coeff, entry * ref, slong size, int flag)
+{
+    slong k, len;
+    acb_ptr x;
+    sec_t c;
+    data_t data;
+    tree_t tree;
+    fmpz_mat_t ca;
+    fmpz_mat_t cm;
+    acb_poly_t f;
+
+    acb_poly_init(f);
+    acb_poly_fit_length(f, n + 1);
+    for (k = 0; k < n; k++)
+        acb_set_d_d(acb_poly_get_coeff_ptr(f, k), creal(coeff[k]), cimag(coeff[k]));
+    x = _acb_vec_init(n);
+    acb_poly_find_roots(x, f, NULL, 0, 20);
+
+    sec_init(&c, m, x, n);
+    tree_init(tree,n-1);
+    spanning_tree(tree, x, n, INT_DE);
+    data_init(data, tree, c, 40);
+    len = (n-1)*(m-1);
+    fmpz_mat_init(ca, len, len);
+    intersection_tree(ca, data, tree, n, m);
+
+    /* Intersection matrix from magma */
+    fmpz_mat_init(cm, len, len);
+    fmpz_mat_set_entries(cm, ref, size);
+
+    if (!flag && !fmpz_mat_equal(ca,cm))
+    {
+      flint_printf("Example 1: invalid intersection matrix\n");
+      flint_printf("\nintersection matrix arb:\n");
+      fmpz_mat_print_pretty(ca);
+      flint_printf("\nintersection matrix magma:\n");
+      fmpz_mat_print_pretty(cm);
+      abort();
+    }
+
+    fmpz_mat_clear(ca);
+    fmpz_mat_clear(cm);
+    tree_clear(tree);
+    data_clear(data);
+    _acb_vec_clear(x, n);
+    acb_poly_clear(f);
+}
+
 int main()
 {
 
-    slong n, m, len;
-    acb_ptr x;
-    tree_t tree;
-    fmpz_mat_t c;
-    fmpz_mat_t cm;
-    acb_poly_t f;
+    cdouble pol_1[3] = {-6, -5, 2};
     entry mat_1[2] = { {0,1,1}, {1,0,-1} };
+    cdouble pol_2[3] = {0, -1, 0};
     entry mat_2[16] = { {0,1,1}, {0,5,-1}, {1,0,-1}, {1,2,1}, {1,3,1},
         {2,1,-1}, {2,3,-1}, {2,4,1}, {3,1,-1}, {3,2,1}, {3,4,1}, {4,2,-1},
         {4,3,-1}, {4,5,1}, {5,0,1}, {5,4,-1} };
+    cdouble pol_3[4] = {0, 10+2*I, 3-5*I, 5};
     entry mat_3[30] = { {0,1,1}, {0,5,-1}, {0,6,1}, {0,7,-1}, {1,0,-1},
         {1,2,1}, {1,3,1}, {1,7,1}, {1,8,-1}, {2,1,-1}, {2,3,-1}, {2,4,1},
         {2,8,1}, {3,1,-1}, {3,2,1}, {3,4,1}, {4,2,-1}, {4,3,-1}, {4,5,1},
         {5,0,1}, {5,4,-1}, {6,0,-1}, {6,7,1}, {7,0,1}, {7,1,-1}, {7,6,-1},
         {7,8,1}, {8,1,1}, {8,2,-1},{8,7,-1} };
+    cdouble pol_4[4] = {8, 92, -40, 84};
     entry mat_4[36] = { {0,1,1}, {0,4,-1}, {0,5,1}, {0,8,-1}, {1,0,-1},
         {1,2,1}, {1,5,-1}, {1,6,1}, {2,1,-1}, {2,3,1}, {2,6,-1}, {2,7,1},
         {3,2,-1}, {3,4,1}, {3,7,-1}, {3,8,1}, {4,0,1}, {4,3,-1},
         {4,5,1}, {4,8,-1}, {5,0,-1}, {5,1,1}, {5,4,-1}, {5,6,1}, {6,1,-1},
         {6,2,1}, {6,5,-1}, {6,7,1}, {7,2,-1}, {7,3,1}, {7,6,-1}, {7,8,1},
         {8,0,1}, {8,3,-1}, {8,4,1}, {8,7,-1} };
+    cdouble pol_5[5] = {20, 13, 3, -3, -7};
     entry mat_5[82] = { {0,1,1}, {0,6,-1}, {0,7,1}, {1,0,-1}, {1,2,1},
         {1,7,-1}, {1,8,1}, {2,1,-1}, {2,3,1}, {2,8,-1}, {2,9,1}, {3,2,-1},
         {3,4,1}, {3,9,-1}, {4,3,-1}, {4,5,1}, {5,4,-1}, {5,6,1},
@@ -61,189 +109,32 @@ int main()
     flint_printf("intersection matrix examples..."); fflush(stdout);
 
     /* Example 1 : y^2 = (x+3)(x+1)(x-2), g = 1 */
-    n = 3;
-    m = 2;
-    x = _acb_vec_init(n);
-    acb_set_si(x + 0, -3);
-    acb_set_si(x + 1, -1);
-    acb_set_si(x + 2, 2);
-    tree_init(tree,n-1);
-    spanning_tree(tree, x, n, INT_DE);
-    len = (n-1)*(m-1);
-    fmpz_mat_init(c, len, len);
-    intersection_tree(c, tree, n, m);
-
-    /* Intersection matrix from magma */
-    fmpz_mat_init(cm, len, len);
-    fmpz_mat_set_entries(cm, mat_1, 2);
-  
-    if ( fmpz_mat_equal(c,cm) == 0 )
-    {
-      flint_printf("Example 1: invalid intersection matrix\n");
-      flint_printf("\nintersection matrix arb:\n");
-      fmpz_mat_print_pretty(c);
-      flint_printf("\nintersection matrix magma:\n");
-      fmpz_mat_print_pretty(cm);
-      abort();
-    }
-    
-    fmpz_mat_clear(c);
-    fmpz_mat_clear(cm);
-    tree_clear(tree);
-    _acb_vec_clear(x, n);
-    
+    /*do_example(2, 3, {-3, -1, 2}, mat_1, 2);*/
+    do_example(2, 3, pol_1, mat_1, 2, 0);
 
     /* Example 2 : y^4 = (x+1)(x)(x-1), g = 3 */
-    n = 3;
-    m = 4;
-    x = _acb_vec_init(n);
-    acb_set_si(x + 0, -1);
-    acb_set_si(x + 1, 0);
-    acb_set_si(x + 2, 1);
-    tree_init(tree,n-1);
-    spanning_tree(tree, x, n, INT_DE);
-    len = (n-1)*(m-1);
-    fmpz_mat_init(c, len, len);
-    intersection_tree(c, tree, n, m);
+    /*do_example(4, 3, {-1, 0, 1}, mat_2, 16);*/
+    do_example(4, 3, pol_2, mat_2, 16, 0);
 
-    /* Intersection matrix from magma */
-    fmpz_mat_init(cm, len, len);
-    fmpz_mat_set_entries(cm, mat_2, 16);
-    
-    if ( fmpz_mat_equal(c,cm) == 0 )
-    {
-      flint_printf("Example 2: invalid intersection matrix\n");
-      flint_printf("\nintersection matrix arb:\n");
-      fmpz_mat_print_pretty(c);
-      flint_printf("\nintersection matrix magma:\n");
-      fmpz_mat_print_pretty(cm);
-      abort();
-    }
-    
-    fmpz_mat_clear(c);
-    fmpz_mat_clear(cm);
-    tree_clear(tree);
-    _acb_vec_clear(x, n);
-
-   
     /* Example 3 : y^4 = (x+5+i)(x)(x+i)(x-2i), g = 3 */
-    n = 4;
-    m = 4;
-    x = _acb_vec_init(n);
-    acb_onei( x + 0 ); acb_add_si( x+0, x+0, 5, 30); acb_neg(x+0,x+0);
-    acb_set_si( x+1, 0);
-    acb_onei( x + 2 ); acb_neg(x+2,x+2);
-    acb_onei( x + 3 ); acb_mul_si(x+3,x+3,2,30);
-    tree_init(tree,n-1);
-    spanning_tree(tree, x, n, INT_DE);
-    len = (n-1)*(m-1);
-    fmpz_mat_init(c, len, len);
-    intersection_tree(c, tree, n, m);
-
-    /* Intersection matrix from magma */
-    fmpz_mat_init(cm, len, len);
-    fmpz_mat_set_entries(cm, mat_3, 30);
-
-    if (!SKIP && fmpz_mat_equal(c,cm) == 0 )
-    {
-      flint_printf("Example 3: invalid intersection matrix\n");
-      flint_printf("\nintersection matrix arb:\n");
-      fmpz_mat_print_pretty(c);
-      flint_printf("\nintersection matrix magma:\n");
-      fmpz_mat_print_pretty(cm);
-      abort();
-    }
-
-    fmpz_mat_clear(c);
-    fmpz_mat_clear(cm);
-    tree_clear(tree);
-    _acb_vec_clear(x, n);
+    /*do_example(4, 4, {-5-I, 0, -I, 2*I}, mat_3, 30);*/
+    do_example(4, 4, pol_3, mat_3, 30, 0);
 
     /* Example 4 : y^4 = x^4 + 84x^3 - 40x^2 + 92x + 8, g = 3 */
-    n = 4;
-    m = 4;
-    x = _acb_vec_init(n);
-    acb_poly_init(f);
-    acb_poly_set_coeff_si(f,0,8);
-    acb_poly_set_coeff_si(f,1,92);
-    acb_poly_set_coeff_si(f,2,-40);
-    acb_poly_set_coeff_si(f,3,84);
-    acb_poly_set_coeff_si(f,4,1);
-    acb_poly_find_roots(x, f, NULL, 0, 30);
+    do_example(4, 4, pol_4, mat_4, 36, SKIP);
+    /* ugly
     acb_swap(x+1,x+2);
     acb_swap(x+2,x+3);
-    
-    tree_init(tree,n-1);
-    spanning_tree(tree, x, n, INT_DE);
-    len = (n-1)*(m-1);
-    fmpz_mat_init(c, len, len);
-    intersection_tree(c, tree, n, m);
-
-    /* Intersection matrix from magma */
-    fmpz_mat_init(cm, len, len);
-    fmpz_mat_set_entries(cm, mat_4, 36);
-    
-    if (fmpz_mat_equal(c,cm) == 0 )
-    {
-      flint_printf("Example 4; invalid intersection matrix\n");
-      flint_printf("\nintersection matrix arb:\n");
-      fmpz_mat_print_pretty(c);
-      flint_printf("\nintersection matrix magma:\n");
-      fmpz_mat_print_pretty(cm);
-      abort();
-    }
-
-    fmpz_mat_clear(c);
-    fmpz_mat_clear(cm);
-    tree_clear(tree);
-    _acb_vec_clear(x, n);
-    acb_poly_clear(f);
-
-
+    */
 
     /* Example 5 (s1) : y^6 = x^5 - 7*x^4 - 3*x^3 + 3*x^2 + 13*x + 20, g = 10 */
-    n = 5;
-    m = 6;
-    x = _acb_vec_init(n);
-    acb_poly_init(f);
-    acb_poly_set_coeff_si(f,0,20);
-    acb_poly_set_coeff_si(f,1,13);
-    acb_poly_set_coeff_si(f,2,3);
-    acb_poly_set_coeff_si(f,3,-3);
-    acb_poly_set_coeff_si(f,4,-7);
-    acb_poly_set_coeff_si(f,5,1);
-    acb_poly_find_roots(x, f, NULL, 0, 20);
+    do_example(6, 5, pol_5, mat_5, 82, SKIP);
+    /* ugly
     acb_swap(x+0,x+4);
     acb_swap(x+0,x+3);
     acb_swap(x+0,x+2);
     acb_swap(x+2,x+1);
-    
-    tree_init(tree,n-1);
-    spanning_tree(tree, x, n, INT_DE);
-    len = (n-1)*(m-1);
-    fmpz_mat_init(c, len, len);
-    intersection_tree(c, tree, n, m);
-
-    /* Intersection matrix from magma */
-    fmpz_mat_init(cm, len, len);
-    fmpz_mat_set_entries(cm, mat_5, 82);
-
-    if (!SKIP && fmpz_mat_equal(c,cm) == 0 )
-    {
-      flint_printf("Example 5: invalid intersection matrix\n");
-      flint_printf("\nintersection matrix arb:\n");
-      fmpz_mat_print_pretty(c);
-      flint_printf("\nintersection matrix magma:\n");
-      fmpz_mat_print_pretty(cm);
-      abort();
-    }
-
-    fmpz_mat_clear(c);
-    fmpz_mat_clear(cm);
-    tree_clear(tree);
-    _acb_vec_clear(x, n);
-    acb_poly_clear(f);
-
+    */
 
     flint_cleanup();
     printf("PASS\n");
