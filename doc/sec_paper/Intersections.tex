@@ -6,14 +6,8 @@
 
   In \S \ref{m-subsec:cycles_homo} we presented a generating set $\Gamma$ for $\homo$.
   The formulas in Theorem \ref{m-thm:intsec_numb} explicitly determine the
-  intersection matrix $K_{\Gamma}$ and
-  the rest of the section is concerned with its proof.
-
-
-%   Since we generate $\homo$ with elementary cycles $\cyab$ and their shifts $\cyab^{(k)}$,
-%   we only need to know intersections between them. A further restriction is that by construction
-%   of the spanning tree we only need to
-%   consider intersections $\cyab\circ\cycd$ such that $c$ is either $a$ or $b$
+  intersection matrix $K_{\Gamma}$.
+  The rest of this section is concerned with its proof.
 
   Since we generate $\homo$ with shifts of elementary cycles $\cyabk$ corresponding to edges $(a,b) \in E$ in a spanning tree, we only need to know the intersection between them.
   By construction of the spanning tree we can restrict to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$ such that $c$ is either $a$ or $b$.
@@ -34,31 +28,23 @@
       \begin{tabular}{ccc}
           \toprule
           Case
-          %$(a,b),(c,d)$
-          %$\cyab \circ \cycd$
           & $s_+$ & $s_-$ \\
           \midrule
           $a=c$ and $b=d$
-          %$\cyab \circ \cyab$
           & $1$ & $-1$ \\
           $b=c$
-          %$\cyab \circ \cybd$
           & $-s(b)$ & $1-s(b)$ \\
           $a=c$ and $\rho>0$
-          %$\cyab \circ \cyad$ and $\rho>0$
           & $1-s(a)$ & $-s(a)$ \\
           $a=c$ and $\rho<0$
-          %$\cyab \circ \cyad$ and $\rho<0$
           & $-s(a)$ & $-1-s(a)$\\
           $\set{a,b}\cap\set{c,d}=\varnothing$ & \multicolumn{2}{c}{no intersection} \\
           \bottomrule
       \end{tabular}
       \end{center}
-      and where $s(x)\in\Z$ for $x\in\set{a,b}$ is given by
+      and where $s(x)\in\Z/m\Z$ for $x\in\set{a,b}$ is given by
       \begin{equation}
-%           s(x) = \frac{(d-1)\rho+m(\arg \ytcd(x)-\arg\ytab(x))}{2π}
-%           +\delta_{a=c}\frac{1}2
-	    s(x) = \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{(d-c)^{\frac{\deg(f)}{m}}\ytcd(x)}{(b-a)^{\frac{\deg(f)}{m}}\ytab(x)} \right) \right) + \frac{1}{2}
+	    s(x) = \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{(d-c)^{\frac{n}{m}}\ytcd(x)}{(b-a)^{\frac{n}{m}}\ytab(x)} \right) \right) + \frac{1}{2}
 	    \left( U_{c,d}^+ - U_{a,b}^+
 	    + \delta_{b=c}\right)
       \end{equation}
