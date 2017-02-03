@@ -13,7 +13,7 @@
    returns l1
 */
 slong
-ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec)
+ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong n, slong m, slong prec)
 {
     slong k, l;
     acb_t ab, ba; /* a + b and b - a */
@@ -26,7 +26,7 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec)
     acb_set(ab, x + e.a);
     acb_add(ab, ba, x + e.b, prec);
 
-    for (k = 0, l = 0; k < d; k++)
+    for (k = 0, l = 0; k < n; k++)
     {
         if (k == e.a || k == e.b)
             continue;
@@ -38,8 +38,8 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec)
 
     /* now l = d - 2, set last two */
 
-    acb_mul_2exp_si(u + l, ba, -1);
-    acb_div(u + l + 1, ab, ba, prec);
+    acb_mul_2exp_si(u + l, ba, -1);   /* (b-a)/2 */
+    acb_div(u + l + 1, ab, ba, prec); /* (a+b)/(b-a) */
 
     /* reorder */
     for (k = 0; k < l; k++)
@@ -48,7 +48,40 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong prec)
     acb_clear(ab);
     acb_clear(ba);
 
+    /* set constant cab on component n */
+    acb_pow_ui(u + n, u + n - 2, n, prec);
+    if (l % 2 == 0)
+        acb_neg(u + n, u + n);
+    acb_root_ui(u + n, u + n, m, prec);
+
     return l;
+}
+
+void
+ab_points_tree(acb_mat_t u, slong * n1, const tree_t tree, sec_t c, slong prec)
+{
+    slong k;
+
+    for (k = 0; k < tree->n; k++)
+        n1[k] = ab_points(u->rows[k], c.roots, tree->e[k], c.n, c.m, prec);
+}
+
+void
+data_init(data_t data, const tree_t tree, sec_t c, slong prec)
+{
+    data->n = c.n;
+    data->m = c.m;
+    data->delta = c.delta;
+    acb_mat_init(data->upoints, c.n - 1, c.n + 1);
+    data->n1 = flint_malloc((c.n - 1) * sizeof(slong));
+    ab_points_tree(data->upoints, data->n1, tree, c, prec);
+}
+
+void
+data_clear(data_t data)
+{
+    acb_mat_clear(data->upoints);
+    flint_free(data->n1);
 }
 
 /* returns x0, c.x0 + x1, c^2.x0 + 2.c.x1 + x2, ... */
@@ -77,8 +110,8 @@ integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c
     /* c_1 = (1-zeta^-1) ba2^(-d/2) (-I)^i
      *     = 2 / ba2^(d/2) */
 
-    acb_pow_ui(cj, ba2, c.d / 2, prec);
-    if (c.d % 2)
+    acb_pow_ui(cj, ba2, c.n / 2, prec);
+    if (c.n % 2)
     {
         acb_t t;
         acb_init(t);

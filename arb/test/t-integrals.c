@@ -5,11 +5,22 @@
  x = [5, 8 , -9, 8, 1 , 7, -4 , 3 , -5, 0, 0 , -9, 4 , 4, 4, 7 , 10, 4, -3, -9];
  y = [9, -5, 1 , 0, -4, 8, -10, -8, 0 , 6, -8, -9, -6, 0, 5, -7, 4 , 7, 4 , 5];
  u = vector(#x,k,(x[k]+I*y[k])/sqrt(2));
- { ref = concat(vector(8,d,vector((d+1)\2,i,
+ { ref2 = concat(vector(8,d,vector((d+1)\2,i,
      intnum(t=[-1,-1/2],[1,-1/2],t^(i-1)/(sqrt(1-t^2)*prod(k=1,d,sqrt(t-u[k]))))
      ))) }
- apply(z->printf("\"%f\",\n",real(z)),ref)
- apply(z->printf("\"%f\",\n",imag(z)),ref)
+ apply(z->printf("\"%f\",\n",real(z)),ref2)
+ apply(z->printf("\"%f\",\n",imag(z)),ref2)
+
+ { ref3 = concat(vector(8,d,
+     if(d % 3 == 0, [],
+     concat( vector((d-1)\3,i,
+     intnum(t=[-1,-2/3],[1,-2/3],t^(i-1)/((1-t^2)^(1/3)*prod(k=1,d,(t-u[k])^(1/3))))),
+     vector((d-1)\3,i,
+     intnum(t=[-1,-2/3],[1,-2/3],t^(i-1)/((1-t^2)^(2/3)*prod(k=1,d,(t-u[k])^(2/3))))))
+     ))) }
+ apply(z->printf("\"%f\",\n",real(z)),ref3)
+ apply(z->printf("\"%f\",\n",imag(z)),ref3)
+
  */
 #define dmax 20
 #define nref 20
@@ -123,7 +134,7 @@ int main() {
 
             /* de */
             c.m = 2;
-            c.d = d2 + 2;
+            c.n = d2 + 2;
             c.delta = (d2 % 2) ? 1 : 2;
             c.g = g;
             c.roots = NULL;

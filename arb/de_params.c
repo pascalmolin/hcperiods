@@ -189,12 +189,12 @@ de_params_tree(double * h, const tree_t tree, sec_t c, slong prec)
 
     r = tree->r;
 
-    u = _acb_vec_init(c.d);
-    ab_points(u, c.roots, tree->e[tree->min], c.d, prec);
+    u = _acb_vec_init(c.n);
+    ab_points(u, c.roots, tree->e[tree->min], c.n, c.m, prec);
 
-    n = de_params(h, u, c.d - 2, r, c.d-1, c.m, prec);
+    n = de_params(h, u, c.n - 2, r, c.n - 1, c.m, prec);
 
-    _acb_vec_clear(u, c.d);
+    _acb_vec_clear(u, c.n);
 
     return n;
 }
