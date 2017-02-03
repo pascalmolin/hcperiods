@@ -8,8 +8,8 @@
 
 /* u[0..l1[ contains roots re(ui)>0
    u[l1..d-2[ roots with re(ui) <= 0
-   the last two components are set to
-   (b-a)/2 and (a+b)/(b-a)
+   the last three components are set to
+   (b-a)/2, (a+b)/(b-a) and Cab
    returns l1
 */
 slong

@@ -39,7 +39,7 @@ fill_block(fmpz_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
 }
 
 slong
-shift_abbd(const acb_ptr uab, slong nab, const acb_ptr ucd, slong ncd, slong n, slong m)
+shift_abbd(acb_srcptr uab, slong nab, acb_srcptr ucd, slong ncd, slong n, slong m)
 {
     slong prec = 40;
     arb_t one, m_one;
