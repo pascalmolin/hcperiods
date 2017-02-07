@@ -22,9 +22,8 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong n, slong m, slong prec)
     acb_init(ba);
 
     acb_set(ba, x + e.b);
+    acb_add(ab, ba, x + e.a, prec);
     acb_sub(ba, ba, x + e.a, prec);
-    acb_set(ab, x + e.a);
-    acb_add(ab, ba, x + e.b, prec);
 
     for (k = 0, l = 0; k < n; k++)
     {
@@ -35,24 +34,27 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong n, slong m, slong prec)
         acb_div(u + l, u + l, ba, prec);
         l++;
     }
+    if (l != n - 2)
+        abort();
 
-    /* now l = d - 2, set last two */
-
-    acb_mul_2exp_si(u + l, ba, -1);   /* (b-a)/2 */
-    acb_div(u + l + 1, ab, ba, prec); /* (a+b)/(b-a) */
-
-    /* reorder */
+    /* now l = n - 2, reorder */
     for (k = 0; k < l; k++)
         if (arb_is_nonpositive(acb_realref(u + k)))
-            acb_swap(u + k--, u + l--);
-    acb_clear(ab);
-    acb_clear(ba);
+            acb_swap(u + k--, u + --l);
 
-    /* set constant cab on component n */
+    /* set last 3 constants */
+
+    acb_mul_2exp_si(u + n - 2, ba, -1);   /* (b-a)/2 */
+    acb_div(u + n - 1, ab, ba, prec); /* (a+b)/(b-a) */
+
+    /* cab on component n */
     acb_pow_ui(u + n, u + n - 2, n, prec);
     if (l % 2 == 0)
         acb_neg(u + n, u + n);
     acb_root_ui(u + n, u + n, m, prec);
+
+    acb_clear(ab);
+    acb_clear(ba);
 
     return l;
 }

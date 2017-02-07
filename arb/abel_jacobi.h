@@ -168,6 +168,7 @@ void tree_init(tree_t tree, slong d);
 void tree_clear(tree_t tree);
 void spanning_tree(tree_t tree, acb_srcptr x, slong d, int type);
 void shift_info_tree(tree_t tree, cdouble * w, slong d);
+void tree_print(const tree_t tree);
 
 /* reduced points of spanning tree */
 void ab_points_worst(cdouble * w, const tree_t tree, sec_t c);

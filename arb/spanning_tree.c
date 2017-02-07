@@ -148,3 +148,13 @@ tree_clear(tree_t tree)
 {
     free(tree->e);
 }
+
+void
+tree_print(const tree_t tree)
+{
+    slong k;
+    flint_printf("\n[%ld",tree->n);
+    for (k = 0; k < tree->n; k++)
+        flint_printf(",[%ld,%ld]%s",tree->e[k].a,tree->e[k].b);
+    flint_printf("]\n");
+}
