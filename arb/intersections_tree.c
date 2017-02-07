@@ -6,7 +6,6 @@
 
 #include "abel_jacobi.h"
 
-#define TWOPI (2 * acos(-1.))
 #define c(i,j) fmpz_mat_entry(c,i,j)
 
 /* set
@@ -40,41 +39,48 @@ fill_block(fmpz_mat_t c, slong i, slong j, slong sp, slong sm, slong m)
     }
 }
 
+static void
+arb_angle(arb_t rho, const acb_t ab, const acb_t cd, slong prec)
+{
+    acb_t t;
+    arb_t pi;
+    arb_init(pi);
+    acb_init(t);
+    acb_div(t, ab, cd, prec);
+    if (!acb_is_finite(t))
+    {
+        flint_printf("\nERROR: infinite value\n");
+        arb_printd(ab, 20); flint_printf("\n");
+        arb_printd(cd, 20); flint_printf("\n");
+        abort();
+    }
+    arb_const_pi(pi, prec);
+    /* if re < 0, rotate first */
+    if (arb_is_nonpositive(acb_realref(t)))
+    {
+        acb_neg(t, t);
+        acb_arg(rho, t, prec);
+        arb_add(rho, rho, pi, prec);
+    }
+    else
+        acb_arg(rho, t, prec);
+
+    arb_div(rho, rho, pi, prec);
+    arb_mul_2exp_si(rho, rho, -1);
+
+    arb_clear(pi);
+    acb_clear(t);
+}
+
 static slong
 shift_ratio(const acb_t x, const acb_t y, slong m, slong prec)
 {
     slong s;
     fmpz_t sz;
-    acb_t r;
-    arb_t a, pi;
+    arb_t a;
 
-    acb_init(r);
     arb_init(a);
-    arb_init(pi);
-
-    acb_div(r, x, y, prec);
-    if (!acb_is_finite(r))
-    {
-        flint_printf("\nERROR: infinite value\n");
-        arb_printd(x, 10); flint_printf("\n");
-        arb_printd(y, 10); flint_printf("\n");
-        abort();
-    }
-
-    arb_const_pi(pi, prec);
-
-    /* if re < 0, rotate first */
-    if (arb_is_nonpositive(acb_realref(r)))
-    {
-        acb_neg(r, r);
-        acb_arg(a, r, prec);
-        arb_add(a, a, pi, prec);
-    }
-    else
-        acb_arg(a, r, prec);
-
-    arb_mul_2exp_si(pi, pi, 1);
-    arb_div(a, a, pi, prec);
+    arb_angle(a, x, y, prec);
     arb_mul_ui(a, a, m, prec);
 
     fmpz_init(sz);
@@ -82,16 +88,12 @@ shift_ratio(const acb_t x, const acb_t y, slong m, slong prec)
     {
         flint_printf("\nERROR: shift not an integer\n");
         arb_printd(a, 10);
-        flint_printf("\nm = %ld, r = ", m);
-        acb_printd(r, 10);
         abort();
     }
     s = fmpz_get_si(sz);
     fmpz_clear(sz);
 
-    acb_clear(r);
     arb_clear(a);
-    arb_clear(pi);
     return s;
 }
 
@@ -171,17 +173,6 @@ is_neg_abad(const acb_t ab2, const acb_t cd2)
     s = arb_is_nonpositive(acb_imagref(r));
     acb_clear(r);
     return s;
-}
-
-static void
-arb_angle(arb_t rho, const acb_t ab2, const acb_t cd2)
-{
-    acb_t t;
-    slong prec = 40;
-    acb_init(t);
-    acb_div(t, ab2, cd2, prec);
-    acb_arg(rho, t, prec);
-    acb_clear(t);
 }
 
 void
