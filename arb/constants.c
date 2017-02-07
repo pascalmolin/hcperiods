@@ -49,9 +49,26 @@ ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong n, slong m, slong prec)
 
     /* cab on component n */
     acb_pow_ui(u + n, u + n - 2, n, prec);
-    if (l % 2 == 0)
+    if ((k = arb_is_negative(acb_realref(u +n))))
         acb_neg(u + n, u + n);
     acb_root_ui(u + n, u + n, m, prec);
+    if ((k + l) % 2 == 0)
+    {
+        acb_unit_root(ab, 2*m, prec);
+        acb_mul(u + n, u + n, ab, prec);
+    }
+
+    if (acb_contains_zero(u + n))
+    {
+        flint_printf("\n\nERROR: Cab contains 0\nm, n = %ld, %ld, ((b-a)/2)^n\n", m, n);
+        acb_printd(ba, 20); flint_printf("\n ba/2 = ");
+        acb_printd(u + n - 2, 20); flint_printf("\n ^n = ");
+        acb_pow_ui(u + n, u + n - 2, n, prec);
+        acb_printd(u + n, 20); flint_printf("\n ^1/m [m=%ld] = ", m);
+        acb_root_ui(u + n, u + n, m, prec);
+        acb_printd(u + n, 20); flint_printf("\n");
+        abort();
+    }
 
     acb_clear(ab);
     acb_clear(ba);

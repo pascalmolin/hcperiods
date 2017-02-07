@@ -140,12 +140,12 @@ int main()
     /* Example 1 : y^2 = (x+3)(x+1)(x-2), g = 1 */
     /*do_example(2, 3, {-3, -1, 2}, mat_1, 2);*/
     progress("example 1\n");
-    do_example_si(2, 3, pol_1, mat_1, 2, 0);
+    do_example_si(2, 3, pol_1, mat_1, 2, SKIP);
 
     /* Example 2 : y^4 = (x+1)(x)(x-1), g = 3 */
     /*do_example(4, 3, {-1, 0, 1}, mat_2, 16);*/
     progress("example 2\n");
-    do_example_si(4, 3, pol_2, mat_2, 16, 0);
+    do_example_si(4, 3, pol_2, mat_2, 16, SKIP);
 
     /* Example 3 : y^4 = (x+5+i)(x)(x+i)(x-2i), g = 3 */
     /*do_example(4, 4, {-5-I, 0, -I, 2*I}, mat_3, 30);*/

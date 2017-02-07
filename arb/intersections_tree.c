@@ -50,8 +50,8 @@ arb_angle(arb_t rho, const acb_t ab, const acb_t cd, slong prec)
     if (!acb_is_finite(t))
     {
         flint_printf("\nERROR: infinite value\n");
-        arb_printd(ab, 20); flint_printf("\n");
-        arb_printd(cd, 20); flint_printf("\n");
+        acb_printd(ab, 20); flint_printf("\n");
+        acb_printd(cd, 20); flint_printf("\n");
         abort();
     }
     arb_const_pi(pi, prec);
@@ -60,7 +60,10 @@ arb_angle(arb_t rho, const acb_t ab, const acb_t cd, slong prec)
     {
         acb_neg(t, t);
         acb_arg(rho, t, prec);
-        arb_add(rho, rho, pi, prec);
+        if (arb_is_nonnegative(rho))
+            arb_sub(rho, rho, pi, prec);
+        else
+            arb_add(rho, rho, pi, prec);
     }
     else
         acb_arg(rho, t, prec);
@@ -73,33 +76,26 @@ arb_angle(arb_t rho, const acb_t ab, const acb_t cd, slong prec)
 }
 
 static slong
-shift_ratio(const acb_t x, const acb_t y, slong m, slong prec)
+arb_get_si(const arb_t a, slong prec)
 {
     slong s;
     fmpz_t sz;
-    arb_t a;
-
-    arb_init(a);
-    arb_angle(a, x, y, prec);
-    arb_mul_ui(a, a, m, prec);
 
     fmpz_init(sz);
     if (!arb_get_unique_fmpz(sz, a))
     {
         flint_printf("\nERROR: shift not an integer\n");
-        arb_printd(a, 10);
+        arb_printd(a, 20);
         abort();
     }
     s = fmpz_get_si(sz);
     fmpz_clear(sz);
-
-    arb_clear(a);
     return s;
 }
 
-/* (1 + sgn*(d-c)/(b-a)) * Cab * yab(x), x = +/-1, sgn = +/- 1 */
+/* Cab * yab(x), x = +/-1 */
 static void
-limit_edge(acb_t z, acb_srcptr uab, slong nab, slong n, slong m, const acb_t cd2, int x, int sgn, slong prec)
+limit_edge(acb_t z, acb_srcptr uab, slong nab, slong n, slong m, int x, slong prec)
 {
     arb_t u;
     acb_t r;
@@ -112,60 +108,63 @@ limit_edge(acb_t z, acb_srcptr uab, slong nab, slong n, slong m, const acb_t cd2
     mth_root_pol_def(z, uab, nab, n - 2, u, m, prec);
     acb_mul(z, z, uab + n, prec);
 
-#if FORMULA==1
-    acb_div(r, cd2, uab + n -2, prec);
-    acb_add_si(r, r, sgn, prec);
-    if (sgn < 0)
-        acb_neg(r, r);
-    acb_root_ui(r, r, m, prec);
-    acb_mul(z, z, r, prec);
-#endif
-
     acb_clear(r);
     arb_clear(u);
 }
 
-static slong
-shift_abad(acb_srcptr uab, slong nab, acb_srcptr ucd, slong ncd, slong n, slong m)
-{
-    slong s, prec = 40;
-    acb_t yab, yad;
-
-    acb_init(yab);
-    acb_init(yad);
-
-    limit_edge(yab, uab, nab, n, m, ucd + n - 2,  -1, 1, prec);
-    limit_edge(yad, ucd, ncd, n, m, uab + n - 2,  -1, 1, prec);
-    s = shift_ratio(yad, yab, m, prec);
-
-    acb_clear(yab);
-    acb_clear(yad);
-    return s;
-}
+enum { ABAD, ABBD };
 
 static slong
-shift_abbd(acb_srcptr uab, slong nab, acb_srcptr ucd, slong ncd, slong n, slong m)
+shift_number(acb_srcptr uab, slong nab, acb_srcptr ucd, slong ncd, slong n, slong m, int type, slong prec)
 {
-    slong s, prec = 40;
-    acb_t yab, ybd;
+    slong s;
+    arb_t rho, psi;
+    acb_t yab, ycd;
 
     acb_init(yab);
-    acb_init(ybd);
+    acb_init(ycd);
 
-    limit_edge(yab, uab, nab, n, m, ucd + n - 2,  1, -1, prec);
-    limit_edge(ybd, ucd, ncd, n, m, uab + n - 2, -1, -1, prec);
-    s = shift_ratio(ybd, yab, m, prec);
+    if (type == ABAD)
+        limit_edge(yab, uab, nab, n, m, -1, prec);
+    else
+        limit_edge(yab, uab, nab, n, m, 1, prec);
+    limit_edge(ycd, ucd, ncd, n, m, -1, prec);
+
+    
+    //flint_printf("\nyab");
+    //acb_printd(yab, 20);
+    //flint_printf("\nycd");
+    //acb_printd(ycd, 20);
+
+    arb_init(rho);
+    arb_init(psi);
+    arb_angle(rho, uab + n -2, ucd + n - 2, prec);
+    arb_angle(psi, ycd, yab, prec);
+    arb_mul_ui(psi, psi, m, prec);
+    arb_add(rho, rho, psi, prec);
+    if (type == ABBD)
+    {
+        //flint_printf("\nabbd, ba = ");
+        //acb_printd(uab+n-2,20);
+        //flint_printf("\n      dc = ");
+        //acb_printd(ucd+n-2,20);
+        //flint_printf("\n      rho = ");
+        //arb_printd(rho,20);
+        arb_one(psi);
+        arb_mul_2exp_si(psi, psi, -1);
+        arb_add(rho, rho, psi, prec);
+    }
+    s = arb_get_si(rho, prec);
 
     acb_clear(yab);
-    acb_clear(ybd);
+    acb_clear(ycd);
     return s;
 }
 
 static int
-is_neg_abad(const acb_t ab2, const acb_t cd2)
+is_neg_abad(const acb_t ab2, const acb_t cd2, slong prec)
 {
     int s;
-    slong prec = 40;
     acb_t r;
 
     acb_init(r);
@@ -178,6 +177,7 @@ is_neg_abad(const acb_t ab2, const acb_t cd2)
 void
 intersection_tree(fmpz_mat_t c, const data_t data, const tree_t tree, slong n, slong m)
 {
+    slong prec = 64;
     slong k, l, size = m - 1;
     arb_t one, m_one;
     arb_init(one);
@@ -212,21 +212,15 @@ intersection_tree(fmpz_mat_t c, const data_t data, const tree_t tree, slong n, s
 
             ucd = data->upoints->rows[l];
             ncd = data->n1[l];
-#if FORMULA==2
+
             arb_init(rho);
-            arb_angle(rho, uab + nab - 2, acd + ncd - 2);
-#endif
+            arb_angle(rho, uab + n - 2, ucd + n - 2, prec);
 
             if(el.a == ek.a)
             {
                 /* case ab.ad */
-#if FORMULA==3
-                s = lrint((el.va - ek.va ) / TWOPI);
-                if (el.dir > ek.dir)
-#else
-                s = shift_abad(uab, nab, ucd, ncd, n, m);
-                if (is_neg_abad(uab + n -2, ucd + n -2))
-#endif
+                s = shift_number(uab, nab, ucd, ncd, n, m, ABAD, prec);
+                if (is_neg_abad(uab + n -2, ucd + n -2, prec))
                     fill_block(c, k * size, l * size, -s, -1-s, m);
                 else
                     fill_block(c, k * size, l * size, 1-s, -s, m);
@@ -234,11 +228,7 @@ intersection_tree(fmpz_mat_t c, const data_t data, const tree_t tree, slong n, s
             else if (el.a == ek.b)
             {
                 /* case ab.bd */
-#if FORMULA==3
-                s = lrint(.5 + (el.va - ek.vb ) / TWOPI);
-#else
-                s = shift_abbd(uab, nab, ucd, ncd, n, m);
-#endif
+                s = shift_number(uab, nab, ucd, ncd, n, m, ABBD, prec);
                 fill_block(c, k * size, l * size, -s, 1-s, m);
             }
             else
