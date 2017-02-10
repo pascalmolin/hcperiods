@@ -38,17 +38,16 @@ do_example(slong m, slong n, acb_srcptr x, entry * ref, slong size, int flag)
 {
     slong len, prec = 64;
     sec_t c;
-    data_t data;
     tree_t tree;
     fmpz_mat_t ca;
     fmpz_mat_t cm;
     sec_init(&c, m, x, n);
     tree_init(tree,n-1);
     spanning_tree(tree, x, n, INT_DE);
-    data_init(data, tree, c, prec);
+    tree_ydata_init(tree, x, n, m, prec);
     len = (n-1)*(m-1);
     fmpz_mat_init(ca, len, len);
-    intersection_tree(ca, data, tree, n, m);
+    intersection_tree(ca, tree, n, m);
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);
@@ -66,8 +65,8 @@ do_example(slong m, slong n, acb_srcptr x, entry * ref, slong size, int flag)
 
     fmpz_mat_clear(ca);
     fmpz_mat_clear(cm);
+    tree_ydata_clear(tree);
     tree_clear(tree);
-    data_clear(data);
 }
 
 void

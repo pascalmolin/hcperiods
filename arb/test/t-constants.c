@@ -26,21 +26,20 @@ int main() {
                 slong k;
                 sec_t c;
                 tree_t tree;
-                data_t data;
 
                 sec_init(&c, m, x, n);
                 tree_init(tree, n-1);
                 spanning_tree(tree, x, n, INT_DE);
-                data_init(data, tree, c, prec);
+                tree_ydata_init(tree, x, n, m, prec);
 
                 /* check some roots */
                 for (k = 0; k < n - 1; k++)
                 {
                     /* f((a+b)/2) */
                     slong i;
-                    slong nab = data->n1[k];
+                    slong nab = tree->data[k].n1;
                     slong a = tree->e[k].a, b = tree->e[k].b;
-                    acb_ptr uab = data->upoints->rows[k];
+                    acb_ptr uab = tree->data[k].u;
                     acb_t z, fx, y;
                     acb_init(z);
                     acb_init(y);
@@ -55,7 +54,7 @@ int main() {
                     }
                     acb_zero(z);
                     mth_root_pol_def(y, uab, nab, n - 2, acb_realref(z), m, prec);
-                    acb_mul(y, y, uab + n, prec);
+                    acb_mul(y, y, tree->data[k].c, prec);
                     acb_pow_ui(y, y, m, prec);
 
                     if (!acb_overlaps(y, fx))
@@ -92,6 +91,7 @@ int main() {
                     acb_clear(z);
                 }
 
+                tree_ydata_clear(tree);
                 tree_clear(tree);
 
             }

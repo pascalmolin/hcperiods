@@ -30,7 +30,6 @@ typedef struct
     acb_ptr roots;       /* branch points */
     slong delta;         /* default = gcd(m, d) */
     slong g;             /* genus, 2g = (m-1)(d-1) - delta + 1 */
-
 }
 superelliptic_curve;
 
@@ -53,12 +52,25 @@ typedef de_integration_struct de_int_t[1];
 
 typedef struct
 {
+    slong m;
+    slong n;
+    slong n1;
+    acb_ptr u; /* n - 2 + 5 */
+    acb_ptr ba2;
+    acb_ptr ab;
+    acb_ptr c;
+    acb_ptr ya;
+    acb_ptr yb;
+} ydata_struct;
+typedef ydata_struct ydata_t[1];
+
+typedef struct
+{
     double r;
     slong a;
     slong b;
-    double va;
-    double vb;
-    double dir;
+    /* FIXME: here or below ? */
+    ydata_t data;
 } edge_t;
 
 typedef struct
@@ -67,18 +79,9 @@ typedef struct
     slong min;
     double r;
     edge_t * e;
+    ydata_struct * data;
 } tree_struct;
 typedef tree_struct tree_t[1];
-
-typedef struct
-{
-    slong n;
-    slong m;
-    slong delta;
-    acb_mat_t upoints;
-    slong * n1;
-} tree_data_struct;
-typedef tree_data_struct data_t[1];
 
 /* represents the loop_t(coeff * zeta^shift * tree[index]) */
 typedef struct
@@ -172,13 +175,14 @@ void tree_print(const tree_t tree);
 
 /* reduced points of spanning tree */
 void ab_points_worst(cdouble * w, const tree_t tree, sec_t c);
-slong ab_points(acb_ptr u, acb_srcptr x, edge_t e, slong d, slong m, slong prec);
-void data_init(data_t data, const tree_t tree, sec_t c, slong prec);
-void data_clear(data_t data);
+void ydata_init_edge(ydata_t yab, acb_srcptr x, edge_t e, slong n, slong m, slong prec);
+void ydata_clear(ydata_t yab);
+void tree_ydata_init(tree_t tree, acb_srcptr x, slong n, slong m, slong prec);
+void tree_ydata_clear(tree_t tree);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
-void intersection_tree(fmpz_mat_t c, const data_t data, const tree_t tree, slong n, slong m);
+void intersection_tree(fmpz_mat_t c, const tree_t tree, slong n, slong m);
 
 /* find g+g symplectic homology basis from tree */
 /* two lists of g loops */
@@ -186,7 +190,7 @@ void loop_init(loop_t * l, slong len);
 void homol_init(homol_t * cyc, slong len);
 void homol_clear(homol_t l, slong len);
 void symplectic_reduction(fmpz_mat_t p, fmpz_mat_t m, slong g);
-void symplectic_basis(homol_t alpha, homol_t beta, const data_t data, const tree_t tree, sec_t c);
+void symplectic_basis(homol_t alpha, homol_t beta, const tree_t tree, sec_t c);
 
 /* find basis of holomorphic differentials */
 /* g elementary differentials */
@@ -199,8 +203,8 @@ void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
 void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec);
 void integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec);
 void integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, const cohom_t dz, slong prec);
-void integrals_tree_de(acb_mat_t integrals, const data_t data, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
-void integrals_tree_gc(acb_mat_t integrals, const data_t data, sec_t c, const tree_t tree, slong prec);
+void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
+void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
 void acb_vec_polynomial_shift(acb_ptr x, const acb_t c, slong len, slong prec);
 
 /* get all periods on a, b basis */

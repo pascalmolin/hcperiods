@@ -87,44 +87,19 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slo
 }
 
 void
-integrals_edge_gc(acb_ptr res, sec_t c, edge_t e, slong n, slong prec)
+integrals_edge_gc(acb_ptr res, ydata_t ye, sec_t c, slong n, slong prec)
 {
-    slong n1;
-    acb_ptr u, cab, ab2;
-
-    /* reduce roots */
-    u = _acb_vec_init(c.n + 1);
-    n1 = ab_points(u, c.roots, e, c.n, c.m, prec);
-    ab2 = u + c.n - 2;
-    cab = u + c.n - 1;
-
-    gc_integrals(res, u, n1, c.n - 2, c.g, n, prec);
-    integrals_edge_factors_gc(res, cab, ab2, c, prec);
-
-    _acb_vec_clear(u, c.n + 1);
+    gc_integrals(res, ye->u, ye->n1, c.n - 2, c.g, n, prec);
+    integrals_edge_factors_gc(res, ye->c, ye->ba2, c, prec);
 }
 
 void
-integrals_tree_gc(acb_mat_t integrals, const data_t data, sec_t c, const tree_t tree, slong prec)
+integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec)
 {
     slong k, n;
 
     n = gc_params_tree(tree, c, prec);
 
     for (k = 0; k < c.n - 1; k++)
-    {
-        slong n1;
-        acb_ptr res, u, cab, ab2;
-
-        res = integrals->rows[k];
-        u = data->upoints->rows[k];
-        n1 = data->n1[k];
-        ab2 = u + c.n - 2;
-        cab = u + c.n - 1;
-
-        gc_integrals(res, u, n1, c.n - 2, c.g, n, prec);
-        integrals_edge_factors_gc(res, cab, ab2, c, prec);
-    }
-
-
+        integrals_edge_gc(integrals->rows[k], tree->data + k, c, n, prec);
 }

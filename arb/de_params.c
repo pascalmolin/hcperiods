@@ -183,18 +183,5 @@ de_int_cst_b(mag_t b, mag_t tau, slong j, slong m)
 slong
 de_params_tree(double * h, const tree_t tree, sec_t c, slong prec)
 {
-    slong n;
-    double r;
-    acb_ptr u;
-
-    r = tree->r;
-
-    u = _acb_vec_init(c.n + 1);
-    ab_points(u, c.roots, tree->e[tree->min], c.n, c.m, prec);
-
-    n = de_params(h, u, c.n - 2, r, c.n - 1, c.m, prec);
-
-    _acb_vec_clear(u, c.n + 1);
-
-    return n;
+    return de_params(h, tree->data[tree->min].u, c.n, tree->r, c.n - 1, c.m, prec);
 }

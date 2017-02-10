@@ -127,8 +127,6 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
         }
     }
 
-    shift_info_tree(tree, w, len);
-
     free(w);
     free(e);
     free(t);
@@ -141,6 +139,7 @@ tree_init(tree_t tree, slong n)
     tree->e = malloc(n * sizeof(edge_t));
     tree->r = 0.;
     tree->min = 0;
+    tree->data = NULL;
 }
 
 void

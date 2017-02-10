@@ -63,15 +63,14 @@ abel_jacobi_clear(abel_jacobi_t aj)
 abel_jacobi_compute(abel_jacobi_t aj, slong prec)
 {
     sec_t c = aj->c;
-    data_t data;
     acb_mat_t integrals;
 
     /* homology */
     spanning_tree(aj->tree, c.roots, c.n, aj->type);
 
-    data_init(data, aj->tree, c, prec);
+    tree_ydata_init(aj->tree, c.roots, c.n, c.m, prec);
 
-    symplectic_basis(aj->loop_a, aj->loop_b, data, aj->tree, c);
+    symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
 
     /* cohomology */
     holomorphic_differentials(aj->dz, c.n, c.m);
@@ -79,16 +78,17 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
     /* integration */
     acb_mat_init(integrals, c.n-1, c.g);
     if (aj->type == INT_GC)
-        integrals_tree_gc(integrals, data, c, aj->tree, prec);
+        integrals_tree_gc(integrals, c, aj->tree, prec);
     else
-        integrals_tree_de(integrals, data, c, aj->tree, aj->dz, prec);
+        integrals_tree_de(integrals, c, aj->tree, aj->dz, prec);
+
+    tree_ydata_clear(aj->tree);
 
     /* period matrices */
     period_matrix(aj->omega0, aj->loop_a, aj->dz, integrals, c, prec);
     period_matrix(aj->omega1, aj->loop_b, aj->dz, integrals, c, prec);
 
     acb_mat_clear(integrals);
-    data_clear(data);
 
     tau_matrix(aj->tau, aj->omega0, aj->omega1, prec);
 
