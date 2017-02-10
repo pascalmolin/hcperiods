@@ -101,6 +101,20 @@ typedef struct
 typedef loop_t * homol_t;
 
 /* differential form */
+
+/* i,j s.t. dj >= mi + delta */
+inline slong
+jmin(slong m, slong n, slong d)
+{
+    return (1 + (m + d - 1) / n);
+}
+inline slong
+imax(slong j, slong m, slong n, slong d)
+{
+    slong i = ((j * n - d) / m);
+    return (i < n) ? i : n - 1;
+}
+
 typedef struct
 {
     slong x; /* power of x */
@@ -205,7 +219,6 @@ void integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, se
 void integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, const cohom_t dz, slong prec);
 void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
 void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
-void acb_vec_polynomial_shift(acb_ptr x, const acb_t c, slong len, slong prec);
 
 /* get all periods on a, b basis */
 /* two g*g matrices */
@@ -219,3 +232,10 @@ void sqrt_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong
 void mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec);
 void mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec);
 void mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec);
+
+/* vec utilities */
+void acb_vec_polynomial_shift(acb_ptr x, slong len, const acb_t c, slong prec);
+void acb_vec_mul_geom(acb_ptr x, slong len, acb_t c0, const acb_t c, slong prec);
+void acb_vec_add_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong prec);
+void acb_vec_sub_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong prec);
+

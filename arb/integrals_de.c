@@ -23,7 +23,8 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
     _acb_vec_zero(res, c.g);
     for (l = 0; l < de->n; l++)
     {
-        slong ix, iy;
+        slong j;
+        acb_ptr r;
 
         /* compute 1/y(x) */
         mth_root_pol_def(y, u, d1, d, de->x + l, c.m, prec);
@@ -31,21 +32,21 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
         acb_div(y, wy, y, prec);
 
         /* all differentials for x */
-        iy = 1; ix = 0;
-        acb_mul_arb(wy, y, de->dx + l, prec);
-        acb_set(wyx, wy);
-
-        for (k = 0; k < c.g; k++)
+        j = jmin(c.m, c.n, c.delta);
+        if (j > 1)
         {
-            for (; iy < dz[k].y; ix = 0, iy++)
-            {
-                acb_mul(wy, wy, y, prec);
-                acb_set(wyx, wy);
-            }
-            for (; ix < dz[k].x; ix++)
-                acb_mul_arb(wyx, wyx, de->x + l, prec);
-            acb_add(res + k, res + k, wyx, prec);
+            acb_pow_ui(wy, y, j, prec);
+            acb_mul_arb(wy, wy, de->dx + l, prec);
+        }
+        else
+            acb_mul_arb(wy, y, de->dx + l, prec);
 
+        for (r = res; j < c.m; j++)
+        {
+            slong ni = imax(j, c.m, c.n, c.delta);
+            acb_set(wyx, wy);
+            acb_vec_add_geom_arb(r, ni, wyx, de->x + l, prec);
+            r += ni;
         }
 
         if (l == 0)
@@ -57,22 +58,21 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
         acb_set_arb(wy, de->ch2m + l);
         acb_div(y, wy, y, prec);
 
-        iy = 1; ix = 0;
-        acb_mul_arb(wy, y, de->dx + l, prec);
-        acb_set(wyx, wy);
-        for (k = 0; k < c.g; k++)
+        j = jmin(c.m, c.n, c.delta);
+        if (j > 1)
         {
-            for (; iy < dz[k].y; ix = 0, iy++)
-            {
-                acb_mul(wy, wy, y, prec);
-                acb_set(wyx, wy);
-            }
-            for (; ix < dz[k].x; ix++)
-                acb_mul_arb(wyx, wyx, de->x + l, prec);
-            if (ix % 2)
-                acb_sub(res + k, res + k, wyx, prec);
-            else
-                acb_add(res + k, res + k, wyx, prec);
+            acb_pow_ui(wy, y, j, prec);
+            acb_mul_arb(wy, wy, de->dx + l, prec);
+        }
+        else
+            acb_mul_arb(wy, y, de->dx + l, prec);
+
+        for (r = res; j < c.m; j++)
+        {
+            slong ni = imax(j, c.m, c.n, c.delta);
+            acb_set(wyx, wy);
+            acb_vec_sub_geom_arb(r, ni, wyx, de->x + l, prec);
+            r += ni;
         }
     }
 
