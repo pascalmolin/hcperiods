@@ -67,6 +67,7 @@ do_example(slong m, slong n, acb_srcptr x, entry * ref, slong size, int flag)
     fmpz_mat_clear(cm);
     tree_ydata_clear(tree);
     tree_clear(tree);
+    sec_clear(c);
 }
 
 void

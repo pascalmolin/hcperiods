@@ -98,4 +98,5 @@ de_int_clear(de_int_t de)
     arb_clear(de->factor);
     _arb_vec_clear(de->x, de->n);
     _arb_vec_clear(de->dx, de->n);
+    _arb_vec_clear(de->ch2m, de->n);
 }

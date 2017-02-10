@@ -50,6 +50,7 @@ int main() {
 #endif
 
                 tree_ydata_clear(tree);
+                sec_clear(c);
                 fmpz_mat_clear(ca);
             }
 

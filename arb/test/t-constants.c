@@ -93,6 +93,7 @@ int main() {
 
                 tree_ydata_clear(tree);
                 tree_clear(tree);
+                sec_clear(c);
 
             }
 

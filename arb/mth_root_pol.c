@@ -93,32 +93,32 @@ mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_s
 
     acb_sub_arb(y, u + 0, x, prec); 
     if (!d1)
-          acb_neg(y, y);
+        acb_neg(y, y);
 
     isgn_y = im_sgn(y);
     for (k = 1; k < d; k++)
     { 
 
-      acb_sub_arb(t, u + k, x, prec);
-      if (k >= d1)
+        acb_sub_arb(t, u + k, x, prec);
+        if (k >= d1)
             acb_neg(t, t);
 
-      acb_mul(y, y, t, prec);
+        acb_mul(y, y, t, prec);
 
-      isgn_t = im_sgn(t);
-      if (isgn_y == isgn_t)
-      {
-        isgn_y = im_sgn(y);
-        if (isgn_y != isgn_t)
+        isgn_t = im_sgn(t);
+        if (isgn_y == isgn_t)
         {
-          if (isgn_t > 0)
-            q++;
-          else
-            q--;
+            isgn_y = im_sgn(y);
+            if (isgn_y != isgn_t)
+            {
+                if (isgn_t > 0)
+                    q++;
+                else
+                    q--;
+            }
         }
-      }
-      else
-         isgn_y = im_sgn(y);
+        else
+            isgn_y = im_sgn(y);
     } 
     acb_root_ui(y, y, m, prec);
 

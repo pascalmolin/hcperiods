@@ -80,7 +80,7 @@ int main() {
             acb_clear(y2);
             acb_clear(y3);
             _acb_vec_clear(u, d);
-
+            _acb_vec_clear(z, m);
         }
     }
 
