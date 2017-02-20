@@ -15,17 +15,9 @@ int main() {
         {
             tree_t tree;
             acb_ptr x;
-            slong i;
 
             x = _acb_vec_init(d);
-            for (i = 0; i < d; i++)
-            {
-                acb_randtest_precise(x + i, state, 100, 4);
-                /*
-                flint_printf("\nx[%ld] = ", i);
-                acb_printd(x + i, 10);
-                */
-            }
+            acb_vec_set_random(x, d, state, 100, 4);
 
             tree_init(tree, d - 1);
 

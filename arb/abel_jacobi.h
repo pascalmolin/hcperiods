@@ -239,3 +239,6 @@ void acb_vec_mul_geom(acb_ptr x, slong len, acb_t c0, const acb_t c, slong prec)
 void acb_vec_add_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong prec);
 void acb_vec_sub_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong prec);
 
+/* tests/bench only */
+void acb_vec_set_random(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);
+void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);

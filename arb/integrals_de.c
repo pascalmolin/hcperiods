@@ -10,7 +10,7 @@ void
 de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
         const cohom_t dz, const de_int_t de, slong prec)
 {
-    slong k, l;
+    slong l;
     arb_t x;
     acb_t y, wy, wyx;
 

@@ -30,9 +30,7 @@ int main() {
             acb_init(y3);
             acb_init(y4);
 
-
-            for (j = 0; j < d; j++)
-                acb_randtest_precise(u + j, state, prec, 4);
+            acb_vec_set_random_u(u, d, state, prec, 4);
 
             for (j = 0; j < 10; j++)
             {
