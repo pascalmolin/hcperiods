@@ -24,20 +24,7 @@ gc_params(acb_srcptr u, slong len, double r, slong i, slong prec)
 slong
 gc_params_tree(const tree_t tree, sec_t c, slong prec)
 {
-    slong n;
-    double r;
-    cdouble * w;
-
-    r = tree->r;
-
-    w = malloc(c.n * sizeof(cdouble));
-    ab_points_worst(w, tree, c);
-
-    n = gc_params_d(w, c.n - 2, r, c.g - 1, prec);
-
-    free(w);
-
-    return n;
+    return gc_params(tree->data[tree->min].u, c.n, tree->r, c.n - 1, prec);
 }
 
 void

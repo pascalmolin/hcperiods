@@ -188,7 +188,6 @@ void shift_info_tree(tree_t tree, cdouble * w, slong d);
 void tree_print(const tree_t tree);
 
 /* reduced points of spanning tree */
-void ab_points_worst(cdouble * w, const tree_t tree, sec_t c);
 void ydata_init_edge(ydata_t yab, acb_srcptr x, edge_t e, slong n, slong m, slong prec);
 void ydata_clear(ydata_t yab);
 void tree_ydata_init(tree_t tree, acb_srcptr x, slong n, slong m, slong prec);
@@ -241,4 +240,4 @@ void acb_vec_sub_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong p
 
 /* tests/bench only */
 void acb_vec_set_random(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);
-void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);
+void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits, double eps);
