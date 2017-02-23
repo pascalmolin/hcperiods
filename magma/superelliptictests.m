@@ -92,7 +92,7 @@ intrinsic RS_CircleTest( X::RieSrf : r := 1/10, j := 1 ) -> RngIntElt
 	print "FC2`Integrals:",FC2`Integrals;
 	print "LS`Integrals:",LS`Integrals;
 	print "LSInv`Integrals:",LSInv`Integrals;
-	SE_DFF := RS_SuperellipticDifferentials(f);
+	SE_DFF := RS_SEDifferentials(f);
 	DFF := &cat[ DFF_i : DFF_i in SE_DFF ];
 	SE_Integrals := RS_SEIntegration( f, ls0, Pts, DFF );
 	print "LS`Perm:",LS`Permutation;
@@ -320,89 +320,16 @@ end intrinsic;
 
 
 
-intrinsic RS_TestFormulas( N::RngIntElt, d::RngIntElt ) -> RngIntElt
-{ - }
-	print "d:",d;
-	print "N:",N;
-	m := Gcd(N,d);
-	print "m:",m;
-	Sum1 := 0;
-	for j in [Ceiling((N+m)/d)..N-1] do
-		Sum1 +:= Floor((d*j - m)/N);
-	end for;
-	print "Sum1:",Sum1;
-	Sum2 := 0;
-	for j in [1..N-1] do
-		Sum2 +:= Floor(d*j/N);
-	end for;
-	print "Sum2:",Sum2;
-	g := (1/2) * ((d-1)*(N-1) - m + 1 );
-	print "g:",g;
-	assert g eq Sum1;
-	
-	"################";
-	gg := d*(N-1)/2 - (N+m-2)/2;
-	print "gg:",gg;
-	assert gg eq g;
 
-	"#################";
-	print "(N-m-2)/2:",(N+m-2)/2;
-	restsum := (N-1)/N * m;
-	for j in [1..N-1] do
-		r_j := (d*j - m) mod N;
-		k := Integers()!(d/m);
-		r_j := ((k*j - 1) * m) mod N;
-		restsum +:= r_j/N;
-	end for;
-	restsum := (N-1)/N * m;
-	l := N/m;
-	print "l:",l;
-	print "(d/m) mod N:",Integers()!(d/m) mod N;
-	for j in [1..l] do
-		r_j := (d*j - m) mod N;
-		print "r_j:",r_j;
-		
-		print "(d/m)j - 1) mod N:",(Integers()!(d/m)*j - 1) mod N;
-		restsum +:= m/N * r_j;
-	end for;
-	//r_N := -m mod N;
-	r_N := -m + N;
-	print "r_N:",r_N;
-	restsum -:= (1/N) * r_N;
-	print "restsum:",restsum;
-	assert restsum eq (N+m-2)/2;
-
-
-
-	new1 := (1/2) * (N^2 - (m+2)*N + 2*m);
-	print "new1:",new1;
-	newsum := 0;
-	l := N/m;
-	for j in [1..l-1] do
-		newsum +:= j*m;
-	end for;
-	newsum *:= m;
-	newsum +:= m - N;
-	assert newsum eq new1;
-	print "newsum:",newsum;
-	return 0;
-end intrinsic;
-
-
-
-intrinsic RS_SEAJTest( SEC::SECurve : Ht := 100 ) -> RS_Vector
+intrinsic RS_SEAJTest( SEC::SECurve : Ht := 100 ) -> RngIntElt
 { Test for Abel-Jacobi map of superelliptic curves }
 	C<i> := ComplexField(SEC`Prec);
-	RS_ComputeAll(SEC);
+	R := SEC`RealField;
 	x1 := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]);
 	x2 := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]);
-	/*print "x1:",x1;
-	print "x2:",x2;
-	print "Distance x1 to disc points:",RS_Distance(x1,SEC`BranchPoints);
-	print "Distance x2 to disc points:",RS_Distance(x2,SEC`BranchPoints);*/
 
-	F1 := RS_Fiber(SEC`DefiningPolynomial,x1); 
-	F2 := RS_Fiber(SEC`DefiningPolynomial,x2);
+	F1 := RS_Fiber(SEC`DefiningPolynomial,x1); print "F1:",F1;
+	F2 := RS_Fiber(SEC`DefiningPolynomial,x2); print "F2:",F2;
 	P := [];
 	Q := [];
 	for j in [1..SEC`Degree[1]] do
@@ -412,75 +339,75 @@ intrinsic RS_SEAJTest( SEC::SECurve : Ht := 100 ) -> RS_Vector
 	//print "P:",P;
 	//print "Q:",Q;
 	V := [];
+	V1 := Matrix(R,2*SEC`Genus,1,[]);
+	V2 := Matrix(R,2*SEC`Genus,1,[]);
 	for j in [1..SEC`Degree[1]] do
-		Append(~V,(-1)*SEC`AbelJacobi(Q[j]));
-		Append(~V,SEC`AbelJacobi(P[j]));
+		V1 +:= ChangeRing(SEC`AbelJacobi(P[j]),R);
+		V2 -:= ChangeRing(SEC`AbelJacobi(Q[j]),R);
 	end for;
-
-	W := RS_ModPeriodLattice( SEC, &+V );
-	
-	print "W:",W;
-
-	C_0 := Zero(C);
-	for k in [1..SEC`Genus] do
-		r := W[k][1];
-		r_ := C!Round(r);
-		if Abs(r-r_) lt SEC`Error then
-			W[k][1] := C_0;
-		else
-			W[k][1] := C!r;
-		end if;
-	end for;
-
-	return W;
-	
-end intrinsic;
-
-
-intrinsic RS_SEAJInftyTest( SEC::SECurve : Ht := 100 ) -> RS_Vector
-{ Test for Abel-Jacobi map of superelliptic curves }
-	C<i> := ComplexField(SEC`Prec);
-	RS_ComputeAll(SEC);
-	x := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]);
-	print "x:",x;
-	
-	print "Distance x to disc points:",RS_Distance(x,SEC`BranchPoints);
-	
-
-	F := RS_Fiber(SEC`DefiningPolynomial,x); 
-	P1 := <x,F[1]>;
-	P2 := <x,F[2]>;
-	
-	print "P1:",P1;
-	print "P1:",P2;
-	V := [];
-
-	Append(~V,RS_Vector(SEC`AbelJacobi(P1)));
-	Append(~V,RS_Vector(SEC`AbelJacobi(P2)));
-	print "V:",V;
-	InfShouldBe := (1/2) * ( V[1] + V[2] );
-	print "InfShouldBe:",InfShouldBe;
-
-	Append(~V,(-SEC`Degree[1])*RS_Vector(RS_AJInfinity(SEC)));
-
 
 	// The sum has to be zero in \R^2g / \Z^2g
-	W := &+V;
+	W := V1+V2;
+	Z := Matrix(R,2*SEC`Genus,1,[ z - Round(z) : z in ElementToSequence(W) ]);
+	return Z;
+end intrinsic;
 
-	R := RealField(SEC`Prec); R_0 := Zero(R);
-	for k in [1..2*SEC`Genus] do
-		r := W`Entries[k];
-		r_ := Round(r);
-		if Abs(r-r_) lt SEC`Error then
-			W`Entries[k] := R_0;
-		else
-			W`Entries[k] := R!r;
-		end if;
+
+intrinsic RS_SEAJTest2( SEC::SECurve : Ht := 10 ) -> RngIntElt
+{ Test for Abel-Jacobi map of superelliptic curves }
+	C<i> := ComplexField(SEC`Prec); Cxy<x,y> := PolynomialRing(C,2);
+	R := SEC`RealField;
+
+	y1 := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]); print "y1:",y1;
+	y2 := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]); print "y2:",y2;
+	
+	f := Cxy!SEC`DefiningPolynomial;
+	g1 := UnivariatePolynomial(Evaluate(f,2,y1)); //print "g1:",g1;
+	g2 := UnivariatePolynomial(Evaluate(f,2,y2)); //print "g2:",g2;
+	F1 := Roots(g1); print "F1:",F1;
+	F2 := Roots(g2); print "F2:",F2;
+	P := [];
+	Q := [];
+	for j in [1..SEC`Degree[2]] do
+		Append(~P,<F1[j][1],y1>);
+		Append(~Q,<F2[j][1],y2>);
+	end for;
+	//print "P:",P;
+	//print "Q:",Q;
+	V := [];
+	V1 := Matrix(R,2*SEC`Genus,1,[]);
+	V2 := Matrix(R,2*SEC`Genus,1,[]);
+	for j in [1..SEC`Degree[2]] do
+		V1 +:= ChangeRing(SEC`AbelJacobi(P[j]),R);
+		V2 -:= ChangeRing(SEC`AbelJacobi(Q[j]),R);
 	end for;
 
-	//W := RS_ModPeriodLattice( SEC, &+V );
-	return W;
+	// The sum has to be zero in \R^2g / \Z^2g
+	W := V1+V2;
+	Z := Matrix(R,2*SEC`Genus,1,[ z - Round(z) : z in ElementToSequence(W) ]);
+	return Z;
 end intrinsic;
+
+
+intrinsic RS_SEAJTest2LT( N::RngIntElt, d::RngIntElt : Prec:=20, t := 10 ) -> RngIntElt
+{ - }
+	for j in [1..t] do
+		s := RS_RandomSuperellipticCurve(N,d);
+		S := RS_SECurve(s:Prec:=Prec);
+		for k in [1..t] do
+			v := RS_SEAJTest2(S);
+			print "v:",v;
+			for l in [1..2*S`Genus] do
+				if v[l][1] gt 10^-(Prec-15) then
+					print "s:",s;
+					error Error("!");
+				end if;
+			end for;
+		end for;
+	end for;
+	return true;
+end intrinsic;
+
 
 
 

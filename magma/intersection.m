@@ -1,16 +1,18 @@
+//Import global settings
 import "superelliptic.m": RS_ImSgn, RS_NRootAC, RS_MakeCCVectors;
+import "comparefunctions.m": RS_CompareFldComElt;
+
+
 
 C_20<i> := ComplexField(20);
 C_Pi := Real(Pi(C_20));
 
 
-intrinsic RS_SEIntersection( Edge1::Tup, Edge2::Tup, Points::[FldComElt], N::RngIntElt, Zeta::FldComElt ) -> Tup
+intrinsic RS_SEIntersection( Edge1::Tup, Edge2::Tup, Points::[FldComElt], N::RngIntElt, Zetas::SeqEnum[FldComElt] ) -> Tup
 { - }
 	NrOfEndPts := #Set([Edge1[1],Edge1[2],Edge2[1],Edge2[2]]);
 	if NrOfEndPts eq 4 then
-		return <0,0,0>; // cannot occur in MST
-		//print "################################ Case5: nce ################################";
-		//return RS_InnerIntersection( Edge1,Edge2,Points,N );
+		return <0,0>;
 	end if;
 
 	// Trivial cases
@@ -25,155 +27,63 @@ intrinsic RS_SEIntersection( Edge1::Tup, Edge2::Tup, Points::[FldComElt], N::Rng
 	end if;
 
 	// Number of points
-	l := #Points;
-	assert l ge 3;
+	n := #Points; assert n ge 3;
 
-	// Variables;
+	// End points
 	a := Points[Edge1[1]]; b := Points[Edge1[2]];
 	c := Points[Edge2[1]]; d := Points[Edge2[2]];	
 
-	// Constants
-	c1 := (b-a)^(l/N); 
-	c2 := (d-c)^(l/N);
-
-	// Angle between linesegments
-	phi := Arg((d-c)/(b-a));
-	
-	// Are these necessary?
-	//assert &and[-Pi lt phi+10^(-10), phi-10^(-10) lt Pi];
-	//assert &and[-Pi lt phi, phi lt Pi];
+	// Arg of factor corresponding to end points
+	phi := Arg((b-a)/(d-c));	
 
 	// Making vectors of centers of circumcircles
 	CCV1 := RS_MakeCCVectors(Edge1[1],Edge1[2],Points);
 	CCV2 := RS_MakeCCVectors(Edge2[1],Edge2[2],Points);
-	
-	/*
-	print "########################### RS_SEIntsec ############################";
-	print "Edge1:",Edge1; print "Edge2:",Edge2;
-	print "phi:",phi;
-	print "Points:",Points;
-	print "#Points:",#Points;
-	print "N:",N;
-	print "c1:",c1;
-	print "c2:",c2;
-	print "phi:",phi; 
-	print "PPP1:",PPP1;
-	print "PPP2:",PPP2;
-	*/
+	UP1 := #[ z : z in CCV1 | Re(z) gt 0 ];
+	UP2 := #[ z : z in CCV2 | Re(z) gt 0 ];
+
+	// Constants
+	C_ab := Exp( (n/N) * Log(b-a)) * Zetas[(UP1+1) mod 2 + 1]; 
+	C_cd := Exp( (n/N) * Log(d-c)) * Zetas[(UP2+1) mod 2 + 1];
 
 	// Cases
 	if Edge1[1] eq Edge2[1] then
 		//"################################ Case1: a = c ################################";
-		AR1 := RS_NRootAC(-1,CCV1,Zeta,N);
-		AR2 := RS_NRootAC(-1,CCV2,Zeta,N);
-		// This is the whole story, but we really only need one case, since intersections coincide in both cases
-		/*
-		if Abs(phi) le Pi/2 then
-			LimArg := -phi/2;
-			ints := -Sign(phi);
-			dir := Sign(phi) mod N;
+		AR1 := RS_NRootAC(-1,CCV1,Zetas,N);
+		AR2 := RS_NRootAC(-1,CCV2,Zetas,N);
+		Val_ab := C_ab * AR1;
+		Val_cd := C_cd * AR2;		
+		Val := Val_cd/Val_ab;
+		k_ := ((1/(2*C_Pi)) * ( phi + N * Arg(Val) ));
+		k := Round(k_);
+		assert Abs(k-k_) lt 10^-10;
+		if phi gt 0 then
+			return <1-k,-k>;
 		else
-			LimArg := Sign(phi)*Pi - phi/2;
-			ints := Sign(phi);
-			dir := -Sign(phi) mod N;
+			return <-k,-1-k>;
 		end if;
-		*/ 
-		LimArg := -phi/2;
-		ints := -Sign(phi);
-		dir := Sign(phi) mod N;
 	elif Edge1[2] eq Edge2[1] then
 		//"################################ Case2: b = c ################################";
-		AR1 := RS_NRootAC(1,CCV1,Zeta,N);
-		AR2 := RS_NRootAC(-1,CCV2,Zeta,N);
-		// This is the whole story, but we really only need one case, since intersections coincide in both cases
-		/*
-		if phi gt 0 then
-			assert &and[ 0 lt (C_Pi-phi)/2, (C_Pi-phi)/2 lt C_Pi/2];
-			LimArg := (C_Pi-phi)/2;
-			ints := -1;
-			dir := N-1;
-		else
-			assert &and[ 0 lt (C_Pi+phi)/2, (C_Pi+phi)/2 le C_Pi/2];
-			LimArg := -(C_Pi+phi)/2;
-			ints := 1;
-			dir := 1;
-		end if;
-		*/
-		/*
-		LimArg := (C_Pi-phi)/2;
-		ints := -1;
-		dir := N-1;		
-		*/
-		LimArg := -(C_Pi+phi)/2;
-		ints := 1;
-		dir := 1;	
+		AR1 := RS_NRootAC(1,CCV1,Zetas,N);
+		AR2 := RS_NRootAC(-1,CCV2,Zetas,N);
+		Val_ab := C_ab * AR1;
+		Val_cd := C_cd * AR2;		
+		Val := Val_cd/Val_ab;
+		k_ := (1/(2*C_Pi)) * ( phi + N * Arg(Val) ) + (1/2);
+		k := Round(k_);
+		assert Abs(k-k_) lt 10^-10;
+		return <-k,1-k>;
 	elif Edge1[1] eq Edge2[2] then
-		//"################################ Case3: a = d ################################";
-		AR1 := RS_NRootAC(-1,CCV1,Zeta,N);
-		AR2 := RS_NRootAC(1,CCV2,Zeta,N);
-		// Basically the same as the case b = c
-		/*
-		if phi gt 0 then
-			LimArg := (Pi-phi)/2;
-			ints := -1;
-			dir := N-1;
-		else
-			LimArg := -(Pi+phi)/2;
-			ints := 1;
-			dir := 1;
-		end if;
-		*/
-		LimArg := (C_Pi-phi)/2;
-		ints := -1;
-		dir := N-1;
-		/*
-		LimArg := -(C_Pi+phi)/2;
-		ints := 1;
-		dir := 1;
-		*/
+		"################################ Case3: a = d ################################";
+		AR1 := RS_NRootAC(-1,CCV1,Zetas,N);
+		AR2 := RS_NRootAC(1,CCV2,Zetas,N);
+		error Error("Case should not occur in spanning tree.");
 	elif Edge1[2] eq Edge2[2] then
-		//"################################ Case1: b = d ################################";
-		AR1 := RS_NRootAC(1,CCV1,Zeta,N);
-		AR2 := RS_NRootAC(1,CCV2,Zeta,N);
-		// Basically the same as the case a = c
-		/*
-		if Abs(phi) le Pi/2 then
-			LimArg := -phi/2;
-			ints := -Sign(phi);
-			dir := Sign(phi) mod N;
-		else
-			LimArg := Sign(phi)*C_Pi - phi/2;
-			ints := Sign(phi);
-			dir := -Sign(phi) mod N;
-		end if;
-		*/
-		LimArg := -phi/2;
-		ints := -Sign(phi);
-		dir := Sign(phi) mod N;
-	else
-		//"################################ Case5: nce ################################";
-		return <0,0,0>; // cannot occur in MST
-		//return RS_InnerIntersection( Edge1,Edge2,Points,N );
+		"################################ Case1: b = d ################################";
+		AR1 := RS_NRootAC(1,CCV1,Zetas,N);
+		AR2 := RS_NRootAC(1,CCV2,Zetas,N);
+		error Error("Case should not occur in spanning tree.");
 	end if;
-	
-	// Compute argument of actual value
-	Val_ab := c1 * AR1;
-	Val_cd := c2 * AR2;		
-	Val := Val_ab/Val_cd;
-	ValArg := Arg(Val);
-
-	// Compute shift between sheets
-	k := (1/C_Pi) * ( LimArg - (N/2) * ValArg );
-	//print "k:",k;
-	k_ := Round(k);
-	assert Abs(k - k_) lt 10^-10; // Check: k \in \Z ?
-	k := k_ mod N;
-	//print "k:",k;
-	//print "LimArg:",LimArg;
-
-	// Return <s,k,d>-triple
-	return <ints,k,dir>;
-
 end intrinsic;
 
 
