@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
-<ipe version="70005" creator="Ipe 7.1.6">
-<info created="D:20161219110343" modified="D:20161219110557"/>
+<ipe version="70206" creator="Ipe 7.2.7">
+<info created="D:20161219110343" modified="D:20170224101642"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -220,13 +220,13 @@ h
 <dashstyle name="dash dotted" value="[4 2 1 2] 0"/>
 <dashstyle name="dash dot dotted" value="[4 2 1 2 1 2] 0"/>
 <textsize name="large" value="\large"/>
-<textsize name="small" value="\small"/>
-<textsize name="tiny" value="\tiny"/>
 <textsize name="Large" value="\Large"/>
 <textsize name="LARGE" value="\LARGE"/>
 <textsize name="huge" value="\huge"/>
 <textsize name="Huge" value="\Huge"/>
+<textsize name="small" value="\small"/>
 <textsize name="footnote" value="\footnotesize"/>
+<textsize name="tiny" value="\tiny"/>
 <textstyle name="center" begin="\begin{center}" end="\end{center}"/>
 <textstyle name="itemize" begin="\begin{itemize}" end="\end{itemize}"/>
 <textstyle name="item" begin="\begin{itemize}\item{}" end="\end{itemize}"/>
@@ -285,18 +285,18 @@ h
 384 688 m
 338.371 662.641 l
 </path>
-<text matrix="1 0 0 1 -1.58514 -10.779" transformations="translations" pos="384 688" stroke="black" type="label" width="5.012" height="4.297" depth="1.93" valign="baseline">$p$</text>
-<text layer="gamma" matrix="1 0 0 1 -5.70651 4.75543" transformations="translations" pos="192 640" stroke="black" type="label" width="12.73" height="6.421" depth="0.83" valign="baseline">$-1$</text>
-<text matrix="1 0 0 1 -2.53623 4.4384" transformations="translations" pos="320 640" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">$1$</text>
-<text matrix="1 0 0 1 -8.24274 -7.60868" transformations="translations" pos="209.26 588.838" stroke="black" type="label" width="5.071" height="4.289" depth="0" valign="baseline">$z$</text>
-<text matrix="1 0 0 1 -8.55501 31.6601" transformations="translations" pos="262.674 671.265" stroke="black" type="label" width="35.196" height="9.101" depth="1.26" valign="baseline">$\sqrt{a^2-1}$</text>
-<text matrix="1 0 0 1 -1.58514 2.53623" transformations="translations" pos="350.435 635.743" stroke="black" type="label" width="5.266" height="4.289" depth="0" valign="baseline">$a$</text>
+<text matrix="1 0 0 1 -1.58514 -10.779" transformations="translations" pos="384 688" stroke="black" type="label" width="5.012" height="4.297" depth="1.93" valign="baseline" style="math">p</text>
+<text layer="gamma" matrix="1 0 0 1 -5.70651 4.75543" transformations="translations" pos="192 640" stroke="black" type="label" width="12.73" height="6.421" depth="0.83" valign="baseline" style="math">-1</text>
+<text matrix="1 0 0 1 -2.53623 4.4384" transformations="translations" pos="320 640" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline" style="math">1</text>
+<text matrix="1 0 0 1 -8.24274 -7.60868" transformations="translations" pos="209.26 588.838" stroke="black" type="label" width="5.071" height="4.289" depth="0" valign="baseline" style="math">z</text>
+<text matrix="1 0 0 1 -8.55501 31.6601" transformations="translations" pos="262.674 671.265" stroke="black" type="label" width="34.701" height="9.101" depth="1.26" valign="baseline" style="math">\sqrt{r^2-1}</text>
+<text matrix="1 0 0 1 -1.58514 2.53623" transformations="translations" pos="350.435 635.743" stroke="black" type="label" width="4.771" height="4.289" depth="0" valign="baseline" style="math">r</text>
 <path layer="delta" stroke="black">
 342.298 664.011 m
 344.201 660.84 l
 340.713 658.938 l
 340.713 658.938 l
 </path>
-<text layer="alpha" transformations="translations" pos="180.741 688.422" stroke="black" type="label" width="9.465" height="4.294" depth="1.49" valign="baseline">$\varepsilon_a$</text>
+<text layer="alpha" transformations="translations" pos="180.741 688.422" stroke="black" type="label" width="9.057" height="4.294" depth="1.49" valign="baseline" style="math">\varepsilon_r</text>
 </page>
 </ipe>
