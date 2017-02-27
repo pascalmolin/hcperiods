@@ -7,9 +7,9 @@
    %Assume for this section that we already computed a period matrix following the strategy described in Section \ref{m-sec:strat_pm}.
    Here we are concerned with explicitly computing the Abel-Jacobi map of degree zero divisors, for a general introduction see Section \ref{m-sec:ajm}.
    
-   Let $D = \sum_{P \in \cu} a_P P \in \Div^0(\cu)$. Choosing a basepoint $P_0 \in \cu$, the computation of $\AJ$ reduces to (using linearity)
+   Let $D = \sum_{P \in \cu} v_P P \in \Div^0(\cu)$. Choosing a basepoint $P_0 \in \cu$, the computation of $\AJ$ reduces to (using linearity)
    \begin{equation}
-     \AJ([D]) \equiv \sum_{P \in \cu} a_P \int_{P_0}^P \bar\w \mod \Lambda.
+     \AJ([D]) \equiv \sum_{P \in \cu} v_P \int_{P_0}^P \bar\w \mod \Lambda.
    \end{equation}
   For every $P \in \cu$, $\int_{P_0}^P \bar\w$ is a linear combination of vector integrals of the form
   \begin{align*}
@@ -20,9 +20,10 @@
   \begin{itemize}
    \item $P = (x_P,y_P) \in \cu$ is a finite point on the curve,
    \item $P_k = (x_k,0) \in \cu$ is a ramification point, i.e.\ $x_k \in X$, and
-   \item $P_{\infty} \in \cu$ is a point above infinity.
+   \item $P_{\infty} \in \cu$ is an infinite point.
   \end{itemize}
-  Finally, the resulting vector integral has to reduced modulo the period lattice, which is covered in \S \ref{m-subsec:lat_red}.
+  Finally, the resulting vector integral has to reduced modulo the period lattice, which is covered in \S \ref{m-subsec:lat_red}. We will give the 
+  image of the Abel-Jacobi map in $\R^{2g} / \Z^{2g}$.
   
   Assume for this section that we already computed a period matrix (and all related data) following the Strategy from Section \ref{m-sec:strat_pm}. 
   
@@ -38,19 +39,18 @@
   \end{align}
   Denote $a = x_{k_j}, b = x_{k_{j+1}} \in X$. From \S \ref{m-subsec:cycles_homo} we know that for $(a,b) \in E$ a smooth path between $P_a=(a,0)$ and $P_b=(b,0)$ is given by
   \begin{align*}
-   \gamma = \{  (x,\yab(x))  \mid  x \in [a,b]  \}.
+   \gamma_{[a,b]}^{(0)} = \{  (x,\yab(x))  \mid  x \in [a,b]  \}.
   \end{align*}
   Fix a differential $\w_{i,j} \in \W$. Then, according to the proof of Theorem \ref{m-thm:periods} the corresponding integral is just an elementary integral
   \begin{align}
-   \int_{\gamma} \w_{i,j}  & =  C_{i,j}  \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}} \du,
+   \int_{\gamma_{[a,b]}^{(0)}} \w_{i,j}  & =  C_{i,j}  \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}} \du,
   \end{align}
   which has already been evaluated during the period matrix computation.
 
 
   \subsection{Reaching non-ramification points}\label{subsec:ajm_finite}
 
-   \todo Rework
-   Let $P = (x_P,y_P) \in \cu$ and $a \in X$ such that $X\cap]a,x_P]=\varnothing$. As in \S \ref{m-subsec:roots_branches} we define a locally analytic branch of $\cu$ via the functions
+   Let $P = (x_P,y_P)$ be a finite point on $\cu$ and $a \in X$ such that $X\cap]a,x_P]=\varnothing$. As in \S \ref{m-subsec:roots_branches} we define a locally analytic branch of $\cu$ via the functions
   \begin{align}\label{def:yax}
   \begin{split}
    \yaxp(x)  & =  \left(\frac{x_P-a}{2}\right)^{\frac{d}{m}}  (1 + u(x))^{\frac{j}{m}}  \ytaxp(u(x)), \quad \text{with} \\
@@ -99,32 +99,191 @@
   \end{align}
   \end{proof}
 
-  \subsection{From basepoint to infinity}\label{subsec:ajm_infty}
+  \subsection{Infinite points}\label{subsec:ajm_infty}
 
-    If there is only one point $P_{\infty}$ above infinity, i.e. $\delta = \gcd(m,d) = 1$, we can easily obtain from data that has already been computed.
-
-    Consider the Bézout identity $\mu m + \nu d = 1$, with $\mu,\nu \in \Z$. We use the following following princial divisors to express $P_{\infty}$ in terms of the finite ramification points
-    modulo the periods lattice.
+  Recall from \S \ref{m-subsec:sedef} that there are $\delta = \gcd(m,n)$ points above infinity $\mathcal{P}
+  = \{ P_{\infty}^{(1)},\dots, P_{\infty}^{(\delta)} \}$ on our projective curve $\cu$.
+  
+  Suppose we want to integrate from $P_0$ to $P_{\infty} \in \mathcal{P}$, which is equivalent to computing the Abel-Jacobi map of the divisor
+  $D_{\infty} = P_{\infty} - P_0$.
+%   \begin{equation*}
+%     D_{\infty} := \AJ([P_{\infty} - P_0]) \equiv \int_{P_0}^{P_{\infty}} \bar\w \mod \Lambda.
+%   \end{equation*}
+  Our strategy is to find a principal divisor $D \in \Prin(\cu)$ such that $\supp(D) \cap \mathcal{P} = \{ P_{\infty} \}$
+  and $v_{P_{\infty}}(D) = \pm 1$. Then, by definition of the Abel-Jacobi map
+  \begin{equation}
+  \AJ([D_0]) \equiv \AJ([D_{\infty}]) \equiv \int_{P_0}^{P_{\infty}} \bar\w \mod \Lambda
+  \end{equation}
+  where $D_0 = D_{\infty} \mp D$ and $\supp(D_0) \cap \mathcal{P} = \varnothing$.
+  Since there is no principal divisor who does the job unconditionally, we have to consider a few different cases.
+  
+  In the following we will use the Bézout identity
+  \begin{equation}
+    \mu m + \nu n = \delta,
+  \end{equation}
+  where $-\mu,\nu \in \Z_{\ge 0}$.
+  
+  
+  \subsubsection{Coprime degrees}
+  
+  For $\delta = 1$ there is only one infinite point $\mathcal{P} = \{ P_{\infty} \}$ and
+  we can easily compute  $\AJ( [D_{\infty}] )$ by adding a suitable
+  principal divisor $D$
     \begin{align}
      \begin{split}
-      &\div(y^{\nu}) ) =  \nu \sum_{k = 1}^d P_k - \nu d P_{\infty},\\
+      &\div(y^{\nu}) ) =  \nu \sum_{k = 1}^n P_k - \nu n P_{\infty},\\
       &\div((x-x_0)^{\mu})  =  \mu m P_0 - \mu m P_{\infty} ,\\
-      D  =  & \div(y^{\nu}(x-x_0)^{\mu})  = \nu \sum_{k = 1}^d P_k + \mu m P_0 - P_{\infty}
+      D  =  & \div(y^{\nu}(x-x_0)^{\mu})  = \nu \sum_{k = 1}^n P_k + \mu m P_0 - P_{\infty}.
      \end{split}
     \end{align}
-    Integrating from $P_0$ to $P_{\infty}$ is equivalent to computing the Abel-Jacobi map of the divisor $D_{\infty} =  P_{\infty} - P_0 $. Therefore,
+    We immediately obtain
     \begin{align}
-     \AJ( [D_{\infty}] )  & \equiv  \AJ([D_{\infty} + D])  =  \AJ( [ \nu \sum_{k = 1}^d P_k + (\mu m - 1) P_0 ]  ) \\  & \equiv  \AJ( [ \nu \sum_{k = 1}^d P_k ] )
-      \equiv   \nu \sum_{k=1}^d \int_{P_0}^{P_k} \bar\w \mod \Lambda.
+     \AJ( [D_{\infty}] )  & \equiv  \AJ([D_{\infty} + D])  =  \AJ( [ \nu \sum_{k = 1}^n P_k + (\mu m - 1) P_0 ]  ) \\  & \equiv  \AJ( [ \nu \sum_{k = 1}^d P_k ] )
+      \equiv   \nu \sum_{k=1}^n \int_{P_0}^{P_k} \bar\w \mod \Lambda
     \end{align}
+    and conclude that $\AJ( [D_{\infty}] )$ can be expressed in terms of integrals between
+    ramification points (see \S \ref{m-subsec:ajm_bp}).
+   
+ \subsubsection{Non-coprime degrees}
 
-    \todo Add case $\delta > 1$.
+  For $\delta > 1$ the problem becomes a lot harder. First we need a way to distinguish the infinite points in $\mathcal{P}
+  = \{ P_{\infty}^{(1)},\dots, P_{\infty}^{(\delta)} \}$ and second they are singular points
+  on the homogenization of our affine model $\caff$
+  whenever $m \ne n,n\pm1$.
+  
+  As shown in \cite[\S 1]{CT1996}, we obtain a different affine model of $\cu$ that is non-singular at $\mathcal{P}$
+  in the following way:
+  
+  Denoting $M = \frac{m}\delta$ and $N = \frac{n}\delta$, we consider the birational transformation
+  \begin{equation}
+   (x,y) = \Phi(r,t) = \left(\frac{1}{r^{\nu}t^M},\frac{r^{\mu}}{t^N}\right)
+  \end{equation}
+  which results in an affine model
+  \begin{equation}
+   \cafft : r^{\delta} = \prod_{k=1}^n (1-x_kr^{\nu}t^M).
+  \end{equation}
+  The inverse transformation is given by
+  \begin{equation}
+   (r,t) = \Phi^{-1}(x,y) = \left(\frac{y^M}{x^N},\frac{1}{x^{\mu}y^{\nu}}\right).
+  \end{equation}
+  Under this transformation the infinite points in $\mathcal{P}$ are mapped to finite points that have the coordinates
+  \begin{equation}
+   (r,t) = (\zeta_{\delta}^s,0) \quad s= 1,\dots,\delta
+  \end{equation}
+  where $\zeta_{\delta} = e^{\frac{2\pi i }{\delta}}$. 
+  Hence, we can identify the infinite points in $\mathcal{P} \subset \cu$ via
+   \begin{equation}
+      P_{\infty}^{(s)} = \Phi^{-1}(\zeta_{\delta}^s,0).
+   \end{equation}
+   
+   
+   Suppose we want to compute the Abel-Jacobi map of $D_{\infty}^{(s)} = P_{\infty}^{(s)} - P_0$ for $s \in \{1,\dots,\delta\}$.
+   Again following our strategy,
+   this time on $\cafft$, we look at the divisor of the vertical line through $(\zeta_{\delta}^s,0)$.
+   \begin{equation}
+      D_1 = \div(r - \zeta_{\delta}^s) = \sum_{i = 1}^{\deg(g)} (\zeta_{\delta}^s,t_i) - N D_1'
+   \end{equation}
+      where the $t_i$ are the zeros of $g(t) = \prod_{k=1}^n (1-x_k\zeta_{\delta}^{s\nu}t^M) - 1 \in \C[t]$ and
+    \begin{equation}
+       D_1' = \begin{cases}
+             \sum_{l=1}^m \Phi^{-1}(0,\zeta_m^l \sqrt[m]{f(0)}), \quad \text{if} \; 0 \not\in X,\\
+             (m-M) \Phi^{-1}(0,0), \hfill \text{if} \; 0 \in X.
+            \end{cases}
+    \end{equation}
+    Now, $\Phi(D_1) := \div \left( \frac{y^M}{x^N} - \zeta_{\delta}^s \right)$ is a principal divisor on $\caff$ and by
+    construction we have $v_{P_{\infty}^{(s)}}(\Phi(D_1)) \ge 1$.
+    
+  
+    If $v_{P_{\infty}^{(s)}}(\Phi(D_1)) = 1$ we are done: assuming $t_1 = 0$, we obtain
+    \begin{align}
+      \AJ( [D_{\infty}^{(s)}] )  & \equiv  \AJ([D_{\infty}^{(s)} - \Phi(D_1)])  
+      \equiv  -\AJ( [\sum_{i = 2}^{\deg(g)} \Phi(\zeta_{\delta}^s,t_i) + N \Phi(D_1') ] )
+%      \\ & \equiv  -\sum_{i = 2}^{\deg(g)}  \AJ( \Phi(\zeta_{\delta}^s,t_i)) + N \AJ( \Phi(D_1') )
+       \mod \Lambda,
+    \end{align}
+    which involves only finite points on $\caff$ and can thus be computed using Theorem \ref{m-thm:ajm_finite_int}.
+    
+    \bigskip
+    
+    In the case where $v_{P_{\infty}^{(s)}}(\Phi(D_1))$ is greater than $1$, the vertical line is tangent to the curve $\cafft$ 
+    at $(\zeta_{\delta}^s,0)$ and cannot be used.
+    Consequently, we must find another function. The obvious choice here is the line $r - t -  \zeta_{\delta}^s$, which
+    is now guaranteed to have a simple intersection with $\cafft$ 
+    at $(\zeta_{\delta}^s,0)$.
 
+    The corresponding principal divisor is given by
+     \begin{equation}
+      D_2 = \div(r - t - \zeta_{\delta}^s) = \sum_{i = 1}^{\deg(g)} (t_i+\zeta_{\delta}^s,t_i) - b \sum_{k=1}^n
+      \Phi^{-1}(x_k,0)- N D_2'
+   \end{equation}
+      where the $t_i$ are the zeros of $g(t) = \prod_{k=1}^n (1-x_k(t+\zeta_{\delta})^{s\nu}t^M) - 1 \in \C[t]$ and
+    \begin{equation}
+       D_2' = \begin{cases}
+             \sum_{l=1}^m \Phi^{-1}(0,\zeta_m^l \sqrt[m]{f(0)}), \quad \text{if} \; 0 \not\in X,\\
+             (m-\frac{M+\nu}{N}) \Phi^{-1}(0,0), \hfill \text{if} \; 0 \in X.
+            \end{cases}
+    \end{equation}
+ 
+    Now, $\Phi(D_2) := \div \left( \frac{y^M}{x^N} - \frac{1}{x^{\mu}y^{\nu}} - \zeta_{\delta}^s \right)$
+    is a principal divisor such that
+    $v_{P_{\infty}^{(s)}}(\Phi(D_2))$ is equal to $1$. Hence, with $t_1 = 0$ we have
+     \begin{align}
+      \AJ( [D_{\infty}^{(s)}] )  & \equiv  \AJ([D_{\infty}^{(s)} - \Phi(D_2)])  \\
+      & \equiv  -\AJ( [\sum_{i = 2}^{\deg(g)} \Phi(\zeta_{\delta}^s,t_i) + b \sum_{k=1}^n
+      (x_k,0) + N \Phi(D_2') ] )
+%      \\ & \equiv  -\sum_{i = 2}^{\deg(g)}  \AJ( \Phi(\zeta_{\delta}^s,t_i)) + N \AJ( \Phi(D_1') )
+       \mod \Lambda.
+    \end{align}
+    
+  \subsection{Reduction modulo period lattice}\label{subsec:lat_red}
 
+    In order for the Abel-Jacobi map to be well defined we have to reduce modulo the period lattice $\Lambda = 
+  \Omega\Z^{2g}$, where $\Omega = (\OA, \OB)$ is the big period matrix, computed as explained in
+  Section \ref{m-sec:strat_pm}.
+   
+   For reasons that will be adressed later in this paragraph
+   we choose to
+   represent the image of the Abel-Jacobi map in 
+    $\R^{2g} / \Z^{2g}$.
+    
+   Let $v = \int_P^Q \bar\w \in \C^g$ be an vector integral obtained by integration the holomorphic differentials in
+   $\W$.
+   We identify the complex and real vector space via the bijection
+   \begin{equation}
+    \iota:\C^g \rightarrow \R^{2g},v = (v_1,\dots,v_g)^T \mapsto (\Re(v_1),\dots,\Re(v_g),\Im(v_1),\dots,\Im(v_g))^T.
+   \end{equation}
+    Applying $\iota$ to the columns of $\Omega$ yields the invertible real matrix
+   \begin{equation}
+    R = 
+   \begin{pmatrix}
+     \Re(\OA) & \Re(\OB) \\
+     \Im(\OA) & \Im(\OB)
+    \end{pmatrix} \in \R^{2g \times 2g}.
+   \end{equation}
+   Now, reduction of $v$ modulo $\Lambda$ corresponds to taking the fractional part of $\iota(v)R^{-1}$
+   \begin{equation}
+    v \bmod \Lambda \leftrightarrow \lfloor \iota(v)R^{-1} \rceil.
+   \end{equation}
+   This representation has the following advantages:
+   \begin{rmk}[Image of Abel-Jacobi map] \
+    \begin{itemize}
+     \item[$\bullet$] Operations on the Jacobian variety $\Jac(\cu)$ correspond to operations in $\R^{2g}/\Z^{2g}$.
+     \item[$\bullet$] Torsion divisors under $\AJ$ are mapped to vectors of rational numbers with 
+     denominator dividing $m$, i.e. 
+     \begin{equation}
+      \AJ([P_k - P_j]) \equiv \int_{P_0}^{P_k} \bar\w \bmod \Lambda \leftrightarrow \lfloor \iota\left(\int_{P_0}^{P_k} \bar\w\right)
+      R^{-1} \rceil \in \frac{1}m\Z^{2g}
+     \end{equation}
+     for $k,j \in \{ 1,\dots,n \}$.
+    \end{itemize}
 
-  \subsection{Lattice reduction}\label{subsec:lat_red}
+    
+   \end{rmk}
 
-    Necessary? Yes. \todo Explain reduction.
+   
+   
+   
+    
 
 \biblio
 \end{document}

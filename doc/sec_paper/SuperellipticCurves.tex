@@ -4,7 +4,7 @@
 
   \section{Superelliptic curves}\label{sec:se_curves}
 
-  \subsection{Definition \& properties}
+  \subsection{Definition \& properties}\label{subsec:se_def}
 
     \begin{defn}\label{def:se_curve}
     In this paper, a superelliptic curve $\cu$ over $\C$ is a smooth plane projective curve that has an affine model given by an equation of the form
@@ -18,11 +18,11 @@
    Over $\C$ we identify the curve $\cu$ with the Riemann surface $\cu(\hat{\C})$ and denote by $\pr : \cu \rightarrow \P^1_{\C}$ the corresponding smooth cyclic branched covering of the projective line
    defined by the $x$-coordinate.
 
-  There are $\delta = \gcd(m,n)$ points above infinity $P_{\infty}^{(1)},\dots,P_{\infty}^{(\delta)} \in \cu$, that behave differently depending on $m$ and $n$ (see \cite{CT1996}, \S 1 for details).
+  There are $\delta = \gcd(m,n)$ infinite points $P_{\infty}^{(1)},\dots,P_{\infty}^{(\delta)} \in \cu$, that behave differently depending on $m$ and $n$ (see \cite{CT1996}, \S 1 for details).
   Especially, $\infty \in \P^1_{\C}$ is a branch point for $\delta \ne m$. Thus, we introduce the set of finite branch points $X = \X$ as well as the set of all branch points
   \begin{align}\label{eq:branch_points}
-         \hat{X} = \begin{cases}   X \cup \{ \infty \}, \quad \text{if}  m  \nmid  d,\\
-         X,\quad \text{otherwise.}
+         \hat{X} = \begin{cases}   X \cup \{ \infty \} \quad \text{if} \; m  \nmid  d,\\
+         X \hfill \text{otherwise.}
      \end{cases}
   \end{align}
   The ramification indices at the branch points are given by $e_x = m$ for all $x \in X$ and $e_{\infty} = \frac{m}{\delta}$. Using the
@@ -70,9 +70,13 @@
   differ by a factor $\zeta^l$ for some $l \in \{0,\dots,l-1\}$. Thus, following a path, it is sufficient to know \emph{one} branch that is analytic in a suitable neighborhood. In the
   next paragraph, we will introduce locally analytic branches very explicitly.
   
+  \bigskip
+  
   Similar to the complex $m$-th root, we can assume that crossing the branch cut at $x_k \in X$ in positive direction corresponds to multiplication by $\zeta$ on the surface. We
   obtain an ordering of the sheets relative to the analytic branches of $\cu$ by imposing that multiplication by $\zeta$ ( i.e. applying the map
   $(x,y(x)) \mapsto (x,\zeta y(x))$ ) corresponds to moving one sheet up on the surface.
+  
+   \bigskip
   
   Consequently, the monodromy at every $x_k \in X$
   is equal and cyclic of order $m$ and thus, the monodromy group is isomorphic to the cyclic group $C_m$. This makes it possible to find explicit generators for the
