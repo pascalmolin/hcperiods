@@ -7,7 +7,7 @@
    %Assume for this section that we already computed a period matrix following the strategy described in Section \ref{m-sec:strat_pm}.
    Here we are concerned with explicitly computing the Abel-Jacobi map of degree zero divisors, for a general introduction see Section \ref{m-sec:ajm}.
    
-   Let $D = \sum_{P \in \cu} v_P P \in \Div^0(\cu)$. Choosing a basepoint $P_0 \in \cu$, the computation of $\AJ$ reduces to (using linearity)
+   Let $D = \sum_{P \in \cu} v_P P \in \Div^0(\cu)$. After choosing a basepoint $P_0 \in \cu$, the computation of $\AJ$ reduces (using linearity) to
    \begin{equation}
      \AJ([D]) \equiv \sum_{P \in \cu} v_P \int_{P_0}^P \bar\w \mod \Lambda.
    \end{equation}
@@ -18,12 +18,13 @@
     \quad \text{and} \quad \int_{P_0}^{P_{\infty}} \bar\w\quad \text{(see \S \ref{m-subsec:ajm_infty}),} \quad \text{where}
   \end{align*}
   \begin{itemize}
+   \item $\bar\w$ is the vector of differentials in $\W$,
    \item $P = (x_P,y_P) \in \cu$ is a finite point on the curve,
    \item $P_k = (x_k,0) \in \cu$ is a ramification point, i.e.\ $x_k \in X$, and
    \item $P_{\infty} \in \cu$ is an infinite point.
   \end{itemize}
-  Finally, the resulting vector integral has to reduced modulo the period lattice, which is covered in \S \ref{m-subsec:lat_red}. We will give the 
-  image of the Abel-Jacobi map in $\R^{2g} / \Z^{2g}$.
+  Finally, the resulting vector integral has to reduced modulo the period lattice $\Lambda$, which is covered in \S \ref{m-subsec:lat_red}. For practical reasons, we will compute the
+  image of the Abel-Jacobi map in $(1,\tau)\left(\R^{2g} / \Z^{2g}\right)$.
   
   Assume for this section that we already computed a period matrix (and all related data) following the Strategy from Section \ref{m-sec:strat_pm}. 
   
