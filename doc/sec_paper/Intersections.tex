@@ -12,7 +12,7 @@
   Since we generate $\homo$ with shifts of elementary cycles $\cyabk$ corresponding to edges $(a,b) \in E$ in a spanning tree, we only need to know the intersection between them.
   By construction of the spanning tree we can restrict to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$ such that $c$ is either $a$ or $b$.
 
-  \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
+   \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
       Let $(a,b),(c,d) \in E$. The intersections of the corresponding cycles $\cyabk, \cycdl \in \Gamma$ are given by
       \begin{equation}
           \left(\cyab^{(k)} \circ \cycd^{(l)}\right)
@@ -44,24 +44,14 @@
       \end{center}
       and where $s(x)\in\Z/m\Z$ for $x\in\set{a,b}$ is given by
       \begin{equation}
-	    s(x) = \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{(d-c)^{\frac{n}{m}}\ytcd(x)}{(b-a)^{\frac{n}{m}}\ytab(x)} \right) \right) + \frac{1}{2}
-	    \left( U_{c,d}^+ - U_{a,b}^+
-	    + \delta_{b=c}\right)
+	    s(x) = \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{C_{c,d} \ytcd(x)}{C_{a,b}\ytab(x)} \right) \right) + \frac{1}{2}\delta_{b=c}
       \end{equation}
      and
       \begin{equation}
-          %\rho = \arg(d-c) - \arg(b-a).
           \rho = \arg \left( \frac{b-a}{d-c} \right).
       \end{equation}
  \end{thm}
 
-%  \todo This is wrong. Notice $\ytab(a) = \prod_{x\neq a,b}(\frac{2x-2a}{b-a})^{\frac1m}$, and
-%  $s(x)$ can also be written
-%       \begin{equation}
-%       2π s(x) = (d-1)\rho
-%       + \sum_{x_k\neq c,d}\arg \frac{c-x_k}{d-c}
-%       - \sum_{x_k\neq a,b}\arg \frac{x-x_k}{b-a}
-%       \end{equation}
 
   \begin{proof}\let\qed\relax
    \begin{itemize}

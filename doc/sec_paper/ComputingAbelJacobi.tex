@@ -4,8 +4,9 @@
 
   \section{Computing the Abel-Jacobi map}\label{sec:comp_ajm}
   
-   %Assume for this section that we already computed a period matrix following the strategy described in Section \ref{m-sec:strat_pm}.
    Here we are concerned with explicitly computing the Abel-Jacobi map of degree zero divisors, for a general introduction see Section \ref{m-sec:ajm}.
+   
+   Assume for this section that we already computed a big period period matrix (and all related data) following the Strategy from Section \ref{m-sec:strat_pm}. 
    
    Let $D = \sum_{P \in \cu} v_P P \in \Div^0(\cu)$. After choosing a basepoint $P_0 \in \cu$, the computation of $\AJ$ reduces (using linearity) to
    \begin{equation}
@@ -23,18 +24,17 @@
    \item $P_k = (x_k,0) \in \cu$ is a ramification point, i.e.\ $x_k \in X$, and
    \item $P_{\infty} \in \cu$ is an infinite point.
   \end{itemize}
-  Finally, the resulting vector integral has to reduced modulo the period lattice $\Lambda$, which is covered in \S \ref{m-subsec:lat_red}. For practical reasons, we will compute the
-  image of the Abel-Jacobi map in $(1,\tau)\left(\R^{2g} / \Z^{2g}\right)$.
   
-  Assume for this section that we already computed a period matrix (and all related data) following the Strategy from Section \ref{m-sec:strat_pm}. 
-  
-  Typically, we choose as basepoint the ramification point $P_0 = (x_0,0)$, where $x_0 \in X$ is the root of the spanning tree $T = (X,E)$.
-
-  
+   Typically, we choose as basepoint the ramification point $P_0 = (x_0,0)$, where $x_0 \in X$ is the root of the spanning tree $T = (X,E)$.
    
+  Finally, the resulting vector integral has to reduced modulo the period lattice $\Lambda$, which is covered in \S \ref{m-subsec:lat_red}. For practical reasons, we will compute the
+  image of the Abel-Jacobi map in $\R^{2g} / \Z^{2g}$.
+  
+  
   \subsection{Between ramification points}\label{subsec:ajm_bp}
 
-  Consider a path $(x_0=x_{k_0},x_{k_1},\dots,x_{k_{n-1}},x_{k_t}=x_k)$ in the spanning tree connecting $x_0$ and $x_k$. Then we have that
+  Suppose we want to integrate $\bar\w$ from $P_0 =(x_0,0)$ to $P_k = (x_k,0)$. By construction there exists a path
+ $(x_0=x_{k_0},x_{k_1},\dots,x_{k_{n-1}},x_{k_t}=x_k)$ in the spanning tree which connects $x_0$ and $x_k$. Thus, the integral splits into
   \begin{align}
     \int_{P_0}^{P_k} \bar\w = \sum_{j = 0}^{t-1}  \int_{P_{k_j}}^{P_{k_{j+1}}} \bar\w.
   \end{align}
@@ -42,67 +42,91 @@
   \begin{align*}
    \gamma_{[a,b]}^{(0)} = \{  (x,\yab(x))  \mid  x \in [a,b]  \}.
   \end{align*}
-  Fix a differential $\w_{i,j} \in \W$. Then, according to the proof of Theorem \ref{m-thm:periods} the corresponding integral is just an elementary integral
+  Let $\w_{i,j} \in \W$ be a differential. According to the proof of Theorem \ref{m-thm:periods} the corresponding integral is given by
   \begin{align}
-   \int_{\gamma_{[a,b]}^{(0)}} \w_{i,j}  & =  C_{i,j}  \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}} \du,
+   \int_{\gamma_{[a,b]}^{(0)}} \w_{i,j}  & = 
+   (1-\zeta^{-j}) C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du,
   \end{align}
-  which has already been evaluated during the period matrix computation.
+  which is  (up to the constants) an elementary integral and has already been evaluated during the period matrix computation.
 
 
   \subsection{Reaching non-ramification points}\label{subsec:ajm_finite}
 
-   Let $P = (x_P,y_P)$ be a finite point on $\cu$ and $a \in X$ such that $X\cap]a,x_P]=\varnothing$. As in \S \ref{m-subsec:roots_branches} we define a locally analytic branch of $\cu$ via the functions
-  \begin{align}\label{def:yax}
-  \begin{split}
-   \yaxp(x)  & =  \left(\frac{x_P-a}{2}\right)^{\frac{d}{m}}  (1 + u(x))^{\frac{j}{m}}  \ytaxp(u(x)), \quad \text{with} \\
-   \ytaxp(u(x))  & =  \prod_{x_k \ne a} (u(x) - u(x_k))\mr \quad \text{and} \\
-   u(x) & =  u_{a,x_P}(x) = \frac{2x-x_P-a}{x_P-a}.
-   \end{split}
+  Let $P = (x_P,y_P) \in \cu$ be a finite point and $P_a = (a,0)$ a ramification point such that $X\cap]a,x_P]=\varnothing$. In order to define a smooth path between $P$ and $P_a$ 
+  we need to find a suitable analytic branch of $\cu$. 
+  
+  Following our approach in \S \ref{m-subsec:roots_branches} we first define the affine linear transformation
+    \begin{equation}\label{def:uaxp}
+      \uaxp : x \mapsto \frac{x_P-a}{2}\left(x+\frac{x_P+a}{x_P-a}\right)
+  \end{equation}
+   and split the preimage of $X$ under $\uaxp$ into subsets
+  \begin{equation}
+      \uaxp^{-1}(X) = \set{-1} \cup U^+ \cup U^-,
+  \end{equation}
+  where $U^+$ (resp. $U^-$) contains the points with strictly positive (resp. non-positive) real part. Now, the function
+   \begin{align}
+      \ytaxp(u) = \prod_{u_k\in U^-} \sqrt[m]{u-u_k}\prod_{u_k\in U^+}\sqrt[m]{u_k-u}
   \end{align}
-  Now $\yaxp(x)$ is a branch of $\cu$ that is holomorphic in a neighbourhood of $]a,x_P]$.
-
-  Define a path
-  \begin{align*}
-   \gamma_{a,x_P} = \{  (x,\yaxp(x))  \mid  x \in [a,x_P]  \}.
-  \end{align*}
-  Now, we can compute a \emph{shifting number} at the endpoint $x=x_P$
-  \begin{align*}
-   \zeta^s & = \frac{y_P}{\yaxp(x_P)} = \frac{y_P}{\left(\frac{x_P-a}{2}\right)^{\frac{d}{m}} 2\mr \ytaxp(x_P)} \\
-   \Rightarrow s & = \frac{m}{2\pi} \arg\left(  \frac{y_P}{ (x_P-a)^{\frac{d}{m}} \ytaxp(x_P)} \right)
-  \end{align*}
-  and define a smooth path between $P_a$ and $P$ on $\cu$ by
-  \begin{align*}
-   \gamma_{P_a,P} = \{  (x, \zeta^s \yaxp(x))  \mid  x \in [a,x_P]  \}.
-  \end{align*}
-
-
-
+  is holomorphic in a neighbourhood $\epsilon_{a,x_P}$ of $[-1,1]$.
+  We obtain a branch that is analytic on a neighbourhood $V_{a,x_P}$ of $]a,x_P]$ via
+  \begin{equation}
+    \yaxp(x) =   C_{a,x_P} \ytaxp( \uaxp^{-1}(x) ) \sqrt[m]{1 + \uaxp^{-1}(x)}
+  \end{equation}
+  where
+   \begin{equation}
+      C_{a,x_P} = \left(\frac{x_P-a}{2}\right)^{\frac{n}{m}} e^{\frac{\pi i}{m}(\#U^+ \bmod 2)}.
+  \end{equation}
+  More concrete: The statements of Proposition \ref{m-prop:yab} are true for $\ytaxp$ and $\yaxp$, if we choose the sets $\epsilon_{a,x_P}$ and $V_{a,x_P}$ as if $x_P$ was a branch point.
+  
+  Therefore, the lifts of $[a,x_P]$ to $\cu$ are given by
+    \begin{equation}\label{eq:def_path_axp}
+      \gamma^{(l)}_{[a,x_P]} = \{  (x,\zeta^l \yaxp(x))  \mid  x \in [a,x_P]  \}, \quad l \in \Z/m\Z.
+   \end{equation}
+  All left to do is to pick the correct lift which is done by computing a \emph{shifting number} $s \in \Z/m\Z$ at the endpoint $x_P$:
+  \begin{align}
+   \zeta^s & = \frac{y_P}{\yaxp(x_P)} = \frac{y_P}{ C_{a,x_P} \ytaxp( \uaxp^{-1}(x_P) ) \sqrt[m]{2}  } \\
+   \Rightarrow s & = \frac{m}{2\pi} \arg\left(  \frac{y_P}{C_{a,x_P} \ytaxp( \uaxp^{-1}(x_P) )} \right)
+  \end{align}
+  Consequently, $\gamma^{(s)}_{[a,x_P]}$ is smooth path between $P_a$ and $P$ on $\cu$. We can now state the main theorem of this section.
+  
   \begin{thm}\label{thm:ajm_finite_int}
-  Let $\w_{i,j} \in \WM$. With notation as above we have
- \begin{align}\label{eq:aj_int}
-  \begin{split}
-       \int_{P_a}^P \w_{i,j} & = \left(\frac{x_P-a}{2}\right)^{i-\frac{dj}{m}} \zeta^{-js} \int_{-1}^1
-      \frac{\left(u + \frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}} \ytaxp(u)^j}  \du.
-%      \ytaxp(u) & = \prod_{x_k \ne a} ( u - u_{a,x_P}(x_k) )\mr, \\
-%      s & = \frac{m}{2\pi}  \arg \left( y_P \cdot (x_P-a)^{-\frac{d}{m}} \right).
-   \end{split}
-   \end{align}
+  Let $\w_{i,j} \in \WM$ be a differential. With notations and choices as above we have
+ \begin{equation}\label{eq:aj_int}
+       \int_{P_a}^P \w_{i,j} = \zeta^{-sj} C_{a,x_P}^{-j} \left(\frac{x_P-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1+u)^{\frac{j}{m}}}  \du
+  \end{equation}
+   where
+   \begin{equation}
+    \varphi_{i,j}  = \left(u+\frac{x_P+a}{x_P-a}\right)^{i-1} \ytaxp(u)^{-j}.
+   \end{equation}
+   is holomorphic in a neighbourhood $\epsilon_{a,x_P}$ of $[-1,1]$.
   \end{thm}
   \begin{proof}
     \begin{align}
-    \begin{split}
-     \int_{P_a}^P \w_{i,j}  & =  \int_{\gamma_{P,a_P}} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-sj} \int_a^{x_P} \frac{x^{i-1}}{\yaxp(x)^j}  \dx \\  & = 
-     \zeta^{-sj} \left(\frac{x_P-a}{2}\right)^{i-1-\frac{dj}{m}}
-     \int_a^{x_P} \frac{\left(u(x)+\frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u(x))^{\frac{j}{m}}\ytaxp(u(x))^j}  \dx \\
-     & =  \zeta^{-sj} \left(\frac{x_P-a}{2}\right)^{i-\frac{dj}{m}}
-     \int_{-1}^{1} \frac{\left(u+\frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}}\ytaxp(u)^j}  \du \\
-    \end{split}
+     \int_{P_a}^P \w_{i,j}  & =  \int_{\gamma^{(s)}_{[a,x_P]}} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-sj} \int_a^{x_P} \frac{x^{i-1}}{\yaxp(x)^j}  \dx \\  & = 
+     \zeta^{-sj} C_{a,x_P}^{-j}  \int_a^{x_P} \frac{x^{i-1}}{(1+\uaxp^{-1}(x))^{\frac{j}{m}}\ytaxp(\uaxp^{-1}(x))^j}  \dx
   \end{align}
+   Applying the transformation $x \mapsto \uaxp(u)$ introduces the derivative $\dx = \left(\frac{x_P-a}{2}\right) \du$.
+  \begin{align}
+   & =  \zeta^{-sj} C_{a,x_P}^{-j} \left(\frac{x_P-a}{2}\right) \int_a^{x_P} \frac{\uaxp(u)^{i-1}}{(1+u)^{\frac{j}{m}}\ytaxp(u)^j}  \du \\ & =
+   \zeta^{-sj} C_{a,x_P}^{-j} \left(\frac{x_P-a}{2}\right)^i \int_a^{x_P} \frac{\left(u + \frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}}\ytaxp(u)^j}  \du.
+  \end{align}
+  The statement about holomorphicity of $\varphi_{i,j}$ is implied, since Proposition \ref{m-prop:yab} holds for $\ytaxp$ and $\yaxp$ as discussed above.
   \end{proof}
 
+  \begin{rmk}\label{rmk:ajm_finite_int}
+   By Theorem \ref{m-thm:ajm_finite_int}, the problem of integrating $\bar\w$ from $P_0$ to $P$ reduces to numerical integration of
+    \begin{equation}
+       \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1+u)^{\frac{j}{m}}}  \du.
+   \end{equation}
+   Since these integrals are very similar to the elementary integrals \eqref{m-eq:elem_ints} that occur during the period matrix computation, they can be computed with a little twist to
+   the methods presented in Section \ref{m-sec:numerical_integration}.
+   \end{rmk}
+
+  
+  
   \subsection{Infinite points}\label{subsec:ajm_infty}
 
-  Recall from \S \ref{m-subsec:sedef} that there are $\delta = \gcd(m,n)$ points above infinity $\mathcal{P}
+  Recall from \S \ref{m-subsec:se_def} that there are $\delta = \gcd(m,n)$ points above infinity $\mathcal{P}
   = \{ P_{\infty}^{(1)},\dots, P_{\infty}^{(\delta)} \}$ on our projective curve $\cu$.
   
   Suppose we want to integrate from $P_0$ to $P_{\infty} \in \mathcal{P}$, which is equivalent to computing the Abel-Jacobi map of the divisor
@@ -122,7 +146,7 @@
   \begin{equation}
     \mu m + \nu n = \delta,
   \end{equation}
-  where $-\mu,\nu \in \Z_{\ge 0}$.
+  with $-\mu,\nu \in \Z_{\ge 0}$.
   
   
   \subsubsection{Coprime degrees}
@@ -139,7 +163,7 @@
     \end{align}
     We immediately obtain
     \begin{align}
-     \AJ( [D_{\infty}] )  & \equiv  \AJ([D_{\infty} + D])  =  \AJ( [ \nu \sum_{k = 1}^n P_k + (\mu m - 1) P_0 ]  ) \\  & \equiv  \AJ( [ \nu \sum_{k = 1}^d P_k ] )
+     \AJ( [D_{\infty}] )  & \equiv  \AJ([D_{\infty} + D])  =  \AJ( [ \nu \sum_{k = 1}^n P_k + (\mu m - 1) P_0 ]  ) \\ & 
       \equiv   \nu \sum_{k=1}^n \int_{P_0}^{P_k} \bar\w \mod \Lambda
     \end{align}
     and conclude that $\AJ( [D_{\infty}] )$ can be expressed in terms of integrals between
@@ -194,16 +218,33 @@
     Now, $\Phi(D_1) := \div \left( \frac{y^M}{x^N} - \zeta_{\delta}^s \right)$ is a principal divisor on $\caff$ and by
     construction we have $v_{P_{\infty}^{(s)}}(\Phi(D_1)) \ge 1$.
     
-  
-    If $v_{P_{\infty}^{(s)}}(\Phi(D_1)) = 1$ we are done: assuming $t_1 = 0$, we obtain
+  \begin{lemma}
+    If $v_{P_{\infty}^{(s)}}(\Phi(D_1)) = 1$, then ...
+  \end{lemma}
+  \begin{proof}
+    Assuming $t_1 = 0$ and $d=\deg(g)$ we obtain
     \begin{align}
       \AJ( [D_{\infty}^{(s)}] )  & \equiv  \AJ([D_{\infty}^{(s)} - \Phi(D_1)])  
-      \equiv  -\AJ( [\sum_{i = 2}^{\deg(g)} \Phi(\zeta_{\delta}^s,t_i) + N \Phi(D_1') ] )
-%      \\ & \equiv  -\sum_{i = 2}^{\deg(g)}  \AJ( \Phi(\zeta_{\delta}^s,t_i)) + N \AJ( \Phi(D_1') )
-       \mod \Lambda,
+      \equiv  -\AJ( [\sum_{i = 2}^{d} \Phi(\zeta_{\delta}^s,t_i) - N \Phi(D_1') ] )
+       \mod \Lambda
+    \end{align}
+    Denote the points $Q_i = \Phi(\zeta_{\delta}^s,t_i) \in \cu \setminus \mathcal{P}$ for $i = 2,\dots,d$. Moreover, notice that if $0 \not\in X$
+    there exists an $P_K$ such that for all $\w_{i,j} \in \W$
+    \begin{align}
+     \sum_{l=1}^m \int_{P_0}^{(0,\zeta_m^l \sqrt[m]{f(0)})} \w_{i,j} = m \int_{P_0}^{P_k} + (1 + \zeta^{-j} + \dots + \zeta^{-j(m-1)} \int_{P_0}^(0,f(0)) \bar\w_{i,j}
+     \equiv 0 \mod \Lambda.
+    \end{align}
+
+    Then expression becomes
+    \begin{align}
+    & \equiv -\sum_{i = 2}^{d} \int_{P_0}^{Q_i} \bar\w - N \begin{cases}
+                                            \int_{P_0}^{(0,0)} \quad \text{if} \; 0 \in X,\\
+                                            0, \hfill \text{otherwise}.
+                                          \end{cases}
     \end{align}
     which involves only finite points on $\caff$ and can thus be computed using Theorem \ref{m-thm:ajm_finite_int}.
-    
+     \end{proof}
+
     \bigskip
     
     In the case where $v_{P_{\infty}^{(s)}}(\Phi(D_1))$ is greater than $1$, the vertical line is tangent to the curve $\cafft$ 
@@ -230,8 +271,8 @@
     $v_{P_{\infty}^{(s)}}(\Phi(D_2))$ is equal to $1$. Hence, with $t_1 = 0$ we have
      \begin{align}
       \AJ( [D_{\infty}^{(s)}] )  & \equiv  \AJ([D_{\infty}^{(s)} - \Phi(D_2)])  \\
-      & \equiv  -\AJ( [\sum_{i = 2}^{\deg(g)} \Phi(\zeta_{\delta}^s,t_i) + b \sum_{k=1}^n
-      (x_k,0) + N \Phi(D_2') ] )
+      & \equiv  -\AJ( [\sum_{i = 2}^{\deg(g)} \Phi(\zeta_{\delta}^s,t_i) - b \sum_{k=1}^n
+      (x_k,0) - N \Phi(D_2') ] )
 %      \\ & \equiv  -\sum_{i = 2}^{\deg(g)}  \AJ( \Phi(\zeta_{\delta}^s,t_i)) + N \AJ( \Phi(D_1') )
        \mod \Lambda.
     \end{align}
@@ -270,12 +311,12 @@
     \begin{itemize}
      \item[$\bullet$] Operations on the Jacobian variety $\Jac(\cu)$ correspond to operations in $\R^{2g}/\Z^{2g}$.
      \item[$\bullet$] Torsion divisors under $\AJ$ are mapped to vectors of rational numbers with 
-     denominator dividing $m$, i.e. 
+     denominator dividing $m$, i.e. for $k,j \in \{ 1,\dots,n \}$ we have
      \begin{equation}
       \AJ([P_k - P_j]) \equiv \int_{P_0}^{P_k} \bar\w \bmod \Lambda \leftrightarrow \lfloor \iota\left(\int_{P_0}^{P_k} \bar\w\right)
-      R^{-1} \rceil \in \frac{1}m\Z^{2g}
+      R^{-1} \rceil \in \frac{1}m\Z^{2g}.
      \end{equation}
-     for $k,j \in \{ 1,\dots,n \}$.
+   
     \end{itemize}
 
     
