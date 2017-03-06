@@ -27,15 +27,16 @@
    via double exponential integration.
 
    For multiprecision numbers, we consider that the multiplication has
-   complexity $M(D)=O(D\log D)$,
-   \todo Really?
+   complexity $M(D)=O(D \log^{1+\varepsilon}D)$,
    while simple transcendental functions (log, exp, sinh,\dots) can be evaluated
-   in complexity $T(D)=O(D\log^2 D$).
-
+   in complexity $T(D)=O(D\log^{2+\varepsilon} D$).
+    Moreover, we assume that inversion and multiplication of a $g \times g$ matrix can be done using
+    $O(g^{\eta})$ multiplications for some constant $2 < \eta < 3$.
+   
    \subsubsection{Computation of elementary integrals}
 
-   For each elementary cycle $\gamma_e\in \Gamma$, we evaluate numerically the $g$
-   integrals of differentials from \eqref{m-eq:periods} as sums of the form
+   For each elementary cycle $\gamma_e\in \Gamma$, we evaluate numerically the vector of $g$
+   elementary integrals from \eqref{m-eq:periods} as sums of the form
    \begin{equation}
        \int_{-1}^1\frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac jm}}\du
            \approx \sum_{k=1}^N w_k\frac{x_k^{i-1}}{y_k^j}
@@ -56,17 +57,17 @@
        integral.
    \end{itemize}
 
-   Altogether, the computation of one elementary integral takes
+   Altogether, the computation of one vector of elementary integrals takes
    \begin{equation}\label{eq:elem_int_complexity}
-    N(D)T(D)+N(D)(n-1)M(D)+N(D)gM(D)
+    E(D) := N(D)T(D)+N(D)(n-1)M(D)+N(D)gM(D)
    \end{equation}
     operations,
    so that depending on the integration scheme we obtain:
    \begin{thm}\label{thm:complexity_integrals}
-       Each of the $(n-1)$ elementary integrals can be computed to precision $D$ using
+       Each of the $(n-1)$ elementary vector integrals can be computed to precision $D$ using
        \begin{itemize}
-           \item $O(D^2\log D (g + \log D))$ operations, if $m=2$,
-           \item $O(D^2\log D (g + \log^2 D))$ operations, if $m>2$.
+           \item $O(D^2\log^{1+\varepsilon} D (g + \log^{1+\varepsilon} D))$ operations, if $m=2$,
+           \item $O(D^2\log^{1+\varepsilon} D (g + \log^{2+\varepsilon} D))$ operations, if $m>2$.
        \end{itemize}
    \end{thm}
    \begin{proof}
@@ -102,28 +103,45 @@
    However we have no proof of this fact, so that we state the far from optimal
    result
    \begin{thm}
-       Given the $(d-1)\times g$ elementary integrals to precision $D$,
+       Given the $(n-1)\times g$ elementary integrals to precision $D$,
        we compute the big period matrix using $O(g^2D\log D)$ operations.
    \end{thm}
 
    \subsubsection{Small period matrix}
 
    Finally, the small period matrix is obtained as $\tau=\OA^{-1}\OB$,
-   that is a $g\times g$ matrix inversion, which can be done using
-   $O(g^3)$ multiplications by Gauss algorithm.
+   i.e. one $g\times g$ matrix inversion and one multiplication, which can be done using
+   $O(g^{\eta})$ multiplications.
 
    
    \subsubsection{Abel-Jacobi map}
    
-   \todo Write this after finished ComputingAbelJacobi
-   \begin{thm}
-    \begin{itemize}
-     \item[$\bullet$] For each point $P \in \C$, we can compute vector integral in $\C^g$ that is a representative of $\AJ([P - P_0])$ in the same time as an elementary integral, see
-      \ref{m-thm:complexity_integrals}.
-     \item[$\bullet$] Reducing the integral modulo the period lattice $\Lambda$ requires a $2g \times 2g$ matrix multiplication and can be done using $O(g^3)$ multiplications.  
+  This part of the complexity analysis is based on the results of Section \ref{m-sec:comp_ajm} and assumes that we already computed a big period matrix and all related data.
+   
+  Let $E(D)$ be the number of operations needed to compute a vector of $g$ elemenatary integrals  (see \eqref{m-eq:elem_int_complexity}). The complexity class of $E(D)$ in $O$-notation is given in
+  Theorem \ref{m-thm:complexity_integrals}.
+  
+   \begin{thm} \
+   \begin{itemize}
+     \item[(i)] For each finite point $P \in \caff$ we can compute $\int_{P_0}^P \bar\w$ to precision $D$ using 
+      $E(D)$ operations. 
+     \item[(ii)] For each infinite point $P_{\infty} \in \cu$ we can compute $\int_{P_0}^{P_{\infty}} \bar\w$ to precision $D$ using
+      \begin{itemize}
+       \item[$\bullet$] a few vector additions in $\C^g$, if $\delta = \gcd(m,n) = 1$,
+       \item[$\bullet$] $n E(D)$ operations in the case of Theorem \ref{m-thm:ajm_inf_ord1},
+       \item[$\bullet$] $n(\nu+M)E(D)$ operations  in the case of Theorem \ref{m-thm:ajm_inf_ordgt1}.
+      \end{itemize}
+      \item[(iii)] Reducing a vector $v \in \C^g$ modulo $\Lambda$ can be done using $O(g^{\eta})$ multiplications.
     \end{itemize}
-
-   \end{thm}
+  \end{thm}
+   \begin{proof}
+    \begin{itemize}
+     \item[(i)] Follows from combining the results from \S \ref{m-subsec:ajm_ram_pts} and Remark \ref{m-rmk:ajm_finite_int}.
+     \item[(ii)] The statements follow immediately from \S \ref{m-subsec:ajm_inf_cop}, Theorem \ref{m-thm:ajm_inf_ord1} and Theorem \ref{m-thm:ajm_inf_ordgt1}.
+     \item[(iii)] By \S \ref{m-subsec:lat_red}, the reduction modulo the period lattice requires one $2g \times 2g$ matrix inversion and one multiplication.
+    \end{itemize}
+   \end{proof}
+   
 
    \subsection{Integration parameters}
 
@@ -246,12 +264,12 @@
   For numerical integration of the integrals in \eqref{m-eq:periods}
   we need to evaluate
   \begin{equation*}
-   \ytab(u) = \prod_{u_k\in U_{a,b}^-} \sqrt[m]{u-u_k}\prod_{u_k\in U_{a,b}^+}\sqrt[m]{u_k-u}
+   \ytab(u) = \prod_{u_k\in U^-} \sqrt[m]{u-u_k}\prod_{u_k\in U^+}\sqrt[m]{u_k-u}
   \end{equation*}
-  $u \in [-1,1]$. Instead of computing $(n-2)$ $m$-th roots for each
+  for $u \in [-1,1]$. Instead of computing $(n-2)$ $m$-th roots for each
   integration point, we compute $q \in \frac12\Z$ such that
   \begin{equation*}
-   \ytab(u) = \zeta^q \Big( \prod_{u_k\in U_{a,b}^-}(u-u_k) \prod_{u_k\in U_{a,b}^+} (u_k-u) \Big)\mr
+   \ytab(u) = \zeta^q \Big( \prod_{u_k\in U^-}(u-u_k) \prod_{u_k\in U^+} (u_k-u) \Big)\mr
   \end{equation*}
  which can be done by tracking
   the winding number of the product while staying away from the branch cut
