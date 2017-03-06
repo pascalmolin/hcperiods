@@ -99,7 +99,6 @@ function RS_SEMST2( Points )
 	// Sort by holomorphicity
 	Sort(~Edges);
 	
-
 	Taken := [ 0 : j in [1..d] ];
 	MST_Edges := [<Edges[1][2],Edges[1][3]>];
 	Tau := Edges[1][1];
@@ -246,17 +245,16 @@ end function;
 function RS_NRootAC(x,CCV,Zetas,N:long:=false)
 // Analytic continuation of y = f(x)^(1/N) on one sheet, avoiding branch cuts
 	//long := true;
-	/*
-	if #CCV eq 1 or long then
-		prod := 0;
+	/*if #CCV eq 1 or long then
+		prod := 1;
 		for k in [1..#CCV] do
 			if Real(CCV[k]) gt 0 then
-				prod +:= (1/N) * Log(CCV[k] - x);
+				prod *:= (CCV[k] - x)^(1/N);
 			else
-				prod +:= (1/N) * Log(x - CCV[k]);
+				prod *:= (x - CCV[k])^(1/N);
 			end if;
 		end for;
-		return Exp(prod);
+		return prod;
 	end if;*/
 	WindingNr := 0;
 	if Re(CCV[1]) le 0 then
@@ -633,6 +631,7 @@ function RS_SEIntegrate3( Edge,Points,DFF,Abscissas,Weights,StepLength,d,N,Zetas
 	for j in [1..g] do
 		w := DFF[j];
 		for k in [0..w[1]] do
+			print "Binomial(w[1],k) :",Binomial(w[1],k) ;
 			Integrals0[j] +:= Binomial(w[1],k) * Fact3[k+1] * ShiftedIntegrals[j-k];
 		end for;
 		Pow := -((UP + 1) mod 2)*DFF[j][2] mod (2*N) + 1;
@@ -695,7 +694,6 @@ intrinsic RS_SEPM( f::RngMPolElt : Prec := -1, Small := true ) -> Mtrx
 	lc_x := -LeadingCoefficient(f_x); 
 	vprint SE,2 : "Leading coefficient:",C_20!lc_x;	
 	lc_m := 1/lc_x^(1/m);
-	lc_m := 1;
 
 	// Low precision branch points
 	LowPrecPoints := [ C_20!Pt : Pt in Points ];
@@ -747,7 +745,7 @@ intrinsic RS_SEPM( f::RngMPolElt : Prec := -1, Small := true ) -> Mtrx
 	Integrals := [];
 	for k in [1..n-1] do
 		vprint SE,2 : "Integrating edge nr.",k;
-		I := RS_SEIntegrate2( MST_Edges[k],Points,DFF,Abscissas,Weights,StepLength,n,m,Zetas,lc_m );
+		I := RS_SEIntegrate( MST_Edges[k],Points,DFF,Abscissas,Weights,StepLength,n,m,Zetas,lc_m );
 		//I := RS_SEIntegrate3( MST_Edges[k],Points,DFF,Abscissas,Weights,StepLength,n,m,Zetas,lc_m );
 		Append(~Integrals,I);
 	end for;

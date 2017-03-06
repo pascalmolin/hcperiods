@@ -321,86 +321,59 @@ end intrinsic;
 
 
 
-intrinsic RS_SEAJTest( SEC::SECurve : Ht := 100 ) -> RngIntElt
-{ Test for Abel-Jacobi map of superelliptic curves }
-	C<i> := ComplexField(SEC`Prec);
+intrinsic RS_SEAJMTest_1( SEC::SECurve : Ht := 100 ) -> RngIntElt
+{ (weak) test for Abel-Jacobi map of superelliptic curves }
+	C<i> := SEC`ComplexField;
 	R := SEC`RealField;
 	x1 := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]);
 	x2 := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]);
-
 	F1 := RS_Fiber(SEC`DefiningPolynomial,x1); print "F1:",F1;
 	F2 := RS_Fiber(SEC`DefiningPolynomial,x2); print "F2:",F2;
-	P := [];
-	Q := [];
+	Points := < >; Coeffs := [];
 	for j in [1..SEC`Degree[1]] do
-		Append(~P,<x1,F1[j]>);
-		Append(~Q,<x2,F2[j]>);
+		Append(~Points,[x1,F1[j]]); Append(~Coeffs,1);
+		Append(~Points,[x2,F2[j]]); Append(~Coeffs,-1);
 	end for;
-	//print "P:",P;
-	//print "Q:",Q;
-	V := [];
-	V1 := Matrix(R,2*SEC`Genus,1,[]);
-	V2 := Matrix(R,2*SEC`Genus,1,[]);
-	for j in [1..SEC`Degree[1]] do
-		V1 +:= ChangeRing(SEC`AbelJacobi(P[j]),R);
-		V2 -:= ChangeRing(SEC`AbelJacobi(Q[j]),R);
-	end for;
-
-	// The sum has to be zero in \R^2g / \Z^2g
-	W := V1+V2;
-	Z := Matrix(R,2*SEC`Genus,1,[ z - Round(z) : z in ElementToSequence(W) ]);
-	return Z;
+	D := RS_SEDivisor(Points,Coeffs,SEC:Check:=true);	
+	return SEC`AbelJacobi(D);
 end intrinsic;
 
 
-intrinsic RS_SEAJTest2( SEC::SECurve : Ht := 10 ) -> RngIntElt
-{ Test for Abel-Jacobi map of superelliptic curves }
-	C<i> := ComplexField(SEC`Prec); Cxy<x,y> := PolynomialRing(C,2);
+intrinsic RS_SEAJMTest_2( SEC::SECurve : Ht := 100 ) -> RngIntElt
+{ (strong) test for Abel-Jacobi map of superelliptic curves }
+	C<i> := SEC`ComplexField; Cxy<x,y> := PolynomialRing(C,2);
 	R := SEC`RealField;
-
-	y1 := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]); print "y1:",y1;
-	y2 := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]); print "y2:",y2;
-	
+	y1 := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]); //print "y1:",y1;
+	y2 := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]); //print "y2:",y2;
 	f := Cxy!SEC`DefiningPolynomial;
 	g1 := UnivariatePolynomial(Evaluate(f,2,y1)); //print "g1:",g1;
 	g2 := UnivariatePolynomial(Evaluate(f,2,y2)); //print "g2:",g2;
-	F1 := Roots(g1); print "F1:",F1;
-	F2 := Roots(g2); print "F2:",F2;
-	P := [];
-	Q := [];
+	F1 := Roots(g1); //print "F1:",F1;
+	F2 := Roots(g2); //print "F2:",F2;
+	Points := < >; Coeffs := [];
 	for j in [1..SEC`Degree[2]] do
-		Append(~P,<F1[j][1],y1>);
-		Append(~Q,<F2[j][1],y2>);
+		Append(~Points,[F1[j][1],y1]); Append(~Coeffs,1);
+		Append(~Points,[F2[j][1],y2]); Append(~Coeffs,-1);
 	end for;
-	//print "P:",P;
-	//print "Q:",Q;
-	V := [];
-	V1 := Matrix(R,2*SEC`Genus,1,[]);
-	V2 := Matrix(R,2*SEC`Genus,1,[]);
-	for j in [1..SEC`Degree[2]] do
-		V1 +:= ChangeRing(SEC`AbelJacobi(P[j]),R);
-		V2 -:= ChangeRing(SEC`AbelJacobi(Q[j]),R);
-	end for;
-
-	// The sum has to be zero in \R^2g / \Z^2g
-	W := V1+V2;
-	Z := Matrix(R,2*SEC`Genus,1,[ z - Round(z) : z in ElementToSequence(W) ]);
-	return Z;
+	D := RS_SEDivisor(Points,Coeffs,SEC:Check:=true);
+	//print "D:",D;	
+	return SEC`AbelJacobi(D);
 end intrinsic;
 
 
-intrinsic RS_SEAJTest2LT( N::RngIntElt, d::RngIntElt : Prec:=20, t := 10 ) -> RngIntElt
-{ - }
+intrinsic RS_SEAJMLTTest_2( N::RngIntElt, d::RngIntElt : Prec:=20, t := 10 ) -> RngIntElt
+{ Long time test }
 	for j in [1..t] do
 		s := RS_RandomSuperellipticCurve(N,d);
-		S := RS_SECurve(s:Prec:=Prec);
+		SEC := RS_SECurve(s:Prec:=Prec);
 		for k in [1..t] do
-			v := RS_SEAJTest2(S);
-			print "v:",v;
-			for l in [1..2*S`Genus] do
-				if v[l][1] gt 10^-(Prec-15) then
-					print "s:",s;
-					error Error("!");
+			V := RS_SEAJMTest_2(SEC);
+			print "V:",V;
+			for l in [1..2*SEC`Genus] do
+				//if V[l][1] gt 10^(-Prec+10) then
+				if V[l][1] gt SEC`Error then
+					print "SEC:",SEC;
+					error Error("Abel-Jacobi map test 2 failed.");
 				end if;
 			end for;
 		end for;
@@ -409,18 +382,127 @@ intrinsic RS_SEAJTest2LT( N::RngIntElt, d::RngIntElt : Prec:=20, t := 10 ) -> Rn
 end intrinsic;
 
 
+intrinsic RS_SEAJMTest_Inf( SEC::SECurve )
+{ Computes AJM for a principal zero divisor }
+	"#####################  TEST ####################";
+	delta := SEC`Degree[3];
+	assert delta gt 1;
+	m := SEC`Degree[1];
+	n := SEC`Degree[2];
+	delta,a,b := Xgcd(m,n);
+	while a ge 0 do
+		a -:= n;
+		b +:= m;
+	end while;
+	assert a*m + b*n eq delta;
+	M := Round(m/delta);
+	N := Round(n/delta);
+	C<i> := SEC`ComplexField;
+	Ct<t> := PolynomialRing(C);
 
 
+	// For each points at infinity compute AJM of D = [ r - zeta^k ]
+	for k in [0..delta-1] do
+		r := Exp(2*SEC`Pi*i*k/delta);
+		g_t := &*[ (1 - x*(r+t)^b*(t^M)) : x in SEC`BranchPoints ] - (r+t)^delta;
+		g_C := Coefficients(g_t);
+		assert Degree(g_t) in [n*(M+b),(n-1)*(M+b)];
+		ord := Min([ j : j in [1..Degree(g_t)+1] | Abs(g_C[j]) gt SEC`Error ]) - 1; print "ord:",ord;
+		Rts_g_t := RS_Roots(g_t);
+		print "Rts:",Rts_g_t;
+		//print "Rts_g_t:",Rts_g_t;
+		Points := < >; Coeffs := [];
+		for j in [1..Degree(g_t)] do
+			t_j := Rts_g_t[j];
+			if Abs(t_j) gt SEC`Error then
+				x_j := 1/(r+t_j)^b/(t_j^M);
+				y_j := (r+t_j)^a/((t_j^N)*SEC`LeadingCoeff);
+				Append(~Points,[x_j,y_j]);
+				Append(~Coeffs,1);
+			else
+				Append(~Points,[0,k+1,0]);
+				Append(~Coeffs,ord);
+			end if;
+		end for;
+		//assert &+Coeffs in [n*b+n*M,n*b+n*M-b-M];
+		if Degree(g_t) eq (n-1)*(M+b) then
+			"OK";
+			Append(~Points,[0,0]);
+			Append(~Coeffs,-N*m+M+b);
+		else
+			Y0 := RS_PrincipalBranch(SEC,Zero(C):Fiber);
+			for j in [1..m] do
+				Append(~Points,[0,Y0[j]]);
+				Append(~Coeffs,-N);
+			end for;
+		end if;
+		for j in [1..n] do
+			Append(~Points,[SEC`BranchPoints[j],0]);
+			Append(~Coeffs,-b);
+		end for;
+		D := RS_SEDivisor(Points,Coeffs,SEC:Check:=false);
+		//print "D:",D;
+		//assert D`Degree eq 0;
+		V := SEC`AbelJacobi(D);
+		/*print "############### COMPARE #################";
+		print "V_test:",V;
+		print "-V_real:",SEC`AJM_InftyPoints[k+1];
+		print "lol:",V+SEC`AJM_InftyPoints[k+1];*/
+		//W :=  b * &+[ V : V in SEC`AJM_RamPoints ]; print "W",W;		
+		//V -:= ChangeRing(W,R);
+		Z := Matrix(SEC`RealField,2*SEC`Genus,1,[ z - Round(z) : z in Eltseq(V) ]); print "Z:",Z;
+		print "Poly:",SEC`DefiningPolynomial;
+		assert &and[ Abs(z) lt 10^-10 : z in Eltseq(Z) ];
+	end for;
+end intrinsic;
 
 
+intrinsic RS_SEAJMLTTest_Inf( N::RngIntElt, d::RngIntElt : Prec:=20, t := 10 ) -> RngIntElt
+{ Long time test }
+	for j in [1..t] do
+		s := RS_RandomSuperellipticCurve(N,d);
+		SEC := RS_SECurve(s:Prec:=Prec);
+		for k in [1..t] do
+			RS_SEAJMTest_Inf(SEC);
+		end for;
+	end for;
+	return true;
+end intrinsic;
 
+intrinsic RS_TestForArb(SEC:SECurve) -> RngIntElt
+{ - }
+	C<i> := SEC`ComplexField; R := SEC`RealField;
+	X := [5, 8 , -9, 8, 1 , 7, -4 , 3 , -5, 0, 0 , -9, 4 , 4, 4, 7 , 10, 4, -3, -9];
+	Y := [9, -5, 1 , 0, -4, 8, -10, -8, 0 , 6, -8, -9, -6, 0, 5, -7, 4 , 7, 4 , 5];
+	U := [ (X[j]+i*Y[j])/(Sqrt(R!2)) : j in [1..#X] ];
 
+	
 
+/*
 
+  for (j = 0; j < dmax; j++)
+        {
+            arb_set_si(acb_realref(u + j), x[j]);
+            arb_set_si(acb_imagref(u + j), y[j]);
+            acb_div_arb(u + j, u + j, s2, prec);
+        }
+        arb_clear(s2);
 
+        for (j = 0; j < nref; j++)
+        {
+            if (arb_set_str(acb_realref(ref + j), ref_r[j], prec) ||
+                    arb_set_str(acb_imagref(ref + j), ref_i[j], prec) )
+            {
+                flint_printf("error while setting ref[%ld] <- %s+I*%s\n",
+                        j, ref_r[j], ref_i[j]);
+                abort();
+            }
 
+        }\;
+*/
 
-
+	return 0;
+end intrinsic;
 
 	
 
