@@ -129,6 +129,17 @@
 
    \subsubsection{Double-exponential case}
 
+   We use the parametrization
+   $\partial Z_r = \set{ z = \tanh(λ\sinh(t+ir), t\in\R }$.
+
+   The distance from a point $p$ to $Z_r$ can be computed
+   applying Newton method to the scalar product function
+   $f(t) = \Re(\overline{z'}(p-z))$, where $z = \tanh(λ\sinh(t+ir))$
+   and starting point $t=\Re(z^{-1}(p))$.
+
+   Unfortunately the solution may not be unique, so we also use ball arithmetic to compute a rigorous
+   bound on the boundary of $Z_r$.
+
    \paragraph{Choice of $r$}
 
    We try to minimize the number $N$ of integration
@@ -144,8 +155,8 @@
    
    For $k$ such that $r_k=r_0$, we write for small $ε>0$
    \[ \dist(u_k,Z_{r-ε}) = ε D_k + O(ε^2) \]
-       where
-   \[ D_k = \abs{\frac{λ \cosh(t_k+ir_k)}{\cosh(λ\sinh(t_k+ir_k))^2}} \]
+   where
+   \[ D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\frac{λ \cosh(t_k+ir_k)}{\cosh(λ\sinh(t_k+ir_k))^2}} \]
    
    Let $U_0$ be the set of branch points $u_k$ reaching the minimum
    value $r_0$, and 
@@ -162,6 +173,10 @@
    
    \subsubsection{Gauss-Chebychev case}
 
+   If we write $r=\cosh(ρ)$, then we have a parametrization
+   $ε_r = \set{ \cosh(ρ+it) = \cos(t-iρ), t\in]-π,π] }$
+   of the ellipse.
+
    \begin{figure}[H]
        \begin{center}
        \includegraphics[width=5cm]{images/ellipse.pdf}
@@ -169,6 +184,47 @@
    \label{fig:ellipse}
    \end{figure}
 
+   The sum of its semi-axes lengths becomes $r+\sqrt{r^2-1}=e^{ρ}$
+   and one needs 
+   \[
+       n = \frac{D+\log(2πM(r)+e^{-D})}{2ρ}
+   \]
+   to have $\abs{E(n)}\leq e^{-D}$.
+
+   The distance $d_k=\dist(u_k,ε_r)$ from a branch point $u_k$
+   to the ellipse $ε_r$ can be computed
+   applying Newton method to the scalar product function
+   $f(t) = \Re(\overline{z'}(u_k-z))$, where $z = \cos(t-iρ)$
+   and starting point $t=\Re(\arccos(u_k))$. By convexity of the ellipse,
+   the solution is unique on the quadrant containing $u_k$.
+
+   \subsubsection{Choice of $r$}
+   
+   Let $r_k = \frac{\abs{u_k-1}+\abs{u_k+1}}2$. We need to choose
+   $r<r_0=\min_k r_k$ (so that $u_k\not\in ε_r$) in order to minimize
+   the number of integration points.
+
+   For all $k$ such that $r_k > r_0$, we compute
+   explicitely the distance $d_k=\dist(u_k,ε_{r_0})<\dist(u_k,ε_r)$.
+   
+   For $k$ such that $r_k=r_0$, we use first order approximation
+   \[ \dist(u_k,Z_{r-ε}) = ε D_k + O(ε^2) \]
+   where
+   \[ D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\sin(t_k-ir_k)} \]
+ 
+   Let $U_0$ be the set of branch points $u_k$ reaching the minimum
+   value $r_0$, and 
+   \[ M_0 = (\prod_{u_k\in U_0} D_k\prod_{u_k\not\in U_0}d_k)^{-j/m} \]
+   then the integrand is bounded on $Z_{r_0-ε}$ by
+   \[ M_2 = M_0 ε^{-\frac{j\#U_0}m} (1+O(ε)) \]
+   so that
+   \[ h = \frac{2π(r_0-ε)}{A-λ\log(ε)+O(ε)} \]
+   for constants $A=D+\log(2B(r_0,α)M_0)$ and $λ=j\#U_0/m$.
+
+   The maximum is obtained for $ε(A+λ-λ\log(ε))=λr_0$,
+   we can take
+   \[ ε = \frac{λr_0}{A+λ(1+\log\frac{A+λ}{λr})} \]
+   
    \subsection{Implementation tricks}
 
    Here we simply give some further ideas used in our implementation to improve constants.
