@@ -45,6 +45,7 @@ makes it hard to compete with the double-exponential scheme.
 
 Using the double-exponential change of variable
 \begin{equation}
+    \label{eq:de_change}
 u=\tanh(λ\sinh(t)),
 \end{equation}
 the singularities at $\pm1$ are pushed to infinity and
@@ -60,10 +61,10 @@ with
 
 Let
 \begin{equation}
-Z_r = \set{\tanh(λ\sinh(z), -r<\Im(z)<r }
+    Z_r = \set{\tanh(λ\sinh(z)), -r<\Im(z)<r }
 \end{equation}
 be the image of the strip $\Delta_r$ under the change of
-variable $u=\tanh(λ\sinh(t))$.
+variable \eqref{eq:de_change}.
 
 Since we can compute the distance of each branch point $u_i$ to
 both $[-1,1]$ and its neighborhood $Z_r$ (see \S \ref{m-sec:dist_zr}), we obtain
@@ -233,7 +234,7 @@ simple: there is no need to actually compute the Chebychev polynomials
 since their roots are explicitly given as cosine functions.
 \begin{thm}[Gauss-Chebychev integration]
     Let $g$ be holomorphic around $[-1,1]$. Then for all
-    $n$, there exist $\xi \in ]-1,1[$ such that
+    $n$, there exists $\xi \in ]-1,1[$ such that
     \begin{equation}
         \label{eq:gauss_chebychev}
         \int_{-1}^1\frac{g(u)}{\sqrt{1-u^2}}\du
@@ -267,7 +268,7 @@ theorem on an ellipse $ε_r$ of the form
 Now we use this theorem with a function
 $g_{i,j}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitely factored
 polynomial $Q(u)=\prod(u-u_k)$, so that the error can be
-explicitly controlled
+explicitly controlled.
 
 \begin{lemma}
     \label{lem:param_r}
