@@ -13,7 +13,8 @@ de_distance_d(double x, double y, double r)
     /* FIXME: this is not the real distance... */
     cdouble xItau;
     xItau = casinh(catanh(x+I*y)/LAMBDA);
-    return fabs(cimag(xItau))-r;
+    return
+    (fabs(cimag(xItau))-r) * LAMBDA * cabs(ccosh(x+I*y)) / pow(cabs(ccosh(LAMBDA * csinh(x+I*y))), 2);
 }
 
 double
