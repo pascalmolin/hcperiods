@@ -42,23 +42,18 @@
    Let $\gamma_e^{(l)} \in \Gamma$ be a shift of an elementary cycle corresponding
    to an edge $e = (a,b) \in E$. Then, for all differentials $w_{i,j} \in \WM$, we have
    \begin{equation}\label{eq:periods} 
-      \int_{\gamma_e^{(l)}} \w_{i,j}  =  \zeta^{-lj} C_{i,j} \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du
+      \int_{\gamma_e^{(l)}} \w_{i,j}  =  \zeta^{-lj} (1-\zeta^{-j}) C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du
    \end{equation}
    where
-   \begin{equation}
-    C_{i,j}   =  (1-\zeta^{-j}) C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i
-   \end{equation}
-   and 
    \begin{equation}
     \varphi_{i,j}  = \left(u+\frac{b+a}{b-a}\right)^{i-1} \ytab(u)^{-j}
    \end{equation}
    is holomorphic in a neighbourhood $\epsilon_{a,b}$ of $[-1,1]$.
   \end{thm}
   \begin{proof}
-    By Definition \ref{m-def:elem_cycle} we can write $\gamma_e^{(l)} = \gamma_1 + \gamma_2$ with $\gamma_1 = \{  (x,\zeta^l \yab(x))  \mid  x \in [a,b]  \}$ and
-    $\gamma_2 = \{  (x,\zeta^{l+1}\yab(x))  \mid  x \in [b,a]  \}$. We split up the integral and compute
+    By the definition in \eqref{m-eq:def_cyabl} we can write $\gamma_e^{(l)} = \gamma_{[a,b]}^{(l)} \cup \gamma_{[b,a]}^{(l+1)}$. Hence we split up the integral and compute
     \begin{align}\label{eq:thm_periods_2}
-     \int_{\gamma_1} \w_{i,j}  & =  \int_{\gamma_1} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-lj} \int_a^b \frac{x^{i-1}}{\yab(x)^j}  \dx \\  & =
+     \int_{\gamma_{[a,b]}^{(l)}} \w_{i,j}  & =  \int_{\gamma_{[a,b]}^{(l)}} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-lj} \int_a^b \frac{x^{i-1}}{\yab(x)^j}  \dx \\  & =
      \zeta^{-lj} C_{a,b}^{-j}   \int_a^b \frac{x^{i-1}}{\ytab(\uab^{-1}(x))^j (1-\uab^{-1}(x)^2)^{\frac{j}{m}}}  \dx
   \end{align}
   Applying the transformation $x \mapsto \uab(u)$ introduces the derivative $\dx = \left(\frac{b-a}{2}\right) \du$.
@@ -68,7 +63,7 @@
   \end{align}
   Similarly, we obtain
   \begin{align}
-        \int_{\gamma_2} w_{i,j}  & =  -\zeta^{-j} \int_{\gamma_1} w_{i,j}.
+        \int_{\gamma_{[b,a]}^{(l+1)}} w_{i,j}  & =  -\zeta^{-j} \int_{\gamma_{[a,b]}^{(l)}} w_{i,j}.
   \end{align}
   By Proposition \ref{m-prop:yab} $\ytab$ is holomorphic and has no zeros on $\epsilon_{a,b}$, therefore \\ $\varphi_{i,j}  = \left(u+\frac{b+a}{b-a}\right)^{i-1} \ytab(u)^{-j}$
   is holomorphic on $\epsilon_{a,b}$.
