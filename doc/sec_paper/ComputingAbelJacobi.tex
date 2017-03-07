@@ -4,7 +4,7 @@
 
   \section{Computing the Abel-Jacobi map}\label{sec:comp_ajm}
   
-   Here we are concerned with explicitly computing the Abel-Jacobi map of degree zero divisors, for a general introduction see Section \ref{m-sec:ajm}.
+   Here we are concerned with explicitly computing the Abel-Jacobi map of degree zero divisors; for a general introduction see Section \ref{m-sec:ajm}.
    
    Assume for this section that we already computed a big period period matrix (and all related data) following the Strategy from Section \ref{m-sec:strat_pm}. 
    
@@ -14,7 +14,7 @@
    \end{equation}
   For every $P \in \cu$, $\int_{P_0}^P \bar\w$ is a linear combination of vector integrals of the form
   \begin{align*}
-    \int_{P_0}^{P_k} \bar\w\quad \text{(see \S \ref{m-subsec:ajm_bp}),} \quad
+    \int_{P_0}^{P_k} \bar\w\quad \text{(see \S \ref{m-subsec:ajm_ram_pts}),} \quad
     \int_{P_k}^{P} \bar\w \quad \text{(see \S \ref{m-subsec:ajm_finite})}
     \quad \text{and} \quad \int_{P_0}^{P_{\infty}} \bar\w\quad \text{(see \S \ref{m-subsec:ajm_infty}),} \quad \text{where}
   \end{align*}
@@ -27,7 +27,7 @@
   
    Typically, we choose as basepoint the ramification point $P_0 = (x_0,0)$, where $x_0 \in X$ is the root of the spanning tree $T = (X,E)$.
    
-  Finally, the resulting vector integral has to reduced modulo the period lattice $\Lambda$, which is covered in \S \ref{m-subsec:lat_red}. For practical reasons, we will compute the
+  Finally, the resulting vector integral has to be reduced modulo the period lattice $\Lambda$, which is covered in \S \ref{m-subsec:lat_red}. For practical reasons, we will compute the
   image of the Abel-Jacobi map in the torus $\R^{2g} / \Z^{2g}$.
   
   
@@ -49,63 +49,69 @@
   \end{align}
   which is  (up to the constants) an elementary integral and has already been evaluated during the period matrix computation.
   
-  Moreover, the Abel-Jacobi map between ramification points is $m$-torsion (\todo ref?), i.e. for any two $k,j \in \{1,\dots,n\}$ we have
+  Moreover, the image of the Abel-Jacobi map between ramification points is $m$-torsion, i.e. for any two $k,j \in \{1,\dots,n\}$ we have
   \begin{equation}\label{eq:m_tors}
-    m \int_{P_j}^{P_k} \bar\w \equiv 0 \mod  \Lambda.
+    m \int_{P_j}^{P_k} \bar\w \equiv \AJ( [ mP_k - mP_j ] ) \equiv 0 \mod  \Lambda,
   \end{equation}
-
+  since $\div\left( \frac{x-x_k}{x-x_j} \right) = mP_k - mP_j$ is a principal divisor.
 
   \subsection{Reaching non-ramification points}\label{subsec:ajm_finite}
 
   Let $P = (x_P,y_P) \in \cu$ be a finite point and $P_a = (a,0)$ a ramification point such that $X\cap]a,x_P]=\varnothing$. In order to define a smooth path between $P$ and $P_a$ 
   we need to find a suitable analytic branch of $\cu$. 
   
-  Following our approach in \S \ref{m-subsec:roots_branches} we first define the affine linear transformation
-    \begin{equation}\label{def:uaxp}
-      \uaxp : x \mapsto \frac{x_P-a}{2}\left(x+\frac{x_P+a}{x_P-a}\right)
-  \end{equation}
-   and split the preimage of $X$ under $\uaxp$ into subsets
-  \begin{equation}
-      \uaxp^{-1}(X) = \set{-1} \cup U^+ \cup U^-,
-  \end{equation}
-  where $U^+$ (resp. $U^-$) contains the points with strictly positive (resp. non-positive) real part. Now, the function
-   \begin{align}
-      \ytaxp(u) = \prod_{u_k\in U^-} \sqrt[m]{u-u_k}\prod_{u_k\in U^+}\sqrt[m]{u_k-u}
-  \end{align}
+  This can be done (almost analogously) following  the approach from \S \ref{m-subsubsec:analytic_branches}, the only difference being that
+  $x_P$ is not a branch point. Therefore, we are going to adjust the definitions and highlight the differences.
+  
+  Let  $\uaxp$ be the affine linear transformation
+  that maps $[-1,1]$ to $[a,x_P]$. Similar to \eqref{m-eq:uab_preimage} we split up the preimage of $X$ under $\uaxp$ into subsets, but this time
+ $\uaxp^{-1}(x_P) = 1$ is contained in $U^+$.
+ 
+  $\ytaxp(u)$ can be defined exactly as in $\eqref{m-eq:ytab}$ and
   is holomorphic in a neighbourhood $\epsilon_{a,x_P}$ of $[-1,1]$.
-  We obtain a branch that is analytic on a neighbourhood $V_{a,x_P}$ of $]a,x_P]$ via
+  The term corresponding to $a$, that is
+  \begin{equation}
+   \sqrt[m]{1+u},
+  \end{equation}
+   has a branch cut $]-\infty,-1]$ and is holomorphic on the complement of this cut.
+   
+  Now we can define a branch of the curve,
+   that is analytic in a neighbourhood $V_{a,x_P}$ of $]a,x_P]$, by
   \begin{equation}
     \yaxp(x) =   C_{a,x_P} \ytaxp( \uaxp^{-1}(x) ) \sqrt[m]{1 + \uaxp^{-1}(x)}
   \end{equation}
-  where
+  where 
    \begin{equation}
       C_{a,x_P} = \left(\frac{x_P-a}{2}\right)^{\frac{n}{m}} e^{\frac{\pi i}{m}(\#U^+ \bmod 2)}.
   \end{equation}
-  More concrete: The statements of Proposition \ref{m-prop:yab} are true for $\ytaxp$ and $\yaxp$, if we choose the sets $\epsilon_{a,x_P}$ and $V_{a,x_P}$ as if $x_P$ was a branch point.
+  
+  More concretely: The statements of Proposition \ref{m-prop:yab} continue to hold for $\ytaxp$ and $\yaxp$, 
+  if we choose the sets $\epsilon_{a,x_P}$ and $V_{a,x_P}$ as if $x_P$ was a branch point.
   
   Therefore, the lifts of $[a,x_P]$ to $\cu$ are given by
     \begin{equation}\label{eq:def_path_axp}
       \gamma^{(l)}_{[a,x_P]} = \{  (x,\zeta^l \yaxp(x))  \mid  x \in [a,x_P]  \}, \quad l \in \Z/m\Z.
    \end{equation}
-  All left to do is to pick the correct lift which is done by computing a \emph{shifting number} $s \in \Z/m\Z$ at the endpoint $x_P$:
+  In order to reach $P = (x_P,y_P)$ we have to pick the correct lift. This is done by computing a \emph{shifting number} $s \in \Z/m\Z$ at the endpoint $x_P$:
   \begin{align}
    \zeta^s & = \frac{y_P}{\yaxp(x_P)} = \frac{y_P}{ C_{a,x_P} \ytaxp( \uaxp^{-1}(x_P) ) \sqrt[m]{2}  } \\
    \Rightarrow s & = \frac{m}{2\pi} \arg\left(  \frac{y_P}{C_{a,x_P} \ytaxp( \uaxp^{-1}(x_P) )} \right)
   \end{align}
-  Consequently, $\gamma^{(s)}_{[a,x_P]}$ is smooth path between $P_a$ and $P$ on $\cu$. We can now state the main theorem of this section.
+  Consequently, $\gamma^{(s)}_{[a,x_P]}$ is a smooth path between $P_a$ and $P$ on $\cu$. We can now state the main theorem of this section.
   
   \begin{thm}\label{thm:ajm_finite_int}
-  Let $\w_{i,j} \in \WM$ be a differential. With notations and choices as above we have
+  Let $\w_{i,j} \in \WM$ be a differential. With the choices and notation as above we have
  \begin{equation}\label{eq:aj_int}
-       \int_{P_a}^P \w_{i,j} = \zeta^{-sj} C_{a,x_P}^{-j} \left(\frac{x_P-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1+u)^{\frac{j}{m}}}  \du
+       \int_{P_a}^P \w_{i,j} = \zeta^{-sj} C_{a,x_P}^{-j} \left(\frac{x_P-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1+u)^{\frac{j}{m}}}  \du,
   \end{equation}
    where
    \begin{equation}
-    \varphi_{i,j}  = \left(u+\frac{x_P+a}{x_P-a}\right)^{i-1} \ytaxp(u)^{-j}.
+    \varphi_{i,j}  = \left(u+\frac{x_P+a}{x_P-a}\right)^{i-1} \ytaxp(u)^{-j}
    \end{equation}
    is holomorphic in a neighbourhood $\epsilon_{a,x_P}$ of $[-1,1]$.
   \end{thm}
   \begin{proof}
+    We have
     \begin{align}
      \int_{P_a}^P \w_{i,j}  & =  \int_{\gamma^{(s)}_{[a,x_P]}} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-sj} \int_a^{x_P} \frac{x^{i-1}}{\yaxp(x)^j}  \dx \\  & = 
      \zeta^{-sj} C_{a,x_P}^{-j}  \int_a^{x_P} \frac{x^{i-1}}{(1+\uaxp^{-1}(x))^{\frac{j}{m}}\ytaxp(\uaxp^{-1}(x))^j}  \dx
@@ -137,19 +143,27 @@
   Suppose we want to integrate from $P_0$ to $P_{\infty} \in \mathcal{P}$, which is equivalent to computing the Abel-Jacobi map of the divisor
   $D_{\infty} = P_{\infty} - P_0$.
 
-  Our strategy is to find a principal divisor $D \in \Prin(\cu)$ such that $\supp(D) \cap \mathcal{P} = \{ P_{\infty} \}$
-  and $v_{P_{\infty}}(D) = \pm 1$. Then, by definition of the Abel-Jacobi map
+  Our strategy is to explicity apply Chow's moving lemma to $D_{\infty}$: we construct a principal divisor $D \in \Prin(\cu)$ such that $\supp(D) \cap \mathcal{P} = \{ P_{\infty} \}$
+  and $v_{P_{\infty}}(D) = \pm 1$. Then, by definition of the Abel-Jacobi map,
   \begin{equation}
   \AJ([D_0]) \equiv \AJ([D_{\infty}]) \equiv \int_{P_0}^{P_{\infty}} \bar\w \mod \Lambda
   \end{equation}
   where $D_0 = D_{\infty} \mp D$ and $\supp(D_0) \cap \mathcal{P} = \varnothing$.
-  Since there is no principal divisor who does the job unconditionally, we have to consider a few different cases.
   
-  In the following we will use the Bézout identity
+  The exposition in this paragraph will explain the construction of $D$, while distinguishing three different cases.
+  
+  In the fowlloing denote by  $-\mu,\nu > 0$ the coefficients of the Bézout identity
   \begin{equation}
-    \mu m + \nu n = \delta,
+    \mu m + \nu n = \delta.
   \end{equation}
-  with $-\mu,\nu \in \Z_{\ge 0}$.
+  
+  \begin{rmk}
+   We acknowledge that there are other ways of computing $\AJ([D_{\infty}])$, like using transformations or even numerical
+   integration. Especially in the case $\delta = m$ a transformation is the better option and will be used in practice.
+   The advantage of this approach is that we can stay in our setup, i.e. we can compute solely on $\caff$,
+   keep the integration scheme and reuse the integration parameters.
+  \end{rmk}
+
   
   
   \subsubsection{Coprime degrees}\label{subsec:ajm_inf_cop}
