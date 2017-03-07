@@ -4,8 +4,9 @@
 
   \section{Strategy for the period matrix}\label{sec:strat_pm}
 
-  In this section we present our strategy to obtain period matrices $\OC, \OA, \OB$ and $\tau$ as defined in \S \ref{m-subsec:bases_matrices}. Although our algorithm is no way restricted to the
-  case $\delta = 1$, we will briefly assume it to simplify notation.
+  In this section we present our strategy to obtain period matrices $\OC, \OA, \OB$ and $\tau$ as defined in 
+  \S \ref{m-subsec:bases_matrices}. Although this paper is not restricted to the
+  case $\gcd(m,n) = 1$, we will briefly assume it in this paragraph to simplify notation.
   
   The main ingredients were already described in
   Section \ref{m-sec:se_curves}: we integrate the holomorphic differentials in $\W$ (\S \ref{m-subsec:diff_forms})
@@ -17,7 +18,7 @@
   The matrices $\OA$ and $\OB$ require a symplectic basis of $\homo$.
   So, we compute the intersection pairing on $\Gamma$, as explained in Section \ref{m-sec:intersections}, which results in a
   intersection matrix $K_{\Gamma} \in \Z^{2g \times 2g}$.
-  After computing a symplectic basis $S \in \GL(\Z,2g)$ for $K_{\Gamma}$ (\S \ref{m-subsec:symp_basis}), we obtain a big period matrix
+  After computing a symplectic base change $S \in \GL(\Z,2g)$ for $K_{\Gamma}$ (\S \ref{m-subsec:symp_basis}), we obtain a big period matrix
   \begin{equation}
       \label{eq:OAOB}
       (\OA,\OB) = \OC S,
@@ -32,10 +33,10 @@
 
   \subsection{Computation of periods}\label{subsec:comp_of_periods}
 
-  The following theorem provides a formula for computing the periods of $\cu$. It relates integration of differential forms on the curve to numerical integration in $\C$.
-  Although we only need to integrate holomorphic
-  differentials, the statement is true for all differentials in $\WM$.
-
+  The following theorem provides a formula for computing the periods of the curve. 
+  It relates integration of differential forms on the curve to numerical integration in $\C$.
+  
+  Note that the statement is true for all differentials in $\WM$, not just the holomorphic ones.
   We continue to use the notation from Section \ref{m-sec:se_curves}.
 
   \begin{thm}\label{thm:periods}
@@ -70,30 +71,34 @@
   \end{proof}
 
   \begin{rmk}\label{rmk:elem_ints}
-   From Theorem \ref{m-thm:periods} it follows that we can obtain a period matrix by computing the \emph{elementary integrals}
+   In order to compute a period matrix $\OC$ the only integrals that have to
+   be numerically evaluated are 
+   the \emph{elementary integrals}
    \begin{equation}\label{eq:elem_ints}
        \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du
    \end{equation}
-   for all $\w_{i,j} \in \W$ and $e \in E$. All other integrals are obtained by multiplication with constants.
+   for all $\w_{i,j} \in \W$ and $e \in E$. By Theorem \ref{m-thm:periods}, all the periods in $\OC$ are 
+   then obtained by multiplication 
+   of elementary integrals with constants.
    \end{rmk}
  
   
   
   \subsection{Symplectic basis}\label{subsec:symp_basis}
 
-  For a period matrix $\tau$, we need to integrate over a symplectic basis of $\homo$. In Section \ref{m-subsec:cycles_homo}, we chose a generating set $\Gamma$ for $\homo$, that is in general not
+  By definition, a big period matrix $(\OA,\OB)$ requires integration along a symplectic basis of $\homo$. In \S \ref{m-subsec:cycles_homo} we gave a generating set $\Gamma$ for $\homo$, that is in general not
   a (symplectic) basis. We ressolve this by computing the intersection pairing on $\Gamma$, as explained in Section \ref{m-sec:intersections}. 
   
   The resulting intersection matrix $K_{\Gamma}$
    is a skew-symmetric matrix of dimension \\ $(n-1)(m-1)$ with entries in $\{ 0,\pm 1\}$ and has rank $2g$. Hence, we can apply an algorithm, based on
-    \cite[Theorem 18]{KB2002}, that computes a symplectic basis
-   for $K_{\Gamma}$ over $\Z$, i.e. a unimodular matrix $S$ such that
+    \cite[Theorem 18]{KB2002}, that outputs a symplectic basis
+   for $K_{\Gamma}$ over $\Z$, i.e. a unimodular matrix base change matrix $S$ such that
   $$S^T K_{\Gamma}  S = J, \quad \text{where} \quad J = \begin{pmatrix} 0 & I_g & 0 \\ -I_g & 0 & 0 \\ 0 & 0 & 0_{\delta-1} \end{pmatrix}.$$
-  The linear combinations of cycles given by $\OC S$ then yield a symplectic homology basis
+  The linear combinations of periods given by the first $2g$ columns of $\OC S$ then correspond to a symplectic homology basis
   \begin{equation}\label{eq:symp_basis}
-   (\OA,\OB, 0_{\delta-1}) = \OC S.
+   (\OA,\OB, 0_{\delta-1}) = \OC S
   \end{equation}
-  Note that the last $\delta-1$ columns of $\OC S$ are zero and can be ignored, as they correspond to the dependent cycles
+  whereas the last $\delta-1$ columns are zero and can be ignored, as they correspond to the dependent cycles
   in $\Gamma$ and contribute nothing.
 
 
