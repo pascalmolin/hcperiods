@@ -2,8 +2,35 @@
 
 \begin{document}
 
+  Content: Problem formulation, Applications, Existing work, Thm: Complexity Abel-Jacobi
+
   \section{Introduction}
 
-  Content: Problem formulation, Applications, Existing work, Thm: Complexity Abel-Jacobi
+  The numerical evaluation of integrals defined on algebraic curves
+  is a problem of long interest. Being able to compute such integrals
+  rigorously and to arbitrary precision is of crucial interest in
+  number theory.
+
+  \subsection{Existing algorithms}
+
+  For genus 1 and 2, methods based on isogenies (AGM, Richelot \cite{BostMestre88}, Borchards means \cite{Labrande16})
+  make it possible to compute periods to arbitrary precision in almost linear time.
+
+  For modular curves, the modular symbols machinery and termwise integration of
+  modular forms expansions also give excellent algorithms
+  \cite[sec 3.2]{Mascot13}.
+
+  For general hyperelliptic curve of arbitrary genus, the Magma implantation
+  due to P. Van Wamelen \cite{vanWamelen06} computes this map.
+  However it is limited in terms of precision (less
+  than 2000 digits) and some bugs are experienced on
+  certain configurations of branch points. This implementation motivated our
+  work. Using a different strategy
+  (integration along a tree instead of around Voronoi cells)
+  we obtain a much better algorithm and rigorous results.
+
+  For completely general algebraic curves, there is an implementation in Maple
+  due to van Hoeij and Dekoninck \cite{DeconinckvanHoeij01}.
+  We found that this package is not suitable for high precision purposes.
 
 \end{document}
