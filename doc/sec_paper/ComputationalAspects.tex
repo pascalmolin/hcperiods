@@ -36,10 +36,9 @@
    \subsubsection{Computation of elementary integrals}
 
    For each elementary cycle $\gamma_e\in \Gamma$, we evaluate numerically the vector of $g$
-   elementary integrals from \eqref{m-eq:periods} as sums of the form
+   elementary integrals from \eqref{eq:elem_num_int} as sums of the form
    \begin{equation}
-       \int_{-1}^1\frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac jm}}\du
-           \approx \sum_{k=1}^N w_k\frac{x_k^{i-1}}{y_k^j}
+       I_{a,b} \approx \sum_{k=1}^N w_k\frac{x_k^{i-1}}{y_k^j}
    \end{equation}
    where $N$ is the number of integration points, $w_k,u_k$ are integration weights and points,
    $x_k=u_k+\frac{b+a}{b-a}$ and $y_k=\ytab(u_k)$.
@@ -48,7 +47,7 @@
    \begin{itemize}
    \item for each $k$, we evaluate the absissa and weight $u_k,w_k$ using
        a few \footnote{this can be reduced to evaluating only one exponential
-       and a few multiplications} trigonometric or hyperbolic functions,
+       and a few multiplications.} trigonometric or hyperbolic functions,
    \item we compute $y_k=\ytab(u_k)$ using $n-2$ multiplications and one $m$-th root,
        as shown in \S \ref{m-subsec:computing_roots} below;
    \item starting from $w_k\frac{1}{y_k}$, we evaluate all $g$ terms $w_k\frac{x_k^{i-1}}{y_k^j}$
@@ -58,7 +57,7 @@
 
    Altogether, the computation of one vector of elementary integrals takes
    \begin{equation}\label{eq:elem_int_complexity}
-    E(D) := N(D)T(D)+N(D)(n-1)M(D)+N(D)gM(D)
+    \ctot(D) := N(D)\ctrig(D)+N(D)(n-1)\cmul(D)+N(D)g\cmul(D)
    \end{equation}
     operations,
    so that depending on the integration scheme we obtain:
@@ -69,9 +68,9 @@
            \item $O(D^2\log^{1+\varepsilon} D (g + \log^{2+\varepsilon} D))$ operations, if $m>2$.
        \end{itemize}
    \end{thm}
-   \begin{proof}
-     Plugging in $N(D),T(D),M(D)$ in equation \eqref{m-eq:elem_int_complexity} and using that $n-1 = O(g)$.
-   \end{proof}
+   %\begin{proof}
+   %  Plugging in $N(D),T(D),M(D)$ in equation \eqref{m-eq:elem_int_complexity} and using that $n-1 = O(g)$.
+   %\end{proof}
 
 
    \subsubsection{Big period matrix}
@@ -266,7 +265,7 @@
    \ytab(u) = \prod_{u_k\in U^-} \sqrt[m]{u-u_k}\prod_{u_k\in U^+}\sqrt[m]{u_k-u}
   \end{equation*}
   for $u \in [-1,1]$. Instead of computing $(n-2)$ $m$-th roots for each
-  integration point, we compute $q \in \frac12\Z$ such that
+  integration point, we compute $q(u)\in\frac12\Z$ such that
   \begin{equation*}
    \ytab(u) = \zeta^q \Big( \prod_{u_k\in U^-}(u-u_k) \prod_{u_k\in U^+} (u_k-u) \Big)\mr
   \end{equation*}
@@ -290,7 +289,7 @@
   \begin{proof}
    Follows from the choices for $\sqrt[m]{\cdot}$ and $\zeta$ that were made in \S \ref{m-subsec:roots_branches}.
   \end{proof}
-   This Lemma can easily be turned into an algorithm that computes $q$.
+  This Lemma can easily be turned into an algorithm that computes $q(u)$.
 
    \subsubsection{Doing real multiplications}\label{subsec:real_mult}
 
