@@ -26,10 +26,10 @@
    $N(D)=O(D)$ using Gauss-Chebychev integration, while $N(D)=O(D\log D)$
    via double exponential integration.
 
-   For multiprecision numbers, we consider that the multiplication has
-   complexity $M(D)=O(D \log^{1+\varepsilon}D)$,
+   For multiprecision numbers, we consider (see \cite{BrentZimmermann}) that the multiplication has
+   complexity $\cmul(D)=O(D \log^{1+\varepsilon}D)$,
    while simple transcendental functions (log, exp, sinh,\dots) can be evaluated
-   in complexity $T(D)=O(D\log^{2+\varepsilon} D$).
+   in complexity $\ctrig(D)=O(D\log^{2+\varepsilon} D$).
     Moreover, we assume that inversion and multiplication of a $g \times g$ matrix can be done using
     $O(g^{\eta})$ multiplications for some constant $2 < \eta < 3$.
    
