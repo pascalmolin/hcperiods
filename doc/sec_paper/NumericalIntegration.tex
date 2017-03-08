@@ -20,9 +20,11 @@ As explained in \S \ref{m-subsec:real_mult}, the actual computations will be don
     \label{eq:elem_num_int}
     I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{\frac jm}\ytab(u)^j}
 \end{equation}
+(that is, replacing $(u+\frac{b+a}{b-a})^{i-1}$ by $u^{i-1}$ in the numerator)
 so that we restrict the numerical analysis to this case,
 the value of elementary integrals being recovered by the polynomial shift
 \begin{equation}
+    \label{eq:polshift}
     \int_{-1}^1\frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac jm}}\du
     = \sum_{l=0}^{i-1} {i-1 \choose l} \left(\frac{b+a}{b-a}\right)^{i-1-l} I_{a,b}(l,j).
 \end{equation}

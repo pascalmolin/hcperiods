@@ -38,10 +38,10 @@
    For each elementary cycle $\gamma_e\in \Gamma$, we evaluate numerically the vector of $g$
    elementary integrals from \eqref{eq:elem_num_int} as sums of the form
    \begin{equation}
-       I_{a,b} \approx \sum_{k=1}^N w_k\frac{x_k^{i-1}}{y_k^j}
+       I_{a,b} \approx \sum_{k=1}^N w_k\frac{u_k^{i-1}}{y_k^j}
    \end{equation}
    where $N$ is the number of integration points, $w_k,u_k$ are integration weights and points,
-   $x_k=u_k+\frac{b+a}{b-a}$ and $y_k=\ytab(u_k)$.
+   and $y_k=\ytab(u_k)$.
 
    We proceed as follows:
    \begin{itemize}
@@ -51,7 +51,7 @@
    \item we compute $y_k=\ytab(u_k)$ using $n-2$ multiplications and one $m$-th root,
        as shown in \S \ref{m-subsec:computing_roots} below;
    \item starting from $w_k\frac{1}{y_k}$, we evaluate all $g$ terms $w_k\frac{x_k^{i-1}}{y_k^j}$
-       each time either multiplying by $x_k$ or by $\frac{1}{y_k}$, and add each to the corresponding
+       each time either multiplying by $u_k$ or by $\frac{1}{y_k}$, and add each to the corresponding
        integral.
    \end{itemize}
 
@@ -251,9 +251,9 @@
    closely depends on the configuration of branch points.
 
    In practice the tau constant of double-exponential integration is usually bigger than $0.5$
-   for random points, but we can exhibit bad configurations with $τ\approx 0.1$. In this case
-   however, we can perform a change of coordinate by a Moebius transform
-   $x\mapsto \frac{ax+b}{cx+d}$ to redistribute the points more evenly.
+   for random points, but we can exhibit bad configurations with $τ\approx 0.1$.
+   In this case however, we can perform a change of coordinate by a Moebius transform
+   $x\mapsto \frac{ax+b}{cx+d}$ as explained in Remark \ref{rmk:moebius} to redistribute the points more evenly.
 
    Improving $τ$ from $.1$ to say $.6$ immediately saves a factor $6$ on the running time.
 
@@ -295,24 +295,12 @@
 
    During integration, the main complexity comes from the multiplication by numerator
    $x_k=u_k-\frac{b+a}2$, which is usually done $g-m-1$ times for each of
-   the $N$ integration points.
+   the $N$ integration points (more precisely, as we saw in the proof of Proposition \ref{m-prop:holom_diff}, for each power $j$
+   we use the powers $0\leq i\leq n_i = \floor{\frac{nj-δ}m}$, with $\sum n_i = g$).
 
-   More precisely, as we saw in the proof of Proposition \ref{m-prop:holom_diff}, for each power $j$
-   we use the powers $0\leq i\leq n_i = \floor{\frac{nj-δ}m}$, with $\sum n_i = g$.
-
-   However, $x_k$ is a complex number while $u_k$ is real, so it is better to compute
-   the integrals with $u_k$ only and make a simple shift on the integral values of the form
-   \begin{equation}
-       %\left(
-       \int_{-1}^1 (u+c)^iF_j(u) \du
-       %\right_{0\leq i\leq d_i}
-       =
-       %\left(
-       \sum_{l=0}^i {i \choose l} c^{i-l} \int_{-1}^{1} u^lF_j(u)\du
-       %\right_{0\leq i\leq d_i}
-   \end{equation}
-
-   This saves a factor almost $2$ on the running time.
+   Without polynomial shift \eqref{eq:polshift}, this numerator should be
+   $x_k=u_k+\frac{b+a}{b-a}2$. However, $x_k$ is a complex number while $u_k$
+   is real, so computing with $u$ saves a factor almost 2 on the running time.
 
 \biblio
 \end{document}
