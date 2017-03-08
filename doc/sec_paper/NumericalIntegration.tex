@@ -255,7 +255,7 @@ since their roots are explicitly given as cosine functions \cite[25.4.38]{Abramo
 Moreover, very nice estimates on the error $E_n$ can by obtained by applying the residue
 theorem on an ellipse $ε_r$ of the form
 \begin{equation}
-    ε_r = \set{z, \abs{z-1}+\abs{z+1} = 2r }
+    ε_r = \set{z, \abs{z-1}+\abs{z+1} = 2\cosh(r) }
 \end{equation}
 
   \begin{figure}[H] \begin{center}
@@ -264,10 +264,10 @@ theorem on an ellipse $ε_r$ of the form
   \label{fig:ellipse} \end{figure}
 
 \begin{thm}[\cite{ChawlaJain68},Theorem 5]
-    Let $r>1$ such that $g$ is holomorphic on $ε_r$. Then
+    Let $r>0$ such that $g$ is holomorphic on $ε_r$. Then
     the error in \eqref{eq:gauss_chebychev} satisfies
     \begin{equation}
-        \abs{E(n)}\leq \frac{2πM(r)}{(r+\sqrt{r^2-1})^{2n}-1}
+        \abs{E(n)}\leq \frac{2πM(r)}{e^{2rn}-1}
     \end{equation}
     where $M(r)=\max\set{\abs{f(z)},z\in ε_r}$.
 \end{thm}
@@ -279,7 +279,7 @@ explicitly controlled.
 
 \begin{lemma}
     \label{lem:param_r}
-    Let $r>1$ be such that $2r<\abs{u_i-1}+\abs{u_i+1}$ for all
+    Let $r>0$ be such that $2\cosh(r)<\abs{u_i-1}+\abs{u_i+1}$ for all
     roots $u_i$ of $Q$,
     then there exists an explicitly computable
     constant $M(r)$ such that for all $u\in ε_r$
@@ -298,7 +298,7 @@ We simply compute the distance
     With $r$ and $M(r)$ satisfying lemme \ref{m-lem:param_r},
     for all $n$ such that
     \begin{equation}
-        n \geq \frac{D+\log(2πM(r))+1}{2\log(r+\sqrt{r^2-1})}
+        n \geq \frac{D+\log(2πM(r))+1}{2r}
     \end{equation}
     we have
     \begin{equation}
