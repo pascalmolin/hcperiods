@@ -30,10 +30,11 @@ the value of elementary integrals being recovered by the polynomial shift
 We study here two numerical integration schemes:
 \begin{itemize}
     \item 
-the double-exponential change of variables is completely general and its robustness
+        the double-exponential change of variables is completely general \cite{Molin2010} and its robustness
 allows to compute rigorously all integrals of periods in a very unified setting
 even with different values of $\alpha$;
-\item in the special case of hyperelliptic curves however, the Gauss-Chebychev method applies and
+\item in the special case of hyperelliptic curves however,
+    the Gauss-Chebychev method \cite[25.4.38]{AbramowitzStegun} applies and
     provides a better scheme (fewer and simpler integration points).
 \end{itemize}
 For larger $m$, the periods could also be computed using general Gauss-Jacobi integration
@@ -79,34 +80,36 @@ both $[-1,1]$ and its neighborhood $Z_r$ (see \S \ref{m-sec:dist_zr}), we obtain
   \end{lemma}
 
 We also introduce the following quantities
-\begin{align}
+\begin{equation}
+    \begin{cases}
     X_r &=\cos(r)\sqrt{\frac{π}{2λ\sin r}-1} \\
     B(r,α) &=
     \frac{2}{\cos r}
     \left(
         \frac{X_r}2(\frac1{\cos^{2α}(λ\sin r)}+\frac1{X_r^{2α}})
         +\frac{1}{2α\sinh^{2α}X_r}
-    \right)
-\end{align}
+    \right).
+    \end{cases}
+\end{equation}
 
-Once computed the two bounds $M_1$, $M_2$ and the constant $B(r,α)$,
+Once we have computed the two bounds $M_1$, $M_2$ and the constant $B(r,α)$,
 we obtain a rigorous integration scheme as follows
 \begin{thm}
     With the notations above, for all $D>0$, choose $h$ and $n$ such that
     \begin{equation}
         \begin{cases}
             h \le \frac{2πr}{D + \log(2M_2 B(r,α) + e^{-D})}\\
-            nh \ge \asinh(\frac{D+\log(\frac{2^{2α+1}M_1}{α})}{2αλ})
+            nh \ge \asinh\left(\frac{D+\log(\frac{2^{2α+1}M_1}{α})}{2αλ}\right),
         \end{cases}
     \end{equation}
     then
-    \begin{equation}
+    \begin{equation*}
         \abs{
             I_{a,b}(i,j)
             - h\sum_{k=-n}^n
             w_k \frac{u_k^{i-1}}{\ytab(u_k)^j}
-        } \leq e^{-D}
-    \end{equation}
+        } \leq e^{-D},
+    \end{equation*}
     where
     \begin{equation}
         \begin{cases}
@@ -118,14 +121,14 @@ we obtain a rigorous integration scheme as follows
 
 The proof follows the same lines as the one in \cite{Molin2010}:
 we write the Poisson formula on $h\Z$ for the function $g$
-\begin{equation}
+\begin{equation*}
     \underbrace{h\sum_{\abs{k}>n}g(kh)}_{e_T}
  + h\sum_{k=-n}^n g(kh)
  = \int_\R g
  +
      \underbrace{\sum_{k\in\Z^\ast} \hat g(\frac{k}{h})}_{e_Q}
-\end{equation}
-and control both error terms $e_T$ and $e_q$ by lemma \ref{m-lem:de_error_trunc}
+\end{equation*}
+and control both error terms $e_T$ and $e_q$ by Lemma \ref{m-lem:de_error_trunc}
 and \ref{m-lem:de_error_quad} below. The actual parameters $h$ and $n$ follow
 by bounding each error by $e^{-D}/2$.
 
@@ -133,7 +136,7 @@ by bounding each error by $e^{-D}/2$.
     \label{lem:de_error_trunc}
     \begin{equation}
         \sum_{\abs{k}>n}\abs{hg(kh)}
-        \leq \frac{2^{2α} M_1}{αλ}\exp(-2αλ\sinh(nh))
+        \leq \frac{2^{2α} M_1}{αλ}\exp(-2αλ\sinh(nh)).
     \end{equation}
 \end{lemma}
 \begin{proof}
@@ -143,7 +146,7 @@ by bounding each error by $e^{-D}/2$.
         &\leq2M_1\int_{nh}^\infty\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
         =2M_1\int_{λ\sinh(nh)}^\infty\frac{\dt}{\cosh(t)^{2α}}\\
         &\leq 2^{2α+1} M_1\int_{λ\sinh(nh)}^\infty e^{-2αt}\dt
-        = \frac{2^{2α} M_1}{α}e^{-2αλ\sinh(nh)}
+        = \frac{2^{2α} M_1}{α}e^{-2αλ\sinh(nh)}.
     \end{align*}
 \end{proof}
 
@@ -159,30 +162,32 @@ by bounding each error by $e^{-D}/2$.
 
 
 We first bound the Fourier transform by a shift of contour
-\begin{equation}
+\begin{equation*}
     \forall X>0, \hat g(\pm X) = e^{-2πXr} \int_{\R} g(t\mp ir) e^{-2iπtX}\dt
-\end{equation}
+\end{equation*}
 so that
 \begin{equation}
     \sum_k \abs{\hat g(\frac kh)}
     \leq
     \frac{2M_2}{e^{2πr/h}-1}\int_\R \abs{
-    \frac{λ\cosh(t+ir)}{\cosh(λ\sinh(t+ir))^{2α}}}\dt
+    \frac{λ\cosh(t+ir)}{\cosh(λ\sinh(t+ir))^{2α}}}\dt.
 \end{equation}
 
 Now the point $λ\sinh(t+ir) = X(t)+iY(t)$ lies on the hyperbola
 $Y^2 =λ^2(\sin^2r+\tan^2 rX^2)$, and
-\begin{align}
+\begin{equation*}
+    \begin{cases}
     \abs{λ\cosh(t+ir)} &\leq λ\cosh(t) =\frac{X'(t)}{\cos(r)}\\
     \abs{\cosh(X+iY)}^2 &= \sinh(X)^2+\cos(Y)^2
-\end{align}
+    \end{cases}
+\end{equation*}
 so that
-\begin{equation}
+\begin{equation*}
     \int_\R \abs{
     \frac{λ\cosh(t+ir)}{\cosh(λ\sinh(t+ir))^{2α}}}\dt
     \leq
-    \frac{2}{\cos r}\int_0^\infty\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^α}
-\end{equation}
+    \frac{2}{\cos r}\int_0^\infty\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^α}.
+\end{equation*}
 For $X_0=0$, $Y_0=λ\sin r<\frac{π}2$, and $Y_r=\frac{π}2$ for
 $X_r=\cos(r)\sqrt{\frac{π}{2Y_0}-1}$.
 
@@ -191,31 +196,31 @@ $X_r=\cos(r)\sqrt{\frac{π}{2Y_0}-1}$.
       \int_0^{X_r}\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^α}
       & \leq \int_0^{X_r}\frac{\d X}{(X^2+\cos^2Y)^α} \\
       \int_{X_r}^\infty\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^α}
-      & \leq \int_{X_r}^\infty\frac{\d X}{(\sinh X)^{2α}}
+      & \leq \int_{X_r}^\infty\frac{\d X}{(\sinh X)^{2α}}.
   \end{align}
 
   We bound the first integral by convexity:
   since $Y(X)$ is convex and $\cos$ is concave decreasing for $Y\leq Y_r$ we
   obtain by concavity of the composition
-  \begin{equation}
+  \begin{equation*}
       \forall X\leq X_r, \cos(Y)\geq \cos(Y_0)(1-\frac{X}{X_r})
-  \end{equation}
+  \end{equation*}
   Now $X^2+\cos^2Y\geq P_2(X)$ where
-  \begin{equation}
+  \begin{equation*}
      P_2(X) = X^2(1+\frac{\cos^2(Y_0)}{X_r^2})-2\frac{\cos^2(Y_0)}{X_r}X+\cos^2(Y_0)
-  \end{equation}
+  \end{equation*}
   is a convex quadratic, so $X\mapsto P_2(X)^{-α}$ is still convex and the integral
   is bounded by one trapeze
-  \begin{equation}
+  \begin{equation*}
       \int_0^{X_r}\frac{\d X}{P_2(X)^α}\leq X_r\frac{P_2(0)+P_2(X_r)}2
-      = \frac{X_r}2\left(\frac1{\cos^{2α}(Y_0)}+\frac1{X_r^{2α}}\right)
-  \end{equation}
+      = \frac{X_r}2\left(\frac1{\cos^{2α}(Y_0)}+\frac1{X_r^{2α}}\right).
+  \end{equation*}
 
   For the second integral we use
   $\sinh(X)\geq\sinh(X_r)e^{X-X_r}$ to obtain
-  \begin{equation}
-      \int_{X_r}^\infty \frac{\d X}{\sinh(X)^{2α}} \leq \frac1{2α\sinh(X_r)^{2α}}
-  \end{equation}
+  \begin{equation*}
+      \int_{X_r}^\infty \frac{\d X}{\sinh(X)^{2α}} \leq \frac1{2α\sinh(X_r)^{2α}}.
+  \end{equation*}
 
 \subsection{Gauss-Chebychev integration}
 \label{sub:gauss_chebychev_integration}
@@ -231,7 +236,7 @@ Chebychev polynomials.
 
 In this case, the integration formula is particularly
 simple: there is no need to actually compute the Chebychev polynomials
-since their roots are explicitly given as cosine functions.
+since their roots are explicitly given as cosine functions \cite[25.4.38]{AbramowitzStegun}.
 \begin{thm}[Gauss-Chebychev integration]
     Let $g$ be holomorphic around $[-1,1]$. Then for all
     $n$, there exists $\xi \in ]-1,1[$ such that
