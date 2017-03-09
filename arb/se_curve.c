@@ -9,15 +9,16 @@
 void
 sec_init(sec_t * c, slong m, acb_srcptr x, slong n)
 {
-    slong k;
-
     c->m = m;
     c->n = n;
     c->delta = n_gcd(m, n);
     c->g = ((m-1)*(n-1) - c->delta + 1)/ 2;
     c->roots = _acb_vec_init(n);
-    for (k = 0; k < n; k++)
-        acb_set(c->roots + k, x + k);
+    _acb_vec_set(c->roots, x, n);
+    /*
+    flint_printf("\n## set roots[%ld] = ", n);
+    _acb_vec_printd(c->roots, n, 30, ", ");
+    */
 }
 
 void

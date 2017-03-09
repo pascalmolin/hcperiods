@@ -164,7 +164,7 @@ void sec_init(sec_t * c, slong m, acb_srcptr x, slong d);
 void sec_clear(sec_t c);
 
 void abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d);
-void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_srcptr f, slong len, slong prec);
+void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_poly_t f, slong prec);
 void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
@@ -241,3 +241,5 @@ void acb_vec_sub_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong p
 /* tests/bench only */
 void acb_vec_set_random(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);
 void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits, double eps);
+void _acb_vec_printd(acb_srcptr u, slong len, slong d, const char * sep);
+void _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep);

@@ -16,13 +16,17 @@ loop_init(loop_t * l, slong len)
 void
 loop_clear(loop_t l)
 {
-    flint_free(l.l);
+    if (l.n)
+        flint_free(l.l);
 }
 
 void
 homol_init(homol_t * cyc, slong len)
 {
-    * cyc = malloc(len * sizeof(loop_t));
+    slong k;
+    * cyc = flint_malloc(len * sizeof(loop_t));
+    for (k = 0; k < len; k++)
+        (*cyc)[k].n = 0;
 }
 
 void

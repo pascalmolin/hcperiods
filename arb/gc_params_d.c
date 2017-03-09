@@ -83,7 +83,7 @@ gc_params_d(const cdouble * w, slong len, double r, slong i, slong prec)
 {
     slong n, n1;
     double M, A, B, rho;
-    double mult = .25;
+    const double mult = .25;
     double r1 = 0;
 
     if (r <= 1)

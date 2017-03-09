@@ -80,12 +80,12 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
     edge_t * e;
 
     /* small approx of roots */
-    w = malloc(len * sizeof(cdouble));
+    w = flint_malloc(len * sizeof(cdouble));
     for (k = 0; k < len; k++)
         w[k] = acb_get_cdouble(x + k);
 
     n = (len * (len - 1)) / 2;
-    e = malloc(n * sizeof(edge_t));
+    e = flint_malloc(n * sizeof(edge_t));
 
     if (type == INT_GC)
         edges_init(e, param_gc_r, w, len);
@@ -97,7 +97,7 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
     /* order edges */
     qsort(e, n, sizeof(edge_t), (int(*)(const void*,const void*))edge_cmp);
 
-    t = malloc(len * sizeof(int));
+    t = flint_malloc(len * sizeof(int));
     for (k = 0; k < len; k++)
         t[k] = 0;
 
@@ -127,16 +127,16 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
         }
     }
 
-    free(w);
-    free(e);
-    free(t);
+    flint_free(w);
+    flint_free(e);
+    flint_free(t);
 }
 
 void
 tree_init(tree_t tree, slong n)
 {
     tree->n = n;
-    tree->e = malloc(n * sizeof(edge_t));
+    tree->e = flint_malloc(n * sizeof(edge_t));
     tree->r = 0.;
     tree->min = 0;
     tree->data = NULL;
@@ -145,7 +145,7 @@ tree_init(tree_t tree, slong n)
 void
 tree_clear(tree_t tree)
 {
-    free(tree->e);
+    flint_free(tree->e);
 }
 
 void

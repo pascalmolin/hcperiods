@@ -30,8 +30,8 @@ int main() {
                 sec_init(&c, m, x, n);
                 tree_ydata_init(tree, x, n, m, prec);
 
-                alpha = malloc(c.g * sizeof(loop_t));
-                beta = malloc(c.g * sizeof(loop_t));
+                alpha = flint_malloc(c.g * sizeof(loop_t));
+                beta = flint_malloc(c.g * sizeof(loop_t));
 
                 symplectic_basis(alpha, beta, tree, c);
 
