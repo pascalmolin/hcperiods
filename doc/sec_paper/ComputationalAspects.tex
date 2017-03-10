@@ -72,7 +72,6 @@
    %  Plugging in $N(D),T(D),M(D)$ in equation \eqref{m-eq:elem_int_complexity} and using that $n-1 = O(g)$.
    %\end{proof}
 
-
    \subsubsection{Big period matrix}
 
    One of the nice aspects of the method is that we never compute
@@ -139,22 +138,84 @@
      \item[(iii)] By \S \ref{m-subsec:lat_red}, the reduction modulo the period lattice requires one $2g \times 2g$ matrix inversion and one multiplication.
     \end{itemize}
    \end{proof}
-   
 
    \subsection{Integration parameters}
 
+   \subsubsection{Gauss-Chebychev case}
+
+   We have a parametrization
+   $ε_r = \set{ \cosh(r+it) = \cos(t-ir), t\in]-π,π] }$
+   of the ellipse.
+
+   \begin{figure}[H]
+       \begin{center}
+       \includegraphics[width=5cm,page=3]{images/ellipse.pdf}
+   \end{center} \caption{Ellipse parameters.}
+   \label{fig:ellipse}
+   \end{figure}
+
+   The sum of its semi-axes is $e^{r}$
+   and one needs 
+   \[
+       N \geq \frac{D+\log(2πM(r)+e^{-D})}{2r}
+   \]
+   to have $\abs{E(N)}\leq e^{-D}$.
+
+   The distance $d_k=\dist(u_k,ε_r)$ from a branch point $u_k$
+   to the ellipse $ε_r$ can be computed
+   applying Newton method to the scalar product function
+   $f(t) = \Re(\overline{z'}(u_k-z))$, where $z = \cos(t-iρ)$ and
+   we take $t=\Re(\arccos(u_k))$ as a starting point.
+   By convexity of the ellipse,
+   the solution is unique on the quadrant containing $u_k$.
+
+   \subsubsection{Choice of $r$}
+   
+   Let $\abs{u_k-1}+\abs{u_k+1}=2\cosh(r_k)$. We need to choose
+   $r<r_0=\min_k r_k$ (so that $u_k\not\in ε_r$) in order to minimize
+   the number of integration points defined in Proposition \ref{prop:Ngc}.
+   \begin{itemize}
+       \item 
+   For all $k$ such that $r_k > r_0$, we compute
+   explicitly the distance $d_k=\dist(u_k,ε_{r_0})<\dist(u_k,ε_r)$.
+   \item
+   For $k$ such that $r_k=r_0$, we use first order approximation
+   \[ \dist(u_k,Z_{r-η}) = η D_k + O(η^2) \]
+   where
+   \[ D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\sin(t_k-ir_k)} \]
+   \end{itemize}
+
+   Let $K$ be the number of brach points $u_k$ such that $r_k=r_0$ and 
+   \[ M_0 = (\prod_{r_k = r_0} D_k\prod_{r_k>r_0}d_k)^{-j/m}, \]
+   then the integrand is bounded on $ε_{r_0-η}$ by
+   \[ M(r_0-η) = M_0 η^{-\frac{Kj}m} (1+O(η)). \]
+   Plugging this into \eqref{eq:Ngc} and letting
+   $A = D+\log(2πM_0)$ and $B=jK/m$, the number of integration points
+   satisfies
+   \[
+       2N = \frac{A - B \log(η) }{r_0-η}(1+O(η)).
+   \]
+
+   The main term is minimized for $η$ satisfying
+   $η(A+B-B\log(η))=Br_0$,
+   we can take a first order approximation
+   \[ η = \frac{Br_0}{A+B(1+\log\frac{A+B}{Br_0})}. \]
+ 
    \subsubsection{Double-exponential case}
 
    We use the parametrization
    $\partial Z_r = \set{ z = \tanh(λ\sinh(t+ir), t\in\R }$.
+   so that the distance from a branch point $u_k$ to $Z_r$
+   can be computed applying Newton method to the scalar
+   product function
+   $f(t) = \Re(\overline{z'}(u_k-z))$, where $z = \tanh(λ\sinh(t+ir))$.
+   %and starting point $t=\Re(z^{-1}(p))$.
 
-   The distance from a point $p$ to $Z_r$ can be computed
-   applying Newton method to the scalar product function
-   $f(t) = \Re(\overline{z'}(p-z))$, where $z = \tanh(λ\sinh(t+ir))$
-   and starting point $t=\Re(z^{-1}(p))$.
-
-   Unfortunately the solution may not be unique, so we also use ball arithmetic to compute a rigorous
-   bound on the boundary of $Z_r$.
+   Unfortunately the solution may not be unique, so once
+   the parameter $r<r_0$ is chosen, we use ball arithmetic to compute a rigorous
+   bound of the integrand on the boundary of $Z_r$. The process consists in
+   recursively subdividing the interval until the images of the subintervals by the
+   integrand form an $ε$-covering.
 
    \paragraph{Choice of $r$}
 
@@ -187,60 +248,7 @@
    the first order approximation
    \[ ε = \frac{λr_0}{A+λ(1+\log\frac{A+λ}{λr})}. \]
    
-   \subsubsection{Gauss-Chebychev case}
-
-   We have a parametrization
-   $ε_r = \set{ \cosh(r+it) = \cos(t-ir), t\in]-π,π] }$
-   of the ellipse.
-
-   \begin{figure}[H]
-       \begin{center}
-       \includegraphics[width=5cm]{images/ellipse.pdf}
-   \end{center} \caption{Ellipse parameters.}
-   \label{fig:ellipse}
-   \end{figure}
-
-   The sum of its semi-axes is $e^{r}$
-   and one needs 
-   \[
-       N \geq \frac{D+\log(2πM(r)+e^{-D})}{2r}
-   \]
-   to have $\abs{E(N)}\leq e^{-D}$.
-
-   The distance $d_k=\dist(u_k,ε_r)$ from a branch point $u_k$
-   to the ellipse $ε_r$ can be computed
-   applying Newton method to the scalar product function
-   $f(t) = \Re(\overline{z'}(u_k-z))$, where $z = \cos(t-iρ)$ and
-   we take $t=\Re(\arccos(u_k))$ as a starting point.
-   By convexity of the ellipse,
-   the solution is unique on the quadrant containing $u_k$.
-
-   \subsubsection{Choice of $r$}
-   
-   Let $\abs{u_k-1}+\abs{u_k+1}=2\cosh(r_k)$. We need to choose
-   $r<r_0=\min_k r_k$ (so that $u_k\not\in ε_r$) in order to minimize
-   the number of integration points.
-
-   For all $k$ such that $r_k > r_0$, we compute
-   explicitely the distance $d_k=\dist(u_k,ε_{r_0})<\dist(u_k,ε_r)$.
-   
-   For $k$ such that $r_k=r_0$, we use first order approximation
-   \[ \dist(u_k,Z_{r-η}) = η D_k + O(η^2) \]
-   where
-   \[ D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\sin(t_k-ir_k)} \]
- 
-   Let $K$ be the number of $k$ such that $r_k=r_0$ and 
-   \[ M_0 = (\prod_{r_k = r_0} D_k\prod_{r_k>r_0}d_k)^{-j/m} \]
-   then the integrand is bounded on $ε_{r_0-η}$ by
-   \[ M_2 = M_0 η^{-\frac{Kj}m} (1+O(η)) \]
-   so that
-   \[ h = \frac{2π(r_0-η)}{A-B\log(η)+O(η)} \]
-   for constants $A=D+\log(2B(r_0,α)M_0)$ and $B=Kj/m$.
-
-   The maximum is obtained for $η(A+B-B\log(η))=Br_0$,
-   we can take
-   \[ η = \frac{Br_0}{A+B(1+\log\frac{A+B}{Br})}. \]
-   
+  
    \subsection{Implementation tricks}
 
    Here we simply give some further ideas used in our implementation to improve constants.
