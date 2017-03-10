@@ -53,6 +53,9 @@ TESTS = $(patsubst %.c, build/%$(EXEEXT), $(TEST_SOURCES))
 BENCH_SOURCES = $(wildcard bench/*.c)
 BENCH = $(patsubst %.c, build/%$(EXEEXT), $(BENCH_SOURCES))
 
+EXAMPLE_SOURCES = $(wildcard example/*.c)
+EXAMPLE = $(patsubst %.c, build/%$(EXEEXT), $(EXAMPLE_SOURCES))
+
 all: library
 
 quiet: library
@@ -66,6 +69,8 @@ test: library $(TESTS)
 bench: library $(BENCH)
 	export LD_LIBRARY_PATH=${PREFIX}/lib
 	$(AT)$(foreach prog, $(BENCH), $(EXEC) $(prog) || exit $$?;)
+
+example:library $(EXAMPLE)
 
 verbose:
 	$(MAKE) AT= QUIET_CC= QUIET_CXX= QUIET_AR=
@@ -83,6 +88,9 @@ build/test:
 build/bench:
 	mkdir -p build/bench
 
+build/example:
+	mkdir -p build/example
+
 build/%.lo: %.c $(HEADERS) | build
 	$(QUIET_CC) $(CC) $(PIC_FLAG) $(CFLAGS) $(INCS) -c $< -o $@;
 
@@ -93,6 +101,9 @@ build/test/%$(EXEEXT): test/%.c $(HEADERS) $(LIBRARY) | build/test
 	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) $< -o $@ $(LIBS)
 
 build/bench/%$(EXEEXT): bench/%.c $(HEADERS) $(LIBRARY) | build/bench
+	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) $< -o $@ $(LIBS)
+
+build/example/%$(EXEEXT): example/%.c $(HEADERS) $(LIBRARY) | build/example
 	$(QUIET_CC) $(CC) $(CFLAGS) $(INCS) $< -o $@ $(LIBS)
 
 $(LIBRARY): $(LOBJS) $(HEADERS) | build
