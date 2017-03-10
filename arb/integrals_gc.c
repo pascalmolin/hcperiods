@@ -82,6 +82,7 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slo
 
     fmpq_clear(ln);
     arb_clear(x);
+    arb_clear(w);
     acb_clear(y);
     acb_clear(yxi);
 }

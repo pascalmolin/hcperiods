@@ -90,7 +90,7 @@ int main() {
         acb_ptr u, ref;
         arb_t s2;
         u = _acb_vec_init(dmax);
-        ref = _acb_vec_init(dmax);
+        ref = _acb_vec_init(nref);
 
         arb_init(s2);
         arb_set_si(s2, 2);

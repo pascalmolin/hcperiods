@@ -21,6 +21,7 @@ acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, slong
     mag_set_d(arb_radref(acb_imagref(b)), eps);
     for (k = 0; k < len; k++)
         acb_randtest_exclude(u + k, b, state, prec, mag_bits);
+    acb_clear(b);
 }
 
 void

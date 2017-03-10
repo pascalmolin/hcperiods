@@ -13,6 +13,11 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n)
 
     sec_init(&aj->c, m, x, n);
     g = aj->c.g;
+    if (g < 1)
+    {
+        flint_printf("\nno periods if genus < 1 (g = %ld)\n", g);
+        abort();
+    }
 
     aj->type = (m == 2) ? INT_GC : INT_DE;
 

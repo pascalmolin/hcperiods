@@ -77,6 +77,7 @@ int main() {
             acb_clear(y1);
             acb_clear(y2);
             acb_clear(y3);
+            acb_clear(y4);
             _acb_vec_clear(u, d);
             _acb_vec_clear(z, m);
         }

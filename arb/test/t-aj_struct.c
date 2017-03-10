@@ -10,14 +10,15 @@ int main() {
     fflush(stdout);
     flint_randinit(state);
 
-    for (n = 3; n < 10; n++)
+    for (n = 3; n < 5; n++)
     {
-        for (i = 0; i < 5; i++)
+        acb_ptr x;
+        x = _acb_vec_init(n);
+
+        for (i = 0; i < 3; i++)
         {
-            acb_ptr x;
             slong i;
  
-            x = _acb_vec_init(n);
             for (i = 0; i < n; i++)
                 acb_randtest_precise(x + i, state, prec, 4);
 
@@ -32,8 +33,9 @@ int main() {
                 abel_jacobi_clear(aj);
             }
 
-            _acb_vec_clear(x, n);
         }
+
+        _acb_vec_clear(x, n);
     }
 
     flint_randclear(state);
