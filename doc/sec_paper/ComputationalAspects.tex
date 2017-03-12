@@ -115,18 +115,18 @@
    
   This part of the complexity analysis is based on the results of Section \ref{m-sec:comp_ajm} and assumes that we already computed a big period matrix and all related data.
    
-  Let $E(D)$ be the number of operations needed to compute a vector of $g$ elemenatary integrals  (see \eqref{m-eq:elem_int_complexity}). The complexity class of $E(D)$ in $O$-notation is given in
+  Let $\ctot(D)$ be the number of operations needed to compute a vector of $g$ elemenatary integrals  (see \eqref{m-eq:elem_int_complexity}). The complexity class of $E(D)$ in $O$-notation is given in
   Theorem \ref{m-thm:complexity_integrals}.
   
    \begin{thm} \
    \begin{itemize}
      \item[(i)] For each finite point $P \in \caff$ we can compute $\int_{P_0}^P \bar\w$ to precision $D$ using 
-      $E(D)$ operations. 
+      $\ctot(D)$ operations. 
      \item[(ii)] For each infinite point $P_{\infty} \in \cu$ we can compute $\int_{P_0}^{P_{\infty}} \bar\w$ to precision $D$ using
       \begin{itemize}
-       \item[$\bullet$] a few vector additions in $\C^g$, if $\delta = \gcd(m,n) = 1$,
-       \item[$\bullet$] $n E(D)$ operations in the case of Theorem \ref{m-thm:ajm_inf_ord1},
-       \item[$\bullet$] $n(\nu+M)E(D)$ operations  in the case of Theorem \ref{m-thm:ajm_inf_ordgt1}.
+       \item[$\bullet$] $n$ vector additions in $\C^g$, if $\delta = \gcd(m,n) = 1$,
+       \item[$\bullet$] $n \ctot(D)$ operations in the case of Theorem \ref{m-thm:ajm_inf_ord1},
+       \item[$\bullet$] $n(n+\frac{m}\delta)\ctot(D)$ operations  in the case of Theorem \ref{m-thm:ajm_inf_ordgt1}.
       \end{itemize}
       \item[(iii)] Reducing a vector $v \in \C^g$ modulo $\Lambda$ can be done using $O(g^{\eta})$ multiplications.
     \end{itemize}
@@ -310,5 +310,13 @@
    $x_k=u_k+\frac{b+a}{b-a}2$. However, $x_k$ is a complex number while $u_k$
    is real, so computing with $u$ saves a factor almost 2 on the running time.
 
+   
+   \subsubsection{Euclidean spanning tree}
+    \todo
+   
+   
+  \subsection{Further ideas} 
+    \todo
+    
 \biblio
 \end{document}

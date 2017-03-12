@@ -4,13 +4,25 @@
 
   \section{Intersections}\label{sec:intersections}
 
-  In \S \ref{m-subsec:cycles_homo} we presented a generating set $\Gamma$ for $\homo$.
-  The formulas in Theorem \ref{m-thm:intsec_numb} explicitly determine the
-  intersection matrix $K_{\Gamma}$.
+  Recall, that in \S \ref{m-subsec:cycles_homo} we constructed an explicit set of generators for $\homo$ (see Theorem
+  \ref{thm:gen_set}), namely
+  \begin{equation}
+    \Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l < m-1,  e \in E  \right\}.
+  \end{equation}
+  Here, we show how compute the intersection pairing on $\Gamma$. The corresponding intersection matrix is composed of
+  $(n-1)^2$ blocks of dimension $m-1$:
+  \begin{equation}
+   K_{\Gamma} = \left( K_{i,j} \right)_{1\le i,j \le n-1}
+  \end{equation}
+  where $i,j$ correspond to edges $e_i,e_j$ in the spanning tree $T = (X,E)$ and
+  \begin{equation}
+    K_{i,j} = \left(\gamma_{e_i}^{(k)} \circ \gamma_{e_j}^{(l)} \right)_{0 \le k,l < m-1}.
+  \end{equation}
+  Thus, $K_{\Gamma}$ can be explicitly determined by the formulas in Theorem \ref{m-thm:intsec_numb} which is stated below.
   The rest of this section is concerned with its proof.
 
-  Since we generate $\homo$ with shifts of elementary cycles $\cyabk$ corresponding to edges $(a,b) \in E$ in a spanning tree, we only need to know the intersection between them.
-  By construction of the spanning tree we can restrict to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$ such that $c$ is either $a$ or $b$.
+  Very importantly, for edges $(a,b),(c,d) \in E$, by construction of the spanning tree, we can restrict to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$ 
+  such that $c$ is either $a$ or $b$.
 
    \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
       Let $(a,b),(c,d) \in E$. The intersections of the corresponding cycles $\cyabk, \cycdl \in \Gamma$ are given by
@@ -25,67 +37,84 @@
       where $s_+$, $s_-$ are given by the following table, which covers all
       cases occuring in the algorithm
       \begin{center}
-      \begin{tabular}{ccc}
+      \begin{tabular}{c|ccc}
           \toprule
-          Case
-          & $s_+$ & $s_-$ \\
+          & Case & $s_+$ & $s_-$ \\
           \midrule
-          $a=c$ and $b=d$
-          & $1$ & $-1$ \\
-          $b=c$
-          & $-s(b)$ & $1-s(b)$ \\
-          $a=c$ and $\rho>0$
-          & $1-s(a)$ & $-s(a)$ \\
-          $a=c$ and $\rho<0$
-          & $-s(a)$ & $-1-s(a)$\\
-          $\set{a,b}\cap\set{c,d}=\varnothing$ & \multicolumn{2}{c}{no intersection} \\
+         (i) & $a=c$ and $b=d$ & $1$ & $-1$ \\
+         (ii) & $b=c$ & $-s_b$ & $1-s_b$ \\
+         (iii) & $a=c$ and $\rho>0$ & $1-s_a$ & $-s_a$ \\
+         (iv) & $a=c$ and $\rho<0$ & $-s_a$ & $-1-s_a$\\
+         (v) & $\set{a,b}\cap\set{c,d}=\varnothing$ & \multicolumn{2}{c}{no intersection} \\
           \bottomrule
       \end{tabular}
       \end{center}
-      and where $s(x)\in\Z/m\Z$ for $x\in\set{a,b}$ is given by
-      \begin{equation}
-	    s(x) = \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{C_{c,d} \ytcd(x)}{C_{a,b}\ytab(x)} \right) \right) + \frac{1}{2}\chi_{b=c}
+      and where $s_x \in \Z$ for $x\in\set{a,b}$ is given by
+      \begin{equation}\label{eq:s_x}
+	    s_x := \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{C_{c,d} \ytcd(x)}{C_{a,b}\ytab(x)} \right) 
+	    \right)
       \end{equation}
      and
       \begin{equation}
-          \rho = \arg \left( \frac{b-a}{d-c} \right).
+          \rho = \arg \left( \frac{b-a}{d-c} \right) + \delta_{b=c}\pi
       \end{equation}
  \end{thm}
-
-
-  \begin{proof}\let\qed\relax
-   \begin{itemize}
-    \item[($i$)] If there exists $P = (x,y) \in \cyabl \cap \cycdk$, then  $x \in [a,b] \cap [c,d]$.
-   \end{itemize}
+ 
+ \bigskip
+ The proof of Theorem is contained in the following exposition. \\ 
+  Consider
+  two cycles $\cyab^{(k)},\cycd^{(l)} \in \Gamma$ and
+  recall from \S \ref{m-subsec:roots_branches} their definition 
+   \begin{align}\label{eq:def_cyabk}
+      \cyabk & = \{  (x,\zeta^k \yab(x))  \mid  x \in [a,b]  \} \cup \{  (x,\zeta^{k+1} \yab(x))  \mid  x \in [b,a]  \}, \\
+      \cycdl & = \{  (x,\zeta^l \ycd(x))  \mid  x \in [c,d]  \} \cup \{  (x,\zeta^{l+1} \ycd(x))  \mid  x \in [c,d]  \},
+   \end{align}
+  where $\zeta^k\yab(x),\zeta^l\ycd(x)$ are branches of $\cu$ that are analytic on open sets $\vab$ and $\vcd$ 
+  (see Figure \ref{m-fig:set_vab}) respectively.
+  \begin{proof}\let\qed\relax (of case $(v)$) \\
+  We immediately see that that these cycles cannot have a common point, if $[a,b] \cap [c,d] = \varnothing$. Since
+  $(a,b),(c,d)$ are edges in a spanning tree this is equivalent to $\{a,b\} \cap \{c,d\} = \varnothing$, thus
+  proving $(v)$.
   \end{proof}
-  \todo Adjust proof.
-  In order to prove ($ii$) and ($iii$) we have to introduce some more machinery. Recall from \S \ref{m-subsec:roots_branches} that $\yab$ and $\ycd$ are analytic branches of $\cu$ on the open sets
-  $\vab$ and $\vcd$ respectively. \abstandl
-  We choose a common point $x \in V = \vab \cap \vcd$ and determine $s  = s(\cyab,\cycd,x) \in \Z/m\Z$  such that
-  \begin{align}
-   \frac{\ycd(x)}{\yab(x)} = \zeta^s .
-  \end{align}
-  We say $s  = s(\cyab,\cycd,x)$ is the \emph{shfiting number of $\cyab$ and $\cycd$ at $x$}.
-  This definition naturally extends to shifts of elementary cycles via
-\begin{align}\label{eq:shift_numb_rel}
-  \frac{\zeta^k\ycd(x)}{\zeta^l\yab(x)} = \zeta^{s+k-l} \quad \imp \quad s(\cyabl,\cycdk,x) = s(\cyab,\cycd,x) + k - l.
-\end{align}
- Hence, everything can be computed using only elementary cycles. \abstandl
- Within our setting, the shifting number $s=s(\cyab,\cycd,x)$  can be interpreted as '$\cyab$ running $s$ sheets above $\cycd$ at the point $x$'.
- Due to $\yab$ and $\yab$ being analytic, the shifting number is constant on connected open subsets of $V$. Moreover, the intersection number must be independent of the choice of that subset. \abstandl
- Thus,
- this information can be used to determine
- the intersection number graphically by continously deforming the cycles such that $(x,\yab(x)) \in \cyab$ and $(x,\ycd(x)) \in \cycd$.
-
-   \begin{proof}(continued)
-   \begin{itemize}
-    \item[($ii$)] Here, we have that $[a,b] = [c,d]$. Hence, we can take $x = \frac{b+a}{2} \in  ]a,b[  \subset V = \vab$. We obtain the shifting number as
-    \begin{align*}
-      s(\cyabl,\cyab^{(k)},x) = s(\cyab,\cyab,x) + k - l = k - l.
-    \end{align*}
-    Obviously, we have that $\left(\cyabl \circ \cyab^{(k)}\right) = 0$ for $k - l \not\in \{ 0, \pm 1\}$. For the remaining cases, see Figure \ref{m-fig:int_self_shift} below.
-    Illustrated are the cycles $\cyabl$ (black),
-      $\cyab^{(l+1)}$ (red) and $\cyab^{(l-1)}$ (green).
+   In order to prove $(i)-(iv)$ we have to work a little harder.  Since the $\yab(x),\ycd(x)$ are branches of $\cu$,
+   on the set $\C \setminus X$
+   we can define the \emph{shifting function}
+   $s(x)$, that takes values in $\Z/m\Z$, implicitly via
+  \begin{equation}\label{eq:shift_func}
+   \zeta^{s(x)} = \frac{\ycd(x)}{\yab(x)}.
+   \end{equation}
+  We can now introduce the set $V = \vab \cap \vcd$. This set is non-empty if  $\{a,b\} \cap \{c,d\} \ne \varnothing$
+  and has the property that the shifting function $s(x)$ is well-defined on $V$ and, since $\yab(x)$ and $\ycd(x)$ are 
+  both analytic on $V$, constant on its 
+  connected components.
+  Note that \eqref{eq:shift_func} naturally extends to the other analytic branches via
+  \begin{equation}
+   \zeta^{s(x)+l-k} = \frac{\zeta^l\ycd(x)}{\zeta^k\yab(x)}.
+   \end{equation}
+  
+  In \S \ref{subsec:riemann_surface} we established that multiplication of a branch with $\zeta$ corresponds to moving
+  one sheet up on the Riemann surface. Thus, 
+  we can interpret the value of the shifting function at a point $\xt \in V$ geometrically as
+  $\cycdl$ running $s(\xt)+l-k$ sheets above $\cyabk$ at $\xt$, if we deform these cycles homotopically such that their
+  projections to the $x$-plane meet at the point $\xt$.
+  
+ This information can be used to determine the intersection number in the following way. We deform the cycles homotopically
+ such that $\pr(\cyabk) \cap \pr(\cycdl) = \{ \xt \}$ for some $\xt \in V$. Consequently, on $\cu$ they can at most intersect in
+ points in $\pr^{-1}(\xt)$. By definition, any cycle in $\Gamma$ only runs on two neighbouring sheets, which already implies
+ \begin{equation}
+   \left(\cyab^{(k)} \circ \cycd^{(l)}\right) = 0, \quad \text{if} \quad  s(\xt)+l-k \not\in \{-1,0,1\}.
+ \end{equation}
+  In the other cases we can determine the
+  sign of possible intersections by taking into account the orientation of the cycles.
+  
+ We continue the proof with the next simplest case:
+ \begin{proof}\let\qed\relax (of case $(i)$) \\
+ Here we have $[a,b] = [c,d]$. We deform the cycles such that they only intersect above
+ $\xt = \frac{b+a}{2} \in  \vab= V$.
+ We easily see that $s(\xt) + l - k = l - k$ and that trivially $\left( \cyabk \circ \cyabk \right) = 0$ holds. The remaining cases,
+ where $l = k \pm 1$, are handled in Figure \ref{m-fig:int_self_shift} below.
+   Illustrated are the cycles $\cyabk$ (black),
+      $\cyab^{(k+1)}$ (red) and $\cyab^{(k-1)}$ (green).
     \begin{figure}[H]
       \begin{center}
    \input{images/tikz_pic_3.tex}
@@ -93,34 +122,67 @@
     \caption{Intersections of self-shifts.}
     \label{fig:int_self_shift}
 \end{figure}
-   \item[($iii$)]
-  In the case $[a,b] \cap [c,d] = \{ x_0 \}$ we cannot compute the shifting number at $x_0$ directly, since $x_0 \not\in V = \vab \cap \vcd$. Instead, we choose a point $\xt$ on the bissectrix of
-  $[a,b]$ and $[c,d]$, close enough to $x_0$, such that $[\xt,x_0[  \subset  V$. Then, for all $x \in [\xt,x_0[$ we compute the shifting number $s = s(\cyab,\cycd,x)$ as
-  \begin{align}
-   \zeta^s & = \frac{\ycd(x)}{\yab(x)} = \frac{(1- \ucd(x)^2)\mr (d-c)^{\frac{d}{m}}\ytcd(x) }{(1-\uab(x)^2)\mr (b-a)^{\frac{d}{m}}\ytab(x)} \\
-   %\Rightarrow \frac{2\pi s}{m} = \arg \left( \frac{(1- u_{c,d}(x)^2)\mr}{(1-u_{a,b}(x)^2)\mr} \right) + \arg \left( \frac{(d-c)^{\frac{d}{m}} \ytcd(x)}{(b-a)^{\frac{d}{m}} \ytab(x)} \right) \\
-   \Rightarrow  s & = \frac{1}{2\pi} \left( \arg \left( \frac{(1- \ucd(x)^2)}{(1-\uab(x)^2)} \right) + m \cdot \arg \left( \frac{(d-c)^{\frac{d}{m}} \ytcd(x)}{(b-a)^{\frac{d}{m}}
-   \ytab(x)} \right) \right)
-  \end{align}
-  Letting $x$ tend to $x_0$ on the bissectrix and taking
-  \todo{this must be done actually}
-  \begin{align}
-   \theta = \lim_{x \rightarrow x_0} \arg \left( \frac{(1- \ucd(x)^2)}{(1-\uab(x)^2)} \right)
-  \end{align}
-  we obtain equation \eqref{m-eq:shift_numb}. In any of the cases, this limit exists and it depends only on the choice of $\xt$. We will now proof ($iii$) for one of these cases.
+  We see that indenpently of $s(\xt)$, $s_+ = (k+1)-k = 1$ and $s_- = (k-1)-k = -1$ are as claimed.
+ \end{proof}
 
-
-  \begin{center}
-   \underline{Case: $x_0 = b = c$}
-  \end{center}
-  As you can see in Figure \ref{m-fig:set_v} the set $V$ is not connected, but the disjoint union of two open sets that are seperated by the local branch cuts. Here, we choose $\xt$ on the upper bissectrix.
-   \begin{figure}[H]
+  In the cases $(ii)-(iv)$ we have $[a,b] \cap [c,d] = \{ x_0 \}$ where $x_0$ is either $a$ or $b$ and $s(x_0)$ is not
+  defined. 
+  
+ Following our strategy, we choose a point $\xt \in \C \setminus X$ on the bisectrix of
+  $[a,b]$ and $[c,d]$ that is close enough to $x_0$ such that $[\xt,x_0[ \subset V = \vab \cap \vcd$ 
+  (see Figure \ref{m-fig:set_v} for the case $x_0 = b$). 
+  
+  Now, $s(\xt)$ can be computed using the argument function
+  \begin{equation}\label{eq:sxt}
+   s(\xt) = \frac{m}{2\pi} \arg \left( \frac{\ycd(\xt)}{\yab(\xt)} \right).
+  \end{equation}
+   
+    \begin{figure}[H]
       \begin{center}
    \input{images/tikz_pic_4.tex}
-      \end{center}x
+      \end{center}
     \caption{The set $V = \vab \cap \vbd$.}
     \label{fig:set_v}
 \end{figure}
+   
+   \begin{proof}\let\qed\relax (of case $(ii)$) \\
+   In this case ($x_0 = b = c$) we choose $\xt$ on the upper bisectrix, as shown in Figure \ref{m-fig:set_v}, 
+   and compute $s(\xt)$ with \eqref{m-eq:sxt}.
+   
+   Again, the non-trivial cases where $s(\xt) + l - k \in \{1,0,-1\}$, are shown in Figure \ref{m-fig:int_b=c}.
+   Illustrated are the cycles $\cyab^k$ (black), $\cycd^{k-s(\xt)}$ (gray), $\cycd^{k-s(\xt) + 1 }$ (green) and
+    $\cycd^{k-s(\xt)-1}$ (red),
+    \begin{figure}[H]
+      \begin{center}
+   \input{images/tikz_pic_5.tex}
+      \end{center}
+    \caption{Intersections for $b=c$.}
+    \label{fig:int_b=c}
+   \end{figure}
+    By Lemma \ref{lemma:sxt=sx} (1) we have $s(\xt) = s_b$, which implies
+    \begin{align*}
+    & s_+ = k-s(\xt)-k = s_b, \\
+    & s_- = k-s(\xt)+1-k = 1-s_b
+    \end{align*}
+  as claimed.
+  \end{proof}
+ 
+ \begin{proof}(of cases $(iii) + (iv)$)
+  \todo ...
+ \end{proof}
+
+ 
+  
+\begin{lemma}\label{lemma:sxt=sx}
+  \begin{itemize}
+   \item[(1)] In the proof of case $(ii)$ of Theorom \ref{m-thm:intsec_numb}, choosing $\xt$ on the upper bisectrix
+   of $[a,b],[b,d]$, suffices $s(\xt) = s_b$ as defined in \eqref{m-eq:sxt} and \eqref{m-eq:s_x} respectively.
+    \item[(2)] In the proof of the cases $(iii)$ and $(iv)$ of Theorom \ref{m-thm:intsec_numb}, choosing $\xt$ on the upper bisectrix
+   of $[a,b],[a,d]$, suffices $s(\xt) = s_a$ as defined in \eqref{m-eq:sxt} and \eqref{m-eq:s_x} respectively.
+  \end{itemize}
+\end{lemma}
+ \begin{proof}
+ \todo Rework.
   With $\rho = \arg\left(\frac{b-a}{d-b}\right)$ we have that
   \begin{align*}
    & \arg (1+\ubd(x)) = \frac{\pi+\rho}{2} \quad \text{for all}  x \in [\xt,x_0[,\\
@@ -132,29 +194,57 @@
   \begin{align*}
    \theta = \frac{\pi+\rho}{2} - \left(-\frac{\pi+\rho}{2}\right) = \pi + \rho.
   \end{align*}
-  Assuming that the shifting number $s=s(\cyab,\cycd,\xt)$ is computed as above, we can now determine the intersections graphically. \abstandl
-  As before, the only interesting cases
-  are $s \in \{0,\pm 1\}$. Figure \ref{m-fig:int_b=c} displays the cycles $\cyab$ (black) and $\cycd$ in green ($s=1$), gray ($s=0$) and red ($s=-1$).
-  We can read off the intersection numbers
-  \begin{align*}
-    \left(\cyab \circ \cycd\right) = \begin{cases}
-                                          +1, \quad & \text{if} \quad s=0,\\
-                                          -1, \quad & \text{if} \quad s=1,\\
-                                          \quad\!0, \quad & \text{otherwise}.
-                                         \end{cases}
-  \end{align*}
-  The relation \eqref{m-eq:shift_numb_rel} extends this to $\left(\cyabl \circ \cycdk\right)$ as claimed.
-  \begin{figure}[H]
-      \begin{center}
-   \input{images/tikz_pic_5.tex}
-      \end{center}
-    \caption{Intersections for $b=c$ and $s \in \{1,0,-1\}$.}
-    \label{fig:int_b=c}
-\end{figure}
- \end{itemize}
-  \end{proof}
+  \begin{equation}
+   \equiv \frac{1}{2\pi}\left( \theta(x) + m \arg \left( \frac{ \ccd \ytcd(x)}{ \cab
+   \ytab(x)} \right) \right) \bmod m
+   \theta(x) = \arg(1+\ucd(x)) + \arg(1-\ucd(x)) - \arg(1+\uab(x)) - \arg(1-\ucd(x)).
+  \end{equation}
+    \begin{align}\label{eq:s(x)2}
+  \begin{split}
+   \zeta^{s(x)} & = \frac{\ycd(x)}{\yab(x)} = \frac{(1- \ucd(x)^2)\mr \ccd \ytcd(x) }{(1-\uab(x)^2)\mr \cab \ytab(x)} \\
+   \Rightarrow  s(x) & \equiv \frac{m}{2\pi} \left( \arg \left( \frac{(1- \ucd(x)^2)\mr}{(1-\uab(x)^2)\mr} \right) + \arg \left( \frac{ \ccd \ytcd(x)}{ \cab
+   \ytab(x)} \right) \right) \bmod m
+  \end{split}
+  \end{align}
+ \end{proof}
 
 
+\begin{rmk}
+  \todo Rework. Note that depending on our choice of $\xt$ (either on the upper or the lower bisectrix), the path
+  $[\xt,x_0[$ will be contained in different connected components of $V$. Although the value of
+  $s(\xt)$ will change, the intersection number is independent of that choice.
+\end{rmk}
+
+
+%  The problem here is that $\theta(x_0)$ is not defined. We resolve this by
+%   choosing a point $\xt$ on the bisectrix of
+%   $[a,b]$ and $[c,d]$, close enough to $x_0$, such that $[\xt,x_0[ \subset  V = \vab \cap \vab$. 
+%   Staying away from the branch cuts (see Figure \ref{m-fig:set_v}), $\theta(x)$ is continous on $[\xt,x_0[$ and can be continously continued to $x_0$ (this is done below). 
+%   Therefore, the limit
+%   \begin{equation}
+%      \theta(x_0) := \lim_{\xt \rightarrow x_0} \theta(\xt) 
+%   \end{equation}
+%   exists and we can compute the shifting function $s(x_0)$.
+
+%   Assuming that the shifting number $s=s(\cyab,\cycd,\xt)$ is computed as above, we can now determine the intersections graphically. \abstandl
+%   As before, the only interesting cases
+%   are $s \in \{0,\pm 1\}$. Figure \ref{m-fig:int_b=c} displays the cycles $\cyab$ (black) and $\cycd$ in green ($s=1$), gray ($s=0$) and red ($s=-1$).
+%   We can read off the intersection numbers
+%   \begin{align*}
+%     \left(\cyab \circ \cycd\right) = \begin{cases}
+%                                           +1, \quad & \text{if} \quad s=0,\\
+%                                           -1, \quad & \text{if} \quad s=1,\\
+%                                           \quad\!0, \quad & \text{otherwise}.
+%                                          \end{cases}
+%   \end{align*}
+%   The relation \eqref{m-eq:shift_numb_rel} extends this to $\left(\cyabl \circ \cycdk\right)$ as claimed.
+%   \begin{figure}[H]
+%       \begin{center}
+%    \input{images/tikz_pic_5.tex}
+%       \end{center}
+%     \caption{Intersections for $b=c$ and $s \in \{1,0,-1\}$.}
+%     \label{fig:int_b=c}
+% \end{figure}
 
 %  \begin{defn}\label{def:shift_numb}
 %  Let $\cyab, \cycd \in C$ be elementary cycles and let $V = V_{a,b} \cap V_{c,d}$. Then, $\yab$ and $\ycd$ are analytic functions with no zeros on $V$. For each $x \in V$ there
