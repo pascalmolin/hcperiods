@@ -13,8 +13,9 @@
 #include "complex_extras.h"
 #include "mag_func.h"
 
-#define VBS 0
+#define VBS 1
 #define progress(...) if (VBS) flint_printf(__VA_ARGS__);
+#define DEBUG 1
 
 /******************************************************************************
 
@@ -163,8 +164,8 @@ typedef abel_jacobi_struct abel_jacobi_t[1];
 void sec_init(sec_t * c, slong m, acb_srcptr x, slong d);
 void sec_clear(sec_t c);
 
-void abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d);
-void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_poly_t f, slong prec);
+void abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d, int flag);
+void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_poly_t f, int flag, slong prec);
 void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
@@ -215,7 +216,7 @@ void gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n
 void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const cohom_t dz, const de_int_t de, slong prec);
 void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec);
 void integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec);
-void integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, const cohom_t dz, slong prec);
+void integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec);
 void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
 void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
 

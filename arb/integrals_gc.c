@@ -19,6 +19,10 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slo
     arb_init(x);
     acb_init(y);
     acb_init(yxi);
+#if DEBUG
+    flint_printf("\ngc integral : d1 = %ld, d = %ld, g = %ld, n = %ld, prec = %ld",
+            d1, d, g, n, prec);
+#endif
 
     /* compute integral */
     _acb_vec_zero(res, g);
@@ -39,15 +43,23 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slo
         /* differentials : j = 1 && i < g */
         acb_set(yxi, y);
         acb_add(res + 0, res + 0, yxi, prec);
+#if 0 && DEBUG
+        flint_printf("\nl = %ld, res[%ld] = ", l, 0);
+        acb_printd(res + 0, 20);
+#endif
 
         for (i = 1; i < g; i++)
         {
             acb_mul_arb(yxi, yxi, x, prec);
             acb_add(res + i, res + i, yxi, prec);
+#if 0 && DEBUG
+            flint_printf("\nl = %ld, res[%ld] = ", l, i);
+            acb_printd(res + i, 20);
+#endif
         }
 
         continue;
-        /* could reuse -x, but not a big deal */
+        /* TODO: could reuse -x, but not a big deal */
 
         if (l == 0)
             continue;
@@ -91,7 +103,8 @@ void
 integrals_edge_gc(acb_ptr res, ydata_t ye, sec_t c, slong n, slong prec)
 {
     gc_integrals(res, ye->u, ye->n1, c.n - 2, c.g, n, prec);
-    integrals_edge_factors_gc(res, ye->c, ye->ba2, c, prec);
+    /*integrals_edge_factors_gc(res, ye->c, ye->ba2, c, prec);*/
+    integrals_edge_factors(res, ye->c, ye->ba2, c, prec);
 }
 
 void

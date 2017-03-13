@@ -32,7 +32,7 @@ enum { XN1, EXP, BERN, COEFF };
 
 int main(int argc, char * argv[])
 {
-    int i, print = 1, type = XN1;
+    int i, print = 1, type = XN1, flag = 0, big = 0;
     slong n = 9, m = 4, prec = 250, digits = 0;
     acb_poly_t poly;
     abel_jacobi_t aj;
@@ -41,7 +41,7 @@ int main(int argc, char * argv[])
 
     if (argc < 2)
     {
-        flint_printf("periods [-m m] [-n n] [--prec p]\n");
+        flint_printf("periods [-m m] [-n n] [--prec p] [--de]\n");
         flint_printf("Print period matrix of curve y^m = f_n(x).\n");
         flint_printf("Default m = 4, n = 9, f_n(x) = x^n + 1, prec = 250.\n");
         flint_printf("Other polynomials f_n(x):\n");
@@ -57,6 +57,10 @@ int main(int argc, char * argv[])
 
     for (i = 1; i < argc; i++)
     {
+        if (!strcmp(argv[i], "--de"))
+        {
+            flag = 1;
+        }
         if (!strcmp(argv[i], "--quiet"))
         {
             print = 0;
@@ -100,9 +104,13 @@ int main(int argc, char * argv[])
             i++;
             n = atol(argv[i++]);
             for (j = 0; j <= n && i < argc; j++, i++)
-                acb_poly_set_coeff_si(poly, j, atol(argv[i]));
+                acb_poly_set_coeff_si(poly, n - j, atol(argv[i]));
         }
-    }
+        else if (!strcmp(argv[i], "--big"))
+        {
+            big = 1;
+        }
+     }
     if (!digits)
         digits = (slong)(prec * .301);
 
@@ -115,11 +123,19 @@ int main(int argc, char * argv[])
     else if (type != COEFF)
         abort();
 
-    abel_jacobi_init_poly(aj, m, poly, prec);
+    abel_jacobi_init_poly(aj, m, poly, flag, prec);
     abel_jacobi_compute(aj, prec);
 
     if (print)
-        acb_mat_printd(aj->tau, digits);
+    {
+        if (big)
+        {
+            acb_mat_printd(aj->omega0, digits);
+            acb_mat_printd(aj->omega1, digits);
+        }
+        else
+            acb_mat_printd(aj->tau, digits);
+    }
 
     abel_jacobi_clear(aj);
     acb_poly_clear(poly);

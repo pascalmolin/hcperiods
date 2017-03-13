@@ -19,6 +19,10 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
     acb_init(wy);
     acb_init(wyx);
 
+#if DEBUG
+    flint_printf("\nde integral, d1=%ld, d=%ld, prec=%ld\n", d1, d, prec);
+#endif
+
     /* compute integral */
     _acb_vec_zero(res, c.g);
     for (l = 0; l < de->n; l++)
@@ -48,6 +52,10 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
             acb_vec_add_geom_arb(r, ni, wyx, de->x + l, prec);
             r += ni;
         }
+#if 0 && DEBUG
+        flint_printf("\nl = %ld, res = ", l);
+        _acb_vec_printd(res, c.g, 30, "\n");
+#endif
 
         if (l == 0)
             continue;
@@ -78,6 +86,11 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
 
     _acb_vec_scalar_mul_arb(res, res, c.g, de->factor, prec);
 
+#if 0 && DEBUG
+        flint_printf("\nend integration ");
+        _acb_vec_printd(res, c.g, 30, "\n");
+#endif
+
     arb_clear(x);
     acb_clear(y);
     acb_clear(wy);
@@ -104,7 +117,7 @@ void
 integrals_edge_de(acb_ptr res, ydata_t ye, sec_t c, const cohom_t dz, const de_int_t de, slong prec)
 {
     de_integrals_precomp(res, ye->u, ye->n1, c.n - 2, c, dz, de, prec);
-    integrals_edge_factors(res, ye->c, ye->ba2, c, dz, prec);
+    integrals_edge_factors(res, ye->c, ye->ba2, c, prec);
 }
 
 void
@@ -117,9 +130,17 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t
 
     n = de_params_tree(&h, tree, c, prec);
     de_int_init(de, h, n, c.m, prec);
+#if DEBUG
+    flint_printf("\nprecomputed DE, n = %ld, h = %lf, prec=%ld\n", n, h, prec);
+#endif
 
     for (k = 0; k < c.n - 1; k++)
         integrals_edge_de(integrals->rows[k], tree->data + k, c, dz, de, prec);
+
+#if DEBUG
+    flint_printf("\ntree integrals\n", n, h, prec);
+    acb_mat_printd(integrals, 30);
+#endif
 
     de_int_clear(de);
 }

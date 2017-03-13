@@ -6,7 +6,7 @@
 
 #include "abel_jacobi.h"
 
-#define PARAMS 0
+#define PARAMS 1
 
 double
 distance_ellipse_d(double x, double y, double a)

@@ -7,7 +7,7 @@
 #include "abel_jacobi.h"
 
 void
-abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n)
+abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n, int flag)
 {
     slong g;
 
@@ -19,7 +19,7 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n)
         abort();
     }
 
-    aj->type = (m == 2) ? INT_GC : INT_DE;
+    aj->type = (!flag && m == 2) ? INT_GC : INT_DE;
 
     tree_init(aj->tree, n - 1);
     aj->dz = flint_malloc(g * sizeof(dform_t));
@@ -35,7 +35,7 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n)
 }
 
 void
-abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_poly_t f, slong prec)
+abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_poly_t f, int flag, slong prec)
 {
     slong n;
     acb_ptr x;
@@ -47,7 +47,9 @@ abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_poly_t f, slong prec)
         flint_printf("missing roots, abort.\n");
         abort();
     }
-    abel_jacobi_init_roots(aj, m, x, n);
+    /* order them */
+    _acb_vec_sort_pretty(x, n);
+    abel_jacobi_init_roots(aj, m, x, n, flag);
     _acb_vec_clear(x, n);
 }
 
@@ -65,15 +67,22 @@ abel_jacobi_clear(abel_jacobi_t aj)
     flint_free(aj->dz);
 }
 
-    void
+void
 abel_jacobi_compute(abel_jacobi_t aj, slong prec)
 {
     sec_t c = aj->c;
     acb_mat_t integrals;
+#if DEBUG
+    flint_printf("\nuse points X = ");
+    _acb_vec_printd(aj->c.roots, c.n, 30, "\n");
+#endif
 
     /* homology */
     progress("## spanning tree\n");
     spanning_tree(aj->tree, c.roots, c.n, aj->type);
+#if DEBUG
+    tree_print(aj->tree);
+#endif
 
     tree_ydata_init(aj->tree, c.roots, c.n, c.m, prec);
 
@@ -84,18 +93,26 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
     holomorphic_differentials(aj->dz, c.n, c.m);
 
     /* integration */
-    progress("## integrals\n");
+    progress("## integrals %s\n", (aj->type == INT_GC) ? "gc" : "de");
     acb_mat_init(integrals, c.n-1, c.g);
     if (aj->type == INT_GC)
         integrals_tree_gc(integrals, c, aj->tree, prec);
     else
         integrals_tree_de(integrals, c, aj->tree, aj->dz, prec);
     tree_ydata_clear(aj->tree);
+#if DEBUG
+    flint_printf("\n");
+    acb_mat_printd(integrals, 20);
+#endif
 
     /* period matrices */
     progress("## periods\n");
     period_matrix(aj->omega0, aj->loop_a, aj->dz, integrals, c, prec);
     period_matrix(aj->omega1, aj->loop_b, aj->dz, integrals, c, prec);
+#if DEBUG
+    acb_mat_printd(aj->omega0, 20);
+    acb_mat_printd(aj->omega1, 20);
+#endif
 
     acb_mat_clear(integrals);
 

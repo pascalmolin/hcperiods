@@ -152,8 +152,8 @@ void
 tree_print(const tree_t tree)
 {
     slong k;
-    flint_printf("\n[%ld",tree->n);
+    flint_printf("\n[%lf, %ld",tree->r, tree->n);
     for (k = 0; k < tree->n; k++)
-        flint_printf(",[%ld,%ld]%s",tree->e[k].a,tree->e[k].b);
+        flint_printf(",[%ld,%ld]",tree->e[k].a,tree->e[k].b);
     flint_printf("]\n");
 }

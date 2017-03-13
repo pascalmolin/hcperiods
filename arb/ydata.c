@@ -6,6 +6,34 @@
 
 #include "abel_jacobi.h"
 
+/* cab on component n */
+static void
+constant_cab(acb_t c, const acb_t ba2, slong n1, slong n, slong m, slong prec)
+{
+    slong k;
+
+    acb_pow_ui(c, ba2, n, prec);
+    if ((k = arb_is_negative(acb_realref(c))))
+        acb_neg(c, c);
+
+    acb_root_ui(c, c, m, prec);
+
+    if ((k + n1) % 2 == 0)
+    {
+        acb_t z;
+        acb_init(z);
+        acb_unit_root(z, 2 * m, prec);
+        acb_mul(c, c, z, prec);
+        acb_clear(z);
+    }
+
+    if (acb_contains_zero(c))
+    {
+        flint_printf("\n\nERROR: Cab contains 0\nm, n = %ld, %ld\n\n", m, n);
+        abort();
+    }
+}
+
 /* u[0..n1[ contains roots re(ui)>0
    u[n1..n-2[ roots with re(ui) <= 0
    the last two components are set to
@@ -70,8 +98,9 @@ limit_edge(acb_t z, acb_srcptr uab, slong nab, slong n, slong m, int x, slong pr
 void
 ydata_init_edge(ydata_t yab, acb_srcptr x, edge_t e, slong n, slong m, slong prec)
 {
-    slong k, l;
+    slong l;
     acb_ptr u;
+
     u = _acb_vec_init(n - 2 + 5);
     l = ab_points(u, x, e, n, m, prec);
 
@@ -86,25 +115,7 @@ ydata_init_edge(ydata_t yab, acb_srcptr x, edge_t e, slong n, slong m, slong pre
     yab->ya =  u + n + 1;
     yab->yb =  u + n + 2;
 
-    /* cab on component n */
-    acb_pow_ui(yab->c, yab->ba2, n, prec);
-    if ((k = arb_is_negative(acb_realref(yab->c))))
-        acb_neg(yab->c, yab->c);
-    acb_root_ui(yab->c, yab->c, m, prec);
-    if ((k + l) % 2 == 0)
-    {
-        acb_t z;
-        acb_init(z);
-        acb_unit_root(z, 2*m, prec);
-        acb_mul(yab->c, yab->c, z, prec);
-        acb_clear(z);
-    }
-
-    if (acb_contains_zero(yab->c))
-    {
-        flint_printf("\n\nERROR: Cab contains 0\nm, n = %ld, %ld\n\n", m, n);
-        abort();
-    }
+    constant_cab(yab->c, yab->ba2, l, n, m, prec);
 
     /* limits at a and b */
     limit_edge(yab->ya, u, l, n, m, -1, prec);

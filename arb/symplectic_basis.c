@@ -44,7 +44,15 @@ symplectic_basis(homol_t alpha, homol_t beta, const tree_t tree, sec_t c)
     fmpz_mat_init(p, len, len);
     /* compute big intersection matrix, size len = (d-1)*(m-1) */
     intersection_tree(m, tree, c.n, c.m);
+#if DEBUG
+    fmpz_mat_print_pretty(m);
+    flint_printf("\n");
+#endif
     symplectic_reduction(p, m, c.g);
+#if DEBUG
+    fmpz_mat_print_pretty(p);
+    flint_printf("\n");
+#endif
     fmpz_mat_clear(m);
 
     for (i = 0; i < c.g; i++)
