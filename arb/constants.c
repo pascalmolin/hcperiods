@@ -109,7 +109,7 @@ integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, s
     acb_init(zj);
     acb_init(cj);
     acb_unit_root(z, c.m, prec);
-#if DEBUG
+#if 0 && DEBUG
         flint_printf("\nuse zeta = ");
         acb_printd(z, 30);
 #endif
@@ -118,13 +118,13 @@ integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, s
     {
         slong ni = imax(j, c.m, c.n, c.delta);
 
-#if DEBUG
+#if 0 && DEBUG
         flint_printf("\nshift by cab = ");
         acb_printd(cab, 30);
 #endif
         /* polynomial shift by cab */
         acb_vec_polynomial_shift(res, ni, cab, prec);
-#if DEBUG
+#if 0 && DEBUG
         flint_printf("\nshifted = ");
         _acb_vec_printd(cab, c.g, 30, "\n");
 #endif
@@ -135,7 +135,7 @@ integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, s
         acb_neg(zj, zj);
         acb_pow_ui(cj, cab, j, prec);
         acb_div(cj, zj, cj, prec);
-#if DEBUG
+#if 0 && DEBUG
         flint_printf("\nmul by cj = ");
         acb_printd(cj, 30);
 #endif
@@ -146,7 +146,7 @@ integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, s
         acb_vec_mul_geom(res, ni, cj, ba2, prec);
         res += ni;
     }
-#if DEBUG
+#if 0 && DEBUG
     flint_printf("\n-> done ");
     _acb_vec_printd(res - c.g, c.g, 30, "\n");
 #endif

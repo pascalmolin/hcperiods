@@ -89,7 +89,7 @@ generate()
                 acb_poly_init(pol);
                 vf[f](pol, vn[in], prec);
 
-                abel_jacobi_init_poly(aj, 2, pol, prec);
+                abel_jacobi_init_poly(aj, 2, pol, 0, prec);
                 /* should not be necessary */
                 abel_jacobi_compute(aj, prec);
 
@@ -147,7 +147,7 @@ check_periods()
                     slong c;
                     abel_jacobi_t aj;
 
-                    abel_jacobi_init_poly(aj, vm[im], pol, prec);
+                    abel_jacobi_init_poly(aj, vm[im], pol, 0, prec);
                     abel_jacobi_compute(aj, prec);
 
                     /* check 4 entries of each matrix */

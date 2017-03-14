@@ -65,3 +65,23 @@ _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep)
         flint_printf(" * I");
     }
 }
+
+/* adapted from acb_vec_sort_pretty */
+typedef int(*__compar_fn_t) (const void *, const void *);
+int acb_cmp_lex(const acb_t a, const acb_t b)
+{
+    arb_t t;
+    int res;
+    arb_init(t);
+    res = 0;
+	arb_sub(t, acb_realref(a), acb_realref(b), MAG_BITS);
+    if (arb_contains_zero(t))
+		arb_sub(t, acb_imagref(a), acb_imagref(b), MAG_BITS);
+	res = arb_is_positive(t) ? 1 : -1;
+    arb_clear(t);
+    return res;
+}
+void _acb_vec_sort_lex(acb_ptr vec, slong len)
+{
+    qsort(vec, len, sizeof(acb_struct), (__compar_fn_t) acb_cmp_lex);
+}

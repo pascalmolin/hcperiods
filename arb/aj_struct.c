@@ -47,8 +47,16 @@ abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_poly_t f, int flag, slong p
         flint_printf("missing roots, abort.\n");
         abort();
     }
-    /* order them */
-    _acb_vec_sort_pretty(x, n);
+    /* set real roots to exact real */
+    if (acb_poly_validate_real_roots(x, f, prec))
+    {
+        slong k;
+        for (k = 0; k < n; k++)
+            if (arb_contains_zero(acb_imagref(x + k)))
+                arb_zero(acb_imagref(x + k));
+    }
+    /* and order them */
+    _acb_vec_sort_lex(x, n);
     abel_jacobi_init_roots(aj, m, x, n, flag);
     _acb_vec_clear(x, n);
 }
@@ -110,7 +118,9 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
     period_matrix(aj->omega0, aj->loop_a, aj->dz, integrals, c, prec);
     period_matrix(aj->omega1, aj->loop_b, aj->dz, integrals, c, prec);
 #if DEBUG
+    progress("periods A\n");
     acb_mat_printd(aj->omega0, 20);
+    progress("periods B\n");
     acb_mat_printd(aj->omega1, 20);
 #endif
 

@@ -13,9 +13,9 @@
 #include "complex_extras.h"
 #include "mag_func.h"
 
-#define VBS 1
+#define VBS 0
 #define progress(...) if (VBS) flint_printf(__VA_ARGS__);
-#define DEBUG 1
+#define DEBUG 0
 
 /******************************************************************************
 
@@ -238,6 +238,7 @@ void acb_vec_polynomial_shift(acb_ptr x, slong len, const acb_t c, slong prec);
 void acb_vec_mul_geom(acb_ptr x, slong len, acb_t c0, const acb_t c, slong prec);
 void acb_vec_add_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong prec);
 void acb_vec_sub_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong prec);
+void _acb_vec_sort_lex(acb_ptr vec, slong len);
 
 /* tests/bench only */
 void acb_vec_set_random(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);

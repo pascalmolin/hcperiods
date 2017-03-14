@@ -27,7 +27,7 @@ int main() {
                 abel_jacobi_t aj;
 
                 progress("[n=%ld, m=%ld]",n,m);
-                abel_jacobi_init_roots(aj, m, x, n);
+                abel_jacobi_init_roots(aj, m, x, n, 0);
                 abel_jacobi_compute(aj, prec);
 
                 abel_jacobi_clear(aj);
