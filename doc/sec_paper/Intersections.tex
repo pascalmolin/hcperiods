@@ -76,7 +76,7 @@
   $(a,b),(c,d)$ are edges in a spanning tree this is equivalent to $\{a,b\} \cap \{c,d\} = \varnothing$, thus
   proving $(v)$.
   \end{proof}
-   In order to prove $(i)-(iv)$ we have to work a little harder.  Since the $\yab(x),\ycd(x)$ are branches of $\cu$,
+   In order to prove $(i)-(iv)$ we have to introduce some machinery. Since the $\yab(x),\ycd(x)$ are branches of $\cu$,
    on the set $\C \setminus X$
    we can define the \emph{shifting function}
    $s(x)$, that takes values in $\Z/m\Z$, implicitly via
@@ -117,7 +117,7 @@
       $\cyab^{(k+1)}$ (red) and $\cyab^{(k-1)}$ (green).
     \begin{figure}[H]
       \begin{center}
-   \input{images/tikz_pic_3.tex}
+   \input{images/intsec_selfshift.tex}
       \end{center}
     \caption{Intersections of self-shifts.}
     \label{fig:int_self_shift}
@@ -139,7 +139,7 @@
    
     \begin{figure}[H]
       \begin{center}
-   \input{images/tikz_pic_4.tex}
+   \input{images/set_v_b=c.tex}
       \end{center}
     \caption{The set $V = \vab \cap \vbd$.}
     \label{fig:set_v}
@@ -154,7 +154,7 @@
     $\cycd^{k-s(\xt)-1}$ (red),
     \begin{figure}[H]
       \begin{center}
-   \input{images/tikz_pic_5.tex}
+   \input{images/intsec_b=c.tex}
       \end{center}
     \caption{Intersections for $b=c$.}
     \label{fig:int_b=c}
@@ -166,6 +166,16 @@
     \end{align*}
   as claimed.
   \end{proof}
+ 
+ \begin{figure}[H]
+      \begin{center}
+   \input{images/set_v_a=c.tex}
+      \end{center}
+    \caption{The set $V = \vab \cap \vad$.}
+    \label{fig:set_v}
+\end{figure}
+   
+ 
  
  \begin{proof}(of cases $(iii) + (iv)$)
   \todo ...
