@@ -164,7 +164,7 @@
    The distance $d_k=\dist(u_k,ε_r)$ from a branch point $u_k$
    to the ellipse $ε_r$ can be computed
    applying Newton method to the scalar product function
-   $f(t) = \Re(\overline{z'}(u_k-z))$, where $z = \cos(t-iρ)$ and
+   $f(t) = \Re(\overline{z'}(u_k-z))$, where $z = \cos(t-ir)$ and
    we take $t=\Re(\arccos(u_k))$ as a starting point.
    By convexity of the ellipse,
    the solution is unique on the quadrant containing $u_k$.
@@ -185,7 +185,7 @@
    \[ D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\sin(t_k-ir_k)} \]
    \end{itemize}
 
-   Let $K$ be the number of brach points $u_k$ such that $r_k=r_0$ and 
+   Let $K$ be the number of branch points $u_k$ such that $r_k=r_0$ and 
    \[ M_0 = (\prod_{r_k = r_0} D_k\prod_{r_k>r_0}d_k)^{-j/m}, \]
    then the integrand is bounded on $ε_{r_0-η}$ by
    \[ M(r_0-η) = M_0 η^{-\frac{Kj}m} (1+O(η)). \]
@@ -307,7 +307,7 @@
    we use the powers $0\leq i\leq n_i = \floor{\frac{nj-δ}m}$, with $\sum n_i = g$).
 
    Without polynomial shift \eqref{eq:polshift}, this numerator should be
-   $x_k=u_k+\frac{b+a}{b-a}2$. However, $x_k$ is a complex number while $u_k$
+   $x_k=u_k+\frac{b+a}{b-a}$. However, $x_k$ is a complex number while $u_k$
    is real, so computing with $u$ saves a factor almost 2 on the running time.
 
    
