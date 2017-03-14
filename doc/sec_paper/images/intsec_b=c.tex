@@ -1,0 +1,63 @@
+\begin{tikzpicture}
+% Intersections for b = c
+
+  \draw (-3.6,2) node {$a$};  \draw (0,2) node {$b$};  \draw (1.8,5.117) node {$d$}; 
+  
+  
+% Intersections
+    \draw (-0.35,4.606) node[cross=3pt,black,rotate=80]{};
+    \draw (-0.25,5) node {$-1$};    
+    \draw (-0.35,0.606) node[cross=3pt,black,rotate=80]{};
+    \draw (0.0,0.5) node {$+1$}; 
+
+% Sheet 4
+    \draw (-3.6,8) circle (0.8pt); 
+    \draw (0,8) circle (0.8pt);   
+    \draw (1.8,11.117) circle (0.8pt); 
+    \draw [densely dashed] (-4.8,8) -- (-3.6,8);
+    \draw [densely dashed] (0,8) -- (1.2,8); 
+    \draw [densely dashed] (0,8) -- (-0.6,8-1.04);
+    \draw [densely dashed] (1.8,11.117) -- (2.4,12.156);
+    \draw [green] (1.95,11.377) .. controls (0.2,12) and (1.5,6.8) .. (-0.4,7.3) [halfarrow1];
+
+% Sheet 3
+    \draw (-3.6,4) circle (0.8pt); 
+    \draw (0,4) circle (0.8pt);   
+    \draw (1.8,7.117) circle (0.8pt);   
+    \draw [densely dashed] (-4.8,4) -- (-3.6,4);
+    \draw [densely dashed] (0,4) -- (1.2,4); 
+    \draw [densely dashed] (0,4) -- (-0.6,4-1.04);
+    \draw [densely dashed] (1.8,7.117) -- (2.4,8.156);
+    \draw (-4.1,4) .. controls (-4,2.5) and (0.4,5.95) .. (0.45,4) [halfarrow2];
+    \draw [green] (1.95,7.377) .. controls (2.8,7) and (2,5.5) .. (-0.35,4.606) [halfarrow2];
+    \draw [green] (-0.35,4.606) arc(110:245:0.7cm) [halfarrow2];
+    \draw [gray] (1.95,7.377) .. controls (0.2,8) and (1.5,2.8) .. (-0.4,3.3) [halfarrow1];
+  
+  
+% Sheet 2
+    \draw (-3.6,0) circle (0.8pt); 
+    \draw (0,0) circle (0.8pt);   
+    \draw (1.8,3.117) circle (0.8pt); 
+    \draw [densely dashed] (-4.8,0) -- (-3.6,0);
+    \draw [densely dashed] (0,0) -- (1.2,0); 
+    \draw [densely dashed] (0,0) -- (-0.6,-1.04);
+    \draw [densely dashed] (1.8,3.117) -- (2.4,4.156);
+    \draw (-4.1,0) .. controls (-4,1) and (0.4,1.5) .. (-0.45,0.4) [halfarrow1];
+    \draw [gray] (1.95,3.377) .. controls (2.8,3) and (2,1.5) .. (-0.35,0.606) [halfarrow2];
+    \draw (-0.45,0.4) arc(150:342:0.5cm) [halfarrow1];
+    \draw [gray] (-0.35,0.606) arc(110:245:0.7cm) [halfarrow2];
+    \draw [red] (1.95,3.377) .. controls (0.2,4) and (1.5,-1.2) .. (-0.4,-0.7) [halfarrow1];
+
+
+% Sheet 1
+    \draw [black] (-3.6,-4) circle (0.8pt); 
+    \draw [black] (0,-4) circle (0.8pt);   
+    \draw [black] (1.8,-0.883) circle (0.8pt); 
+    \draw [densely dashed] (-4.8,-4) -- (-3.6,-4);
+    \draw [densely dashed] (0,-4) -- (1.2,-4); 
+    \draw [densely dashed] (0,-4) -- (-0.6,-5.04);
+    \draw [densely dashed] (1.8,-4+3.117) -- (2.4,0.156);
+    \draw [red] (-0.35,-3.394) arc(110:245:0.7cm) [halfarrow2];
+    \draw [red] (1.95,-0.623) .. controls (2.8,-1) and (2,-2.5) .. (-0.35,-3.394) [halfarrow2];
+ 
+\end{tikzpicture}
