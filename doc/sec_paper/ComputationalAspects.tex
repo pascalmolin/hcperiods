@@ -63,10 +63,13 @@
    so that depending on the integration scheme we obtain:
    \begin{thm}\label{thm:complexity_integrals}
        Each of the $(n-1)$ elementary vector integrals can be computed to precision $D$ using
-       \begin{itemize}
-           \item $O(D^2\log^{1+\varepsilon} D (g + \log^{1+\varepsilon} D))$ operations, if $m=2$,
-           \item $O(D^2\log^{1+\varepsilon} D (g + \log^{2+\varepsilon} D))$ operations, if $m>2$.
-       \end{itemize}
+       \begin{equation}
+           O(N(D)\cmul(D)(g+\log D)) =
+           \begin{cases}
+               O(D^2\log^{1+\varepsilon} D (g + \log D)) \text{ operations, if $m=2$,}\\
+               O(D^2\log^{2+\varepsilon} D (g + \log D)) \text{ operations, if $m>2$.}
+           \end{cases}
+       \end{equation}
    \end{thm}
    %\begin{proof}
    %  Plugging in $N(D),T(D),M(D)$ in equation \eqref{m-eq:elem_int_complexity} and using that $n-1 = O(g)$.
@@ -95,21 +98,24 @@
    involves only a fixed number of multiplications.
 
    In practice, these sums are very sparse and their coefficients are very small integers
-   (less than $m$), so that the change of basis is performed using $O(gD\log D)$ operations.
+   (less than $m$), so that the change of basis is performed using
+   $O(g^2D\log^{1+\varepsilon}D)$ operations
+   (each of the $O(g^2)$ periods is a linear combination of $O(1)$ elementary integrals
+   with size $O(1)$ integer coefficients and precision $D$ roots of unity).
 
-   However we have no proof of this fact, so that we state the far from optimal
-   result
+   However we have no proof of this fact and in general the symplectic reduction
+   could produce dense base change with coefficients of size $O(g)$,
+   so that we state the far from optimal result
    \begin{thm}
        Given the $(n-1)\times g$ elementary integrals to precision $D$,
-       we compute the big period matrix using $O(g^2D\log D)$ operations.
+       we compute the big period matrix using $O(g^3(D+g)\log(D+g))$ operations.
    \end{thm}
 
    \subsubsection{Small period matrix}
 
    Finally, the small period matrix is obtained as $\tau=\OA^{-1}\OB$,
-   i.e. one $g\times g$ matrix inversion and one multiplication, which can be done using
-   $O(g^{\eta})$ multiplications.
-
+   i.e. one $g\times g$ matrix inversion and one multiplication, which
+   can be done using $O(g^{\eta})$ multiplications.
    
    \subsubsection{Abel-Jacobi map}
    
