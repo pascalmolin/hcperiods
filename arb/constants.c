@@ -129,7 +129,7 @@ integrals_edge_factors(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t
     acb_init(cj);
     z = _acb_vec_init(c.m);
     _acb_vec_unit_roots(z, c.m, prec);
-#if 1 && DEBUG
+#if DEBUG > 1
         flint_printf("\nuse zeta = ");
         _acb_vec_printd(z, c.m, 30, ", ");
 #endif
@@ -137,7 +137,7 @@ integrals_edge_factors(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t
     for (r = res, j = 0; j < c.nj; j++)
     {
 
-#if 1 && DEBUG
+#if DEBUG > 1
         flint_printf("\nshift by cab = ");
         acb_printd(cab, 30);
 #endif
@@ -156,7 +156,7 @@ integrals_edge_factors(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t
 
         acb_pow_ui(cj, cab, c.j1 + j, prec);
         acb_div(cj, zj, cj, prec);
-#if 1 && DEBUG
+#if DEBUG > 1
         flint_printf("\nmul by cj = ");
         acb_printd(cj, 30);
 #endif
@@ -164,7 +164,7 @@ integrals_edge_factors(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t
 
         r += c.ni[j];
     }
-#if 1 && DEBUG
+#if DEBUG > 1
     flint_printf("\n-> done ");
     _acb_vec_printd(res, c.g, 30, "\n");
 #endif

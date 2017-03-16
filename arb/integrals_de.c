@@ -137,8 +137,8 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t
     for (k = 0; k < c.n - 1; k++)
         integrals_edge_de(integrals->rows[k], tree->data + k, c, dz, de, prec);
 
-#if DEBUG
-    flint_printf("\ntree integrals\n", n, h, prec);
+#if DEBUG > 1
+    flint_printf("\ntree integrals\n");
     acb_mat_printd(integrals, 30);
 #endif
 

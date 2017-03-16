@@ -21,7 +21,7 @@ periods_loop(acb_ptr res, const loop_t loop, const cohom_t dz, const acb_mat_t i
         fmpz * coeff = &loop.l[i].coeff;
         acb_ptr r = res, ii = integrals->rows[e];
         if (l == 0)
-            _acb_vec_scalar_addmul(r, ii, c.g, tmp, prec);
+            _acb_vec_scalar_addmul_fmpz(r, ii, c.g, coeff, prec);
         else
         {
             slong j;
@@ -50,6 +50,7 @@ period_matrix(acb_mat_t omega, const homol_t basis, const cohom_t dz, const acb_
 
     for (k = 0; k < c.g; k++)
         periods_loop(omega->rows[k], basis[k], dz, integrals, z, c, prec);
+    acb_mat_transpose(omega, omega);
 
     _acb_vec_clear(z, c.m);
     return;

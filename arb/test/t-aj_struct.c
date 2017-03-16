@@ -3,7 +3,7 @@
 int main() {
 
     slong n, i, m;
-    int flag = AJ_NO_TAU;
+    int flag = 0;
     slong prec = 200;
     flint_rand_t state;
     

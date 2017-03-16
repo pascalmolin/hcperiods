@@ -21,7 +21,7 @@ set_loops(gamma_t * l, slong n, fmpz * row, slong m1, slong len)
 {
     slong i, j;
     /* coeff k * (m-1) + s -> gamma_k^s */
-    for (i = 0, j = 0; i < n; i++)
+    for (i = 0, j = 0; i < n; i++, j++)
     {
         for (; fmpz_is_zero(row + j); j++);
         if (!fmpz_fits_si(row + j))
@@ -75,6 +75,10 @@ symplectic_basis(homol_t alpha, homol_t beta, const tree_t tree, sec_t c)
         n = count_coeffs(row, len);
         loop_init(&beta[i], n);
         set_loops(beta[i].l, n, row, c.m - 1, len);
+#if DEBUG > 1
+        flint_printf("\n alpha[%ld] = ", i); loop_print(alpha[i]);
+        flint_printf("\n beta[%ld] = ", i); loop_print(beta[i]);
+#endif
     }
     fmpz_mat_clear(p);
 }
