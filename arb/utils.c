@@ -66,6 +66,22 @@ _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep)
     }
 }
 
+void
+acb_mat_print_gp(const acb_mat_t m, slong digits)
+{
+    long i, nr, nc;
+    nr = acb_mat_nrows(m);
+    nc = acb_mat_ncols(m);
+    flint_printf("[");
+    for (i = 0; i < nr; i++)
+    {
+        if (i)
+            printf(";");
+        _acb_vec_arf_printd(m->rows[i], nc, digits, ", ");
+    }
+    flint_printf("]");
+}
+
 /* adapted from acb_vec_sort_pretty */
 typedef int(*__compar_fn_t) (const void *, const void *);
 int acb_cmp_lex(const acb_t a, const acb_t b)

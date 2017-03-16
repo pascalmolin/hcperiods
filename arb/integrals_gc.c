@@ -103,8 +103,8 @@ void
 integrals_edge_gc(acb_ptr res, ydata_t ye, sec_t c, slong n, slong prec)
 {
     gc_integrals(res, ye->u, ye->n1, c.n - 2, c.g, n, prec);
-    /*integrals_edge_factors_gc(res, ye->c, ye->ba2, c, prec);*/
-    integrals_edge_factors(res, ye->c, ye->ba2, c, prec);
+    /*integrals_edge_factors_gc(res, ye->ba2, ye->ab, ye->c, c, prec);*/
+    integrals_edge_factors(res, ye->ba2, ye->ab, ye->c, c, prec);
 }
 
 void

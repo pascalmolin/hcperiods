@@ -31,6 +31,9 @@ typedef struct
     acb_ptr roots;       /* branch points */
     slong delta;         /* default = gcd(m, d) */
     slong g;             /* genus, 2g = (m-1)(d-1) - delta + 1 */
+    slong j1;
+    slong nj;
+    slong * ni;
 }
 superelliptic_curve;
 
@@ -156,6 +159,13 @@ abel_jacobi_struct;
 
 typedef abel_jacobi_struct abel_jacobi_t[1];
 
+enum {
+    AJ_USE_DE   = 1 << 0,
+    AJ_NO_TAU   = 1 << 1,
+    AJ_NO_AB    = 1 << 2
+};
+
+
 /******************************************************************************
 
   functions
@@ -166,7 +176,7 @@ void sec_clear(sec_t c);
 
 void abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d, int flag);
 void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_poly_t f, int flag, slong prec);
-void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
+void abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
 /* parameters for DE integration */
@@ -215,8 +225,8 @@ void holomorphic_differentials(cohom_t dz, slong d, slong m);
 void gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slong prec);
 void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const cohom_t dz, const de_int_t de, slong prec);
 void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec);
-void integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec);
-void integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec);
+void integrals_edge_factors_gc(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t cab, sec_t c, slong prec);
+void integrals_edge_factors(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t cab, sec_t c, slong prec);
 void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
 void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
 
@@ -234,6 +244,8 @@ void mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, 
 void mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec);
 
 /* vec utilities */
+/*void _acb_vec_scalar_addmul(acb_ptr res, acb_srcptr vec, slong len, const acb_t c, slong prec);*/
+void _acb_vec_scalar_addmul_fmpz(acb_ptr res, acb_srcptr vec, slong len, const fmpz_t c, slong prec);
 void acb_vec_polynomial_shift(acb_ptr x, slong len, const acb_t c, slong prec);
 void acb_vec_mul_geom(acb_ptr x, slong len, acb_t c0, const acb_t c, slong prec);
 void acb_vec_add_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong prec);
@@ -245,3 +257,4 @@ void acb_vec_set_random(acb_ptr u, slong len, flint_rand_t state, slong prec, sl
 void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits, double eps);
 void _acb_vec_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep);
+void acb_mat_print_gp(const acb_mat_t m, slong digits);

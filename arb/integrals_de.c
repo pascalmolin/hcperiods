@@ -36,23 +36,23 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
         acb_div(y, wy, y, prec);
 
         /* all differentials for x */
-        j = jmin(c.m, c.n, c.delta);
-        if (j > 1)
+        if (c.j1 > 1)
         {
-            acb_pow_ui(wy, y, j, prec);
+            acb_pow_ui(wy, y, c.j1, prec);
             acb_mul_arb(wy, wy, de->dx + l, prec);
         }
         else
             acb_mul_arb(wy, y, de->dx + l, prec);
 
-        for (r = res; j < c.m; j++)
+        for (r = res, j = 0; j < c.nj; j++)
         {
-            slong ni = imax(j, c.m, c.n, c.delta);
+            if (j)
+                acb_mul(wy, wy, y, prec);
             acb_set(wyx, wy);
-            acb_vec_add_geom_arb(r, ni, wyx, de->x + l, prec);
-            r += ni;
+            acb_vec_add_geom_arb(r, c.ni[j], wyx, de->x + l, prec);
+            r += c.ni[j];
         }
-#if 0 && DEBUG
+#if DEBUG > 2
         flint_printf("\nl = %ld, res = ", l);
         _acb_vec_printd(res, c.g, 30, "\n");
 #endif
@@ -66,27 +66,27 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
         acb_set_arb(wy, de->ch2m + l);
         acb_div(y, wy, y, prec);
 
-        j = jmin(c.m, c.n, c.delta);
-        if (j > 1)
+        if (c.j1 > 1)
         {
-            acb_pow_ui(wy, y, j, prec);
+            acb_pow_ui(wy, y, c.j1, prec);
             acb_mul_arb(wy, wy, de->dx + l, prec);
         }
         else
             acb_mul_arb(wy, y, de->dx + l, prec);
 
-        for (r = res; j < c.m; j++)
+        for (r = res, j = 0; j < c.nj; j++)
         {
-            slong ni = imax(j, c.m, c.n, c.delta);
+            if (j)
+                acb_mul(wy, wy, y, prec);
             acb_set(wyx, wy);
-            acb_vec_sub_geom_arb(r, ni, wyx, de->x + l, prec);
-            r += ni;
+            acb_vec_sub_geom_arb(r, c.ni[j], wyx, de->x + l, prec);
+            r += c.ni[j];
         }
     }
 
     _acb_vec_scalar_mul_arb(res, res, c.g, de->factor, prec);
 
-#if 0 && DEBUG
+#if DEBUG
         flint_printf("\nend integration ");
         _acb_vec_printd(res, c.g, 30, "\n");
 #endif
@@ -117,7 +117,7 @@ void
 integrals_edge_de(acb_ptr res, ydata_t ye, sec_t c, const cohom_t dz, const de_int_t de, slong prec)
 {
     de_integrals_precomp(res, ye->u, ye->n1, c.n - 2, c, dz, de, prec);
-    integrals_edge_factors(res, ye->c, ye->ba2, c, prec);
+    integrals_edge_factors(res, ye->ba2, ye->ab, ye->c, c, prec);
 }
 
 void

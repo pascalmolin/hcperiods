@@ -19,7 +19,7 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n, int fla
         abort();
     }
 
-    aj->type = (!flag && m == 2) ? INT_GC : INT_DE;
+    aj->type =  (flag & AJ_USE_DE || m > 2) ? INT_DE : INT_GC;
 
     tree_init(aj->tree, n - 1);
     aj->dz = flint_malloc(g * sizeof(dform_t));
@@ -32,6 +32,9 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n, int fla
     acb_mat_init(aj->tau, g, g);
 
     arb_mat_init(aj->proj, 2*g, 2*g);
+
+    /* abel-jacobi map */
+    aj->p0 = 0;
 }
 
 void
@@ -76,7 +79,7 @@ abel_jacobi_clear(abel_jacobi_t aj)
 }
 
 void
-abel_jacobi_compute(abel_jacobi_t aj, slong prec)
+abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
 {
     sec_t c = aj->c;
     acb_mat_t integrals;
@@ -99,6 +102,9 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
 
     /* cohomology */
     holomorphic_differentials(aj->dz, c.n, c.m);
+
+    if (flag & AJ_NO_AB)
+        return;
 
     /* integration */
     progress("## integrals %s\n", (aj->type == INT_GC) ? "gc" : "de");
@@ -126,9 +132,10 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
 
     acb_mat_clear(integrals);
 
+    if (flag & AJ_NO_TAU)
+        return;
+
     progress("## tau\n");
     tau_matrix(aj->tau, aj->omega0, aj->omega1, prec);
 
-    /* abel-jacobi map */
-    aj->p0 = 0;
 }

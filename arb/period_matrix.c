@@ -9,32 +9,30 @@
 void
 periods_loop(acb_ptr res, const loop_t loop, const cohom_t dz, const acb_mat_t integrals, acb_srcptr z, sec_t c, slong prec)
 {
-    slong i, k;
+    slong i;
     acb_t tmp;
 
     acb_init(tmp);
-
-    for (k = 0; k < c.g; k++)
-        acb_zero(res + k);
+    _acb_vec_zero(res, c.g);
 
     for (i = 0; i < loop.n; i++)
     {
         slong e = loop.l[i].index, l = loop.l[i].shift;
         fmpz * coeff = &loop.l[i].coeff;
-
+        acb_ptr r = res, ii = integrals->rows[e];
         if (l == 0)
-        {
-            for (k = 0; k < c.g; k++)
-                acb_addmul_fmpz(res + k, acb_mat_entry(integrals, e, k), coeff, prec); 
-        }
+            _acb_vec_scalar_addmul(r, ii, c.g, tmp, prec);
         else
         {
-            for (k = 0; k < c.g; k++)
+            slong j;
+            for (j = 0; j < c.nj; j++)
             {
                 slong lj;
-                lj = (l * dz[k].y) % c.m;
+                lj = ((c.m-l) * (c.j1 + j)) % c.m;
                 acb_mul_fmpz(tmp, z + lj, coeff, prec);
-                acb_addmul(res + k, acb_mat_entry(integrals, e, k), tmp, prec); 
+                _acb_vec_scalar_addmul(r, ii, c.ni[j], tmp, prec);
+                r += c.ni[j];
+                ii += c.ni[j];
             }
         }
     }

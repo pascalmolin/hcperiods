@@ -10,6 +10,7 @@
 void
 sec_init(sec_t * c, slong m, acb_srcptr x, slong n)
 {
+    slong j, delta;
 #if TMP
     flint_printf("\n\ninit curve y^%ld = f_%ld(x) =",m,n);
 #endif
@@ -20,17 +21,29 @@ sec_init(sec_t * c, slong m, acb_srcptr x, slong n)
     }
     c->m = m;
     c->n = n;
-    c->delta = n_gcd(m, n);
-    c->g = ((m-1)*(n-1) - c->delta + 1)/ 2;
+    c->delta = delta = n_gcd(m, n);
+    c->g = ((m-1)*(n-1) - delta + 1)/ 2;
+
+    /* roots */
     c->roots = _acb_vec_init(n);
-    _acb_vec_set(c->roots, x, n);
+    if (x != NULL)
+        _acb_vec_set(c->roots, x, n);
 #if TMP
     _acb_vec_printd(c->roots, n, 30, ", ");
 #endif
+
+    /* differentials */
+    c->j1 = jmin(m, n, delta);
+    c->nj = m - c->j1;
+    c->ni = flint_malloc(c->nj * sizeof(slong));
+    for (j = 0; j < c->nj; j++)
+        c->ni[j] = imax(c->j1 + j, m, n, delta);
+
 }
 
 void
 sec_clear(sec_t c)
 {
     _acb_vec_clear(c.roots, c.n);
+    flint_free(c.ni);
 }
