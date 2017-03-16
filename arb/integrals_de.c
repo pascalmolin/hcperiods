@@ -125,10 +125,10 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec)
     de_int_t de;
 
     n = de_params_tree(&h, tree, c, prec);
-    de_int_init(de, h, n, c.m, prec);
 #if DEBUG
     flint_printf("\nprecomputed DE, n = %ld, h = %lf, prec=%ld\n", n, h, prec);
 #endif
+    de_int_init(de, h, n, c.m, prec);
 
     for (k = 0; k < c.n - 1; k++)
         integrals_edge_de(integrals->rows[k], tree->data + k, c, de, prec);

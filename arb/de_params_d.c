@@ -60,8 +60,8 @@ de_params_d(double * h, const cdouble * w, slong len, double r, slong i, slong m
     if (r <= 0)
     {
         slong k;
-        r = fabs(cimag(casinh(catanh(w[0])/LAMBDA)));
-        for (k = 1; k < len; k++)
+        r = 1.4;
+        for (k = 0; k < len; k++)
         {
             double rk = fabs(cimag(casinh(catanh(w[k])/LAMBDA)));
             if (rk < r)

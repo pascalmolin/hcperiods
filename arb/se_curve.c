@@ -39,6 +39,13 @@ sec_init(sec_t * c, slong m, acb_srcptr x, slong n)
     for (j = 0; j < c->nj; j++)
         c->ni[j] = imax(c->j1 + j, m, n, delta);
 
+#if DEBUG > 1
+    flint_printf("\ndifferentials: j1 = %ld, ni = %ld", c->j1, c->ni[0]);
+    for (j = 1; j < c->nj; j++)
+        flint_printf(", %ld", c->ni[j]);
+    flint_printf("\n");
+#endif
+
 }
 
 void
