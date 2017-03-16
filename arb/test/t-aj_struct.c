@@ -11,12 +11,12 @@ int main() {
     fflush(stdout);
     flint_randinit(state);
 
-    for (n = 3; n < 5; n++)
+    for (n = 3; n < 10; n++)
     {
         acb_ptr x;
         x = _acb_vec_init(n);
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 5; i++)
         {
             slong i;
  

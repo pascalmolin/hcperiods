@@ -8,7 +8,7 @@
 
 void
 de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
-        const cohom_t dz, const de_int_t de, slong prec)
+        const de_int_t de, slong prec)
 {
     slong l;
     arb_t x;
@@ -102,26 +102,22 @@ de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec)
 {
     slong n;
     double h;
-    cohom_t dz;
     de_int_t de;
-    dz = malloc(c.g * sizeof(dform_t));
-    holomorphic_differentials(dz, c.n, c.m);
     n = de_params(&h, u, d, 0, c.n - 1, c.m, prec);
     de_int_init(de, h, n, c.m, prec);
-    de_integrals_precomp(res, u, d1, d, c, dz, de, prec);
+    de_integrals_precomp(res, u, d1, d, c, de, prec);
     de_int_clear(de);
-    free(dz);
 }
 
 void
-integrals_edge_de(acb_ptr res, ydata_t ye, sec_t c, const cohom_t dz, const de_int_t de, slong prec)
+integrals_edge_de(acb_ptr res, ydata_t ye, sec_t c, const de_int_t de, slong prec)
 {
-    de_integrals_precomp(res, ye->u, ye->n1, c.n - 2, c, dz, de, prec);
+    de_integrals_precomp(res, ye->u, ye->n1, c.n - 2, c, de, prec);
     integrals_edge_factors(res, ye->ba2, ye->ab, ye->c, c, prec);
 }
 
 void
-integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec)
+integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec)
 {
     slong k;
     ulong n;
@@ -135,7 +131,7 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t
 #endif
 
     for (k = 0; k < c.n - 1; k++)
-        integrals_edge_de(integrals->rows[k], tree->data + k, c, dz, de, prec);
+        integrals_edge_de(integrals->rows[k], tree->data + k, c, de, prec);
 
 #if DEBUG > 1
     flint_printf("\ntree integrals\n");

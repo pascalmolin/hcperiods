@@ -104,7 +104,7 @@ typedef struct
 /* homology basis */
 typedef loop_t * homol_t;
 
-/* differential form */
+/* differential forms */
 
 /* i,j s.t. dj >= mi + delta */
 inline slong
@@ -121,20 +121,8 @@ imax(slong j, slong m, slong n, slong d)
 
 typedef struct
 {
-    slong x; /* power of x */
-    slong y; /* power of y */
-} dform_t;
-
-/* cohomology basis */
-typedef dform_t * cohom_t;
-
-typedef struct
-{
     /* curve */
     sec_t c;
-
-    /* differentials */
-    cohom_t dz;
 
     /* integration type: Gauss or DE */
     int type;
@@ -217,23 +205,19 @@ void homol_clear(homol_t l, slong len);
 void symplectic_reduction(fmpz_mat_t p, fmpz_mat_t m, slong g);
 void symplectic_basis(homol_t alpha, homol_t beta, const tree_t tree, sec_t c);
 
-/* find basis of holomorphic differentials */
-/* g elementary differentials */
-void holomorphic_differentials(cohom_t dz, slong d, slong m);
-
 /* numerically compute d-1 integrals along tree edges */
 /* (d-1)*(g-1) matrix, tree edges on lines */
 void gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slong prec);
-void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const cohom_t dz, const de_int_t de, slong prec);
+void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const de_int_t de, slong prec);
 void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec);
 void integrals_edge_factors_gc(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t cab, sec_t c, slong prec);
 void integrals_edge_factors(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t cab, sec_t c, slong prec);
-void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
+void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
 void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
 
 /* get all periods on a, b basis */
 /* two g*g matrices */
-void period_matrix(acb_mat_t omega, const homol_t basis, const cohom_t dz, const acb_mat_t integrals, sec_t c, slong prec);
+void period_matrix(acb_mat_t omega, const homol_t basis, const acb_mat_t integrals, sec_t c, slong prec);
 
 /* get tau reduced matrix */
 void tau_matrix(acb_mat_t tau, const acb_mat_t omega0, const acb_mat_t omega1, slong prec);

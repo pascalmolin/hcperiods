@@ -22,7 +22,6 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n, int fla
     aj->type =  (flag & AJ_USE_DE || m > 2) ? INT_DE : INT_GC;
 
     tree_init(aj->tree, n - 1);
-    aj->dz = flint_malloc(g * sizeof(dform_t));
 
     homol_init(&aj->loop_a, g);
     homol_init(&aj->loop_b, g);
@@ -75,7 +74,6 @@ abel_jacobi_clear(abel_jacobi_t aj)
     tree_clear(aj->tree);
     homol_clear(aj->loop_a, aj->c.g);
     homol_clear(aj->loop_b, aj->c.g);
-    flint_free(aj->dz);
 }
 
 void
@@ -100,9 +98,6 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     progress("## symplectic basis\n");
     symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
 
-    /* cohomology */
-    holomorphic_differentials(aj->dz, c.n, c.m);
-
     if (flag & AJ_NO_AB)
         return;
 
@@ -112,7 +107,7 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     if (aj->type == INT_GC)
         integrals_tree_gc(integrals, c, aj->tree, prec);
     else
-        integrals_tree_de(integrals, c, aj->tree, aj->dz, prec);
+        integrals_tree_de(integrals, c, aj->tree, prec);
     tree_ydata_clear(aj->tree);
 #if DEBUG
     flint_printf("\n\ntree integrals\n");
@@ -122,8 +117,8 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
 
     /* period matrices */
     progress("## periods\n");
-    period_matrix(aj->omega0, aj->loop_a, aj->dz, integrals, c, prec);
-    period_matrix(aj->omega1, aj->loop_b, aj->dz, integrals, c, prec);
+    period_matrix(aj->omega0, aj->loop_a, integrals, c, prec);
+    period_matrix(aj->omega1, aj->loop_b, integrals, c, prec);
 #if DEBUG > 1
     progress("\n\nperiods A\n");
     acb_mat_printd(aj->omega0, 20);
