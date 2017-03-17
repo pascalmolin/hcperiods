@@ -91,9 +91,9 @@ do_example_si_si(slong m, slong n, pair * coeff, entry * ref, slong size, int fl
 }
 
 void
-do_example_pol(slong m, slong n, slong * coeff, pair * swap, slong ns, entry * ref, slong size, int flag)
+do_example_pol(slong m, slong n, slong * coeff, entry * ref, slong size, int flag)
 {
-    slong k, prec = 64;
+    slong prec = 64;
     acb_poly_t f;
     acb_ptr x;
     acb_poly_init(f);
@@ -103,8 +103,7 @@ do_example_pol(slong m, slong n, slong * coeff, pair * swap, slong ns, entry * r
     acb_vec_set_si(f->coeffs, coeff, n);
     x = _acb_vec_init(n);
     acb_poly_find_roots(x, f, NULL, 0, prec);
-    for (k = 0; k < ns; k++)
-        acb_swap(x+swap[k][0],x+swap[k][1]);
+    _acb_vec_sort_lex(x, n);
     do_example(m, n, x, ref, size, flag);
     _acb_vec_clear(x, n);
     acb_poly_clear(f);
@@ -125,7 +124,6 @@ int main()
         {5,0,1}, {5,4,-1}, {6,0,-1}, {6,7,1}, {7,0,1}, {7,1,-1}, {7,6,-1},
         {7,8,1}, {8,1,1}, {8,2,-1},{8,7,-1} };
     slong pol_4[4] = {8, 92, -40, 84};
-    pair swap_4[2] = { { 1, 2}, {2, 3} };
     entry mat_4[36] = { {0,1,1}, {0,4,-1}, {0,5,1}, {0,8,-1}, {1,0,-1},
         {1,2,1}, {1,5,-1}, {1,6,1}, {2,1,-1}, {2,3,1}, {2,6,-1}, {2,7,1},
         {3,2,-1}, {3,4,1}, {3,7,-1}, {3,8,1}, {4,0,1}, {4,3,-1},
@@ -133,7 +131,6 @@ int main()
         {6,2,1}, {6,5,-1}, {6,7,1}, {7,2,-1}, {7,3,1}, {7,6,-1}, {7,8,1},
         {8,0,1}, {8,3,-1}, {8,4,1}, {8,7,-1} };
     slong pol_5[5] = {20, 13, 3, -3, -7};
-    pair swap_5[4] = { { 0, 4}, {0, 3}, {0, 2}, {2, 1} };
     entry mat_5[82] = { {0,1,1}, {0,6,-1}, {0,7,1}, {1,0,-1}, {1,2,1},
         {1,7,-1}, {1,8,1}, {2,1,-1}, {2,3,1}, {2,8,-1}, {2,9,1}, {3,2,-1},
         {3,4,1}, {3,9,-1}, {4,3,-1}, {4,5,1}, {5,4,-1}, {5,6,1},
@@ -168,11 +165,11 @@ int main()
 
     /* Example 4 : y^4 = x^4 + 84x^3 - 40x^2 + 92x + 8, g = 3 */
     progress("example 4\n");
-    do_example_pol(4, 4, pol_4, swap_4, 2, mat_4, 36, SKIP);
+    do_example_pol(4, 4, pol_4, mat_4, 36, SKIP);
 
     /* Example 5 (s1) : y^6 = x^5 - 7*x^4 - 3*x^3 + 3*x^2 + 13*x + 20, g = 10 */
     progress("example 5\n");
-    do_example_pol(6, 5, pol_5, swap_5, 4, mat_5, 82, SKIP);
+    do_example_pol(6, 5, pol_5, mat_5, 82, SKIP);
 
     flint_cleanup();
     printf("PASS\n");
