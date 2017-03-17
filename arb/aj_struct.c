@@ -19,10 +19,9 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n, int fla
         abort();
     }
 
-    aj->type = (!flag && m == 2) ? INT_GC : INT_DE;
+    aj->type =  (flag & AJ_USE_DE || m > 2) ? INT_DE : INT_GC;
 
     tree_init(aj->tree, n - 1);
-    aj->dz = flint_malloc(g * sizeof(dform_t));
 
     homol_init(&aj->loop_a, g);
     homol_init(&aj->loop_b, g);
@@ -32,6 +31,9 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n, int fla
     acb_mat_init(aj->tau, g, g);
 
     arb_mat_init(aj->proj, 2*g, 2*g);
+
+    /* abel-jacobi map */
+    aj->p0 = 0;
 }
 
 void
@@ -72,11 +74,10 @@ abel_jacobi_clear(abel_jacobi_t aj)
     tree_clear(aj->tree);
     homol_clear(aj->loop_a, aj->c.g);
     homol_clear(aj->loop_b, aj->c.g);
-    flint_free(aj->dz);
 }
 
 void
-abel_jacobi_compute(abel_jacobi_t aj, slong prec)
+abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
 {
     sec_t c = aj->c;
     acb_mat_t integrals;
@@ -97,8 +98,8 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
     progress("## symplectic basis\n");
     symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
 
-    /* cohomology */
-    holomorphic_differentials(aj->dz, c.n, c.m);
+    if (flag & AJ_NO_AB)
+        return;
 
     /* integration */
     progress("## integrals %s\n", (aj->type == INT_GC) ? "gc" : "de");
@@ -106,29 +107,31 @@ abel_jacobi_compute(abel_jacobi_t aj, slong prec)
     if (aj->type == INT_GC)
         integrals_tree_gc(integrals, c, aj->tree, prec);
     else
-        integrals_tree_de(integrals, c, aj->tree, aj->dz, prec);
+        integrals_tree_de(integrals, c, aj->tree, prec);
     tree_ydata_clear(aj->tree);
 #if DEBUG
-    flint_printf("\n");
-    acb_mat_printd(integrals, 20);
+    flint_printf("\n\ntree integrals\n");
+    acb_mat_printd(integrals, 30);
+    flint_printf("\n\n");
 #endif
 
     /* period matrices */
     progress("## periods\n");
-    period_matrix(aj->omega0, aj->loop_a, aj->dz, integrals, c, prec);
-    period_matrix(aj->omega1, aj->loop_b, aj->dz, integrals, c, prec);
-#if DEBUG
-    progress("periods A\n");
+    period_matrix(aj->omega0, aj->loop_a, integrals, c, prec);
+    period_matrix(aj->omega1, aj->loop_b, integrals, c, prec);
+#if DEBUG > 1
+    progress("\n\nperiods A\n");
     acb_mat_printd(aj->omega0, 20);
-    progress("periods B\n");
+    progress("\n\nperiods B\n");
     acb_mat_printd(aj->omega1, 20);
 #endif
 
     acb_mat_clear(integrals);
 
+    if (flag & AJ_NO_TAU)
+        return;
+
     progress("## tau\n");
     tau_matrix(aj->tau, aj->omega0, aj->omega1, prec);
 
-    /* abel-jacobi map */
-    aj->p0 = 0;
 }

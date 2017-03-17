@@ -52,18 +52,45 @@ _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep)
 
     for (k = 0; k < len; k++)
     {
+        int zr, zi;
 #define re arb_midref(acb_realref(u + k))
 #define im arb_midref(acb_imagref(u + k))
         if (k)
             flint_printf(sep);
-        arf_printd(re, d);
-        if (arf_sgn(im) >= 0)
-            flint_printf(" + ");
-        else
-            flint_printf(" ");
-        arf_printd(im, d);
-        flint_printf(" * I");
+        zr = arf_sgn(re);
+        zi = arf_sgn(im);
+        if (!zr && !zi)
+            flint_printf("0");
+        if (zr)
+        {
+            arf_printd(re, d);
+            if (zi > 0)
+                flint_printf(" + ");
+            else if (zi < 0)
+                flint_printf(" ");
+        }
+        if (zi)
+        {
+            arf_printd(im, d);
+            flint_printf(" * I");
+        }
     }
+}
+
+void
+acb_mat_print_gp(const acb_mat_t m, slong digits)
+{
+    long i, nr, nc;
+    nr = acb_mat_nrows(m);
+    nc = acb_mat_ncols(m);
+    flint_printf("[");
+    for (i = 0; i < nr; i++)
+    {
+        if (i)
+            printf(";");
+        _acb_vec_arf_printd(m->rows[i], nc, digits, ", ");
+    }
+    flint_printf("]");
 }
 
 /* adapted from acb_vec_sort_pretty */
