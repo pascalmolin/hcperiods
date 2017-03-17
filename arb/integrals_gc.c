@@ -114,6 +114,6 @@ integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec)
 
     n = gc_params_tree(tree, c, prec);
 
-    for (k = 0; k < c.n - 1; k++)
+    for (k = 0; k < tree->n; k++)
         integrals_edge_gc(integrals->rows[k], tree->data + k, c, n, prec);
 }

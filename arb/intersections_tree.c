@@ -142,7 +142,7 @@ is_neg_abad(const acb_t ab2, const acb_t cd2, slong prec)
 }
 
 void
-intersection_tree(fmpz_mat_t c, const tree_t tree, slong n, slong m)
+intersection_tree(fmpz_mat_t c, const tree_t tree, slong m)
 {
     slong prec = 64;
     slong k, l, size = m - 1;
@@ -151,7 +151,7 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong n, slong m)
 
     /* the entry c[ k * (m-1) + s ] corresponds to the
        loop gamma_k^(s) */
-    for (k = 0; k < n - 1; k++)
+    for (k = 0; k < tree->n; k++)
     {
         slong s;
         edge_t ek = tree->e[k];
@@ -160,7 +160,7 @@ intersection_tree(fmpz_mat_t c, const tree_t tree, slong n, slong m)
         fill_block(c, k * size, k * size, 1, -1, m);
 
         /* intersection with other shifts */
-        for (l = k + 1; l < n - 1; l++)
+        for (l = k + 1; l < tree->n; l++)
         {
             edge_t el = tree->e[l];
 
