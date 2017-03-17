@@ -130,7 +130,7 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec)
 #endif
     de_int_init(de, h, n, c.m, prec);
 
-    for (k = 0; k < c.n - 1; k++)
+    for (k = 0; k < tree->n; k++)
         integrals_edge_de(integrals->rows[k], tree->data + k, c, de, prec);
 
 #if DEBUG > 1

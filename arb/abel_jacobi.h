@@ -195,7 +195,7 @@ void tree_ydata_clear(tree_t tree);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
-void intersection_tree(fmpz_mat_t c, const tree_t tree, slong n, slong m);
+void intersection_tree(fmpz_mat_t c, const tree_t tree, slong m);
 
 /* find g+g symplectic homology basis from tree */
 /* two lists of g loops */

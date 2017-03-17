@@ -47,7 +47,7 @@ do_example(slong m, slong n, acb_srcptr x, entry * ref, slong size, int flag)
     tree_ydata_init(tree, x, n, m, prec);
     len = (n-1)*(m-1);
     fmpz_mat_init(ca, len, len);
-    intersection_tree(ca, tree, n, m);
+    intersection_tree(ca, tree, m);
 
     /* Intersection matrix from magma */
     fmpz_mat_init(cm, len, len);

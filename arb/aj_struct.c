@@ -21,7 +21,7 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n, int fla
 
     aj->type =  (flag & AJ_USE_DE || (m > 2 && n > 2)) ? INT_DE : (m == 2) ? INT_GC : INT_D2;
 
-    tree_init(aj->tree, n - 1);
+    tree_init(aj->tree, n - 1 - (aj->c.delta == m));
 
     homol_init(&aj->loop_a, g);
     homol_init(&aj->loop_b, g);
@@ -103,7 +103,7 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
 
     /* integration */
     progress("## integrals %s\n", (aj->type == INT_GC) ? "gc" : "de");
-    acb_mat_init(integrals, c.n-1, c.g);
+    acb_mat_init(integrals, aj->tree->n, c.g);
     if (aj->type == INT_D2)
         integral_d2(integrals->rows[0], aj->tree->data + 0, c, prec);
     else if (aj->type == INT_GC)

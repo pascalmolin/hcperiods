@@ -34,7 +34,7 @@ int main() {
 
                 fmpz_mat_init(ca, len, len);
 
-                intersection_tree(ca, tree, n, m);
+                intersection_tree(ca, tree, m);
 
 #if 0
                 flint_printf("\n\n ======= d = %ld, m = %ld ===== \n", d, m);

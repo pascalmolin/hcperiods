@@ -36,15 +36,19 @@
   \begin{rmk}
       \label{rmk:moebius}
       For any $\begin{pmatrix}a&b\\c&d\end{pmatrix}\in\PSl(2,\C)$,
-      the Moebius transform $\phi:x\mapsto \frac{ax+b}{cx+d}$ is an automorphism
-      of $\P^1$. By a change of coordinate $\tilde x=\phi(x)$ we obtain a different model of $\cu$
+      the Moebius transform $\phi:u\mapsto \frac{au+b}{cu+d}$ is an automorphism
+      of $\P^1$. By a change of coordinate $x=\phi(u)$ we obtain a different model of $\cu$
+      given by the equation
       \begin{equation}
-          \tilde y^m = \tilde f(\tilde x)
+          \tilde v^m = \tilde f(u)
       \end{equation}
-      where $\tilde y=$ and $\tilde f=$.
-      %FIXME: write new equation
+      where $\tilde f(u)=f(\phi(u))(cu+d)^{\ell m}$ and $v=y(cu+d)^\ell$ for
+      the smallest value $\ell$ such that $\ell m\geq n$.
 
-  We may apply such a transformation to improve the configuration
+      If the curve was singular at infinity, the singularity is moved to $u=-d/c$ in the new model.
+      This happens when $\delta < m$ (so that $\ell m > n$).
+
+  When $\delta=m$ we may apply such a transformation to improve the configuration
   of affine branch points.
   \end{rmk}
 
