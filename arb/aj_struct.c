@@ -19,7 +19,7 @@ abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong n, int fla
         abort();
     }
 
-    aj->type =  (flag & AJ_USE_DE || m > 2) ? INT_DE : INT_GC;
+    aj->type =  (flag & AJ_USE_DE || (m > 2 && n > 2)) ? INT_DE : (m == 2) ? INT_GC : INT_D2;
 
     tree_init(aj->tree, n - 1);
 
@@ -104,7 +104,9 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     /* integration */
     progress("## integrals %s\n", (aj->type == INT_GC) ? "gc" : "de");
     acb_mat_init(integrals, c.n-1, c.g);
-    if (aj->type == INT_GC)
+    if (aj->type == INT_D2)
+        integral_d2(integrals->rows[0], aj->tree->data + 0, c, prec);
+    else if (aj->type == INT_GC)
         integrals_tree_gc(integrals, c, aj->tree, prec);
     else
         integrals_tree_de(integrals, c, aj->tree, prec);
@@ -128,10 +130,19 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
 
     acb_mat_clear(integrals);
 
+    if (flag & AJ_TRIM)
+    {
+        acb_mat_trim(aj->omega0);
+        acb_mat_trim(aj->omega1);
+    }
+
+
     if (flag & AJ_NO_TAU)
         return;
 
     progress("## tau\n");
     tau_matrix(aj->tau, aj->omega0, aj->omega1, prec);
 
+    if (flag & AJ_TRIM)
+        acb_mat_trim(aj->tau);
 }

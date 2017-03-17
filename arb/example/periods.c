@@ -4,12 +4,12 @@
 #include "acb_poly.h"
 #include "abel_jacobi.h"
 
-/* x^n+1 */
+/* x^n-1 */
 void
 pol_xn1(acb_poly_t poly, ulong n, slong prec)
 {
     acb_poly_set_coeff_si(poly, 0, 1);
-    acb_poly_set_coeff_si(poly, n, 1);
+    acb_poly_set_coeff_si(poly, n, -1);
 }
 /* sum x^k/k! */
 void
@@ -51,9 +51,9 @@ int main(int argc, char * argv[])
         flint_printf("  --pol n cn ... c1 c0 : cn x^n + ... + c1 x + c0\n");
         flint_printf("Output options:\n");
         flint_printf("  --quiet: no printing\n");
-        /*flint_printf("  --mid: do not print error balls\n");*/
+        flint_printf("  --trim: reduce to obtained precision\n");
         flint_printf("  --big: big period matrix\n");
-        flint_printf("  --gp: output for pari/gp\n");
+        flint_printf("  --gp: output for pari/gp (discard error balls)\n");
         return 1;
     }
 
@@ -78,6 +78,11 @@ int main(int argc, char * argv[])
         {
             i++;
             prec = atol(argv[i++]);
+        }
+        else if (!strcmp(argv[i], "--trim"))
+        {
+            i++;
+            flag |= AJ_TRIM;
         }
         else if (!strcmp(argv[i], "--digits"))
         {

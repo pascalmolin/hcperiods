@@ -39,7 +39,7 @@ superelliptic_curve;
 
 typedef superelliptic_curve sec_t;
 
-enum { INT_GC, INT_DE };
+enum { INT_D2, INT_GC, INT_DE };
 
 typedef struct
 {
@@ -150,7 +150,8 @@ typedef abel_jacobi_struct abel_jacobi_t[1];
 enum {
     AJ_USE_DE   = 1 << 0,
     AJ_NO_TAU   = 1 << 1,
-    AJ_NO_AB    = 1 << 2
+    AJ_NO_AB    = 1 << 2,
+    AJ_TRIM     = 1 << 3
 };
 
 
@@ -214,6 +215,7 @@ void integrals_edge_factors_gc(acb_ptr res, const acb_t ba2, const acb_t ab, con
 void integrals_edge_factors(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t cab, sec_t c, slong prec);
 void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
 void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
+void integral_d2(acb_ptr res, ydata_t ye, sec_t c, slong prec);
 
 /* get all periods on a, b basis */
 /* two g*g matrices */
@@ -236,6 +238,7 @@ void acb_vec_mul_geom(acb_ptr x, slong len, acb_t c0, const acb_t c, slong prec)
 void acb_vec_add_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong prec);
 void acb_vec_sub_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong prec);
 void _acb_vec_sort_lex(acb_ptr vec, slong len);
+#define acb_mat_trim(m) _acb_vec_trim(m->entries, m->entries, m->r * m->c)
 
 /* tests/bench only */
 void acb_vec_set_random(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);
@@ -243,3 +246,4 @@ void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, 
 void _acb_vec_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void acb_mat_print_gp(const acb_mat_t m, slong digits);
+

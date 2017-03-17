@@ -87,7 +87,7 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
     n = (len * (len - 1)) / 2;
     e = flint_malloc(n * sizeof(edge_t));
 
-    if (type == INT_GC)
+    if (type == INT_GC || type == INT_D2)
         edges_init(e, param_gc_r, w, len);
     else if (type == INT_DE)
         edges_init(e, param_de_tau, w, len);

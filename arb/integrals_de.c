@@ -140,3 +140,33 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec)
 
     de_int_clear(de);
 }
+
+void
+integral_d2(acb_ptr res, ydata_t ye, sec_t c, slong prec)
+{
+    slong j;
+    fmpq_t h, jm;
+    arb_t g;
+    acb_ptr p = res;
+
+    arb_init(g);
+    fmpq_init(h);
+    fmpq_set_si(h, 1, 2);
+    fmpq_init(jm);
+    _acb_vec_zero(p, c.g);
+    for (j = c.g ; j > 0; j--, p++)
+    {
+        arb_ptr r = acb_realref(p);
+        arb_const_sqrt_pi(r, prec);
+        fmpq_set_si(jm, j, c.m);
+        arb_gamma_fmpq(g, jm, prec);
+        arb_mul(r, r, g, prec);
+        fmpq_add(jm, jm, h);
+        arb_gamma_fmpq(g, jm, prec);
+        arb_div(r, r, g, prec);
+    }
+    fmpq_clear(jm);
+    fmpq_clear(h);
+    arb_clear(g);
+    integrals_edge_factors(res, ye->ba2, ye->ab, ye->c, c, prec);
+}
