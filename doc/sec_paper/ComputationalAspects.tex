@@ -179,7 +179,8 @@
    
    Let $\abs{u_k-1}+\abs{u_k+1}=2\cosh(r_k)$. We need to choose
    $r<r_0=\min_k r_k$ (so that $u_k\not\in ε_r$) in order to minimize
-   the number of integration points defined in Proposition \ref{prop:Ngc}.
+   the number of integration points \eqref{eq:Ngc}. We first
+   estimate how the bound $M(r)$ varies for $r<r_0$.
    \begin{itemize}
        \item 
    For all $k$ such that $r_k > r_0$, we compute
@@ -187,74 +188,59 @@
    \item
    For $k$ such that $r_k=r_0$, we use first order approximation
    \[ \dist(u_k,Z_{r-η}) = η D_k + O(η^2) \]
-   where
-   \[ D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\sin(t_k-ir_k)} \]
+   where $D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\sin(t_k-ir_k)}$.
    \end{itemize}
 
    Let $K$ be the number of branch points $u_k$ such that $r_k=r_0$ and 
-   \[ M_0 = (\prod_{r_k = r_0} D_k\prod_{r_k>r_0}d_k)^{-j/m}, \]
+   \[ M_0 = \sqrt{\prod_{r_k = r_0} D_k\prod_{r_k>r_0}d_k}^{-1}, \]
    then the integrand is bounded on $ε_{r_0-η}$ by
-   \[ M(r_0-η) = M_0 η^{-\frac{Kj}m} (1+O(η)). \]
-   Plugging this into \eqref{eq:Ngc} and letting
-   $A = D+\log(2πM_0)$ and $B=jK/m$, the number of integration points
+   \[ M(r_0-η) = M_0 \sqrt{η}^{-K} (1+O(η)). \]
+   Plugging this into \eqref{eq:Ngc}, the number of integration points
    satisfies
    \[
-       2N = \frac{A - B \log(η) }{r_0-η}(1+O(η)).
+       2N = \frac{D+\log(2πM_0) - K/2 \log(η) }{r_0-η}(1+O(η)).
    \]
 
    The main term is minimized for $η$ satisfying
-   $η(A+B-B\log(η))=Br_0$,
-   we can take a first order approximation
-   \[ η = \frac{Br_0}{A+B(1+\log\frac{A+B}{Br_0})}. \]
+   $η(2\frac{D+\log(2πM_0)}K+1-\log(η))=r_0$. The solution
+   can be written as a Lambert function or we use
+   the approximation
+   \[ r = r_0 - η = r_0 ( 1 - \frac{1}{A+\log\frac{A}{r_0}}), \]
+   where $A = 1+\frac2K(D+\log(2πM_0))$.
  
    \subsubsection{Double-exponential case}
 
    We use the parametrization
-   $\partial Z_r = \set{ z = \tanh(λ\sinh(t+ir), t\in\R }$.
-   so that the distance from a branch point $u_k$ to $Z_r$
-   can be computed applying Newton method to the scalar
-   product function
-   $f(t) = \Re(\overline{z'}(u_k-z))$, where $z = \tanh(λ\sinh(t+ir))$.
+   $\partial Z_r = \set{ z = \tanh(λ\sinh(t+ir), t\in\R }$ to compute
+   the distance from a branch point $u_k$ to $Z_r$ by Newton method
+   as before.
+   %$f(t) = \Re(\overline{z'}(u_k-z))$, where $z = \tanh(λ\sinh(t+ir))$
    %and starting point $t=\Re(z^{-1}(p))$.
 
    Unfortunately the solution may not be unique, so once
-   the parameter $r<r_0$ is chosen, we use ball arithmetic to compute a rigorous
+   the parameter $r<r_0$ is chosen (see below), we use ball arithmetic to compute a rigorous
    bound of the integrand on the boundary of $Z_r$. The process consists in
    recursively subdividing the interval until the images of the subintervals by the
    integrand form an $ε$-covering.
 
    \paragraph{Choice of $r$}
 
-   We try to minimize the number $N$ of integration
-   points obtained from equation
-   \eqref{eq:de-parameters} by an appropriate choice
-   of parameter $r$.
+   We adapt the method used for Gauss-Chebychev. This time the number $N$ of integration
+   points is obtained from equation \eqref{eq:de-parameters}.
    
    Writing $u_k = \tanh(λ\sinh(t_k+ir_k))$, we must choose
-   $r<r_0=\min_k r_k$ to ensure $u_k\not\in Z_r$.
-
-   For all $k$ such that $r_k > r_0$, we can compute
-   explicitly the distance $d_k=\dist(u_k,Z_{r_0})<\dist(u_k,Z_r)$.
-   
-   For $k$ such that $r_k=r_0$, we write for small $ε>0$
-   \[ \dist(u_k,Z_{r-ε}) = ε D_k + O(ε^2) \]
-   where
-   \[ D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\frac{λ \cosh(t_k+ir_k)}{\cosh(λ\sinh(t_k+ir_k))^2}} \]
-   
-   Let
+   $r<r_0=\min_k r_k$ to ensure $u_k\not\in Z_r$. Let 
    \[ M_0 = (\prod_{r_k = r_0} D_k\prod_{r_k>r_0}d_k)^{-j/m} \]
-   then the integrand is bounded on $Z_{r_0-ε}$ by
-   \[ M_2 = M_0 ε^{-\frac{j\#U_0}m} (1+O(ε)) \]
-   so that
-   \[ h = \frac{2π(r_0-ε)}{A-λ\log(ε)+O(ε)} \]
-   for constants $A=D+\log(2B(r_0,α)M_0)$ and $λ=j\#U_0/m$.
-
-   The maximum is obtained for $ε(A+λ-λ\log(ε))=λr_0$, the exact
-   solution can be expressed as a Lambert function but we take
-   the first order approximation
-   \[ ε = \frac{λr_0}{A+λ(1+\log\frac{A+λ}{λr})}. \]
-   
-  
+   where $d_k=\dist(u_k,Z_{r_0})<\dist(u_k,Z_r)$ and
+   \[ D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\frac{λ \cosh(t_k+ir_k)}{\cosh(λ\sinh(t_k+ir_k))^2}} \]
+   is such that $\dist(u_k,Z_{r-η}) = η D_k + O(η^2)$, then
+   the integrand is bounded on $Z_{r_0-η}$ by
+   \[ M_2 = M_0 η^{-\frac{jK}m} (1+O(η)). \]
+   Then
+   \[ h = \frac{2π(r_0-η)}{D+\log(2B(r_0,α)M_0)-jK/m\log(η)}+O(η) \]
+   and the maximum is obtained for $η$ solution of $η(A-\log η)=r_0$
+   where $A=1+\frac{m}{jK}(D+\log(2B(r_0,α)M_0))$.
+ 
    \subsection{Implementation tricks}
 
    Here we simply give some further ideas used in our implementation to improve constants.
