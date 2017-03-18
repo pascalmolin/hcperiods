@@ -34,6 +34,7 @@ distance_ellipse_d(double x, double y, double a)
     xa = x * a;
     yb = y * b;
     t = atan((a*y)/(b*x));
+    t = atan((a*y)/(b*x));
     do
     {
         double fpt;
@@ -49,6 +50,9 @@ distance_ellipse_d(double x, double y, double a)
         if (t > 2*PI || t < 0)
             t = fmod(t, 2*PI);
         if (iter++ > 20)
+            flint_printf("[i=%ld] t = %lf, ft = %12lf, fpt = %12lf, a = %lf, x = %lf, y = %lf\n",
+                iter, t, ft, fpt, a, x, y);
+        if (iter > 25)
         {
             flint_printf("\nERROR: too many iterations in distance_ellipse(%lf+I*%lf, %lf)\n", x, y, a);
             abort();
