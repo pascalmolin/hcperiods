@@ -11,37 +11,29 @@ maj_yr(arb_t m, const arb_t m0, const arb_t r, arb_srcptr vr, slong len, slong p
 {
     slong k, K;
 
-    arb_t chr0, chr;
-    arb_init(chr0);
-    arb_init(chr);
+    arb_t d;
+    arb_init(d);
 
     arb_one(m);
-    arb_set_arf(chr0, arb_midref(r));
-    arb_cosh(chr0, chr0, prec);
     for (K = 0, k = 0; k < len; k++)
     {
         if (arb_overlaps(r, vr + k))
             K++;
         else
         {
-            arb_cosh(chr, vr + k, prec);
-            arb_sub(chr, chr, chr0, prec);
-            arb_mul(m, m, chr, prec);
+            /* fixme; no ch... */
+            arb_sub_arf(d, vr + k, arb_midref(r), prec);
+            arb_mul(m, m, d, prec);
         }
     }
-    if (K)
-    {
-        arb_set_arf(chr, arb_midref(r));
-        arb_sinh(chr, chr, prec);
-        arb_pow_ui(chr, chr, K, prec);
-        arb_mul(m, m, chr, prec);
-    }
+    if (!arb_is_finite(m))
+        abort();
+    /* should mult m by sh(r0)^K = derivative */
     arb_log(m, m, prec);
     arb_mul_2exp_si(m, m, -1);
     arb_sub(m, m0, m, prec);
 
-    arb_clear(chr0);
-    arb_clear(chr);
+    arb_clear(d);
 
     return K;
 }
@@ -50,20 +42,32 @@ void
 choose_r(arb_t r, const arb_t r0, const arb_t m, slong K, slong prec)
 {
 #if 1
+    double R, A, M, eps;
+    R = acosh( arf_get_d(arb_midref(r0), ARF_RND_DOWN) );
+    M = arf_get_d(arb_midref(m), ARF_RND_UP);
+    A = 1 + 2 * M / K;
+    eps = 1 / (A + log( A / R ));
+    R = cosh(R * (1 - eps));
     arb_zero(r);
-    arf_set_d(arb_midref(r), .9 * arf_get_d(arb_midref(r0), ARF_RND_DOWN));
+    arf_set_d(arb_midref(r), R);
 #else
     arb_t A;
     arb_init(A);
     /* r = r0 (1-eps), eps*(A-log(eps)) = r0, A = 1+2*m/K */
+    /* A = 1+2m/K */
     arb_div_si(A, m, K, prec);
     arb_mul_2exp_si(A, A, 1);
     arb_add_si(A, A, 1, prec);
-    arb_div(r, A, m, prec);
-    arb_add(r, r, A, prec);
-    arb_div(A, r0, r, prec);
+    /* A = r0/(A+log(A/r0)) */
+    arb_acosh(r, r0, prec);
+    arb_div(r, A, r, prec);
+    arb_log(r, r, pp);
+    arb_add(A, r, A, prec);
+    arb_sub
+    arb_div(A, r0, A, prec);
     arb_sub(r, r0, A, prec);
-    /* mag_zero(arb_radref(r)); */
+    arb_cosh(r, r, prec);
+    mag_zero(arb_radref(r));
     arb_clear(A);
 #endif
 }
@@ -90,35 +94,22 @@ gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
     vr = _arb_vec_init(len);
     for (k = 0; k < len; k++)
     {
-#if 0
-        acb_asin(z, u + k, pp);
-        arb_abs(vr + k, acb_imagref(z));
-#else
         acb_add_si(z, u + k, 1, pp);
         acb_abs(vr + k, z, pp);
         acb_add_si(z, u + k, -1, pp);
         acb_abs(r, z, pp);
         arb_add(vr + k, vr + k, r, pp);
         arb_mul_2exp_si(vr + k, vr + k, -1);
-        arb_acosh(vr + k, vr + k, pp);
-#endif
-        if (!arb_is_finite(vr + k))
-        {
-            flint_printf("\nERROR: could not compute r for u = "); acb_printd(u + k, 20);
-            abort();
-        }
         arb_get_abs_lbound_arf(t, vr + k, pp);
         if (!k || arf_cmp(t, arb_midref(r0)) < 0)
             arf_set(arb_midref(r0), t);
     }
-#if DEBUG > 1
-    flint_printf("\nr0 = "); arb_printd(r0, 10);
-#endif
 
-    /* m0 = D + log(2pi) + d*r0 */
+    /* m0 = D + log(2pi) + d*log(r0) */
     arb_const_log_sqrt2pi(m0, pp);
     arb_mul_2exp_si(m0, m0, 1);
-    arb_addmul_si(m0, r0, d, pp);
+    arb_log(m, r0, pp);
+    arb_addmul_si(m0, m, d, pp);
     arb_const_log2(m, pp);
     arb_addmul_si(m0, m, prec, pp);
 
@@ -129,8 +120,13 @@ gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
 
     while ((K = maj_yr(m, m0, r, vr, len, pp)))
         choose_r(r, r0, m, K, pp);
+#if DEBUG > 1
+    flint_printf("\nchoose r = "); arb_printd(r, 10);
+    flint_printf(" -> m = "); arb_printd(m, 10);
+#endif
 
     /* final result */
+    arb_acosh(r, r, pp);
     arb_div(m, m, r, pp);
     arb_mul_2exp_si(m, m, -1);
     arb_get_ubound_arf(t, m, pp);
