@@ -1,6 +1,14 @@
 #include "abel_jacobi.h"
 
 void
+_acb_vec_add_error_mag(acb_ptr res, slong len, mag_t e)
+{
+    slong k;
+    for (k = 0; k < len; k++)
+        acb_add_error_mag(res + k, e);
+}
+
+void
 acb_randtest_exclude(acb_t z, acb_t b, flint_rand_t state, slong prec, slong mag_bits)
 {
     do

@@ -176,9 +176,8 @@ void de_int_init(de_int_t de, double h, ulong n, ulong m, slong prec);
 void de_int_clear(de_int_t de);
 
 /* parameters for GC integration */
-slong gc_params_d(const cdouble * w, slong len, double r, slong i, slong prec);
-slong gc_params(acb_srcptr u, slong len, double r, slong i, slong prec);
-slong gc_params_tree(const tree_t tree, sec_t c, slong prec);
+slong gc_params(mag_t e, acb_srcptr u, slong len, slong i, slong prec);
+slong gc_params_tree(mag_t e, const tree_t tree, sec_t c, slong prec);
 
 /* compute maximum spanning tree */
 void tree_init(tree_t tree, slong d);
@@ -232,6 +231,7 @@ void mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, 
 
 /* vec utilities */
 /*void _acb_vec_scalar_addmul(acb_ptr res, acb_srcptr vec, slong len, const acb_t c, slong prec);*/
+void _acb_vec_add_error_mag(acb_ptr res, slong len, mag_t e);
 void _acb_vec_scalar_addmul_fmpz(acb_ptr res, acb_srcptr vec, slong len, const fmpz_t c, slong prec);
 void acb_vec_polynomial_shift(acb_ptr x, slong len, const acb_t c, slong prec);
 void acb_vec_mul_geom(acb_ptr x, slong len, acb_t c0, const acb_t c, slong prec);

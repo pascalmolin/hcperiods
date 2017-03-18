@@ -127,7 +127,7 @@ int main() {
             rg = _acb_vec_init(g);
             rd = _acb_vec_init(g);
 
-            n = gc_params(u, d2, -1, g - 1, prec);
+            n = gc_params(NULL, u, d2, g - 1, prec);
 
             /* take d1 = 0 ie sqrt(x-u[i]) for all */
             gc_integrals(rg, u, 0, d2, g, n, prec);

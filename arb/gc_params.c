@@ -49,7 +49,7 @@ maj_yr(arb_t m, const arb_t m0, const arb_t r, arb_srcptr vr, slong len, slong p
 void
 choose_r(arb_t r, const arb_t r0, const arb_t m, slong K, slong prec)
 {
-#if 0
+#if 1
     arb_zero(r);
     arf_set_d(arb_midref(r), .9 * arf_get_d(arb_midref(r0), ARF_RND_DOWN));
 #else
@@ -63,14 +63,16 @@ choose_r(arb_t r, const arb_t r0, const arb_t m, slong K, slong prec)
     arb_add(r, r, A, prec);
     arb_div(A, r0, r, prec);
     arb_sub(r, r0, A, prec);
+    /* mag_zero(arb_radref(r)); */
     arb_clear(A);
 #endif
 }
 
 slong
-gc_param_edge(acb_srcptr u, slong len, slong d, slong prec)
+gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
 {
     slong n, k, K;
+    slong pp = 32;
     acb_t z;
     arf_t t;
     arb_t r0, r, m0, m;
@@ -88,35 +90,62 @@ gc_param_edge(acb_srcptr u, slong len, slong d, slong prec)
     vr = _arb_vec_init(len);
     for (k = 0; k < len; k++)
     {
-        acb_asin(z, u + k, prec);
+#if 0
+        acb_asin(z, u + k, pp);
         arb_abs(vr + k, acb_imagref(z));
-        arb_get_abs_lbound_arf(t, vr + k, prec);
+#else
+        acb_add_si(z, u + k, 1, pp);
+        acb_abs(vr + k, z, pp);
+        acb_add_si(z, u + k, -1, pp);
+        acb_abs(r, z, pp);
+        arb_add(vr + k, vr + k, r, pp);
+        arb_mul_2exp_si(vr + k, vr + k, -1);
+        arb_acosh(vr + k, vr + k, pp);
+#endif
+        if (!arb_is_finite(vr + k))
+        {
+            flint_printf("\nERROR: could not compute r for u = "); acb_printd(u + k, 20);
+            abort();
+        }
+        arb_get_abs_lbound_arf(t, vr + k, pp);
         if (!k || arf_cmp(t, arb_midref(r0)) < 0)
             arf_set(arb_midref(r0), t);
     }
-#if 1
+#if DEBUG > 1
     flint_printf("\nr0 = "); arb_printd(r0, 10);
 #endif
 
     /* m0 = D + log(2pi) + d*r0 */
-    arb_const_log_sqrt2pi(m0, prec);
+    arb_const_log_sqrt2pi(m0, pp);
     arb_mul_2exp_si(m0, m0, 1);
-    arb_addmul_si(m0, r0, d, prec);
-    arb_const_log2(m, prec);
-    arb_addmul_si(m0, m, prec, prec);
+    arb_addmul_si(m0, r0, d, pp);
+    arb_const_log2(m, pp);
+    arb_addmul_si(m0, m, prec, pp);
 
+    /* fixme: let the user provide some r0? */
     /* choose r */
     arb_set(r, r0);
     mag_set_d(arb_radref(r), 2./prec);
 
-    while ((K = maj_yr(m, m0, r, vr, len, prec)))
-        choose_r(r, r0, m, K, prec);
+    while ((K = maj_yr(m, m0, r, vr, len, pp)))
+        choose_r(r, r0, m, K, pp);
 
     /* final result */
-    arb_div(m, m, r, prec);
+    arb_div(m, m, r, pp);
     arb_mul_2exp_si(m, m, -1);
-    arb_get_ubound_arf(t, m, prec);
+    arb_get_ubound_arf(t, m, pp);
     n = arf_get_si(t, ARF_RND_CEIL);
+
+    /* error */
+    if (e)
+    {
+        arb_exp(m, m, pp);
+        arb_mul_si(r, r, 2 * n, pp);
+        arb_exp(r, r, pp);
+        arb_sub_ui(r, r, 1, pp);
+        arb_div(m, m, r, pp);
+        arb_get_mag(e, m);
+    }
 
     _arb_vec_clear(vr, len);
     acb_clear(z);
@@ -130,63 +159,7 @@ gc_param_edge(acb_srcptr u, slong len, slong d, slong prec)
 }
 
 slong
-gc_params(acb_srcptr u, slong len, double r, slong i, slong prec)
+gc_params_tree(mag_t e, const tree_t tree, sec_t c, slong prec)
 {
-    slong n, k;
-    cdouble * w;
-    w = malloc(len * sizeof(cdouble));
-    for (k = 0; k < len; k++)
-        w[k] = acb_get_cdouble(u + k);
-
-    n = gc_params_d(w, len, r, i, prec);
-#if 1
-    flint_printf("\n\ngc param double : n = %ld, prec = %ld", n, prec);
-#endif
-    free(w);
-
-    n = gc_param_edge(u, len, i, prec);
-#if 1
-    flint_printf("\ngc param arb : n = %ld, prec = %ld", n, prec);
-#endif
-
-    return n;
-}
-
-slong
-gc_params_tree(const tree_t tree, sec_t c, slong prec)
-{
-    return gc_params(tree->data[tree->min].u, c.n, tree->r, c.n - 1, prec);
-}
-
-void
-gc_distance_ellipse(mag_t d, const acb_t p, mag_t r)
-{
-    return;
-}
-
-void
-gc_constant_M(mag_t M, acb_srcptr w, slong len, slong d, mag_t r)
-{
-    slong i;
-    mag_t di, p;
-    /* 2*Pi*r^d/sqrt(prod d(w_i,e_r)) */
-    mag_const_pi(M);
-    mag_mul_2exp_si(M, M, 1);
-    mag_pow_ui(p, r, d);
-    mag_mul(M, M, p);
-    mag_one(p);
-    for (i = 0; i < len; i++)
-    {
-        gc_distance_ellipse(di, w + i, r);
-        mag_mul(p, p, di);
-    }
-    mag_rsqrt(p, p);
-    mag_mul(M, M, p);
-}
-
-/* error for computation with n points */
-void
-gc_error(mag_t e, slong n, acb_srcptr w, slong d, mag_t r)
-{
-    return;
+    return gc_params(e, tree->data[tree->min].u, c.n, c.n - 1, prec);
 }
