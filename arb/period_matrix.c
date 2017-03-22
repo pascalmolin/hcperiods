@@ -7,34 +7,32 @@
 #include "abel_jacobi.h"
 
 void
-periods_loop(acb_ptr res, const loop_t loop, const cohom_t dz, const acb_mat_t integrals, acb_srcptr z, sec_t c, slong prec)
+periods_loop(acb_ptr res, const loop_t loop, const acb_mat_t integrals, acb_srcptr z, sec_t c, slong prec)
 {
-    slong i, k;
+    slong i;
     acb_t tmp;
 
     acb_init(tmp);
-
-    for (k = 0; k < c.g; k++)
-        acb_zero(res + k);
+    _acb_vec_zero(res, c.g);
 
     for (i = 0; i < loop.n; i++)
     {
         slong e = loop.l[i].index, l = loop.l[i].shift;
         fmpz * coeff = &loop.l[i].coeff;
-
+        acb_ptr r = res, ii = integrals->rows[e];
         if (l == 0)
-        {
-            for (k = 0; k < c.g; k++)
-                acb_addmul_fmpz(res + k, acb_mat_entry(integrals, e, k), coeff, prec); 
-        }
+            _acb_vec_scalar_addmul_fmpz(r, ii, c.g, coeff, prec);
         else
         {
-            for (k = 0; k < c.g; k++)
+            slong j;
+            for (j = 0; j < c.nj; j++)
             {
                 slong lj;
-                lj = (l * dz[k].y) % c.m;
+                lj = ((c.m-l) * (c.j1 + j)) % c.m;
                 acb_mul_fmpz(tmp, z + lj, coeff, prec);
-                acb_addmul(res + k, acb_mat_entry(integrals, e, k), tmp, prec); 
+                _acb_vec_scalar_addmul(r, ii, c.ni[j], tmp, prec);
+                r += c.ni[j];
+                ii += c.ni[j];
             }
         }
     }
@@ -43,7 +41,7 @@ periods_loop(acb_ptr res, const loop_t loop, const cohom_t dz, const acb_mat_t i
 }
 
 void
-period_matrix(acb_mat_t omega, const homol_t basis, const cohom_t dz, const acb_mat_t integrals, sec_t c, slong prec)
+period_matrix(acb_mat_t omega, const homol_t basis, const acb_mat_t integrals, sec_t c, slong prec)
 {
     slong k;
     acb_ptr z;
@@ -51,7 +49,8 @@ period_matrix(acb_mat_t omega, const homol_t basis, const cohom_t dz, const acb_
     _acb_vec_unit_roots(z, c.m, prec);
 
     for (k = 0; k < c.g; k++)
-        periods_loop(omega->rows[k], basis[k], dz, integrals, z, c, prec);
+        periods_loop(omega->rows[k], basis[k], integrals, z, c, prec);
+    acb_mat_transpose(omega, omega);
 
     _acb_vec_clear(z, c.m);
     return;

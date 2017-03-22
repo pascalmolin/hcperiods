@@ -71,6 +71,7 @@ void
 generate()
 {
     int ip, f, in, im;
+    int flag = 0;
 
     flint_printf("[");
     for (ip = 0; ip < np; ip++)
@@ -89,9 +90,9 @@ generate()
                 acb_poly_init(pol);
                 vf[f](pol, vn[in], prec);
 
-                abel_jacobi_init_poly(aj, 2, pol, prec);
+                abel_jacobi_init_poly(aj, 2, pol, flag, prec);
                 /* should not be necessary */
-                abel_jacobi_compute(aj, prec);
+                abel_jacobi_compute(aj, flag, prec);
 
                 /* print roots */
                 flint_printf("< [");
@@ -118,6 +119,7 @@ check_periods()
 {
     FILE * fp;
     int ip, f, in, im;
+    int flag = 0;
 
     flint_printf("periods...");
     fflush(stdout);
@@ -147,8 +149,8 @@ check_periods()
                     slong c;
                     abel_jacobi_t aj;
 
-                    abel_jacobi_init_poly(aj, vm[im], pol, prec);
-                    abel_jacobi_compute(aj, prec);
+                    abel_jacobi_init_poly(aj, vm[im], pol, flag, prec);
+                    abel_jacobi_compute(aj, flag, prec);
 
                     /* check 4 entries of each matrix */
                     for (c = 0; c < nc; c++)

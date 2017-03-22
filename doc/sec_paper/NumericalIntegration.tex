@@ -4,18 +4,14 @@
 
   \section{Numerical integration}\label{sec:numerical_integration}
 
-  For $(a,b) \in E$ we want to compute to absolute precision say $e^{-D}$ the elementary integrals
+  For each edge $(a,b) \in E$, we want to evaluate the elementary integrals
   (see Remark \ref{m-rmk:elem_ints})
 \begin{align*}
  \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du.
 \end{align*}
-
-In this section, we denote by $α$ the value $1-j/m$, which is the crucial parameter for numerical integration.
-Notice that $α=1/2$ for hyperelliptic curves, while for general superelliptic curves $α$ ranges
-from $1/m$ to $\frac{m-1}m$ depending on the differential form $\omega_{i,j}$ considered.
-
-
-As explained in \S \ref{m-subsec:real_mult}, the actual computations will be done on integrals of the form
+  by numerical integration.
+  
+ As explained in \S \ref{m-subsec:real_mult}, the actual computations will be done on integrals of the form
 \begin{equation}
     \label{eq:elem_num_int}
     I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{\frac jm}\ytab(u)^j}
@@ -28,8 +24,13 @@ the value of elementary integrals being recovered by the polynomial shift
     \int_{-1}^1\frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac jm}}\du
     = \sum_{l=0}^{i-1} {i-1 \choose l} \left(\frac{b+a}{b-a}\right)^{i-1-l} I_{a,b}(l,j).
 \end{equation}
+ 
+In this section, we denote by $α$ the value $1-j/m$, which is the crucial parameter for numerical integration.
+Notice that $α=1/2$ for hyperelliptic curves, while for general superelliptic curves $α$ ranges
+from $1/m$ to $\frac{m-1}m$ depending on the differential form $\omega_{i,j}$ considered.
 
-We study here two numerical integration schemes:
+We study here two numerical integration schemes which are suitable for arbitrary
+precision computations:
 \begin{itemize}
     \item 
         the double-exponential change of variables is completely general \cite{Molin2010} and its robustness
@@ -97,18 +98,18 @@ We also introduce the following quantities
 Once we have computed the two bounds $M_1$, $M_2$ and the constant $B(r,α)$,
 we obtain a rigorous integration scheme as follows
 \begin{thm}
-    With the notations above, for all $D>0$, choose $h$ and $n$ such that
+    With the notations above, for all $D>0$, choose $h$ and $N$ such that
     \begin{equation}
         \begin{cases}
             h \le \frac{2πr}{D + \log(2M_2 B(r,α) + e^{-D})}\\
-            nh \ge \asinh\left(\frac{D+\log(\frac{2^{2α+1}M_1}{α})}{2αλ}\right),
+            Nh \ge \asinh\left(\frac{D+\log(\frac{2^{2α+1}M_1}{α})}{2αλ}\right),
         \end{cases}
     \end{equation}
     then
     \begin{equation*}
         \abs{
             I_{a,b}(i,j)
-            - h\sum_{k=-n}^n
+            - h\sum_{k=-N}^N
             w_k \frac{u_k^{i-1}}{\ytab(u_k)^j}
         } \leq e^{-D},
     \end{equation*}
@@ -125,30 +126,29 @@ The proof follows the same lines as the one in \cite{Molin2010}:
 we write the Poisson formula on $h\Z$ for the function $g$
 \begin{equation*}
     \underbrace{h\sum_{\abs{k}>n}g(kh)}_{e_T}
- + h\sum_{k=-n}^n g(kh)
+ + h\sum_{k=-N}^N g(kh)
  = \int_\R g
- +
-     \underbrace{\sum_{k\in\Z^\ast} \hat g(\frac{k}{h})}_{e_Q}
+ + \underbrace{\sum_{k\in\Z^\ast} \hat g(\frac{k}{h})}_{e_Q}
 \end{equation*}
 and control both error terms $e_T$ and $e_q$ by Lemma \ref{m-lem:de_error_trunc}
-and \ref{m-lem:de_error_quad} below. The actual parameters $h$ and $n$ follow
+and \ref{m-lem:de_error_quad} below. The actual parameters $h$ and $N$ follow
 by bounding each error by $e^{-D}/2$.
 
 \begin{lemma}[truncation error]
     \label{lem:de_error_trunc}
     \begin{equation}
-        \sum_{\abs{k}>n}\abs{hg(kh)}
+        \sum_{\abs{k}>N}\abs{hg(kh)}
         \leq \frac{2^{2α} M_1}{αλ}\exp(-2αλ\sinh(nh)).
     \end{equation}
 \end{lemma}
 \begin{proof}
     We bound the sum by the integral of a decreasing function
     \begin{align*}
-        \sum_{\abs{k}>n}\abs{hg(kh)}
-        &\leq2M_1\int_{nh}^\infty\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
-        =2M_1\int_{λ\sinh(nh)}^\infty\frac{\dt}{\cosh(t)^{2α}}\\
-        &\leq 2^{2α+1} M_1\int_{λ\sinh(nh)}^\infty e^{-2αt}\dt
-        = \frac{2^{2α} M_1}{α}e^{-2αλ\sinh(nh)}.
+        \sum_{\abs{k}>N}\abs{hg(kh)}
+        &\leq2M_1\int_{Nh}^\infty\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
+        =2M_1\int_{λ\sinh(Nh)}^\infty\frac{\dt}{\cosh(t)^{2α}}\\
+        &\leq 2^{2α+1} M_1\int_{λ\sinh(Nh)}^\infty e^{-2αt}\dt
+        = \frac{2^{2α} M_1}{α}e^{-2αλ\sinh(Nh)}.
     \end{align*}
 \end{proof}
 
@@ -241,19 +241,20 @@ simple: there is no need to actually compute the Chebychev polynomials
 since their roots are explicitly given as cosine functions \cite[25.4.38]{AbramowitzStegun}.
 \begin{thm}[Gauss-Chebychev integration]
     Let $g$ be holomorphic around $[-1,1]$. Then for all
-    $n$, there exists $\xi \in ]-1,1[$ such that
+    $N$, there exists $\xi \in ]-1,1[$ such that
     \begin{equation}
         \label{eq:gauss_chebychev}
         \int_{-1}^1\frac{g(u)}{\sqrt{1-u^2}}\du
-        - \sum_{k=1}^n w_k g(u_k)
-        = \frac{π2^{2n+1}}{2^{4n}}\frac{g^{(2n)}(\xi)}{(2n)!}
-     = E(n),
+        - \sum_{k=1}^N w_k g(u_k)
+        = \frac{π2^{2N+1}}{2^{4N}}\frac{g^{(2N)}(\xi)}{(2N)!}
+     = E(N),
     \end{equation}
-    with constant weights $w_k = w =\frac{π}n$ and nodes $u_k = \cos(\frac{2k-1}{2n}π)$.
+    with constant weights $w_k = w =\frac{π}N$
+    and nodes $u_k = \cos(\frac{2k-1}{2N}π)$.
 \end{thm}
 
-Moreover, very nice estimates on the error $E_n$ can by obtained by applying the residue
-theorem on an ellipse $ε_r$ of the form
+Moreover, very nice estimates on the error $E_N$ can by obtained by applying
+the residue theorem on an ellipse $ε_r$ of the form
 \begin{equation}
     ε_r = \set{z, \abs{z-1}+\abs{z+1} = 2\cosh(r) }
 \end{equation}
@@ -267,13 +268,13 @@ theorem on an ellipse $ε_r$ of the form
     Let $r>0$ such that $g$ is holomorphic on $ε_r$. Then
     the error in \eqref{eq:gauss_chebychev} satisfies
     \begin{equation}
-        \abs{E(n)}\leq \frac{2πM(r)}{e^{2rn}-1}
+        \abs{E(N)}\leq \frac{2πM(r)}{e^{2rN}-1}
     \end{equation}
     where $M(r)=\max\set{\abs{f(z)},z\in ε_r}$.
 \end{thm}
 
 Now we use this theorem with a function
-$g_{i,j}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitely factored
+$g_{i,j}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitly factored
 polynomial $Q(u)=\prod(u-u_k)$, so that the error can be
 explicitly controlled.
 
@@ -296,17 +297,18 @@ We simply compute the distance
 
 \begin{prop}
     With $r$ and $M(r)$ satisfying lemme \ref{m-lem:param_r},
-    for all $n$ such that
+    for all $N$ such that
     \begin{equation}
-        n \geq \frac{D+\log(2πM(r))+1}{2r}
+        \label{eq:Ngc}
+        N \geq \frac{D+\log(2πM(r))+1}{2r}
     \end{equation}
     we have
     \begin{equation}
         \abs{I_{a,b}(i,j)
-        - \frac{π}n\sum_{k=1}^n \frac{u_k^{i-1}}{\ytab(u_k)}}
+        - \frac{π}N\sum_{k=1}^N\frac{u_k^{i-1}}{\ytab(u_k)}}
             \leq e^{-D}
     \end{equation}
-    where $u_k=\cos(\frac{2k-1}{2n}π)$.
+    where $u_k=\cos(\frac{2k-1}{2N}π)$.
 \end{prop}
 
 More details on the choice of $r$ and the computation of $M(r)$
@@ -331,7 +333,7 @@ estimated quite precisely by Cauchy formula.
     \end{equation}
 \end{lemma}
 
-For fixed $n$, assuming the minimum value $\rmax$ is attained for exactly
+For fixed $N$, assuming the minimum value $\rmax$ is attained for exactly
 $m$ roots $u_i$, we can optimize the choice of $r$ by writing
 $r=\rmax(1-λ)$ so that $B(r)\leq\frac{B_1}{(\rmaxλ)^m}$, where
 $B_1=\prod(r_i-\rmax)$, the product being on those $r_i>\rmax$.
@@ -382,7 +384,6 @@ assume(l<Pi/2);
 phi:=tanh(l*sinh(t+I*tau));;
 simplify(expand(diff(phi,t$1)));
 \fi
-
 
 \biblio
 \end{document}

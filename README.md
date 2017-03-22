@@ -1,9 +1,17 @@
-hcperiods
-=========
+#hcperiods
 
-:gp: period matrix + abel-jacobi map for hyperelliptic curves
+Numerical evaluation of periods of superelliptic curves to
+arbitrary precision by numerical integration.
 
-:magma: superelliptic generalization w. Christian Neurohr
+## ``gp``
 
-:arb: arb implementation
+initial projet, period matrix + Abel-Jacobi map for hyperelliptic curves
 
+## ``magma``
+
+generalization for superelliptic curves with Christian Neurohr,
+complete Abel-Jacobi.
+
+## ``arb``
+
+arb implementation (rigorous), currently only period matrix

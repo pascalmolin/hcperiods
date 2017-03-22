@@ -183,5 +183,5 @@ de_int_cst_b(mag_t b, mag_t tau, slong j, slong m)
 slong
 de_params_tree(double * h, const tree_t tree, sec_t c, slong prec)
 {
-    return de_params(h, tree->data[tree->min].u, c.n, tree->r, c.n - 1, c.m, prec);
+    return de_params(h, tree->data[tree->min].u, c.n - 2, tree->r, c.n - 1, c.m, prec);
 }

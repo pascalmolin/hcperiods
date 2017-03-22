@@ -87,7 +87,7 @@ spanning_tree(tree_t tree, acb_srcptr x, slong len, int type)
     n = (len * (len - 1)) / 2;
     e = flint_malloc(n * sizeof(edge_t));
 
-    if (type == INT_GC)
+    if (type == INT_GC || type == INT_D2)
         edges_init(e, param_gc_r, w, len);
     else if (type == INT_DE)
         edges_init(e, param_de_tau, w, len);
@@ -152,8 +152,8 @@ void
 tree_print(const tree_t tree)
 {
     slong k;
-    flint_printf("\n[%ld",tree->n);
+    flint_printf("\n[%lf, %ld",tree->r, tree->n);
     for (k = 0; k < tree->n; k++)
-        flint_printf(",[%ld,%ld]%s",tree->e[k].a,tree->e[k].b);
+        flint_printf(",[%ld,%ld]",tree->e[k].a,tree->e[k].b);
     flint_printf("]\n");
 }

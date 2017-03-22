@@ -3,6 +3,7 @@
 int main() {
 
     slong n, i, m;
+    int flag = 0;
     slong prec = 200;
     flint_rand_t state;
     
@@ -10,12 +11,12 @@ int main() {
     fflush(stdout);
     flint_randinit(state);
 
-    for (n = 3; n < 5; n++)
+    for (n = 3; n < 10; n++)
     {
         acb_ptr x;
         x = _acb_vec_init(n);
 
-        for (i = 0; i < 3; i++)
+        for (i = 0; i < 5; i++)
         {
             slong i;
  
@@ -27,8 +28,8 @@ int main() {
                 abel_jacobi_t aj;
 
                 progress("[n=%ld, m=%ld]",n,m);
-                abel_jacobi_init_roots(aj, m, x, n);
-                abel_jacobi_compute(aj, prec);
+                abel_jacobi_init_roots(aj, m, x, n, flag);
+                abel_jacobi_compute(aj, flag, prec);
 
                 abel_jacobi_clear(aj);
             }

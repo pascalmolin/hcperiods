@@ -16,6 +16,9 @@ gc_params(acb_srcptr u, slong len, double r, slong i, slong prec)
         w[k] = acb_get_cdouble(u + k);
 
     n = gc_params_d(w, len, r, i, prec);
+#if DEBUG
+    flint_printf("\ngc params: n = %ld, prec = %ld", n, prec);
+#endif
 
     free(w);
     return n;

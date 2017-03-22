@@ -133,11 +133,7 @@ int main() {
             gc_integrals(rg, u, 0, d2, g, n, prec);
 
             /* de */
-            c.m = 2;
-            c.n = d2 + 2;
-            c.delta = (d2 % 2) ? 1 : 2;
-            c.g = g;
-            c.roots = NULL;
+            sec_init(&c, 2, NULL, d2 + 2);
 
             de_integrals(rd, u, 0, d2, c, prec);
 

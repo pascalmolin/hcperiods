@@ -6,24 +6,33 @@
 
   \section{Introduction}
 
-  The numerical evaluation of integrals defined on algebraic curves
-  is a problem of long interest. Being able to compute such integrals
-  rigorously and to arbitrary precision is of crucial interest in
-  number theory.
+  The Abel-Jacobi map links a curve to a complex torus.
+  In particular the matrix of periods makes it possible to define the Riemann
+  theta function of the curve, which is an object of central interest in
+  mathematics: let us
+  mention the theory of abelian function or integration of partial differential
+  equations.
+
+  In the context of cryptography and number theory, periods also appear
+  in the BSD conjecture or as a tool to identify isogenies or to find
+  curves having prescribed complex multiplication \cite{vanWamelen06}.
+  For such diophantine applications, it is necessary to compute
+  integrals to large precision (say thousand digits), and to have
+  rigorous results.
 
   \subsection{Existing algorithms}
 
   For genus 1 and 2, methods based on isogenies (AGM \cite{CremonaAGM13},
   Richelot \cite{BostMestre88}, Borchards means \cite{Labrande16})
   make it possible to compute periods to arbitrary precision in almost
-  linear time. These techniques scale very badly when the genus grows.
+  linear time. However these techniques scale very badly when the genus grows.
 
   For modular curves, the modular symbols machinery and termwise integration of
   modular forms expansions also give excellent algorithms
   \cite[sec 3.2]{Mascot13}.
 
   For general hyperelliptic curve of arbitrary genus, the Magma implementation
-  due to P. Van Wamelen \cite{vanWamelen06} computes this map.
+  due to van Wamelen \cite{vanWamelen06} computes this map.
   However it is limited in terms of precision (less
   than 2000 digits) and some bugs are experienced on
   certain configurations of branch points. This implementation motivated our
@@ -34,5 +43,62 @@
   For completely general algebraic curves, there is an implementation in Maple
   due to van Hoeij and Deconinck \cite{DeconinckvanHoeij01}.
   We found that this package is not suitable for high precision purposes.
+
+  \subsection{Main result}
+
+  This paper adresses the problem of computing the period matrix and the
+  Abel-Jacobi on curves of the form $y^m = f(x)$, which generalize immediately
+  hyperelliptic curves and are usually called superelliptic.
+
+  We take advantage of their specific geometry to obtain the following
+  (see Theorem \ref{thm:complexity_integrals})
+  \begin{thm}
+      Let $y^m=f(x)$ be a superelliptic curve of genus $g$,
+      where $f$ has degree $d$.
+      We can compute a basis of the period lattice to precision
+      $D$ digits using $O(n(g+\log D)D^2\log^{2+\varepsilon} D)$
+      binary operations, where $\epsilon>0$ is chosen so that
+      the multiplication of precision $D$ numbers has complexity
+      $O(D\log^{1+\epsilon}D)$.
+  \end{thm}
+
+  This part only involves numerical integration of differentials. We remark
+  that this complexity is very favorable in terms of the genus.
+
+  In order
+  to obtain standard periods we rely on some linear algebra to obtain a
+  symplectic basis of homology (see Section \ref{sec:symp_basis}).
+  In practice this step has negligible complexity
+  and produces a base change with tiny coefficients. However we have no proof
+  of this fact which has to do with the very specific form of our input,
+  so we leave it as a supplementary hypothesis to claim the
+  following
+  \begin{thm}
+      Let $y^m=f(x)$ be a superelliptic curve of genus $g$ whose periods
+      have been computed.
+      Provided the symplectic reduction
+      step runs in $O(g^2)$ operations and produces $O(1)$ coefficients,
+      we compute the reduced period matrix $τ$ to precision $D$
+      digits using an extra $O(g^{2.8}D\log^{1+\varepsilon}D)$ operations.
+  \end{thm}
+
+  \subsection{Rigorous implementation}
+
+  The algorithm has been implemented in C using the Arb library \cite{Johansson2013arb}.
+  This system represents a complex numbers as a floating point approximation
+  plus an error bound, and automatically
+  takes into account all precision loss occurring through the
+  execution of the program. With this model we can certify
+  the accuracy of the numerical results of our algorithm (up to human or even
+  compiler errors, as usual).
+
+  Another implementation has been done in Magma. Both are publicly available
+  on github \url{https://github.com/pascalmolin/hcperiods}.
+
+  \subsection{Acknowledgements}
+
+  The first author wants to thank the crypto team at Inria Nancy, where
+  a first version of this work was carried out in the case of hyperelliptic
+  curves.
 
 \end{document}

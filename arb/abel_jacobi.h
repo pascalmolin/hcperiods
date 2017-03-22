@@ -15,6 +15,7 @@
 
 #define VBS 0
 #define progress(...) if (VBS) flint_printf(__VA_ARGS__);
+#define DEBUG 0
 
 /******************************************************************************
 
@@ -30,12 +31,15 @@ typedef struct
     acb_ptr roots;       /* branch points */
     slong delta;         /* default = gcd(m, d) */
     slong g;             /* genus, 2g = (m-1)(d-1) - delta + 1 */
+    slong j1;
+    slong nj;
+    slong * ni;
 }
 superelliptic_curve;
 
 typedef superelliptic_curve sec_t;
 
-enum { INT_GC, INT_DE };
+enum { INT_D2, INT_GC, INT_DE };
 
 typedef struct
 {
@@ -100,7 +104,7 @@ typedef struct
 /* homology basis */
 typedef loop_t * homol_t;
 
-/* differential form */
+/* differential forms */
 
 /* i,j s.t. dj >= mi + delta */
 inline slong
@@ -117,20 +121,8 @@ imax(slong j, slong m, slong n, slong d)
 
 typedef struct
 {
-    slong x; /* power of x */
-    slong y; /* power of y */
-} dform_t;
-
-/* cohomology basis */
-typedef dform_t * cohom_t;
-
-typedef struct
-{
     /* curve */
     sec_t c;
-
-    /* differentials */
-    cohom_t dz;
 
     /* integration type: Gauss or DE */
     int type;
@@ -155,6 +147,14 @@ abel_jacobi_struct;
 
 typedef abel_jacobi_struct abel_jacobi_t[1];
 
+enum {
+    AJ_USE_DE   = 1 << 0,
+    AJ_NO_TAU   = 1 << 1,
+    AJ_NO_AB    = 1 << 2,
+    AJ_TRIM     = 1 << 3
+};
+
+
 /******************************************************************************
 
   functions
@@ -163,9 +163,9 @@ typedef abel_jacobi_struct abel_jacobi_t[1];
 void sec_init(sec_t * c, slong m, acb_srcptr x, slong d);
 void sec_clear(sec_t c);
 
-void abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d);
-void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_poly_t f, slong prec);
-void abel_jacobi_compute(abel_jacobi_t aj, slong prec);
+void abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d, int flag);
+void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_poly_t f, int flag, slong prec);
+void abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
 /* parameters for DE integration */
@@ -195,33 +195,31 @@ void tree_ydata_clear(tree_t tree);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
-void intersection_tree(fmpz_mat_t c, const tree_t tree, slong n, slong m);
+void intersection_tree(fmpz_mat_t c, const tree_t tree, slong m);
 
 /* find g+g symplectic homology basis from tree */
 /* two lists of g loops */
 void loop_init(loop_t * l, slong len);
+void loop_print(const loop_t l);
 void homol_init(homol_t * cyc, slong len);
 void homol_clear(homol_t l, slong len);
 void symplectic_reduction(fmpz_mat_t p, fmpz_mat_t m, slong g);
 void symplectic_basis(homol_t alpha, homol_t beta, const tree_t tree, sec_t c);
 
-/* find basis of holomorphic differentials */
-/* g elementary differentials */
-void holomorphic_differentials(cohom_t dz, slong d, slong m);
-
 /* numerically compute d-1 integrals along tree edges */
 /* (d-1)*(g-1) matrix, tree edges on lines */
 void gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slong prec);
-void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const cohom_t dz, const de_int_t de, slong prec);
+void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const de_int_t de, slong prec);
 void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec);
-void integrals_edge_factors_gc(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, slong prec);
-void integrals_edge_factors(acb_ptr res, const acb_t cab, const acb_t ba2, sec_t c, const cohom_t dz, slong prec);
-void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, const cohom_t dz, slong prec);
+void integrals_edge_factors_gc(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t cab, sec_t c, slong prec);
+void integrals_edge_factors(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t cab, sec_t c, slong prec);
+void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
 void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
+void integral_d2(acb_ptr res, ydata_t ye, sec_t c, slong prec);
 
 /* get all periods on a, b basis */
 /* two g*g matrices */
-void period_matrix(acb_mat_t omega, const homol_t basis, const cohom_t dz, const acb_mat_t integrals, sec_t c, slong prec);
+void period_matrix(acb_mat_t omega, const homol_t basis, const acb_mat_t integrals, sec_t c, slong prec);
 
 /* get tau reduced matrix */
 void tau_matrix(acb_mat_t tau, const acb_mat_t omega0, const acb_mat_t omega1, slong prec);
@@ -233,13 +231,19 @@ void mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, 
 void mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec);
 
 /* vec utilities */
+/*void _acb_vec_scalar_addmul(acb_ptr res, acb_srcptr vec, slong len, const acb_t c, slong prec);*/
+void _acb_vec_scalar_addmul_fmpz(acb_ptr res, acb_srcptr vec, slong len, const fmpz_t c, slong prec);
 void acb_vec_polynomial_shift(acb_ptr x, slong len, const acb_t c, slong prec);
 void acb_vec_mul_geom(acb_ptr x, slong len, acb_t c0, const acb_t c, slong prec);
 void acb_vec_add_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong prec);
 void acb_vec_sub_geom_arb(acb_ptr x, slong len, acb_t c0, const arb_t c, slong prec);
+void _acb_vec_sort_lex(acb_ptr vec, slong len);
+#define acb_mat_trim(m) _acb_vec_trim(m->entries, m->entries, m->r * m->c)
 
 /* tests/bench only */
 void acb_vec_set_random(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);
 void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits, double eps);
 void _acb_vec_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep);
+void acb_mat_print_gp(const acb_mat_t m, slong digits);
+

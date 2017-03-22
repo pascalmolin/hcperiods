@@ -21,6 +21,14 @@ loop_clear(loop_t l)
 }
 
 void
+loop_print(const loop_t l)
+{
+    slong k;
+    for (k = 0; k < l.n; k++)
+        flint_printf("%s%ld*g_%ld^(%ld)",k?"+ ":"",l.l[k].coeff,l.l[k].index,l.l[k].shift);
+}
+
+void
 homol_init(homol_t * cyc, slong len)
 {
     slong k;
