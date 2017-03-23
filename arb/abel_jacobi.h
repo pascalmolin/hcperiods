@@ -43,13 +43,15 @@ enum { INT_D2, INT_GC, INT_DE };
 
 typedef struct
 {
+    arf_t l;       /* lambda, take Pi/2 */
     arf_t h;       /* step size, exact */
     ulong n;       /* number of points */
     slong prec;    /* precision */
-    arb_t factor;  /* lambda*h, lambda=Pi/2 */
+    arb_t factor;  /* lambda*h */
     arb_ptr x;     /* tanh(lambda*sinh(k*h)) */
     arb_ptr dx;    /* cosh(k*h)/cosh(lambda*sinh(k*h))^2 */
     arb_ptr ch2m;  /* cosh(lambda*sinh(k*h))^(2/m) */
+    mag_t e;       /* error bound */
 }
 de_integration_struct;
 typedef de_integration_struct de_int_t[1];
@@ -169,10 +171,11 @@ void abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
 /* parameters for DE integration */
-slong de_params_d(double *ph, const cdouble * w, slong len, double r, slong i, slong m, slong prec);
-slong de_params(double * h, acb_srcptr u, slong len, double r, slong i, slong m, slong prec);
-slong de_params_tree(double * h, const tree_t tree, sec_t c, slong prec);
-void de_int_init(de_int_t de, double h, ulong n, ulong m, slong prec);
+void arb_vec_r(arb_t r0, arb_ptr vr, void (*f)(arb_t r, const acb_t u, arb_srcptr l, slong prec), acb_srcptr u, slong len, slong prec);
+slong de_params_d(double * h, double * lambda, double * r, const cdouble * w, slong len, slong i, slong m, slong prec);
+slong de_params(mag_t e, arf_t h, arf_t l, acb_srcptr u, slong len, double r, slong d, slong j, slong m, slong prec);
+slong de_params_tree(mag_t e, arf_t h, arf_t l, const tree_t tree, sec_t c, slong prec);
+void de_int_init(de_int_t de, const arf_t h, const arf_t l, ulong n, const mag_t e, ulong m, slong prec);
 void de_int_clear(de_int_t de);
 
 /* parameters for GC integration */
@@ -231,7 +234,7 @@ void mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, 
 
 /* vec utilities */
 /*void _acb_vec_scalar_addmul(acb_ptr res, acb_srcptr vec, slong len, const acb_t c, slong prec);*/
-void _acb_vec_add_error_mag(acb_ptr res, slong len, mag_t e);
+void _acb_vec_add_error_mag(acb_ptr res, slong len, const mag_t e);
 void _acb_vec_scalar_addmul_fmpz(acb_ptr res, acb_srcptr vec, slong len, const fmpz_t c, slong prec);
 void acb_vec_polynomial_shift(acb_ptr x, slong len, const acb_t c, slong prec);
 void acb_vec_mul_geom(acb_ptr x, slong len, acb_t c0, const acb_t c, slong prec);

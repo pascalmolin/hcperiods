@@ -41,6 +41,7 @@ arb_subdivide(arb_t t, arf_t step, const arb_t b, slong n, slong prec)
 void
 arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n, slong prec)
 {
+    const int tolerance = -2;
     slong k;
     arb_t t, abs;
     arf_t step;
@@ -48,22 +49,32 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
     arb_init(t);
     arb_init(abs);
     arf_init(step);
-
-    if (mag_is_special(arb_radref(t)) || mag_get_d(arb_radref(t)) < .00001)
+    if (mag_is_special(arb_radref(b)))
+    {
+        flint_printf("\nERROR: illegal ball in mag_func ");
+        arb_printd(b, 20); flint_printf("\n");
         abort();
+    }
 
     arb_subdivide(t, step, b, n, prec);
 
     for (k = 0; k < n; k++)
     {
-        if (f(abs, t, params, prec) == 0 || !arb_is_finite(abs))
-            arb_bound_func_arb(abs, f, params, t, 5, prec);
+        if (f(abs, t, params, prec) == 0
+                || !arb_is_finite(abs)
+                || arb_rel_error_bits(abs) > tolerance)
+            arb_bound_func_arb(abs, f, params, t, 3, prec);
         if (k == 0)
             arb_set(m, abs);
         else
             arb_union(m, m, abs, prec);
         arb_add_arf(t, t, step, prec);
     }
+
+#if VERBOSE > 3
+    flint_printf("\nmag on "); arb_printd(b, 10);
+    flint_printf(" -> "); arb_printd(m, 10);
+#endif
 
     arf_clear(step);
     arb_clear(t);

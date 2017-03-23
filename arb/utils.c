@@ -1,7 +1,7 @@
 #include "abel_jacobi.h"
 
 void
-_acb_vec_add_error_mag(acb_ptr res, slong len, mag_t e)
+_acb_vec_add_error_mag(acb_ptr res, slong len, const mag_t e)
 {
     slong k;
     for (k = 0; k < len; k++)

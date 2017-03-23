@@ -6,6 +6,39 @@
 
 #include "abel_jacobi.h"
 
+void
+arb_func_r_gc(arb_t r, const acb_t u, arb_srcptr l, slong prec)
+{
+    acb_t z;
+    arb_t t;
+    acb_init(z);
+    arb_init(t);
+    acb_add_si(z, u, 1, prec);
+    acb_abs(t, z, prec);
+    acb_add_si(z, u, -1, prec);
+    acb_abs(r, z, prec);
+    arb_add(r, r, t, prec);
+    arb_mul_2exp_si(r, r, -1);
+    arb_clear(t);
+    acb_clear(z);
+}
+
+void
+arb_vec_r(arb_t r0, arb_ptr r, void (*f)(arb_t r, const acb_t u, arb_srcptr l, slong prec), acb_srcptr u, slong len, slong prec)
+{
+    slong k;
+    arf_t t;
+    arf_init(t);
+    for (k = 0; k < len; k++)
+    {
+        f(r + k, u + k, NULL, prec);
+        arb_get_abs_lbound_arf(t, r + k, prec);
+        if (!k || arf_cmp(t, arb_midref(r0)) < 0)
+            arf_set(arb_midref(r0), t);
+    }
+    arf_clear(t);
+}
+
 slong
 maj_yr(arb_t m, const arb_t m0, const arb_t r, arb_srcptr vr, slong len, slong prec)
 {
@@ -21,7 +54,6 @@ maj_yr(arb_t m, const arb_t m0, const arb_t r, arb_srcptr vr, slong len, slong p
             K++;
         else
         {
-            /* fixme; no ch... */
             arb_sub_arf(d, vr + k, arb_midref(r), prec);
             arb_mul(m, m, d, prec);
         }
@@ -75,7 +107,7 @@ choose_r(arb_t r, const arb_t r0, const arb_t m, slong K, slong prec)
 slong
 gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
 {
-    slong n, k, K;
+    slong n, K;
     slong pp = 32;
     acb_t z;
     arf_t t;
@@ -90,20 +122,8 @@ gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
     arb_init(m);
 
     /* compute rk and r0 */
-
     vr = _arb_vec_init(len);
-    for (k = 0; k < len; k++)
-    {
-        acb_add_si(z, u + k, 1, pp);
-        acb_abs(vr + k, z, pp);
-        acb_add_si(z, u + k, -1, pp);
-        acb_abs(r, z, pp);
-        arb_add(vr + k, vr + k, r, pp);
-        arb_mul_2exp_si(vr + k, vr + k, -1);
-        arb_get_abs_lbound_arf(t, vr + k, pp);
-        if (!k || arf_cmp(t, arb_midref(r0)) < 0)
-            arf_set(arb_midref(r0), t);
-    }
+    arb_vec_r(r0, vr, arb_func_r_gc, u, len, pp);
 
     /* m0 = D + log(2pi) + d*log(r0) */
     arb_const_log_sqrt2pi(m0, pp);
