@@ -34,6 +34,7 @@ distance_ellipse_d(double x, double y, double a)
     xa = x * a;
     yb = y * b;
     t = atan((a*y)/(b*x));
+/* What if x = 0? */
     do
     {
         double fpt;
