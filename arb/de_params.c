@@ -128,12 +128,11 @@ void
 de_constant_m1(arb_t m1, acb_srcptr u, slong len, slong m, slong prec)
 {
     slong k;
-    arb_t abs;
     arb_t z1;
     arb_t tmp;
 
     arb_init(z1);
-    arb_one(abs);
+    arb_one(m1);
     arb_init(tmp);
 
     /* [0,1] */
@@ -155,7 +154,6 @@ de_constant_m1(arb_t m1, acb_srcptr u, slong len, slong m, slong prec)
     arb_inv(m1, m1, prec);
 
     arb_clear(tmp);
-    arb_clear(abs);
     arb_clear(z1);
 }
 

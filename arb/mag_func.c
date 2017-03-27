@@ -62,8 +62,16 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
     {
         if (f(abs, t, params, prec) == 0
                 || !arb_is_finite(abs)
-                || arb_rel_error_bits(abs) > tolerance)
+                || ( arb_rel_error_bits(abs) > tolerance
+                     && mag_cmp_2exp_si(arb_radref(abs), 2) > 0)
+           )
+        {
+#if VERBOSE > 1
+            flint_printf("\n  ... "); arb_printd(t, 10);
+            flint_printf(" failed "); arb_printd(abs, 10);
+#endif
             arb_bound_func_arb(abs, f, params, t, 3, prec);
+        }
         if (k == 0)
             arb_set(m, abs);
         else
@@ -71,8 +79,8 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
         arb_add_arf(t, t, step, prec);
     }
 
-#if VERBOSE > 3
-    flint_printf("\nmag on "); arb_printd(b, 10);
+#if VERBOSE > 0
+    flint_printf("\n  mag on "); arb_printd(b, 10);
     flint_printf(" -> "); arb_printd(m, 10);
 #endif
 
@@ -89,6 +97,10 @@ arb_bound_func_arf(arb_t m, arb_func_t f, void * params, const arf_t tmin, const
     arb_init(b);
     arb_set_interval_arf(b, tmin, tmax, prec);
     arb_bound_func_arb(m, f, params, b, n, prec);
+#if VERBOSE > 0
+    flint_printf("\n## arb bound "); arb_printd(b, 10);
+    flint_printf(" -> "); arb_printd(m, 10);
+#endif
     arb_clear(b);
 }
 
