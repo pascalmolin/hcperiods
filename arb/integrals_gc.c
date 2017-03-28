@@ -37,7 +37,11 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slo
         fmpq_clear(ln);
 
         /* compute 1/y(x) */
-        mth_root_pol_def(y, u, d1, d, x, 2, prec);
+#if ROOT == DEF
+        sqrt_pol_def(y, u, d1, d, x, prec);
+#else
+        mth_root_pol_prod(y, u, d1, d, x, 2, prec);
+#endif
         acb_inv(y, y, prec);
 
         /* differentials : j = 1 && i < g */

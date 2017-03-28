@@ -24,7 +24,7 @@ arb_func_r_gc(arb_t r, const acb_t u, arb_srcptr l, slong prec)
     if (!arb_is_positive(t))
     {
         flint_printf("\n\nERROR: not enough precision in parameters, r <= 1 for ");
-        arb_printd(u, 10);
+        acb_printd(u, 10);
         abort();
     }
     arb_clear(t);
@@ -224,5 +224,5 @@ gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
 slong
 gc_params_tree(mag_t e, const tree_t tree, sec_t c, slong prec)
 {
-    return gc_params(e, tree->data[tree->min].u, c.n, c.n - 1, prec);
+    return gc_params(e, tree->data[tree->min].u, c.n - 2, c.n - 1, prec);
 }

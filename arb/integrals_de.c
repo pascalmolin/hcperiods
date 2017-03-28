@@ -13,11 +13,15 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
     slong l;
     arb_t x;
     acb_t y, wy, wyx;
+    acb_ptr z;
 
     arb_init(x);
     acb_init(y);
     acb_init(wy);
     acb_init(wyx);
+
+    z = _acb_vec_init(c.m);
+    _acb_vec_unit_roots(z, c.m, prec);
 
 #if DEBUG
     flint_printf("\nde integral, d1=%ld, d=%ld, prec=%ld\n", d1, d, prec);
@@ -31,7 +35,14 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
         acb_ptr r;
 
         /* compute 1/y(x) */
+
+#if ROOT == DEF
         mth_root_pol_def(y, u, d1, d, de->x + l, c.m, prec);
+#elif ROOT == TURN
+        mth_root_pol_turn(y, u, d1, d, de->x + l, z, c.m, prec);
+#else
+        mth_root_pol_prod(y, u, d1, d, de->x + l, c.m, prec);
+#endif
         acb_set_arb(wy, de->ch2m + l);
         acb_div(y, wy, y, prec);
 
@@ -95,6 +106,7 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
     acb_clear(y);
     acb_clear(wy);
     acb_clear(wyx);
+    _acb_vec_clear(z, c.m);
 }
 
 void

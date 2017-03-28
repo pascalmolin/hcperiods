@@ -17,6 +17,11 @@
 #define progress(...) if (VBS) flint_printf(__VA_ARGS__);
 #define DEBUG 0
 
+#define DEF 0
+#define TURN 0
+#define PROD 1
+#define ROOT DEF
+
 /******************************************************************************
 
   data structures
