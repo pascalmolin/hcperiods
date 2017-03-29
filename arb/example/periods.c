@@ -6,14 +6,14 @@
 
 /* x^n-1 */
 void
-pol_xn1(acb_poly_t poly, ulong n, slong prec)
+pol_xn1(acb_poly_t poly, slong n, slong prec)
 {
     acb_poly_set_coeff_si(poly, 0, 1);
     acb_poly_set_coeff_si(poly, n, -1);
 }
 /* sum x^k/k! */
 void
-pol_exp(acb_poly_t poly, ulong n, slong prec)
+pol_exp(acb_poly_t poly, slong n, slong prec)
 {
     acb_poly_one(poly);
     acb_poly_shift_left(poly, poly, 1);
@@ -34,6 +34,7 @@ int main(int argc, char * argv[])
     int i, print = 1, flag = 0;
     slong n = 5, m = 2, prec = 128, digits = 0;
     void (*f_print) (const acb_mat_t, slong) = &acb_mat_printd;
+    void (*f_pol) (acb_poly_t pol, slong n, slong prec) = &pol_xn1;
     acb_poly_t poly;
     abel_jacobi_t aj;
 
@@ -94,19 +95,19 @@ int main(int argc, char * argv[])
         {
             i++;
             n = atol(argv[i++]);
-            pol_xn1(poly, n, prec);
+            f_pol = &pol_xn1;
         }
         else if (!strcmp(argv[i], "--exp"))
         {
             i++;
             n = atol(argv[i++]);
-            pol_exp(poly, n, prec);
+            f_pol = &pol_exp;
         }
         else if (!strcmp(argv[i], "--bern"))
         {
             i++;
             n = atol(argv[i++]);
-            pol_bern(poly, n, prec);
+            f_pol = &pol_bern;
         }
         else if (!strcmp(argv[i], "--pol"))
         {
@@ -115,6 +116,7 @@ int main(int argc, char * argv[])
             n = atol(argv[i++]);
             for (j = 0; j <= n && i < argc; j++)
                 acb_poly_set_coeff_si(poly, n - j, atol(argv[i++]));
+            f_pol = NULL;
         }
         else if (!strcmp(argv[i], "--big"))
         {
@@ -136,6 +138,10 @@ int main(int argc, char * argv[])
     }
     if (!digits)
         digits = (slong)(prec * .301);
+
+    /* compute pol to actual accuracy */
+    if (f_pol)
+        f_pol(poly, n, prec);
 
     abel_jacobi_init_poly(aj, m, poly);
     abel_jacobi_compute(aj, flag, prec);
