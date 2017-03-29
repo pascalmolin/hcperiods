@@ -132,7 +132,7 @@ int main(int argc, char * argv[])
     if (!digits)
         digits = (slong)(prec * .301);
 
-    abel_jacobi_init_poly(aj, m, poly, flag, prec);
+    abel_jacobi_init_poly(aj, m, poly);
     abel_jacobi_compute(aj, flag, prec);
 
     if (print)

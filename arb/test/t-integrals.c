@@ -133,7 +133,7 @@ int main() {
             gc_integrals(rg, u, 0, d2, g, n, prec);
 
             /* de */
-            sec_init(&c, 2, NULL, d2 + 2);
+            sec_init(&c, 2, d2 + 2);
 
             de_integrals(rd, u, 0, d2, c, prec);
 

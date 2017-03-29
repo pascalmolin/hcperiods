@@ -90,13 +90,13 @@ generate()
                 acb_poly_init(pol);
                 vf[f](pol, vn[in], prec);
 
-                abel_jacobi_init_poly(aj, 2, pol, flag, prec);
+                abel_jacobi_init_poly(aj, 2, pol);
                 /* should not be necessary */
                 abel_jacobi_compute(aj, flag, prec);
 
                 /* print roots */
                 flint_printf("< [");
-                _acb_vec_arf_printd(aj->c.roots, vn[in], digits, ", ");
+                _acb_vec_arf_printd(aj->roots, vn[in], digits, ", ");
                 flint_printf("]");
 
                 /* print exponents */
@@ -149,7 +149,7 @@ check_periods()
                     slong c;
                     abel_jacobi_t aj;
 
-                    abel_jacobi_init_poly(aj, vm[im], pol, flag, prec);
+                    abel_jacobi_init_poly(aj, vm[im], pol);
                     abel_jacobi_compute(aj, flag, prec);
 
                     /* check 4 entries of each matrix */

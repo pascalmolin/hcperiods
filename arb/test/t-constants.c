@@ -27,8 +27,8 @@ int main() {
                 sec_t c;
                 tree_t tree;
 
-                sec_init(&c, m, x, n);
-                tree_init(tree, n-1);
+                sec_init(&c, m, n);
+                tree_init(tree, n - 1);
                 spanning_tree(tree, x, n, INT_DE);
                 tree_ydata_init(tree, x, n, m, prec);
 
