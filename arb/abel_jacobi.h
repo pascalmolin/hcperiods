@@ -142,6 +142,7 @@ typedef struct
     homol_t loop_b;
 
     /* periods  */
+    acb_mat_t integrals;
     acb_mat_t omega0;
     acb_mat_t omega1;      /* on A,B basis */
     acb_mat_t tau;         /* tau = Omega1^{-1}Omega0 */
@@ -158,7 +159,8 @@ enum {
     AJ_USE_DE   = 1 << 0,
     AJ_NO_TAU   = 1 << 1,
     AJ_NO_AB    = 1 << 2,
-    AJ_TRIM     = 1 << 3
+    AJ_NO_INT   = 1 << 3,
+    AJ_TRIM     = 1 << 4
 };
 
 
