@@ -224,5 +224,7 @@ gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
 slong
 gc_params_tree(mag_t e, const tree_t tree, sec_t c, slong prec)
 {
+// Shouldnt this be 
+//     return gc_params(e, tree->data[tree->min].u, c.n-2, c.n - 1, prec);
     return gc_params(e, tree->data[tree->min].u, c.n, c.n - 1, prec);
 }
