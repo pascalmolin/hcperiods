@@ -50,6 +50,7 @@ abel_jacobi_init_poly(abel_jacobi_t aj, slong m, const acb_poly_t pol)
     homol_init(&aj->loop_a, g);
     homol_init(&aj->loop_b, g);
 
+    acb_mat_init(aj->integrals, aj->tree->n, g);
     acb_mat_init(aj->omega0, g, g);
     acb_mat_init(aj->omega1, g, g);
     acb_mat_init(aj->tau, g, g);
@@ -64,6 +65,7 @@ void
 abel_jacobi_clear(abel_jacobi_t aj)
 {
     _acb_vec_clear(aj->roots, aj->c.n);
+    acb_mat_clear(aj->integrals);
     acb_mat_clear(aj->omega0);
     acb_mat_clear(aj->omega1);
     acb_mat_clear(aj->tau);
@@ -78,7 +80,6 @@ void
 abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
 {
     sec_t c = aj->c;
-    acb_mat_t integrals;
 
     aj->type = (flag & AJ_USE_DE || (c.m > 2 && c.n > 2)) ? INT_DE : (c.m == 2) ? INT_GC : INT_D2;
 
@@ -102,37 +103,38 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     progress("## symplectic basis\n");
     symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
 
-    if (flag & AJ_NO_AB)
+    if (flag & AJ_NO_INT)
         return;
 
     /* integration */
     progress("## integrals %s\n", (aj->type == INT_GC) ? "gc" : "de");
-    acb_mat_init(integrals, aj->tree->n, c.g);
+    acb_mat_init(aj->integrals, aj->tree->n, c.g);
     if (aj->type == INT_D2)
-        integral_d2(integrals->rows[0], aj->tree->data + 0, c, prec);
+        integral_d2(aj->integrals->rows[0], aj->tree->data + 0, c, prec);
     else if (aj->type == INT_GC)
-        integrals_tree_gc(integrals, c, aj->tree, prec);
+        integrals_tree_gc(aj->integrals, c, aj->tree, prec);
     else
-        integrals_tree_de(integrals, c, aj->tree, prec);
+        integrals_tree_de(aj->integrals, c, aj->tree, prec);
     tree_ydata_clear(aj->tree);
+
 #if DEBUG
     flint_printf("\n\ntree integrals\n");
-    acb_mat_printd(integrals, 30);
+    acb_mat_printd(aj->integrals, 30);
     flint_printf("\n\n");
 #endif
+    if (flag & AJ_NO_AB)
+        return;
 
     /* period matrices */
     progress("## periods\n");
-    period_matrix(aj->omega0, aj->loop_a, integrals, c, prec);
-    period_matrix(aj->omega1, aj->loop_b, integrals, c, prec);
+    period_matrix(aj->omega0, aj->loop_a, aj->integrals, c, prec);
+    period_matrix(aj->omega1, aj->loop_b, aj->integrals, c, prec);
 #if DEBUG > 1
     progress("\n\nperiods A\n");
     acb_mat_printd(aj->omega0, 20);
     progress("\n\nperiods B\n");
     acb_mat_printd(aj->omega1, 20);
 #endif
-
-    acb_mat_clear(integrals);
 
     if (flag & AJ_TRIM)
     {

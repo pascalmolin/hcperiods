@@ -31,7 +31,7 @@ pol_bern(acb_poly_t pol, slong n, slong prec)
 
 int main(int argc, char * argv[])
 {
-    int i, print = 1, flag = 0, big = 0;
+    int i, print = 1, flag = 0;
     slong n = 5, m = 2, prec = 128, digits = 0;
     void (*f_print) (const acb_mat_t, slong) = &acb_mat_printd;
     acb_poly_t poly;
@@ -41,7 +41,7 @@ int main(int argc, char * argv[])
 
     if (argc < 2)
     {
-        flint_printf("periods [-m m] [--prec p] [--de] <pol> \n");
+        flint_printf("periods [-m m] [--prec p] poly \n");
         flint_printf("Print period matrix of curve y^m = f_n(x).\n");
         flint_printf("Default m = 2, f_n(x) = x^5 + 1, prec = 128.\n");
         flint_printf("Polynomials f_n(x):\n");
@@ -54,6 +54,7 @@ int main(int argc, char * argv[])
         flint_printf("  --trim: reduce to obtained precision\n");
         flint_printf("  --big: big period matrix\n");
         flint_printf("  --gp: output for pari/gp (discard error balls)\n");
+        flint_printf("  --de: force use of DE integration\n");
         return 1;
     }
 
@@ -119,7 +120,11 @@ int main(int argc, char * argv[])
         {
             i++;
             flag |= AJ_NO_TAU;
-            big = 1;
+        }
+        else if (!strcmp(argv[i], "--int"))
+        {
+            i++;
+            flag |= AJ_NO_AB;
         }
         else if (!strcmp(argv[i], "--gp"))
         {
@@ -137,7 +142,11 @@ int main(int argc, char * argv[])
 
     if (print)
     {
-        if (big)
+        if (flag & AJ_NO_AB)
+        {
+            f_print(aj->integrals, digits);
+        }
+        else if (flag & AJ_NO_TAU)
         {
             f_print(aj->omega0, digits);
             flint_printf("\n");
