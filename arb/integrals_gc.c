@@ -67,7 +67,7 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slo
 
         if (l == 0)
             continue;
-
+// CN: Why integrate on -x here? I thought GC-integration is on point k = 1,..N ?!
         /* now on -x */
         arb_neg(x, x);
 
