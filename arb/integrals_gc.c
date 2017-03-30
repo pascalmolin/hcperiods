@@ -1,6 +1,6 @@
 /******************************************************************************
 
- Copyright (C) 2016 Pascal Molin
+ Copyright (C) 2016 Pascal Molin, Christian Neurohr
 
  ******************************************************************************/
 
@@ -61,35 +61,9 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slo
             acb_printd(res + i, 20);
 #endif
         }
-
-        continue;
-        /* TODO: could reuse -x, but not a big deal */
-
-        if (l == 0)
-            continue;
-
-        /* now on -x */
-        arb_neg(x, x);
-
-        mth_root_pol_def(y, u, d1, d, x, 2, prec);
-        acb_inv(y, y, prec);
-
-        /* differentials : j = 1 && i < g */
-        acb_set(yxi, y);
-        acb_add(res + 0, res + 0, yxi, prec);
-
-        for (i = 1; i < g; i++)
-        {
-            acb_mul_arb(yxi, yxi, x, prec);
-            if (i % 2)
-                acb_add(res + i, res + i, yxi, prec);
-            else
-                acb_sub(res + i, res + i, yxi, prec);
-        }
     }
 
     /* multiply by weight = Pi / n */
-
     arb_const_pi(w, prec);
     arb_div_ui(w, w, n, prec);
 
