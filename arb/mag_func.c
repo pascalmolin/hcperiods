@@ -39,7 +39,7 @@ arb_subdivide(arb_t t, arf_t step, const arb_t b, slong n, slong prec)
 }
 
 void
-arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n, slong prec)
+arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n, slong depth, slong prec)
 {
     const int tolerance = -2;
     slong k;
@@ -52,6 +52,12 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
     if (mag_is_special(arb_radref(b)))
     {
         flint_printf("\nERROR: illegal ball in mag_func ");
+        arb_printd(b, 20); flint_printf("\n");
+        abort();
+    }
+    if (!depth)
+    {
+        flint_printf("\nERROR: limit depth exceeded in mag_func.\n Ball ");
         arb_printd(b, 20); flint_printf("\n");
         abort();
     }
@@ -70,7 +76,7 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
             flint_printf("\n  ... "); arb_printd(t, 10);
             flint_printf(" failed "); arb_printd(abs, 10);
 #endif
-            arb_bound_func_arb(abs, f, params, t, 3, prec);
+            arb_bound_func_arb(abs, f, params, t, 3, depth - 1, prec);
         }
         if (k == 0)
             arb_set(m, abs);
@@ -91,12 +97,12 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
 }
 
 void
-arb_bound_func_arf(arb_t m, arb_func_t f, void * params, const arf_t tmin, const arf_t tmax, slong n, slong prec)
+arb_bound_func_arf(arb_t m, arb_func_t f, void * params, const arf_t tmin, const arf_t tmax, slong n, slong depth, slong prec)
 {
     arb_t b;
     arb_init(b);
     arb_set_interval_arf(b, tmin, tmax, prec);
-    arb_bound_func_arb(m, f, params, b, n, prec);
+    arb_bound_func_arb(m, f, params, b, n, depth, prec);
 #if VERBOSE > 0
     flint_printf("\n## arb bound "); arb_printd(b, 10);
     flint_printf(" -> "); arb_printd(m, 10);
