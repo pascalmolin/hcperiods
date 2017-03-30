@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export LD_LIBRARY_PATH=.:${HOME}/install/lib;
 NARG="3 5 8 13 21 30"
 MARG="2 3 4 5 9 13"
 PREC="64 256 1024 4096"
