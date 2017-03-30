@@ -33,7 +33,7 @@ typedef struct
     /* y^m = prod_{i=1}^d x - roots[i] */
     slong m;             /* degree in y */
     slong n;             /* degree in x */
-    acb_ptr roots;       /* branch points */
+    acb_poly_t pol;      /* polynomial */
     slong delta;         /* default = gcd(m, d) */
     slong g;             /* genus, 2g = (m-1)(d-1) - delta + 1 */
     slong j1;
@@ -131,6 +131,9 @@ typedef struct
     /* curve */
     sec_t c;
 
+    /* branch points */
+    acb_ptr roots;
+
     /* integration type: Gauss or DE */
     int type;
 
@@ -142,6 +145,7 @@ typedef struct
     homol_t loop_b;
 
     /* periods  */
+    acb_mat_t integrals;
     acb_mat_t omega0;
     acb_mat_t omega1;      /* on A,B basis */
     acb_mat_t tau;         /* tau = Omega1^{-1}Omega0 */
@@ -158,7 +162,8 @@ enum {
     AJ_USE_DE   = 1 << 0,
     AJ_NO_TAU   = 1 << 1,
     AJ_NO_AB    = 1 << 2,
-    AJ_TRIM     = 1 << 3
+    AJ_NO_INT   = 1 << 3,
+    AJ_TRIM     = 1 << 4
 };
 
 
@@ -167,11 +172,11 @@ enum {
   functions
 
  ******************************************************************************/
-void sec_init(sec_t * c, slong m, acb_srcptr x, slong d);
+void sec_init(sec_t * c, slong m, slong n);
+void sec_init_poly(sec_t * c, slong m, const acb_poly_t pol);
 void sec_clear(sec_t c);
 
-void abel_jacobi_init_roots(abel_jacobi_t aj, slong m, acb_srcptr x, slong d, int flag);
-void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, acb_poly_t f, int flag, slong prec);
+void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, const acb_poly_t f);
 void abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 

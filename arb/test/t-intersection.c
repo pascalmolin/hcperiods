@@ -29,7 +29,7 @@ int main() {
                 fmpz_mat_t ca;
                 slong len = (n-1)*(m-1);
 
-                sec_init(&c, m, x, n);
+                sec_init(&c, m, n);
                 tree_ydata_init(tree, x, n, m, prec);
 
                 fmpz_mat_init(ca, len, len);
