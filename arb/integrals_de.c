@@ -8,12 +8,14 @@
 
 void
 de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
-        const de_int_t de, slong prec)
+        const de_int_t de, int flag, slong prec)
 {
     slong l;
     arb_t x;
     acb_t y, wy, wyx;
     acb_ptr z;
+    void (*mth_root_pol) (acb_t y, acb_srcptr u, slong d1, slong d,
+            const arb_t x, acb_srcptr z, slong m, slong prec);
 
     arb_init(x);
     acb_init(y);
@@ -27,6 +29,17 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
     flint_printf("\nde integral, d1=%ld, d=%ld, prec=%ld\n", d1, d, prec);
 #endif
 
+    mth_root_pol = &mth_root_pol_def;
+    if (prec > 1000 && d > 5)
+        mth_root_pol = &mth_root_pol_turn;
+
+    if (flag & AJ_ROOT_DEF)
+        mth_root_pol = &mth_root_pol_def;
+    else if (flag & AJ_ROOT_PROD)
+        mth_root_pol = &mth_root_pol_prod;
+    else if (flag & AJ_ROOT_TURN)
+        mth_root_pol = &mth_root_pol_turn;
+
     /* compute integral */
     _acb_vec_zero(res, c.g);
     for (l = 0; l < de->n; l++)
@@ -36,13 +49,7 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
 
         /* compute 1/y(x) */
 
-#if ROOT == DEF
-        mth_root_pol_def(y, u, d1, d, de->x + l, c.m, prec);
-#elif ROOT == TURN
-        mth_root_pol_turn(y, u, d1, d, de->x + l, z, c.m, prec);
-#else
-        mth_root_pol_prod(y, u, d1, d, de->x + l, c.m, prec);
-#endif
+        mth_root_pol(y, u, d1, d, de->x + l, z, c.m, prec);
         acb_set_arb(wy, de->ch2m + l);
         acb_div(y, wy, y, prec);
 
@@ -73,7 +80,7 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
 
         /* now on -x */
         arb_neg(x, de->x + l);
-        mth_root_pol_def(y, u, d1, d, x, c.m, prec);
+        mth_root_pol(y, u, d1, d, x, z, c.m, prec);
         acb_set_arb(wy, de->ch2m + l);
         acb_div(y, wy, y, prec);
 
@@ -110,7 +117,7 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
 }
 
 void
-de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec)
+de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, int flag, slong prec)
 {
     slong n;
     arf_t h, l;
@@ -123,7 +130,7 @@ de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec)
 
     n = de_params(e, h, l, u, d, 0, c.n - 1, c.j1, c.m, prec);
     de_int_init(de, h, l, n, e, c.m, prec);
-    de_integrals_precomp(res, u, d1, d, c, de, prec);
+    de_integrals_precomp(res, u, d1, d, c, de, flag, prec);
 
     de_int_clear(de);
     arf_clear(h);
@@ -132,16 +139,16 @@ de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec)
 }
 
 void
-integrals_edge_de(acb_ptr res, ydata_t ye, sec_t c, const de_int_t de, slong prec)
+integrals_edge_de(acb_ptr res, ydata_t ye, sec_t c, const de_int_t de, int flag, slong prec)
 {
-    de_integrals_precomp(res, ye->u, ye->n1, c.n - 2, c, de, prec);
+    de_integrals_precomp(res, ye->u, ye->n1, c.n - 2, c, de, flag, prec);
     if (0 && !mag_is_zero(de->e))
         _acb_vec_add_error_mag(res, c.g, de->e);
     integrals_edge_factors(res, ye->ba2, ye->ab, ye->c, c, prec);
 }
 
 void
-integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec)
+integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, int flag, slong prec)
 {
     slong k, paramprec = 64;
     ulong n;
@@ -160,7 +167,7 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec)
     de_int_init(de, h, l, n, e, c.m, prec);
 
     for (k = 0; k < tree->n; k++)
-        integrals_edge_de(integrals->rows[k], tree->data + k, c, de, prec);
+        integrals_edge_de(integrals->rows[k], tree->data + k, c, de, flag, prec);
 
 #if DEBUG > 1
     flint_printf("\ntree integrals\n");

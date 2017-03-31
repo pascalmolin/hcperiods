@@ -112,9 +112,9 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     if (aj->type == INT_D2)
         integral_d2(aj->integrals->rows[0], aj->tree->data + 0, c, prec);
     else if (aj->type == INT_GC)
-        integrals_tree_gc(aj->integrals, c, aj->tree, prec);
+        integrals_tree_gc(aj->integrals, c, aj->tree, flag, prec);
     else
-        integrals_tree_de(aj->integrals, c, aj->tree, prec);
+        integrals_tree_de(aj->integrals, c, aj->tree, flag, prec);
     tree_ydata_clear(aj->tree);
 
 #if DEBUG

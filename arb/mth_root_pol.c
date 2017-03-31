@@ -27,7 +27,7 @@ sqrt_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong prec
 }
 
 void
-mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec)
+mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec)
 {
     slong k;
     acb_t t;
@@ -47,7 +47,7 @@ mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong 
 }
 
 void
-mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec)
+mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec)
 {
     slong k;
     acb_t t;
@@ -68,9 +68,8 @@ mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong
     acb_clear(t);
 }
 
-
 static int
-im_sgn(const acb_t x)
+acb_sgn_imag(const acb_t x)
 {
     if ( arb_is_nonnegative(acb_imagref(x)) )
         return 1;
@@ -80,24 +79,21 @@ im_sgn(const acb_t x)
     abort();
 }
 
-void
-mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec)
+static slong
+acb_prod_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong prec)
 {
     int isgn_y,  isgn_t;
-    slong q, k;
+    slong q = 0, k;
     acb_t t;
 
-    q = 0;
     acb_init(t);
-    acb_one(y);
-
-    acb_sub_arb(y, u + 0, x, prec); 
+    acb_sub_arb(y, u + 0, x, prec);
     if (!d1)
         acb_neg(y, y);
 
-    isgn_y = im_sgn(y);
+    isgn_y = acb_sgn_imag(y);
     for (k = 1; k < d; k++)
-    { 
+    {
 
         acb_sub_arb(t, u + k, x, prec);
         if (k >= d1)
@@ -105,10 +101,10 @@ mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_s
 
         acb_mul(y, y, t, prec);
 
-        isgn_t = im_sgn(t);
+        isgn_t = acb_sgn_imag(t);
         if (isgn_y == isgn_t)
         {
-            isgn_y = im_sgn(y);
+            isgn_y = acb_sgn_imag(y);
             if (isgn_y != isgn_t)
             {
                 if (isgn_t > 0)
@@ -118,13 +114,31 @@ mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_s
             }
         }
         else
-            isgn_y = im_sgn(y);
-    } 
-    acb_root_ui(y, y, m, prec);
+            isgn_y = acb_sgn_imag(y);
+    }
+    acb_clear(t);
+    return q;
+}
 
+void
+sqrt_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong prec)
+{
+    slong q;
+
+    q = acb_prod_turn(y, u, d1, d, x, prec);
+    acb_sqrt(y, y, prec);
+    if (q % 2)
+        acb_neg(y, y);
+}
+
+void
+mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec)
+{
+    slong q;
+
+    q = acb_prod_turn(y, u, d1, d, x, prec);
+    acb_root_ui(y, y, m, prec);
     q = (q % m + m) % m;
     if (q)
         acb_mul(y, y, z + q, prec);
-
-    acb_clear(t);
 }

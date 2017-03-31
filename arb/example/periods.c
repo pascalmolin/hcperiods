@@ -77,6 +77,22 @@ int main(int argc, char * argv[])
             i++;
             flag |= AJ_USE_DE;
         }
+        /* mth root */
+        else if (!strcmp(argv[i], "--rootdef"))
+        {
+            i++;
+            flag |= AJ_ROOT_DEF;
+        }
+        else if (!strcmp(argv[i], "--rootprod"))
+        {
+            i++;
+            flag |= AJ_ROOT_PROD;
+        }
+        else if (!strcmp(argv[i], "--rootturn"))
+        {
+            i++;
+            flag |= AJ_ROOT_TURN;
+        }
         /* families */
         else if (!strcmp(argv[i], "--xn1"))
         {

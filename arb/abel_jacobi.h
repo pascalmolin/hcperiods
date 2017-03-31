@@ -17,11 +17,6 @@
 #define progress(...) if (VBS) flint_printf(__VA_ARGS__);
 #define DEBUG 0
 
-#define DEF 0
-#define TURN 0
-#define PROD 1
-#define ROOT DEF
-
 /******************************************************************************
 
   data structures
@@ -159,11 +154,14 @@ abel_jacobi_struct;
 typedef abel_jacobi_struct abel_jacobi_t[1];
 
 enum {
-    AJ_USE_DE   = 1 << 0,
-    AJ_NO_TAU   = 1 << 1,
-    AJ_NO_AB    = 1 << 2,
-    AJ_NO_INT   = 1 << 3,
-    AJ_TRIM     = 1 << 4
+    AJ_USE_DE    = 1 << 0,
+    AJ_NO_TAU    = 1 << 1,
+    AJ_NO_AB     = 1 << 2,
+    AJ_NO_INT    = 1 << 3,
+    AJ_TRIM      = 1 << 4,
+    AJ_ROOT_DEF  = 1 << 5,
+    AJ_ROOT_TURN = 1 << 6,
+    AJ_ROOT_PROD = 1 << 7
 };
 
 
@@ -220,13 +218,13 @@ void symplectic_basis(homol_t alpha, homol_t beta, const tree_t tree, sec_t c);
 
 /* numerically compute d-1 integrals along tree edges */
 /* (d-1)*(g-1) matrix, tree edges on lines */
-void gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, slong prec);
-void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const de_int_t de, slong prec);
-void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, slong prec);
+void gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, int flag, slong prec);
+void de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, const de_int_t de, int flag, slong prec);
+void de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, int flag, slong prec);
 void integrals_edge_factors_gc(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t cab, sec_t c, slong prec);
 void integrals_edge_factors(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t cab, sec_t c, slong prec);
-void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
-void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, slong prec);
+void integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, int flag, slong prec);
+void integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, int flag, slong prec);
 void integral_d2(acb_ptr res, ydata_t ye, sec_t c, slong prec);
 
 /* get all periods on a, b basis */
@@ -238,8 +236,9 @@ void tau_matrix(acb_mat_t tau, const acb_mat_t omega0, const acb_mat_t omega1, s
 
 /* core functions */
 void sqrt_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong prec);
-void mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec);
-void mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec);
+void sqrt_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong prec);
+void mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec);
+void mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec);
 void mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec);
 
 /* vec utilities */
