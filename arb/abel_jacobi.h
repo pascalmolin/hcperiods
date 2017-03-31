@@ -18,8 +18,8 @@
 #define DEBUG 0
 
 #define DEF 0
-#define TURN 0
 #define PROD 1
+#define TURN 2
 #define ROOT DEF
 
 /******************************************************************************
@@ -238,6 +238,7 @@ void tau_matrix(acb_mat_t tau, const acb_mat_t omega0, const acb_mat_t omega1, s
 
 /* core functions */
 void sqrt_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong prec);
+void sqrt_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong prec);
 void mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec);
 void mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec);
 void mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec);
