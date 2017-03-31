@@ -130,12 +130,12 @@ int main() {
             n = gc_params(NULL, u, d2, g - 1, prec);
 
             /* take d1 = 0 ie sqrt(x-u[i]) for all */
-            gc_integrals(rg, u, 0, d2, g, n, prec);
+            gc_integrals(rg, u, 0, d2, g, n, 0, prec);
 
             /* de */
             sec_init(&c, 2, d2 + 2);
 
-            de_integrals(rd, u, 0, d2, c, prec);
+            de_integrals(rd, u, 0, d2, c, 0, prec);
 
             for (j = 0; j < g && l < nref; j++, l++)
             {

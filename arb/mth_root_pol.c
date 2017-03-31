@@ -27,7 +27,7 @@ sqrt_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong prec
 }
 
 void
-mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec)
+mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec)
 {
     slong k;
     acb_t t;
@@ -47,7 +47,7 @@ mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong 
 }
 
 void
-mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong m, slong prec)
+mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec)
 {
     slong k;
     acb_t t;

@@ -1,4 +1,4 @@
-#hcperiods
+# hcperiods
 
 Numerical evaluation of periods of superelliptic curves to
 arbitrary precision by numerical integration.

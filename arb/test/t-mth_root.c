@@ -39,8 +39,8 @@ int main() {
 
                 for (d1 = 0; d1 <= d; d1++)
                 {
-                    mth_root_pol_def(y1, u, d1, d, x, m, prec);
-                    mth_root_pol_prod(y2, u, d1, d, x, m, prec);
+                    mth_root_pol_def(y1, u, d1, d, x, NULL, m, prec);
+                    mth_root_pol_prod(y2, u, d1, d, x, NULL, m, prec);
                     mth_root_pol_turn(y3, u, d1, d, x, z, m, prec);
                     if (!acb_overlaps(y1, y2) || !acb_overlaps(y2,y3) || !acb_overlaps(y1,y3))
                     {

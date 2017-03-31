@@ -53,7 +53,7 @@ int main() {
                         acb_mul(fx, fx, z, prec);
                     }
                     acb_zero(z);
-                    mth_root_pol_def(y, uab, nab, n - 2, acb_realref(z), m, prec);
+                    mth_root_pol_def(y, uab, nab, n - 2, acb_realref(z), NULL, m, prec);
                     acb_mul(y, y, tree->data[k].c, prec);
                     acb_pow_ui(y, y, m, prec);
 
