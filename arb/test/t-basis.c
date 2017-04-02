@@ -27,7 +27,7 @@ int main() {
                 sec_t c;
                 homol_t alpha, beta;
 
-                sec_init(&c, m, x, n);
+                sec_init(&c, m, n);
                 tree_ydata_init(tree, x, n, m, prec);
 
                 alpha = flint_malloc(c.g * sizeof(loop_t));

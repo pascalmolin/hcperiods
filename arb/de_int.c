@@ -30,7 +30,7 @@ arb_tanh_cosh2(arb_t t, arb_t c, const arb_t x, slong prec)
 }
 
 void
-de_int_init(de_int_t de, double h, ulong n, ulong m, slong prec)
+de_int_init(de_int_t de, const arf_t h, const arf_t l, ulong n, const mag_t e, ulong m, slong prec)
 {
     slong k;
     arb_t ah, lambda;
@@ -39,11 +39,16 @@ de_int_init(de_int_t de, double h, ulong n, ulong m, slong prec)
     de->n = n;
     de->prec = prec;
 
+    arf_init(de->l);
     arf_init(de->h);
-    arf_set_d(de->h, h);
+    mag_init(de->e);
+
+    arf_set(de->h, h);
+    arf_set(de->l, l);
+    mag_set(de->e, e);
+
     arb_init(lambda);
-    arb_const_pi(lambda, prec);
-    arb_mul_2exp_si(lambda, lambda, -1);
+    arb_set_arf(lambda, l);
 
     arb_init(de->factor);
     arb_mul_arf(de->factor, lambda, de->h, prec);
@@ -95,6 +100,8 @@ void
 de_int_clear(de_int_t de)
 {
     arf_clear(de->h);
+    arf_clear(de->l);
+    mag_clear(de->e);
     arb_clear(de->factor);
     _arb_vec_clear(de->x, de->n);
     _arb_vec_clear(de->dx, de->n);

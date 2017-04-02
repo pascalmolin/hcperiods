@@ -39,8 +39,9 @@ arb_subdivide(arb_t t, arf_t step, const arb_t b, slong n, slong prec)
 }
 
 void
-arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n, slong prec)
+arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n, slong depth, slong prec)
 {
+    const int tolerance = -2;
     slong k;
     arb_t t, abs;
     arf_t step;
@@ -48,22 +49,46 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
     arb_init(t);
     arb_init(abs);
     arf_init(step);
-
-    if (mag_is_special(arb_radref(t)) || mag_get_d(arb_radref(t)) < .00001)
+    if (mag_is_special(arb_radref(b)))
+    {
+        flint_printf("\nERROR: illegal ball in mag_func ");
+        arb_printd(b, 20); flint_printf("\n");
         abort();
+    }
+    if (!depth)
+    {
+        flint_printf("\nERROR: limit depth exceeded in mag_func.\n Ball ");
+        arb_printd(b, 20); flint_printf("\n");
+        abort();
+    }
 
     arb_subdivide(t, step, b, n, prec);
 
     for (k = 0; k < n; k++)
     {
-        if (f(abs, t, params, prec) == 0 || !arb_is_finite(abs))
-            arb_bound_func_arb(abs, f, params, t, 5, prec);
+        if (f(abs, t, params, prec) == 0
+                || !arb_is_finite(abs)
+                || ( arb_rel_error_bits(abs) > tolerance
+                     && mag_cmp_2exp_si(arb_radref(abs), 2) > 0)
+           )
+        {
+#if VERBOSE > 1
+            flint_printf("\n  ... "); arb_printd(t, 10);
+            flint_printf(" failed "); arb_printd(abs, 10);
+#endif
+            arb_bound_func_arb(abs, f, params, t, 3, depth - 1, prec);
+        }
         if (k == 0)
             arb_set(m, abs);
         else
             arb_union(m, m, abs, prec);
         arb_add_arf(t, t, step, prec);
     }
+
+#if VERBOSE > 0
+    flint_printf("\n  mag on "); arb_printd(b, 10);
+    flint_printf(" -> "); arb_printd(m, 10);
+#endif
 
     arf_clear(step);
     arb_clear(t);
@@ -72,12 +97,16 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
 }
 
 void
-arb_bound_func_arf(arb_t m, arb_func_t f, void * params, const arf_t tmin, const arf_t tmax, slong n, slong prec)
+arb_bound_func_arf(arb_t m, arb_func_t f, void * params, const arf_t tmin, const arf_t tmax, slong n, slong depth, slong prec)
 {
     arb_t b;
     arb_init(b);
     arb_set_interval_arf(b, tmin, tmax, prec);
-    arb_bound_func_arb(m, f, params, b, n, prec);
+    arb_bound_func_arb(m, f, params, b, n, depth, prec);
+#if VERBOSE > 0
+    flint_printf("\n## arb bound "); arb_printd(b, 10);
+    flint_printf(" -> "); arb_printd(m, 10);
+#endif
     arb_clear(b);
 }
 

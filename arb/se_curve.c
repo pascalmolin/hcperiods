@@ -8,7 +8,16 @@
 #define TMP 0
 
 void
-sec_init(sec_t * c, slong m, acb_srcptr x, slong n)
+sec_init_poly(sec_t * c, slong m, const acb_poly_t pol)
+{
+    slong n;
+    n = acb_poly_degree(pol);
+    sec_init(c, m, n);
+    acb_poly_set(c->pol, pol); /* keep a copy */
+}
+
+void
+sec_init(sec_t *c, slong m, slong n)
 {
     slong j, delta;
 #if TMP
@@ -24,13 +33,7 @@ sec_init(sec_t * c, slong m, acb_srcptr x, slong n)
     c->delta = delta = n_gcd(m, n);
     c->g = ((m-1)*(n-1) - delta + 1)/ 2;
 
-    /* roots */
-    c->roots = _acb_vec_init(n);
-    if (x != NULL)
-        _acb_vec_set(c->roots, x, n);
-#if TMP
-    _acb_vec_printd(c->roots, n, 30, ", ");
-#endif
+    acb_poly_init(c->pol);
 
     /* differentials */
     c->j1 = jmin(m, n, delta);
@@ -45,12 +48,11 @@ sec_init(sec_t * c, slong m, acb_srcptr x, slong n)
         flint_printf(", %ld", c->ni[j]);
     flint_printf("\n");
 #endif
-
 }
 
 void
 sec_clear(sec_t c)
 {
-    _acb_vec_clear(c.roots, c.n);
+    acb_poly_clear(c.pol);
     flint_free(c.ni);
 }

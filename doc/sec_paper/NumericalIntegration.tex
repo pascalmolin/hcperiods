@@ -214,7 +214,7 @@ $X_r=\cos(r)\sqrt{\frac{π}{2Y_0}-1}$.
   is a convex quadratic, so $X\mapsto P_2(X)^{-α}$ is still convex and the integral
   is bounded by one trapeze
   \begin{equation*}
-      \int_0^{X_r}\frac{\d X}{P_2(X)^α}\leq X_r\frac{P_2(0)+P_2(X_r)}2
+  \int_0^{X_r}\frac{\d X}{P_2(X)^α}\leq \frac{X_r}2(P_2(0)^{-α}+P_2(X_r)^{-α})
       = \frac{X_r}2\left(\frac1{\cos^{2α}(Y_0)}+\frac1{X_r^{2α}}\right).
   \end{equation*}
 
@@ -290,9 +290,12 @@ explicitly controlled.
 \end{lemma}
 \begin{proof}
 We simply compute the distance
-        $d_r(u_i) = \inf_{z\in ε_r}\abs{z-u_i}$
- from a root $u_i$ to the ellipse $ε_r$, and let
- $M(r) =  \frac{r^{i-1}}{\sqrt{\prod d_r(u_i)} }$.
+        $d_r(u_k) = \inf_{z\in ε_r}\abs{z-u_k}$
+ from a root $u_k$ to the ellipse $ε_r$, and let
+ $M(r) =  \frac{\cosh(r)^{i-1}}{\sqrt{\prod d_r(u_k)} }$.
+ For simplicity, we can use the triangle inequality
+ $d_r(u_k)\geq \cosh(r_k)-\cosh(r)$, where
+ $2\cosh(r_k)=\abs{u_k-1}+\abs{u_k+1}$.
 \end{proof}
 
 \begin{prop}

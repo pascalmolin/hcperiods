@@ -88,7 +88,7 @@ limit_edge(acb_t z, acb_srcptr uab, slong nab, slong n, slong m, int x, slong pr
 
     /* yab(x) * Cab */
     arb_set_si(u, x);
-    mth_root_pol_def(z, uab, nab, n - 2, u, m, prec);
+    mth_root_pol_def(z, uab, nab, n - 2, u, NULL, m, prec);
     acb_mul(z, z, uab + n, prec);
 
     acb_clear(r);

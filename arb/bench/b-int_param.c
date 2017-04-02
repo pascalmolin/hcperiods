@@ -22,6 +22,12 @@ int main() {
         acb_mat_t pols;
         slong nmin[nf], nmax[nf];
         double nmed[nf];
+        mag_t e_de, e_gc;
+        arf_t h, l;
+        arf_init(h);
+        arf_init(l);
+        mag_init(e_gc);
+        mag_init(e_de);
 
         acb_mat_init(pols, imax, d);
 
@@ -36,17 +42,16 @@ int main() {
             for (i = 0; i < imax; i++)
             {
                 slong n;
-                double h;
-                /*
+#if 0
                 flint_printf("\nd = %ld, i = %ld, %6s\n", d, i, f ? "de" : "gauss");
                 for (n = 0; n < d; n++)
                     flint_printf("\nu_%ld = ", n),
                     acb_printd(acb_mat_entry(pols, i, n), 10);
-                    */
+#endif
                 if (f == 0)
-                    n = gc_params(pols->rows[i], d, 0., 0, prec);
+                    n = gc_params(e_gc, pols->rows[i], d, 0, prec);
                 else
-                    n = de_params(&h, pols->rows[i], d, 0., 0, 2, prec);
+                    n = de_params(e_de, h, l, pols->rows[i], d, 0., 0, 1, 2, prec);
                 nmed[f] += n;
                 if (n < nmin[f]) nmin[f] = n;
                 if (n > nmax[f]) nmax[f] = n;
@@ -57,6 +62,10 @@ int main() {
         }
 
         acb_mat_clear(pols);
+        arf_clear(h);
+        arf_clear(l);
+        mag_clear(e_gc);
+        mag_clear(e_de);
     }
 
     flint_randclear(state);

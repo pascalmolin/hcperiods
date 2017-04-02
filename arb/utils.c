@@ -1,12 +1,18 @@
 #include "abel_jacobi.h"
 
 void
+_acb_vec_add_error_mag(acb_ptr res, slong len, const mag_t e)
+{
+    slong k;
+    for (k = 0; k < len; k++)
+        acb_add_error_mag(res + k, e);
+}
+
+void
 acb_randtest_exclude(acb_t z, acb_t b, flint_rand_t state, slong prec, slong mag_bits)
 {
     do
-    {
         acb_randtest_precise(z, state, prec, mag_bits);
-    }
     while(acb_overlaps(z, b));
 }
 
@@ -17,7 +23,7 @@ acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, slong
 
     acb_t b;
     acb_init(b);
-    mag_one(arb_radref(acb_realref(b)));
+    mag_set_d(arb_radref(acb_realref(b)), 1 + eps);
     mag_set_d(arb_radref(acb_imagref(b)), eps);
     for (k = 0; k < len; k++)
         acb_randtest_exclude(u + k, b, state, prec, mag_bits);
