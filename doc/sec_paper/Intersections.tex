@@ -83,20 +83,19 @@
   \begin{equation}\label{eq:shift_func}
    \zeta^{s(x)} = \frac{\ycd(x)}{\yab(x)}.
    \end{equation}
-  We can now introduce the set $V = \vab \cap \vcd$. This set is non-empty if  $\{a,b\} \cap \{c,d\} \ne \varnothing$
-  and has the property that the shifting function $s(x)$ is well-defined on $V$ and, since $\yab(x)$ and $\ycd(x)$ are 
-  both analytic on $V$, constant on its 
-  connected components.
-  Note that \eqref{eq:shift_func} naturally extends to the other analytic branches via
+  Naturally, \eqref{eq:shift_func} extends to the other analytic branches via
   \begin{equation}
    \zeta^{s(x)+l-k} = \frac{\zeta^l\ycd(x)}{\zeta^k\yab(x)}.
    \end{equation}
+   We can now introduce the set $V = \vab \cap \vcd$. If $\{a,b\} \cap \{c,d\} \ne \varnothing$, then $V$ is non-empty
+  and it has the property that the shifting function $s(x)$ is well-defined on $V$ and, since $\yab(x)$ and $\ycd(x)$ are 
+  both analytic on $V$, constant on its 
+  connected components.
   
-  In \S \ref{subsec:riemann_surface} we established that multiplication of a branch with $\zeta$ corresponds to moving
-  one sheet up on the Riemann surface. Thus, 
-  we can interpret the value of the shifting function at a point $\xt \in V$ geometrically as
-  $\cycdl$ running $s(\xt)+l-k$ sheets above $\cyabk$ at $\xt$, if we deform these cycles homotopically such that their
-  projections to the $x$-plane meet at the point $\xt$.
+  In \S \ref{m-subsec:riemann_surface} we established that multiplication of a branch with $\zeta$ corresponds to moving
+  one sheet up on the Riemann surface.
+  We can interpret the value of the shifting function geometrically as
+  $\cycdl$ running $s(\xt)+l-k$ sheets above $\cyabk$ at a point $\xt \in V$.
   
  This information can be used to determine the intersection number in the following way. We deform the cycles homotopically
  such that $\pr(\cyabk) \cap \pr(\cycdl) = \{ \xt \}$ for some $\xt \in V$. Consequently, on $\cu$ they can at most intersect in
@@ -125,28 +124,33 @@
   We see that independently of $s(\xt)$, $s_+ = (k+1)-k = 1$ and $s_- = (k-1)-k = -1$ are as claimed.
  \end{proof}
 
-  In the cases $(ii)-(iv)$ we have $[a,b] \cap [c,d] = \{ x_0 \}$ where $x_0$ is either $a$ or $b$ and $s(x_0)$ is not
-  defined. 
+  For $(ii)-(iv)$ we have that $[a,b] \cap [c,d] = \{ x_0 \}$, where $x_0$ is either $a$ or $b$. Unfortunately, in these cases $s(x_0)$ is not
+  well-defined.
   
  Following our strategy, we choose a point $\xt \in \C \setminus X$ on the bisectrix of
-  $[a,b]$ and $[c,d]$ that is close enough to $x_0$ such that $[\xt,x_0[ \subset V = \vab \cap \vcd$ 
-  (see Figure \ref{m-fig:set_v} for the case $x_0 = b$). 
+  $[a,b]$ and $[c,d]$ that is close enough to $x_0$ such that $[\xt,x_0[ \subset V = \vab \cap \vcd$
+  (see Figure \ref{m-fig:set_v_both} below).
   
-  Now, $s(\xt)$ can be computed using the argument function
+  Then we can easily compute $s(\xt)$ using the argument function
   \begin{equation}\label{eq:sxt}
    s(\xt) = \frac{m}{2\pi} \arg \left( \frac{\ycd(\xt)}{\yab(\xt)} \right).
   \end{equation}
-   
+  
     \begin{figure}[H]
       \begin{center}
-   \input{images/set_v_b=c.tex}
+   \scalebox{.9}{\input{images/set_v_both.tex}}
       \end{center}
-    \caption{The set $V = \vab \cap \vbd$.}
-    \label{fig:set_v}
+     \vspace{-1cm}
+    \caption{The set $V = \vab \cap \vcd$ for $b=c$ (left) and $a=c$ (right).}
+    \label{fig:set_v_b=c}
 \end{figure}
    
+   
+   
+   
+   
    \begin{proof}\let\qed\relax (of case $(ii)$) \\
-   In this case ($x_0 = b = c$) we choose $\xt$ on the upper bisectrix, as shown in Figure \ref{m-fig:set_v}, 
+   In this case ($x_0 = b = c$) we choose $\xt$ on the upper bisectrix, as shown in Figure \ref{m-fig:set_v_both}, 
    and compute $s(\xt)$ with \eqref{m-eq:sxt}.
    
    Again, the non-trivial cases where $s(\xt) + l - k \in \{1,0,-1\}$, are shown in Figure \ref{m-fig:int_b=c}.
@@ -167,20 +171,29 @@
   as claimed.
   \end{proof}
  
- \begin{figure}[H]
-      \begin{center}
-   \input{images/set_v_a=c.tex}
-      \end{center}
-    \caption{The set $V = \vab \cap \vad$.}
-    \label{fig:set_v}
-\end{figure}
+%  \begin{figure}[H]
+%       \begin{center}
+%    \input{images/set_v_a=c.tex}
+%       \end{center}
+%     \caption{The set $V = \vab \cap \vad$.}
+%     \label{fig:set_v_a=c}
+% \end{figure}
    
  
  
  \begin{proof}(of cases $(iii) + (iv)$)
-  \todo ...
+ In this case ($x_0 = b = c$) we choose $\xt$ on the inner bisectrix, as shown in Figure \ref{m-fig:set_v_a=c}, 
+   and compute $s(\xt)$ with \eqref{m-eq:sxt}.
  \end{proof}
 
+  \begin{figure}[H]
+      \begin{center}
+   \scalebox{0.9}{\input{images/intsec_a=c.tex}}
+      \end{center}
+    \caption{Intersections for $a=c$.}
+    \label{fig:int_b=c}
+   \end{figure}
+ 
  
   
 \begin{lemma}\label{lemma:sxt=sx}
