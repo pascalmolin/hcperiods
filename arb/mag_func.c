@@ -73,8 +73,8 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
            )
         {
 #if VERBOSE > 1
-            flint_printf("\n  ... "); arb_printd(t, 10);
-            flint_printf(" failed "); arb_printd(abs, 10);
+            flint_printf("\n  ... "); arb_printd(t, 20);
+            flint_printf(" failed "); arb_printd(abs, 20);
 #endif
             arb_bound_func_arb(abs, f, params, t, 3, depth - 1, prec);
         }
