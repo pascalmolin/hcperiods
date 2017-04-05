@@ -150,23 +150,22 @@
    
    
    \begin{proof}\let\qed\relax (of case $(ii)$) \\
-   In this case ($x_0 = b = c$) we choose $\xt$ on the upper bisectrix, as shown in Figure \ref{m-fig:set_v_both}, 
-   and compute $s(\xt)$ with \eqref{m-eq:sxt}.
-   
-   Again, the non-trivial cases where $s(\xt) + l - k \in \{1,0,-1\}$, are shown in Figure \ref{m-fig:int_b=c}.
-   Illustrated are the cycles $\cyab^k$ (black), $\cycd^{k-s(\xt)}$ (gray), $\cycd^{k-s(\xt) + 1 }$ (green) and
-    $\cycd^{k-s(\xt)-1}$ (red),
+   In this case we have $x_0 = b = c$. Choosing $\xt$ on the upper bisectrix (as shown in Figure \ref{m-fig:set_v_both}) 
+   and computing $s(\xt)$ with \eqref{m-eq:sxt} makes it possible to determine the intersection numbers graphically.
+   Figure \ref{m-fig:int_b=c} shows the non-trivial cases $s(\xt) + l - k \in \{1,0,-1\}$:  
+   illustrated are the cycles $\cyab^k$ (black), $\cycd^{k-s(\xt)}$ (gray), $\cycd^{k-s(\xt) + 1 }$ (green) and
+    $\cycd^{k-s(\xt)-1}$ (red).
     \begin{figure}[H]
       \begin{center}
-   \input{images/intsec_b=c.tex}
+   \scalebox{0.8}{\input{images/intsec_b=c.tex}}
       \end{center}
     \caption{Intersections for $b=c$.}
     \label{fig:int_b=c}
    \end{figure}
-    By Lemma \ref{lemma:sxt=sx} (1) we have $s(\xt) = s_b$, which implies
+    By Lemma \ref{lemma:sxt=sx} (1) we have $s(\xt) \equiv s_b$, which implies
     \begin{align*}
-    & s_+ = k-s(\xt)-k = s_b, \\
-    & s_- = k-s(\xt)+1-k = 1-s_b
+    & s_+ = k-s(\xt)-k \equiv -s_b, \\
+    & s_- = k-s(\xt)+1-k \equiv 1-s_b
     \end{align*}
   as claimed.
   \end{proof}
@@ -181,61 +180,82 @@
    
  
  
- \begin{proof}(of cases $(iii) + (iv)$)
- In this case ($x_0 = b = c$) we choose $\xt$ on the inner bisectrix, as shown in Figure \ref{m-fig:set_v_a=c}, 
-   and compute $s(\xt)$ with \eqref{m-eq:sxt}.
+ \begin{proof}\let\qed\relax(of cases $(iii) + (iv)$)
+ In these cases we have $x_0 = a = c$. We choose $\xt$ on the inner bisectrix (as shown in Figure \ref{m-fig:set_v_a=c}) and 
+   and compute $s(\xt)$ with \eqref{m-eq:sxt}. 
  \end{proof}
-
+ As before Figure \ref{m-fig:int_a=c} shows the non-trivial cases  $s(\xt) + l - k \in \{1,0,-1\}$ for $\varphi = \arg\left(\frac{b-a}{d-c}\right) > 0$ (case $(iii)$):
+   illustrated are the cycles $\cyab^{(k)}$ (black), $\cycd^{(k-s(\xt))}$ (gray), $\cycd^{(k-s(\xt) + 1)}$ (green) and
+    $\cycd^{k-s(\xt)-1}$ (red).
   \begin{figure}[H]
       \begin{center}
-   \scalebox{0.9}{\input{images/intsec_a=c.tex}}
+   \scalebox{0.8}{\input{images/intsec_a=c.tex}}
       \end{center}
-    \caption{Intersections for $a=c$.}
+    \caption{Intersections for $a=c$ and $\varphi > 0$.}
     \label{fig:int_b=c}
    \end{figure}
+   Lemma \ref{lemma:sxt=sx} (2) gives us $s(\xt) \equiv s_a$, which implies 
+    \begin{align*}
+    & s_+ = k-s(\xt)+1-k \equiv 1-s_a, \\
+    & s_- = k-s(\xt)-k \equiv -s_a
+    \end{align*}
+  as claimed for $\varphi > 0$.
+  
+  The case $\varphi < 0$ can be derived as a symmetry: if we mirror Figure \ref{m-fig:int_a=c} at the horizontal line through $a$ we are in case $(iv)$.
+  There, the intersection is positive if $\cyabk$ and $\cycdl$ start on the same sheet and negative if $\cycdl$ start one sheet below $\cyabk$.
  
+ 
+
  
   
 \begin{lemma}\label{lemma:sxt=sx}
+  With the choices made in the proof of Theorem \ref{m-thm:intsec_numb} it holds that
   \begin{itemize}
-   \item[(1)] In the proof of case $(ii)$ of Theorem \ref{m-thm:intsec_numb}, choosing $\xt$ on the upper bisectrix
-   of $[a,b],[b,d]$, suffices $s(\xt) = s_b$ as defined in \eqref{m-eq:sxt} and \eqref{m-eq:s_x} respectively.
-    \item[(2)] In the proof of the cases $(iii)$ and $(iv)$ of Theorem \ref{m-thm:intsec_numb}, choosing $\xt$ on the upper bisectrix
-   of $[a,b],[a,d]$, suffices $s(\xt) = s_a$ as defined in \eqref{m-eq:sxt} and \eqref{m-eq:s_x} respectively.
+   \item[(1)] %Choosing $\xt$ on the upper bisectrix of $[a,b],[c,d]$ (Proof of Theorem \ref{m-thm:intsec_numb},$(ii)$), 
+    $s(\xt) \equiv s_b \bmod m$ in case $(ii)$,
+    %as defined in \eqref{m-eq:sxt} and \eqref{m-eq:s_x} respectively.
+    \item[(2)] %In the proof of the cases $(iii)$ and $(iv)$ of Theorem \ref{m-thm:intsec_numb}, choosing $\xt$ on the upper bisectrix
+   %of $[a,b],[a,d]$, suffices $s(\xt) = s_a$ as defined in \eqref{m-eq:sxt} and \eqref{m-eq:s_x} respectively.
+   $s(\xt) \equiv s_b \bmod m$ in the cases $(iii)+(iv)$.
   \end{itemize}
 \end{lemma}
  \begin{proof}
- \todo Rework.
-  With $\rho = \arg\left(\frac{b-a}{d-b}\right)$ we have that
-  \begin{align*}
-   & \arg (1+\ubd(x)) = \frac{\pi+\rho}{2} \quad \text{for all}  x \in [\xt,x_0[,\\
-   & \arg (1-\uab(x)) = -\frac{\pi+\rho}{2} \quad \text{for all}  x \in [\xt,x_0[,\\
-   & \arg (1-\ubd(x_0)) = 0,\\
-   & \arg (1+\uab(x_0))= 0,
-  \end{align*}
-  and therefore
-  \begin{align*}
-   \theta = \frac{\pi+\rho}{2} - \left(-\frac{\pi+\rho}{2}\right) = \pi + \rho.
-  \end{align*}
-  \begin{equation}
-   \equiv \frac{1}{2\pi}\left( \theta(x) + m \arg \left( \frac{ \ccd \ytcd(x)}{ \cab
-   \ytab(x)} \right) \right) \bmod m
-   \theta(x) = \arg(1+\ucd(x)) + \arg(1-\ucd(x)) - \arg(1+\uab(x)) - \arg(1-\ucd(x)).
-  \end{equation}
-    \begin{align}\label{eq:s(x)2}
-  \begin{split}
-   \zeta^{s(x)} & = \frac{\ycd(x)}{\yab(x)} = \frac{(1- \ucd(x)^2)\mr \ccd \ytcd(x) }{(1-\uab(x)^2)\mr \cab \ytab(x)} \\
-   \Rightarrow  s(x) & \equiv \frac{m}{2\pi} \left( \arg \left( \frac{(1- \ucd(x)^2)\mr}{(1-\uab(x)^2)\mr} \right) + \arg \left( \frac{ \ccd \ytcd(x)}{ \cab
-   \ytab(x)} \right) \right) \bmod m
-  \end{split}
+ Starting from equation \eqref{m-eq:sxt}, for all $x \in \C \setminus X$ we have
+   \begin{align}
+   s(x) & = \frac{m}{2\pi} \arg \left( \frac{\ycd(x)}{\yab(x)} \right)
+   \equiv \frac{m}{2\pi} \left( \arg \left( \frac{(1- \ucd^{-1}(x)^2)\mr}{(1-\uab^{-1}(x)^2)\mr} \right) + \arg \left( \frac{ \ccd \ytcd(x)}{\cab
+   \ytab(x)} \right) \right) \\
+   & \equiv \frac{1}{2\pi} \arg(1+\ucd^{-1}(x)) + \arg(1-\ucd^{-1}(x)) - \arg(1+\uab^{-1}(x)) - \arg(1-\uab^{-1}(x)) \\
+   & +  \frac{m}{2\pi} \arg \left( \frac{ \ccd \ytcd(x)}{\cab\ytab(x)} \right) \mod m.
   \end{align}
+ Assume we are in case $(ii)$, i.e. $x_0 = b = c$ and denote $\varphi_0 = \arg \left( \frac{b-a}{d-c} \right)$. Then, we can parametrize all points $\xt \ne b$ on 
+ the upper bisectrix of $[a,b]$ and
+ $[c,d]$ (see \ref{m-fig:set_v_both}) via
+ \begin{align}
+  \xt & = \ubd(-1+t \exp(\pi i(\pi+\varphi_0)/2)) \text{  as well as} \\
+  \xt & = \uab(1-t \exp(-\pi i (\pi+\varphi_0)/2))
+ \end{align}
+ for some $t > 0$. Therefore,
+ \begin{align}
+   & \arg (1+\ubd^{-1}(\xt)) = \frac{\pi+\varphi_0}{2} \text{ and} \\
+   & \arg (1-\uab^{-1}(\xt)) = -\frac{\pi+\varphi_0}{2}.
+ \end{align}
+ For $\xt$ chosen close enough to $b$ we have that $[\xt,b[ \subset V$ and the shifting function $s(\xt)$ is constant as $\xt$ tends to $b$. Hence, 
+ we can compute it as
+ \begin{align}
+  s(\xt) & \equiv \frac{1}{2\pi} \left( \pi + \varphi_0 + \arg(1-\ucd^{-1}(\xt)) - \arg(1+\uab^{-1}(\xt)) +  m \arg \left( \frac{ \ccd \ytcd(\xt)}{\cab\ytab(\xt)} \right)\right) \\
+	 & \equiv \frac{1}{2\pi} \left ( \varphi +\arg(1-\ucd^{-1}(b)) - \arg(1+\uab^{-1}(b)) +  m \arg \left( \frac{ \ccd \ytcd(b)}{\cab\ytab(b)} \right)\right) \\
+	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \ccd \ytcd(b)}{\cab\ytab(b)} \right)\right) \equiv s_b \mod m,
+ \end{align}
+thus proving (1).
+ \todo Proof of (2).
  \end{proof}
 
 
 \begin{rmk}
-  \todo Rework. Note that depending on our choice of $\xt$ (either on the upper or the lower bisectrix), the path
-  $[\xt,x_0[$ will be contained in different connected components of $V$. Although the value of
-  $s(\xt)$ will change, the intersection number is independent of that choice.
+  The intersection numbers given by Theorem \ref{m-thm:intsec_numb} are independent of the choice of $\xt$.
+  If we were to choose $\xt$ on the lower (or outer) bisectrix, then $[\xt,x_0[$ would be contained in a different connected component of $V$. The value of
+  $s(\xt)$ changes, but the parametrization of the bisectrix and the corresponding will change accordingly.
 \end{rmk}
 
 
