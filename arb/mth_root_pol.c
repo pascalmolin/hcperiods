@@ -6,6 +6,8 @@
 
 #include "abel_jacobi.h"
 
+#define FAIL 2147483647
+
 void
 sqrt_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong prec)
 {
@@ -71,12 +73,10 @@ mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_s
 static int
 acb_sgn_imag(const acb_t x)
 {
-    if ( arb_is_nonnegative(acb_imagref(x)) )
-        return 1;
-    else if ( arb_is_negative(acb_imagref(x)) )
-        return -1;
-    flint_printf("sign cannot be determined\n");
-    abort();
+    if (arb_contains_zero(acb_imagref(x)))
+        return arb_is_nonnegative(acb_realref(x));
+    else
+        return arf_sgn(arb_midref(acb_imagref(x)));
 }
 
 static slong
@@ -94,6 +94,13 @@ acb_prod_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong pre
     isgn_y = acb_sgn_imag(y);
     for (k = 1; k < d; k++)
     {
+        if (!isgn_y)
+        {
+#if DEBUG
+            flint_printf("[y=%ld]",k);
+#endif
+            return FAIL;
+        }
 
         acb_sub_arb(t, u + k, x, prec);
         if (k >= d1)
@@ -102,6 +109,14 @@ acb_prod_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong pre
         acb_mul(y, y, t, prec);
 
         isgn_t = acb_sgn_imag(t);
+        if (!isgn_t)
+        {
+#if DEBUG
+            flint_printf("[t=%ld]",k);
+#endif
+            return FAIL;
+        }
+
         if (isgn_y == isgn_t)
         {
             isgn_y = acb_sgn_imag(y);
@@ -126,9 +141,14 @@ sqrt_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, slong pre
     slong q;
 
     q = acb_prod_turn(y, u, d1, d, x, prec);
-    acb_sqrt(y, y, prec);
-    if (q % 2)
-        acb_neg(y, y);
+    if (q == FAIL)
+        sqrt_pol_def(y, u, d1, d, x, prec);
+    else
+    {
+        acb_sqrt(y, y, prec);
+        if (q % 2)
+            acb_neg(y, y);
+    }
 }
 
 void
@@ -137,8 +157,13 @@ mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_s
     slong q;
 
     q = acb_prod_turn(y, u, d1, d, x, prec);
-    acb_root_ui(y, y, m, prec);
-    q = (q % m + m) % m;
-    if (q)
-        acb_mul(y, y, z + q, prec);
+    if (q == FAIL)
+        mth_root_pol_def(y, u, d1, d, x, z, m, prec);
+    else
+    {
+        acb_root_ui(y, y, m, prec);
+        q = (q % m + m) % m;
+        if (q)
+            acb_mul(y, y, z + q, prec);
+    }
 }

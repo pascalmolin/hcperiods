@@ -275,6 +275,7 @@ de_params(mag_t e, arf_t h, arf_t l, acb_srcptr u, slong len, double r, slong d,
     slong n, k;
     cdouble * w;
     double hh, ll = 1.57, rr = r;
+    const slong paramprec = 64;
     w = malloc(len * sizeof(cdouble));
     for (k = 0; k < len; k++)
         w[k] = acb_get_cdouble(u + k);
@@ -283,7 +284,7 @@ de_params(mag_t e, arf_t h, arf_t l, acb_srcptr u, slong len, double r, slong d,
     arf_set_d(h, hh);
     arf_set_d(l, ll);
 
-    de_error(e, h, l, n, rr, u, len, d, j, m, prec);
+    de_error(e, h, l, n, rr, u, len, d, j, m, paramprec);
 
     free(w);
     return n;

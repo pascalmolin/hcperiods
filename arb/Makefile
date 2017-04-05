@@ -76,7 +76,7 @@ verbose:
 	$(MAKE) AT= QUIET_CC= QUIET_CXX= QUIET_AR=
 
 clean:
-	rm -f $(OBJS) $(LOBJS) $(TESTS) $(PROFS) $(EXMPS) $(wildcard $(LIBRARY)*)
+	rm -f $(OBJS) $(LOBJS) $(TESTS) $(PROFS) $(EXMPS) $(LIBRARY)
 	rm -rf build
 
 build:

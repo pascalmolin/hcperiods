@@ -104,7 +104,7 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
 
     _acb_vec_scalar_mul_arb(res, res, c.g, de->factor, prec);
 
-#if DEBUG
+#if DEBUG > 1
         flint_printf("\nend integration ");
         _acb_vec_printd(res, c.g, 30, "\n");
 #endif
@@ -150,7 +150,7 @@ integrals_edge_de(acb_ptr res, ydata_t ye, sec_t c, const de_int_t de, int flag,
 void
 integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, int flag, slong prec)
 {
-    slong k, paramprec = 64;
+    slong k;
     ulong n;
     arf_t h, l;
     mag_t e;
@@ -160,9 +160,9 @@ integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, int flag, slo
     arf_init(l);
     mag_init(e);
 
-    n = de_params_tree(e, h, l, tree, c, paramprec);
+    n = de_params_tree(e, h, l, tree, c, prec);
 #if DEBUG
-    flint_printf("\nprecomputed DE, n = %ld, h = %lf, prec=%ld\n", n, h, prec);
+    flint_printf("\nprecomputed DE, n = %ld, h = %lf, prec=%ld\n", n, arf_get_d(h, ARF_RND_NEAR), prec);
 #endif
     de_int_init(de, h, l, n, e, c.m, prec);
 
