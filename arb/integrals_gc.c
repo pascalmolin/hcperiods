@@ -10,13 +10,12 @@ void
 gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, int flag, slong prec)
 {
     slong l;
-    fmpq_t ln;
     arb_t w, x;
     acb_t y, yxi;
     void (*sqrt_pol) (acb_t y, acb_srcptr u, slong d1, slong d,
             const arb_t x, slong prec);
+    gc_int_t gc;
 
-    fmpq_init(ln);
     arb_init(w);
     arb_init(x);
     acb_init(y);
@@ -35,25 +34,23 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, int
     else if (flag & AJ_ROOT_TURN)
         sqrt_pol = &sqrt_pol_turn;
 
+    gc_int_init(gc, n, prec);
+
     /* compute integral */
     _acb_vec_zero(res, g);
 
-    for (l = 0; 2 * l + 1 < n; l++)
+    for (l = 0; l < gc->len; l++)
     {
 
-        /* compute x */
-        fmpq_set_si(ln, 2 * l + 1, 2 * n);
-        arb_cos_pi_fmpq(x, ln, prec);
-
         /* compute 1/y(x) */
-        sqrt_pol(y, u, d1, d, x, prec);
+        sqrt_pol(y, u, d1, d, gc->x + l, prec);
         acb_inv(y, y, prec);
 
         /* differentials */
-        acb_vec_add_geom_arb(res, g, y, x, prec);
+        acb_vec_add_geom_arb(res, g, y, gc->x + l, prec);
 
         /* now on -x */
-        arb_neg(x, x);
+        arb_neg(x, gc->x + l);
 
         sqrt_pol(y, u, d1, d, x, prec);
         acb_inv(y, y, prec);
@@ -67,13 +64,13 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, int
         acb_inv(y, y, prec);
         acb_add(res + 0, res + 0, y, prec);
     }
+    gc_int_clear(gc);
 
     /* multiply by weight = Pi / n */
     arb_const_pi(w, prec);
     arb_div_ui(w, w, n, prec);
     _acb_vec_scalar_mul_arb(res, res, g, w, prec);
 
-    fmpq_clear(ln);
     arb_clear(x);
     arb_clear(w);
     acb_clear(y);
