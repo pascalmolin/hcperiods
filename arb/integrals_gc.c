@@ -92,8 +92,7 @@ integrals_edge_gc(acb_ptr res, gc_int_t gc, const ydata_t ye, sec_t c, int flag,
         gc_int_init(gc, n, prec);
     }
     gc_integrals_precomp(res, ye->u, ye->n1, c.n - 2, c.g, gc, flag, prec);
-    if (0 && e)
-        _acb_vec_add_error_mag(res, c.g, e);
+    _acb_vec_add_error_mag(res, c.g, e);
     /*integrals_edge_factors_gc(res, ye->ba2, ye->ab, ye->c, c, prec);*/
     integrals_edge_factors(res, ye->ba2, ye->ab, ye->c, c, prec);
     mag_clear(e);
