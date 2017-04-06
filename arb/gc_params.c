@@ -84,18 +84,20 @@ maj_yr(arb_t m, const arb_t m0, const arb_t r, arb_srcptr vr, slong len, slong p
 void
 choose_r(arb_t r, const arb_t r0, const arb_t m, slong K, slong prec)
 {
-#if 0
+#if 1
     double R, A, M, eps;
     R = acosh( arf_get_d(arb_midref(r0), ARF_RND_DOWN) );
-    flint_printf("\n## R0 = %lf from r0 = ", R); arb_printd(r0, 10);
     M = arf_get_d(arb_midref(m), ARF_RND_UP);
     A = 1 + 2 * M / K;
     eps = R / (A + log( A / R ));
-    flint_printf("\n## choose eps = %lf", eps);
     R = cosh(R * (1. - eps));
-    flint_printf("\n## new R = %lf", R);
     if (R < 1)
         abort();
+#if DEBUG
+    flint_printf("\n## r0 = "); arb_printd(r0, 10);
+    flint_printf("\n## m = %lf -> choose eps = %lf", M, eps);
+    flint_printf("\n## new r = %lf", R);
+#endif
     arb_zero(r);
     arf_set_d(arb_midref(r), R);
 #else
@@ -142,7 +144,7 @@ slong
 gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
 {
     slong n, K;
-    slong pp = 32;
+    const slong pp = 32;
     acb_t z;
     arf_t t;
     arb_t r0, r, m0, m;
@@ -166,10 +168,14 @@ gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
     arb_addmul_si(m0, m, d, pp);
     arb_const_log2(m, pp);
     arb_addmul_si(m0, m, prec, pp);
+#if DEBUG
+        flint_printf("\nm0 = "); arb_printd(m0, 10);
+#endif
 
     /* fixme: let the user provide some r0? */
     /* choose r */
-#if 1
+#if 0
+    /* take mid */
     arb_add_si(r, r0, 1, prec);
     arb_mul_2exp_si(r, r, -1);
     mag_zero(arb_radref(r));
@@ -180,34 +186,42 @@ gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
 
     while ((K = maj_yr(m, m0, r, vr, len, pp)))
     {
-#if DEBUG > 1
+#if DEBUG
         flint_printf("\nr = "); arb_printd(r, 10);
         flint_printf(" -> K = %ld && m = ", K); arb_printd(m, 10);
 #endif
         choose_r(r, r0, m, K, pp);
     }
-#if DEBUG > 1
+#if DEBUG
     flint_printf("\nchoose r = "); arb_printd(r, 10);
-    flint_printf(" -> m = "); arb_printd(m, 10);
+    flint_printf(" -> log(m) = "); arb_printd(m, 10);
 #endif
 
     /* final result */
     arb_acosh(r, r, pp); /* r' = log(r+sqrt(r^2-1)) */
-    arb_div(m, m, r, pp);
-    arb_mul_2exp_si(m, m, -1);
-    arb_get_ubound_arf(t, m, pp);
+    arb_div(m0, m, r, pp);
+    arb_mul_2exp_si(m0, m0, -1);
+    arb_get_ubound_arf(t, m0, pp);
     n = arf_get_si(t, ARF_RND_CEIL);
+#if DEBUG
+    flint_printf(" -> n = %ld", n);
+#endif
 
     /* error */
     if (e)
     {
         /* exp(m)/(exp(2nr')-1) */
         arb_exp(m, m, pp);
+        arb_mul_2exp_si(m, m, -prec);
         arb_mul_si(r, r, 2 * n, pp);
         arb_exp(r, r, pp);
         arb_sub_ui(r, r, 1, pp);
         arb_div(m, m, r, pp);
         arb_get_mag(e, m);
+#if DEBUG > 1
+    flint_printf("\n     -> error = "); arb_printd(m, 10);
+    flint_printf("   -> mag = "); mag_printd(e, 10);
+#endif
     }
 
     _arb_vec_clear(vr, len);

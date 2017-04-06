@@ -28,7 +28,7 @@
 
    For multiprecision numbers, we consider (see \cite{BrentZimmermann}) that the multiplication has
    complexity $\cmul(D)=O(D \log^{1+\varepsilon}D)$,
-   while simple transcendental functions (log, exp, sinh,\dots) can be evaluated
+   while simple transcendental functions (log, exp, tanh, sinh,\dots) can be evaluated
    in complexity $\ctrig(D)=O(D\log^{2+\varepsilon} D$).
     Moreover, we assume that inversion and multiplication of a $g \times g$ matrix can be done using
     $O(g^{\eta})$ multiplications for some constant $2 < \eta < 3$.
@@ -243,14 +243,14 @@
  
    \subsection{Implementation tricks}
 
-   Here we simply give some further ideas used in our implementation to improve constants.
+   Here we simply give some ideas that we used in our implementation(s) to improve constant factors hidden in the big-$O$ notation, i.e. the absolute running time.
 
    \subsubsection{Improving branch points}
 
    As we saw in Section \ref{m-sec:numerical_integration}, the number of integration points
    closely depends on the configuration of branch points.
 
-   In practice the tau constant of double-exponential integration is usually bigger than $0.5$
+   In practice, when using double-exponential integration, the constant $r$ is usually bigger than $0.5$
    for random points, but we can exhibit bad configurations with $τ\approx 0.1$.
    In this case however, we can perform a change of coordinate by a Moebius transform
    $x\mapsto \frac{ax+b}{cx+d}$ as explained in Remark \ref{rmk:moebius} to redistribute the points more evenly.
@@ -303,8 +303,33 @@
    is real, so computing with $u$ saves a factor almost 2 on the running time.
 
    
-   \subsubsection{Euclidean spanning tree}
-    \todo
+   \subsubsection{Maximal spanning tree}
+    As explained in \S \ref{m-subsec:cycles_homo} we integrate along the edges of a maximal-flow spanning tree $T = (X,E)$, where the capacity $r_e$ of an edge $e = (a,b) \in E$ is computed as
+    \begin{equation}
+     r_e =  \min_{c \in X \setminus \{ a,b\}} \begin{cases}
+            \frac{|c-a|+|c-b|}{|b-a|}, \text{ if $m=2$,}\\
+            | \Im(\sinh^{-1}(\tanh^{-1}(\frac{2c - b -a}{b-a})/\lambda) |, \text{ if $m>2$.}
+            \end{cases}
+    \end{equation}
+    Although this can be done in low precision, computing $r_e$ for all $(n-1)(n-2)/2$ edges of the complete graph needs
+    \begin{equation} O(n^3)
+     \begin{cases}
+   \text{ multiplications, if $m=2$ or}\\
+    \text{ evaluations of transcendental functions, if $m>2$}.
+    \end{cases}
+    \end{equation}
+    For large $n$, the computation of these capacities has a noticable impact on the running time. This can be avoided by computing a \emph{minimal spanning tree} that uses the euclidean distance
+    between the end points of an edge as capacity, i.e. $r_e = |b-a|$, which  reduces the complexity to $O(n^2)$ multiplications.
+    
+    Given sufficiently many branch points that are randomly distributed in the complex plane, the shortest edges of the complete graph tend to agree with the edges that are well suited for integration.
+    Heuristically we find that starting with $n \approx 15$ this approach becomes favourable.
+    
+    
+
+
+
+    
+    
    
    
   \subsection{Further ideas} 

@@ -117,7 +117,7 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
         integrals_tree_de(aj->integrals, c, aj->tree, flag, prec);
     tree_ydata_clear(aj->tree);
 
-#if DEBUG
+#if DEBUG > 2
     flint_printf("\n\ntree integrals\n");
     acb_mat_printd(aj->integrals, 30);
     flint_printf("\n\n");
@@ -129,7 +129,7 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     progress("## periods\n");
     period_matrix(aj->omega0, aj->loop_a, aj->integrals, c, prec);
     period_matrix(aj->omega1, aj->loop_b, aj->integrals, c, prec);
-#if DEBUG > 1
+#if DEBUG > 2
     progress("\n\nperiods A\n");
     acb_mat_printd(aj->omega0, 20);
     progress("\n\nperiods B\n");

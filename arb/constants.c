@@ -138,8 +138,8 @@ integrals_edge_factors(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t
     {
 
 #if DEBUG > 1
-        flint_printf("\nshift by cab = ");
-        acb_printd(cab, 30);
+        flint_printf("\nshift by ab = ");
+        acb_printd(ab, 30);
 #endif
         /* polynomial shift by ab */
         acb_vec_polynomial_shift(r, c.ni[j], ab, prec);

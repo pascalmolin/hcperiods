@@ -58,6 +58,15 @@ typedef de_integration_struct de_int_t[1];
 
 typedef struct
 {
+    slong n;
+    slong len;
+    arb_ptr x;
+}
+gc_integration_struct;
+typedef gc_integration_struct gc_int_t[1];
+
+typedef struct
+{
     slong m;
     slong n;
     slong n1;
@@ -189,6 +198,8 @@ void de_int_clear(de_int_t de);
 /* parameters for GC integration */
 slong gc_params(mag_t e, acb_srcptr u, slong len, slong i, slong prec);
 slong gc_params_tree(mag_t e, const tree_t tree, sec_t c, slong prec);
+void gc_int_init(gc_int_t gc, slong n, slong prec);
+void gc_int_clear(gc_int_t gc);
 
 /* compute maximum spanning tree */
 void tree_init(tree_t tree, slong d);

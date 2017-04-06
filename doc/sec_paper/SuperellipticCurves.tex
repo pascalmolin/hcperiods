@@ -93,14 +93,15 @@
   
   \bigskip
   
-  Similar to the complex $m$-th root, we can assume that crossing the branch cut at $x_k \in X$ in positive direction corresponds to multiplication by $\zeta$ on the surface. We
-  obtain an ordering of the sheets relative to the analytic branches of $\cu$ by imposing that multiplication by $\zeta$ ( i.e. applying the map
-  $(x,y(x)) \mapsto (x,\zeta y(x))$ ) corresponds to moving one sheet up on the surface.
+  Similar to the complex $m$-th root, we can assume that crossing the branch cut at $x_k \in X$ in positive direction corresponds to multiplication by $\zeta$ on the Riemann surface. We
+  obtain an ordering of the sheets relative to the analytic branches of $\cu$ by imposing that multiplication by $\zeta$, i.e. applying the map
+  $(x,y(x)) \mapsto (x,\zeta y(x))$ corresponds to moving one sheet up on the Riemann surface.
   
    \bigskip
   
-  Consequently, the monodromy at every $x_k \in X$
-  is equal and cyclic of order $m$ and thus, the monodromy group is isomorphic to the cyclic group $C_m$. This makes it possible to find explicit generators for the
+  
+  Consequently, the local monodromy (of the cyclic covering $\pr$) at every $x_k \in X$
+  is equal and cyclic of order $m$ and the monodromy group is, up to conjugation, the cyclic group $C_m$. This makes it possible to find explicit generators for the
   homology group $\homo$ without specifying a base point, as shown in \S \ref{m-subsec:cycles_homo}.
 
   \subsubsection{Locally analytic branches}\label{subsubsec:analytic_branches}
@@ -236,7 +237,7 @@
        We say $\cyab = \cyab^{(0)}$ is an \emph{elementary cycle} and call $\cyabl$ its \emph{shifts} for $l \in \Z/m\Z$.
    \end{defn}
    In $\pi_1(\cu)$
-   they are homotopic to cycles that encirle  $a$ in negative and $b$ in positive orientation, once each.
+   they are homotopic to cycles that encircle  $a$ in negative and $b$ in positive orientation, once each.
    By definition of $\yab$ the branch cuts at the end points are outward and parallel to $[a,b]$. Thus, we have the following useful visualizations of $\cyabl$ on $\cu$:
    \begin{figure}[H]
       \begin{center}
@@ -253,7 +254,7 @@
   
   \medskip
    Consider the complete graph on the set of finite branch points $G = (X,E')$, i.e.\ $E' = \{  (a,b)  \mid  a,b \in X \}$.
-   Each edge $e = (a,b) \in E'$ gets assigned a capacity $\tau_e$ that indicates the cost of numerical integration along the interval $[a,b]$.
+   Each edge $e = (a,b) \in E'$ gets assigned a capacity $r_e$ that indicates the cost of numerical integration along the interval $[a,b]$.
    
     \medskip
    Here, the integration process is most favourable

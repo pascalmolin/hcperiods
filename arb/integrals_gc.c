@@ -7,29 +7,24 @@
 #include "abel_jacobi.h"
 
 void
-gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, int flag, slong prec)
+gc_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, const gc_int_t gc, int flag, slong prec)
 {
-    slong i, l;
-    fmpq_t ln;
+    slong l;
     arb_t w, x;
     acb_t y, yxi;
     void (*sqrt_pol) (acb_t y, acb_srcptr u, slong d1, slong d,
             const arb_t x, slong prec);
 
-    fmpq_init(ln);
     arb_init(w);
     arb_init(x);
     acb_init(y);
     acb_init(yxi);
 #if DEBUG
     flint_printf("\ngc integral : d1 = %ld, d = %ld, g = %ld, n = %ld, prec = %ld",
-            d1, d, g, n, prec);
+            d1, d, g, gc->n, prec);
 #endif
 
-    sqrt_pol = &sqrt_pol_def;
-    if (prec > 1000 && d > 5)
-        sqrt_pol = &sqrt_pol_turn;
-
+    sqrt_pol = &sqrt_pol_turn;
     if (flag & AJ_ROOT_DEF)
         sqrt_pol = &sqrt_pol_def;
     else if (flag & AJ_ROOT_TURN)
@@ -37,73 +32,38 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, int
 
     /* compute integral */
     _acb_vec_zero(res, g);
-    for (l = 0; l < n; l++)
-    {
-        fmpq_t ln;
 
-        /* compute x */
-        fmpq_init(ln);
-        fmpq_set_si(ln, 2 * l + 1, 2 * n);
-        arb_cos_pi_fmpq(x, ln, prec);
-        fmpq_clear(ln);
+    for (l = 0; l < gc->len; l++)
+    {
 
         /* compute 1/y(x) */
-        sqrt_pol(y, u, d1, d, x, prec);
+        sqrt_pol(y, u, d1, d, gc->x + l, prec);
         acb_inv(y, y, prec);
 
-        /* differentials : j = 1 && i < g */
-        acb_set(yxi, y);
-        acb_add(res + 0, res + 0, yxi, prec);
-#if 0 && DEBUG
-        flint_printf("\nl = %ld, res[%ld] = ", l, 0);
-        acb_printd(res + 0, 20);
-#endif
-
-        for (i = 1; i < g; i++)
-        {
-            acb_mul_arb(yxi, yxi, x, prec);
-            acb_add(res + i, res + i, yxi, prec);
-#if 0 && DEBUG
-            flint_printf("\nl = %ld, res[%ld] = ", l, i);
-            acb_printd(res + i, 20);
-#endif
-        }
-
-        continue;
-        /* TODO: could reuse -x, but not a big deal */
-
-        if (l == 0)
-            continue;
+        /* differentials */
+        acb_vec_add_geom_arb(res, g, y, gc->x + l, prec);
 
         /* now on -x */
-        arb_neg(x, x);
+        arb_neg(x, gc->x + l);
 
         sqrt_pol(y, u, d1, d, x, prec);
         acb_inv(y, y, prec);
+        acb_vec_add_geom_arb(res, g, y, x, prec);
+    }
 
-        /* differentials : j = 1 && i < g */
-        acb_set(yxi, y);
-        acb_add(res + 0, res + 0, yxi, prec);
-
-        for (i = 1; i < g; i++)
-        {
-            acb_mul_arb(yxi, yxi, x, prec);
-            if (i % 2)
-                acb_add(res + i, res + i, yxi, prec);
-            else
-                acb_sub(res + i, res + i, yxi, prec);
-        }
+    if (gc->n % 2)
+    {
+        arb_zero(x);
+        sqrt_pol(y, u, d1, d, x, prec);
+        acb_inv(y, y, prec);
+        acb_add(res + 0, res + 0, y, prec);
     }
 
     /* multiply by weight = Pi / n */
-
     arb_const_pi(w, prec);
-    arb_div_ui(w, w, n, prec);
+    arb_div_ui(w, w, gc->n, prec);
+    _acb_vec_scalar_mul_arb(res, res, g, w, prec);
 
-    for (i = 0; i < g; i++)
-        acb_mul_arb(res + i, res + i, w, prec);
-
-    fmpq_clear(ln);
     arb_clear(x);
     arb_clear(w);
     acb_clear(y);
@@ -111,26 +71,59 @@ gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, int
 }
 
 void
-integrals_edge_gc(acb_ptr res, ydata_t ye, sec_t c, slong n, mag_t e, int flag, slong prec)
+gc_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, slong n, int flag, slong prec)
 {
-    gc_integrals(res, ye->u, ye->n1, c.n - 2, c.g, n, flag, prec);
-    if (0 && e)
-        _acb_vec_add_error_mag(res, c.g, e);
+    gc_int_t gc;
+    gc_int_init(gc, n, prec);
+    gc_integrals_precomp(res, u, d1, d, g, gc, flag, prec);
+    gc_int_clear(gc);
+}
+
+void
+integrals_edge_gc(acb_ptr res, gc_int_t gc, const ydata_t ye, sec_t c, int flag, slong prec)
+{
+    slong n;
+    mag_t e;
+    mag_init(e);
+    n = gc_params(e, ye->u, c.n - 2, c.g, prec);
+    if (!gc->n || (gc->n - n) * (c.n + c.g) > n)
+    {
+        gc_int_clear(gc);
+        gc_int_init(gc, n, prec);
+    }
+    gc_integrals_precomp(res, ye->u, ye->n1, c.n - 2, c.g, gc, flag, prec);
+    _acb_vec_add_error_mag(res, c.g, e);
     /*integrals_edge_factors_gc(res, ye->ba2, ye->ab, ye->c, c, prec);*/
     integrals_edge_factors(res, ye->ba2, ye->ab, ye->c, c, prec);
+    mag_clear(e);
+}
+
+typedef struct { double r; slong k; } comp_t;
+
+int
+comp_cmp(const comp_t * x, const comp_t * y)
+{
+        return (x->r < y->r) ? -1 : (x->r > y->r);
 }
 
 void
 integrals_tree_gc(acb_mat_t integrals, sec_t c, const tree_t tree, int flag, slong prec)
 {
-    slong k, n;
-    mag_t e;
+    slong l;
+    comp_t * t;
+    gc_int_t gc;
 
-    mag_init(e);
-    n = gc_params_tree(e, tree, c, prec);
+    t = flint_malloc(tree->n * sizeof(comp_t));
+    for (l = 0; l < tree->n; l++)
+        t[l].k = l, t[l].r = tree->e[l].r;
+    qsort(t, tree->n, sizeof(comp_t), (int(*)(const void*,const void*))comp_cmp);
 
-    for (k = 0; k < tree->n; k++)
-        integrals_edge_gc(integrals->rows[k], tree->data + k, c, n, e, flag, prec);
-
-    mag_clear(e);
+    gc_int_init(gc, 0, prec);
+    for (l = 0; l < tree->n; l++)
+    {
+        slong k = t[l].k;
+        integrals_edge_gc(integrals->rows[k], gc, tree->data + k, c, flag, prec);
+    }
+    gc_int_clear(gc);
+    flint_free(t);
 }
