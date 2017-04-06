@@ -41,7 +41,8 @@ gc_int_init(gc_int_t gc, slong n, slong prec)
     gc->n = n;
     gc->len = n / 2;
     gc->x = _arb_vec_init(gc->len);
-    _arb_vec_cos_pi(gc->x, gc->len, n, prec);
+    if (n)
+        _arb_vec_cos_pi(gc->x, gc->len, n, prec);
 }
 
 void
