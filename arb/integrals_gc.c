@@ -24,10 +24,7 @@ gc_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, cons
             d1, d, g, gc->n, prec);
 #endif
 
-    sqrt_pol = &sqrt_pol_def;
-    if (prec > 1000 && d > 5)
-        sqrt_pol = &sqrt_pol_turn;
-
+    sqrt_pol = &sqrt_pol_turn;
     if (flag & AJ_ROOT_DEF)
         sqrt_pol = &sqrt_pol_def;
     else if (flag & AJ_ROOT_TURN)

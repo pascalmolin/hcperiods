@@ -29,7 +29,7 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
     flint_printf("\nde integral, d1=%ld, d=%ld, prec=%ld\n", d1, d, prec);
 #endif
 
-    mth_root_pol = &mth_root_pol_def;
+    mth_root_pol = &mth_root_pol_prod;
     if (prec > 1000 && d > 5)
         mth_root_pol = &mth_root_pol_turn;
 
