@@ -6,18 +6,18 @@
 
   Recall, that in \S \ref{m-subsec:cycles_homo} we constructed an explicit set of generators for $\homo$ (see Theorem
   \ref{thm:gen_set}), namely
-  \begin{equation}
+  \begin{equation*}
     \Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l < m-1,  e \in E  \right\}.
-  \end{equation}
+  \end{equation*}
   Here, we show how compute the intersection pairing on $\Gamma$. The corresponding intersection matrix is composed of
   $(n-1)^2$ blocks of dimension $m-1$:
-  \begin{equation}
+  \begin{equation*}
    K_{\Gamma} = \left( K_{i,j} \right)_{1\le i,j \le n-1}
-  \end{equation}
+  \end{equation*}
   where $i,j$ correspond to edges $e_i,e_j$ in the spanning tree $T = (X,E)$ and
-  \begin{equation}
+  \begin{equation*}
     K_{i,j} = \left(\gamma_{e_i}^{(k)} \circ \gamma_{e_j}^{(l)} \right)_{0 \le k,l < m-1}.
-  \end{equation}
+  \end{equation*}
   Thus, $K_{\Gamma}$ can be explicitly determined by the formulas in Theorem \ref{m-thm:intsec_numb} which is stated below.
   The rest of this section is concerned with its proof.
 
@@ -26,14 +26,14 @@
 
    \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
       Let $(a,b),(c,d) \in E$. The intersections of the corresponding cycles $\cyabk, \cycdl \in \Gamma$ are given by
-      \begin{equation}
+      \begin{equation*}
           \left(\cyab^{(k)} \circ \cycd^{(l)}\right)
           = \begin{cases}
               1  &\text{ if } l-k \equiv s_+ \bmod m,\\
               -1 &\text{ if } l-k \equiv s_- \bmod m,\\
               0 &\text{ otherwise,}
           \end{cases}
-      \end{equation}
+      \end{equation*}
       where $s_+$, $s_-$ are given by the following table, which covers all
       cases occurring in the algorithm
       \begin{center}
@@ -55,9 +55,9 @@
 	    \right)
       \end{equation}
      and
-      \begin{equation}
+      \begin{equation*}
           \rho = \arg \left( \frac{b-a}{d-c} \right) + \delta_{b=c}\pi
-      \end{equation}
+      \end{equation*}
  \end{thm}
  
  \bigskip
@@ -65,10 +65,10 @@
   Consider
   two cycles $\cyab^{(k)},\cycd^{(l)} \in \Gamma$ and
   recall from \S \ref{m-subsec:roots_branches} their definition 
-   \begin{align}\label{eq:def_cyabk}
+   \begin{align*}
       \cyabk & = \{  (x,\zeta^k \yab(x))  \mid  x \in [a,b]  \} \cup \{  (x,\zeta^{k+1} \yab(x))  \mid  x \in [b,a]  \}, \\
       \cycdl & = \{  (x,\zeta^l \ycd(x))  \mid  x \in [c,d]  \} \cup \{  (x,\zeta^{l+1} \ycd(x))  \mid  x \in [c,d]  \},
-   \end{align}
+   \end{align*}
   where $\zeta^k\yab(x),\zeta^l\ycd(x)$ are branches of $\cu$ that are analytic on open sets $\vab$ and $\vcd$ 
   (see Figure \ref{m-fig:set_vab}) respectively.
   \begin{proof}\let\qed\relax (of case $(v)$) \\
@@ -80,13 +80,13 @@
    on the set $\C \setminus X$
    we can define the \emph{shifting function}
    $s(x)$, that takes values in $\Z/m\Z$, implicitly via
-  \begin{equation}\label{eq:shift_func}
+  \begin{equation*}\label{eq:shift_func}
    \zeta^{s(x)} = \frac{\ycd(x)}{\yab(x)}.
-   \end{equation}
+   \end{equation*}
   Naturally, \eqref{eq:shift_func} extends to the other analytic branches via
-  \begin{equation}
+  \begin{equation*}
    \zeta^{s(x)+l-k} = \frac{\zeta^l\ycd(x)}{\zeta^k\yab(x)}.
-   \end{equation}
+   \end{equation*}
    We can now introduce the set $V = \vab \cap \vcd$. If $\{a,b\} \cap \{c,d\} \ne \varnothing$, then $V$ is non-empty
   and it has the property that the shifting function $s(x)$ is well-defined on $V$ and, since $\yab(x)$ and $\ycd(x)$ are 
   both analytic on $V$, constant on its 
@@ -98,63 +98,59 @@
   $\cycdl$ running $s(\xt)+l-k$ sheets above $\cyabk$ at a point $\xt \in V$.
   
  This information can be used to determine the intersection number in the following way. We deform the cycles homotopically
- such that $\pr(\cyabk) \cap \pr(\cycdl) = \{ \xt \}$ for some $\xt \in V$. Consequently, on $\cu$ they can at most intersect in
+ such that $\pr(\cyabk) \cap \pr(\cycdl) = \{ \xt \}$ for some $\xt \in V$. Consequently, on $\cu$ they can at most intersect at the
  points in $\pr^{-1}(\xt)$. By definition, any cycle in $\Gamma$ only runs on two neighbouring sheets, which already implies
- \begin{equation}
+ \begin{equation*}
    \left(\cyab^{(k)} \circ \cycd^{(l)}\right) = 0, \quad \text{if} \quad  s(\xt)+l-k \not\in \{-1,0,1\}.
- \end{equation}
+ \end{equation*}
   In the other cases we can determine the
   sign of possible intersections by taking into account the orientation of the cycles.
   
  We continue the proof with the next simplest case:
  \begin{proof}\let\qed\relax (of case $(i)$) \\
- Here we have $[a,b] = [c,d]$. We deform the cycles such that they only intersect above
+ Here we have $[a,b] = [c,d]$. Trivially $\left( \cyabk \circ \cyabk \right) = 0$ holds. For $k \ne l$ we deform the cycles such that they only intersect above
  $\xt = \frac{b+a}{2} \in  \vab= V$.
- We easily see that $s(\xt) + l - k = l - k$ and that trivially $\left( \cyabk \circ \cyabk \right) = 0$ holds. The remaining cases,
- where $l = k \pm 1$, are handled in Figure \ref{m-fig:int_self_shift} below.
+  We easily see that $s(\xt) = 0$ and therefore $s(\xt) + l - k = l - k$. The remaining non-trivial cases
+ ($l = k \pm 1$), are shown in Figure \ref{m-fig:int_self_shift} below.
    Illustrated are the cycles $\cyabk$ (black),
       $\cyab^{(k+1)}$ (red) and $\cyab^{(k-1)}$ (green).
     \begin{figure}[H]
       \begin{center}
-   \input{images/intsec_selfshift.tex}
+   \scalebox{0.8}{\input{images/intsec_selfshift.tex}}
       \end{center}
     \caption{Intersections of self-shifts.}
     \label{fig:int_self_shift}
 \end{figure}
-  We see that independently of $s(\xt)$, $s_+ = (k+1)-k = 1$ and $s_- = (k-1)-k = -1$ are as claimed.
+  We see that, independently of $s(\xt)$, $s_+ = (k+1)-k = 1$ and $s_- = (k-1)-k = -1$ are as claimed.
  \end{proof}
 
-  For $(ii)-(iv)$ we have that $[a,b] \cap [c,d] = \{ x_0 \}$, where $x_0$ is either $a$ or $b$. Unfortunately, in these cases $s(x_0)$ is not
+  For $(ii)-(iv)$ we have that $[a,b] \cap [c,d] = \{c \}$, where $c$ is either $a$ or $b$. Unfortunately, in these cases $s(c)$ is not
   well-defined.
   
  Following our strategy, we choose a point $\xt \in \C \setminus X$ on the bisectrix of
-  $[a,b]$ and $[c,d]$ that is close enough to $x_0$ such that $[\xt,x_0[ \subset V = \vab \cap \vcd$
+  $[a,b]$ and $[c,d]$ that is close enough to $c$ such that $[\xt,c[ \subset V = \vab \cap \vcd$
   (see Figure \ref{m-fig:set_v_both} below).
   
   Then we can easily compute $s(\xt)$ using the argument function
   \begin{equation}\label{eq:sxt}
    s(\xt) = \frac{m}{2\pi} \arg \left( \frac{\ycd(\xt)}{\yab(\xt)} \right).
   \end{equation}
-  
     \begin{figure}[H]
       \begin{center}
    \scalebox{.9}{\input{images/set_v_both.tex}}
       \end{center}
      \vspace{-1cm}
     \caption{The set $V = \vab \cap \vcd$ for $b=c$ (left) and $a=c$ (right).}
-    \label{fig:set_v_b=c}
+    \label{fig:set_v_both}
 \end{figure}
    
-   
-   
-   
-   
    \begin{proof}\let\qed\relax (of case $(ii)$) \\
-   In this case we have $x_0 = b = c$. Choosing $\xt$ on the upper bisectrix (as shown in Figure \ref{m-fig:set_v_both}) 
-   and computing $s(\xt)$ with \eqref{m-eq:sxt} makes it possible to determine the intersection numbers graphically.
-   Figure \ref{m-fig:int_b=c} shows the non-trivial cases $s(\xt) + l - k \in \{1,0,-1\}$:  
-   illustrated are the cycles $\cyab^k$ (black), $\cycd^{k-s(\xt)}$ (gray), $\cycd^{k-s(\xt) + 1 }$ (green) and
-    $\cycd^{k-s(\xt)-1}$ (red).
+   In this case we have $b = c$. Choosing $\xt$ on the upper bisectrix (as shown in Figure \ref{m-fig:set_v_both}) 
+   and computing $s(\xt)$ with \eqref{m-eq:sxt} makes it possible to determine the intersection numbers geometrically.
+   
+   Figure \ref{m-fig:int_b=c} shows the non-trivial cases $s(\xt) + l - k \in \{1,0,-1\}$.
+   Illustrated are the cycles $\cyab^k$ (black), $\cybd^{k-s(\xt)}$ (gray), $\cybd^{k-s(\xt) + 1 }$ (green) and
+    $\cybd^{k-s(\xt)-1}$ (red).
     \begin{figure}[H]
       \begin{center}
    \scalebox{0.8}{\input{images/intsec_b=c.tex}}
@@ -162,51 +158,35 @@
     \caption{Intersections for $b=c$.}
     \label{fig:int_b=c}
    \end{figure}
-    By Lemma \ref{lemma:sxt=sx} (1) we have $s(\xt) \equiv s_b$, which implies
+    By Lemma \ref{lemma:sxt=sx} (1) we have $s(\xt) \equiv s_b$, which implies (as claimed)
     \begin{align*}
-    & s_+ = k-s(\xt)-k \equiv -s_b, \\
-    & s_- = k-s(\xt)+1-k \equiv 1-s_b
+    & s_+ \equiv k-s(\xt)-k \equiv -s_b \mod m, \\
+    & s_- \equiv k-s(\xt)+1-k \equiv 1-s_b \mod m.
     \end{align*}
-  as claimed.
-  \end{proof}
+   \end{proof}
  
-%  \begin{figure}[H]
-%       \begin{center}
-%    \input{images/set_v_a=c.tex}
-%       \end{center}
-%     \caption{The set $V = \vab \cap \vad$.}
-%     \label{fig:set_v_a=c}
-% \end{figure}
-   
- 
- 
- \begin{proof}\let\qed\relax(of cases $(iii) + (iv)$)
- In these cases we have $x_0 = a = c$. We choose $\xt$ on the inner bisectrix (as shown in Figure \ref{m-fig:set_v_a=c}) and 
+ \begin{proof}(of cases $(iii) + (iv)$)
+ In these cases we have $a = c$. We choose $\xt$ on the inner bisectrix (as shown in Figure \ref{m-fig:set_v_both}) and 
    and compute $s(\xt)$ with \eqref{m-eq:sxt}. 
- \end{proof}
- As before Figure \ref{m-fig:int_a=c} shows the non-trivial cases  $s(\xt) + l - k \in \{1,0,-1\}$ for $\varphi = \arg\left(\frac{b-a}{d-c}\right) > 0$ (case $(iii)$):
-   illustrated are the cycles $\cyab^{(k)}$ (black), $\cycd^{(k-s(\xt))}$ (gray), $\cycd^{(k-s(\xt) + 1)}$ (green) and
-    $\cycd^{k-s(\xt)-1}$ (red).
+ 
+ For for $\varphi = \arg\left(\frac{b-a}{d-c}\right) > 0$, the non trivial cases, i.e. $s(\xt) + l - k \in \{1,0,-1\}$, are shown in Figure \ref{m-fig:int_a=c} 
+  We illustrate are the cycles $\cyab^{(k)}$ (black), $\cyad^{(k-s(\xt))}$ (gray), $\cyad^{(k-s(\xt) + 1)}$ (green) and
+    $\cyad^{k-s(\xt)-1}$ (red).
   \begin{figure}[H]
       \begin{center}
    \scalebox{0.8}{\input{images/intsec_a=c.tex}}
       \end{center}
     \caption{Intersections for $a=c$ and $\varphi > 0$.}
-    \label{fig:int_b=c}
+    \label{fig:int_a=c}
    \end{figure}
-   Lemma \ref{lemma:sxt=sx} (2) gives us $s(\xt) \equiv s_a$, which implies 
+   Lemma \ref{lemma:sxt=sx} (2) gives us $s(\xt) \equiv s_a$, which implies (as claimed for $\varphi > 0$)
     \begin{align*}
-    & s_+ = k-s(\xt)+1-k \equiv 1-s_a, \\
-    & s_- = k-s(\xt)-k \equiv -s_a
+    & s_+ = k-s(\xt)+1-k \equiv 1-s_a \mod m, \\
+    & s_- = k-s(\xt)-k \equiv -s_a \mod m.
     \end{align*}
-  as claimed for $\varphi > 0$.
-  
-  The case $\varphi < 0$ can be derived as a symmetry: if we mirror Figure \ref{m-fig:int_a=c} at the horizontal line through $a$ we are in case $(iv)$.
-  There, the intersection is positive if $\cyabk$ and $\cycdl$ start on the same sheet and negative if $\cycdl$ start one sheet below $\cyabk$.
- 
- 
-
- 
+  The case $\varphi < 0$ is easily derived as a symmetry: if we mirror Figure \ref{m-fig:int_a=c} at the horizontal line through $a$ we are in case $(iv)$.
+  There, the intersection is positive if $\cyabk$ and $\cyadl$ start on the same sheet and negative if $\cyadl$ starts one sheet below $\cyabk$. 
+  \end{proof}
   
 \begin{lemma}\label{lemma:sxt=sx}
   With the choices made in the proof of Theorem \ref{m-thm:intsec_numb} it holds that
@@ -221,41 +201,57 @@
 \end{lemma}
  \begin{proof}
  Starting from equation \eqref{m-eq:sxt}, for all $x \in \C \setminus X$ we have
-   \begin{align}
+   \begin{align*}
    s(x) & = \frac{m}{2\pi} \arg \left( \frac{\ycd(x)}{\yab(x)} \right)
    \equiv \frac{m}{2\pi} \left( \arg \left( \frac{(1- \ucd^{-1}(x)^2)\mr}{(1-\uab^{-1}(x)^2)\mr} \right) + \arg \left( \frac{ \ccd \ytcd(x)}{\cab
    \ytab(x)} \right) \right) \\
-   & \equiv \frac{1}{2\pi} \arg(1+\ucd^{-1}(x)) + \arg(1-\ucd^{-1}(x)) - \arg(1+\uab^{-1}(x)) - \arg(1-\uab^{-1}(x)) \\
-   & +  \frac{m}{2\pi} \arg \left( \frac{ \ccd \ytcd(x)}{\cab\ytab(x)} \right) \mod m.
-  \end{align}
- Assume we are in case $(ii)$, i.e. $x_0 = b = c$ and denote $\varphi_0 = \arg \left( \frac{b-a}{d-c} \right)$. Then, we can parametrize all points $\xt \ne b$ on 
+   & \equiv \frac{1}{2\pi} \left( \arg(1+\ucd^{-1}(x)) + \arg(1-\ucd^{-1}(x)) - \arg(1+\uab^{-1}(x)) - \arg(1-\uab^{-1}(x)) \right) \\
+   & +  \frac{m}{2\pi} \left( \arg \left( \frac{ \ccd \ytcd(x)}{\cab\ytab(x)} \right)\right) \mod m.
+  \end{align*}
+ Assume we are in case $(ii)$, i.e. $b = c$ and denote $\varphi_0 = \arg \left( \frac{b-a}{d-c} \right)$. Then, we can parametrize all points $\xt \ne b$ on 
  the upper bisectrix of $[a,b]$ and
- $[c,d]$ (see \ref{m-fig:set_v_both}) via
- \begin{align}
-  \xt & = \ubd(-1+t \exp(\pi i(\pi+\varphi_0)/2)) \text{  as well as} \\
-  \xt & = \uab(1-t \exp(-\pi i (\pi+\varphi_0)/2))
- \end{align}
- for some $t > 0$. Therefore,
- \begin{align}
+ $[a,d]$ (see Figure \ref{m-fig:set_v_both}) via
+ \begin{align*}
+  \xt & = \ubd(-1+t \exp(i(\pi+\varphi_0)/2)) \text{  as well as} \\
+  \xt & = \uab(1-t \exp(-i (\pi+\varphi_0)/2))
+ \end{align*}
+ for $t > 0$. Therefore,
+ \begin{align*}
    & \arg (1+\ubd^{-1}(\xt)) = \frac{\pi+\varphi_0}{2} \text{ and} \\
    & \arg (1-\uab^{-1}(\xt)) = -\frac{\pi+\varphi_0}{2}.
- \end{align}
- For $\xt$ chosen close enough to $b$ we have that $[\xt,b[ \subset V$ and the shifting function $s(\xt)$ is constant as $\xt$ tends to $b$. Hence, 
+ \end{align*}
+ For $\xt$ chosen close enough to $b$ we have that $[\xt,b[ \subset V$ and the shifting function $s(\xt)$ is constant as $\xt$ tends towards $b$. Hence, 
  we can compute it as
- \begin{align}
-  s(\xt) & \equiv \frac{1}{2\pi} \left( \pi + \varphi_0 + \arg(1-\ucd^{-1}(\xt)) - \arg(1+\uab^{-1}(\xt)) +  m \arg \left( \frac{ \ccd \ytcd(\xt)}{\cab\ytab(\xt)} \right)\right) \\
-	 & \equiv \frac{1}{2\pi} \left ( \varphi +\arg(1-\ucd^{-1}(b)) - \arg(1+\uab^{-1}(b)) +  m \arg \left( \frac{ \ccd \ytcd(b)}{\cab\ytab(b)} \right)\right) \\
-	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \ccd \ytcd(b)}{\cab\ytab(b)} \right)\right) \equiv s_b \mod m,
- \end{align}
+ \begin{align*}
+  s(\xt) & \equiv \frac{1}{2\pi} \left( \pi + \varphi_0 + \arg(1-\ubd^{-1}(\xt)) - \arg(1+\uab^{-1}(\xt)) +  m \arg \left( \frac{ \cbd \ytcd(\xt)}{\cab\ytab(\xt)} \right)\right) \\
+	 & \equiv \frac{1}{2\pi} \left ( \varphi +\arg(1-\ubd^{-1}(b)) - \arg(1+\uab^{-1}(b)) +  m \arg \left( \frac{ \cbd \ytbd(b)}{\cab\ytab(b)} \right)\right) \\
+	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \ccd \ytbd(b)}{\cab\ytab(b)} \right)\right) \equiv s_b \mod m,
+ \end{align*}
 thus proving (1).
- \todo Proof of (2).
- \end{proof}
-
+  In the cases $(iii)$ and $(iv)$ we have $a = c$ and denote $\varphi =  \arg \left( \frac{b-a}{d-c} \right)$. If $\phi > 0$, then we can parametrize all points on the inner
+  bisectrix of $[a,b]$ and $[a,d]$ (see Figure \ref{m-fig:set_v_both}) via
+ \begin{align*}
+  \xt & = \uad(-1+t \exp(i \varphi /2)) \text{  as well as} \\
+  \xt & = \uab(-1+t \exp(-i \varphi/2))
+ \end{align*}
+ for $t > 0$. Therefore,
+ \begin{align*}
+   & \arg (1+\uad^{-1}(\xt)) = \frac{\varphi}{2} \text{ and} \\
+   & \arg (1+\uab^{-1}(\xt)) = -\frac{\varphi}{2}.
+ \end{align*}
+ As before we can let $\xt$ tend towards $a$ and compute the shifting function at $\xt$ as
+ \begin{align*}
+  s(\xt) & \equiv \frac{1}{2\pi} \left( \varphi + \arg(1-\uad^{-1}(\xt)) - \arg(1+\uab^{-1}(\xt)) +  m \arg \left( \frac{ \cad \ytad(\xt)}{\cab\ytab(\xt)} \right)\right) \\
+	 & \equiv \frac{1}{2\pi} \left ( \varphi +\arg(1-\uad^{-1}(a)) - \arg(1-\uab^{-1}(a)) +  m \arg \left( \frac{ \cad \ytad(a)}{\cab\ytab(a)} \right)\right) \\
+	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \ccd \ytad(a)}{\cab\ytab(a)} \right)\right) \equiv s_a \mod m,
+ \end{align*}
+ Since the case $\phi < 0$ follows analogously, the proof of (2) is completed.
+\end{proof} 
 
 \begin{rmk}
   The intersection numbers given by Theorem \ref{m-thm:intsec_numb} are independent of the choice of $\xt$.
-  If we were to choose $\xt$ on the lower (or outer) bisectrix, then $[\xt,x_0[$ would be contained in a different connected component of $V$. The value of
-  $s(\xt)$ changes, but the parametrization of the bisectrix and the corresponding will change accordingly.
+  If we were to choose $\xt$ on the lower (or outer) bisectrix, then $[\xt,c[$ would be contained in a different connected component of $V$. The value of
+  $s(\xt)$ changes, but the parametrization of the bisectrix and the corresponding arguments will change accordingly.
 \end{rmk}
 
 
