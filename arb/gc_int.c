@@ -29,15 +29,8 @@ _arb_vec_cos_pi(arb_ptr c, slong len, slong n, slong prec)
         arb_set_round(c + k, acb_realref(x + 2 * k + 1), prec);
         arb_set_round(c + len - k - 1, acb_imagref(x + 2 * k + 1 + s), prec);
     }
-    if (n % 4 == 2)
-    {
-        arb_sqrt_ui(c + (n / 4), 2, prec);
-        arb_mul_2exp_si(c + (n / 4), c + (n / 4), -1);
-    }
-    else if (n % 4 == 3)
-    {
+    if (n % 4 >= 2)
         arb_set_round(c + (n / 4), acb_realref(x + (n / 2)), prec);
-    }
 
     _acb_vec_clear(x, len);
 }
