@@ -84,18 +84,20 @@ maj_yr(arb_t m, const arb_t m0, const arb_t r, arb_srcptr vr, slong len, slong p
 void
 choose_r(arb_t r, const arb_t r0, const arb_t m, slong K, slong prec)
 {
-#if 0
+#if 1
     double R, A, M, eps;
     R = acosh( arf_get_d(arb_midref(r0), ARF_RND_DOWN) );
-    flint_printf("\n## R0 = %lf from r0 = ", R); arb_printd(r0, 10);
     M = arf_get_d(arb_midref(m), ARF_RND_UP);
     A = 1 + 2 * M / K;
     eps = R / (A + log( A / R ));
-    flint_printf("\n## choose eps = %lf", eps);
     R = cosh(R * (1. - eps));
-    flint_printf("\n## new R = %lf", R);
     if (R < 1)
         abort();
+#if DEBUG
+    flint_printf("\n## r0 = "); arb_printd(r0, 10);
+    flint_printf("\n## m = %lf -> choose eps = %lf", M, eps);
+    flint_printf("\n## new r = %lf", R);
+#endif
     arb_zero(r);
     arf_set_d(arb_midref(r), R);
 #else
@@ -172,7 +174,7 @@ gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
 
     /* fixme: let the user provide some r0? */
     /* choose r */
-#if 1
+#if 0
     /* take mid */
     arb_add_si(r, r0, 1, prec);
     arb_mul_2exp_si(r, r, -1);
@@ -216,8 +218,8 @@ gc_params(mag_t e, acb_srcptr u, slong len, slong d, slong prec)
         arb_sub_ui(r, r, 1, pp);
         arb_div(m, m, r, pp);
         arb_get_mag(e, m);
-#if DEBUG
-    flint_printf("\n -> error = "); arb_printd(m, 10);
+#if DEBUG > 1
+    flint_printf("\n     -> error = "); arb_printd(m, 10);
     flint_printf("   -> mag = "); mag_printd(e, 10);
 #endif
     }
