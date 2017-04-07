@@ -28,10 +28,18 @@ pol_bern(acb_poly_t pol, slong n, slong prec)
     acb_poly_set_fmpq_poly(pol, h, prec);
     fmpq_poly_clear(h);
 }
+void
+acb_poly_reverse(acb_poly_t pol)
+{
+    slong k, n;
+    n = acb_poly_degree(pol);
+    for (k = 0; k <= n / 2; k++)
+        acb_swap(pol->coeffs + k, pol->coeffs + n - k);
+}
 
 int main(int argc, char * argv[])
 {
-    int i, print = 1, flag = 0, run = 1;
+    int i, print = 1, flag = 0, run = 1, rev = 0;
     slong n = 5, m = 2, prec = 128, digits = 0;
     void (*f_print) (const acb_mat_t, slong) = &acb_mat_printd;
     void (*f_pol) (acb_poly_t pol, slong n, slong prec) = &pol_xn1;
@@ -48,8 +56,10 @@ int main(int argc, char * argv[])
         flint_printf("Polynomials f_n(x):\n");
         flint_printf("  --xn1 n: x^n + 1\n");
         flint_printf("  --bern n: Bernoulli polynomial Bn(x)\n");
-        flint_printf("  --cheb n: Chebychev polynomial Tn(x)\n");
+        flint_printf("  --exp n: exponential polynomial sum x^k/k!\n");
         flint_printf("  --pol n cn ... c1 c0 : cn x^n + ... + c1 x + c0\n");
+        flint_printf("  --bernrev n: reverse Bernoulli x^nBn(1/x)\n");
+        flint_printf("  --exprev n: reverse exponential sum x^k/(n-k)!\n");
         flint_printf("Output options:\n");
         flint_printf("  --quiet: no printing\n");
         flint_printf("  --trim: reduce to obtained precision\n");
@@ -112,6 +122,11 @@ int main(int argc, char * argv[])
             n = atol(argv[i++]);
             f_pol = &pol_bern;
         }
+        else if (!strcmp(argv[i], "--rev"))
+        {
+            i++;
+            rev = 1;
+        }
         else if (!strcmp(argv[i], "--pol"))
         {
             int j;
@@ -168,6 +183,8 @@ int main(int argc, char * argv[])
     /* compute pol to actual accuracy */
     if (f_pol)
         f_pol(poly, n, prec);
+    if (rev)
+        acb_poly_reverse(poly);
 
     abel_jacobi_init_poly(aj, m, poly);
 
