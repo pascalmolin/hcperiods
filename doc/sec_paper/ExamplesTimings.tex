@@ -5,60 +5,66 @@
   \section{Examples and Timings}\label{sec:examples_timings}
 
   \subsection{Timings}
+  \newcommand{\bern}{\mathcal{B}}
+  \newcommand{\bernrev}{\widetilde{\bern}}
 
-  For testing purposes we consider two families of curves :
-  \begin{itemize}
-      \item reverse exponential series
+  For testing purposes we consider a family of curves given by Bernoulli polynomials
           \begin{equation}
-              \mathcal{E}_{m,n} : y^m = \sum_{k=0}^n\frac{x^{n-k}}{k!}
+              \bern_{m,n} : y^m = B_n(x) = \sum_{k=0}^n\binom nkb_{n-k}x^k
           \end{equation}
-      \item reverse Bernoulli polynomials
+  as well as their reciprocals:
           \begin{equation}
-              \mathcal{B}_{m,n} : y^m = x^nB_n(\frac1x) = \sum_{k=0}^n\binom nkb_{k}x^k
+              \bernrev_{m,n} : y^m = x^nB_n(\frac1x).
           \end{equation}
-  \end{itemize}
 
-  The branch points of these two families present interesting patterns which can be considered as
-  bad cases from a numerical integration perspective.
-  \begin{figure}[H]
-      \begin{center}
-          \subfloat[degree 7]{ \includegraphics[width=.5\linewidth,page=3]{images/roots_exp.pdf} }
-          \subfloat[degree 30]{ \includegraphics[width=.5\linewidth,page=4]{images/roots_exp.pdf} }
-      \end{center}
-      \caption{roots of reverse exponential polynomials.}
-  \label{fig:roots_exp}
-  \end{figure}
+  The branch points of these curves present interesting patterns which can be respectively considered
+  as good and bad cases from a numerical integration perspective (Figure \ref{fig:roots_bern}).
 
   \begin{figure}[H]
       \begin{center}
-          \subfloat[degree 8]{ \includegraphics[width=.5\linewidth,page=3]{images/roots_bern.pdf} }
-          \subfloat[degree 30]{ \includegraphics[width=.5\linewidth,page=4]{images/roots_bern.pdf} }
+          \subfloat[$\bern_{m,8}$]{ \includegraphics[width=.5\linewidth,page=1]{images/roots_bern.pdf} }
+          \subfloat[$\bern_{m,30}$]{ \includegraphics[width=.5\linewidth,page=2]{images/roots_bern.pdf} }\\
+          \subfloat[$\bernrev_{m,8}$]{ \includegraphics[width=.5\linewidth,page=3]{images/roots_bern.pdf} }
+          \subfloat[$\bernrev_{m,30}$]{ \includegraphics[width=.5\linewidth,page=4]{images/roots_bern.pdf} }
       \end{center}
-      \caption{roots of reverse Bernoulli polynomials.}
+      \caption{configurations of branch points.}
   \label{fig:roots_bern}
   \end{figure}
 
-  In the case of hyperelliptic curves, we compare our timings with the existing Magma code.
-      \begin{center}
-          \begin{table}[h!]
-      \begin{tabular}{lllrrrrr}
-          \toprule
-          & & bits & 128 & 512 & 2000 & 4000 & 10000 \\
-          curve & genus & digits & 38 & 154 & 600 & 1200 & 3000 \\
-          \midrule
-          $\mathcal{B}_{2,8}$ & 3
-          & Arb   & 3e-3 & 7.9e-3 & 9.4e-2 & & 4.21            \\
-          & & Magma (old) & 0.76 & 1.28 & 21.15 & 1190 & >1 month \\
-          \midrule
-          $\mathcal{B}_{2,30}$ & 15
-          & Arb & 3.4e-2 & 1.5e-1 & 2.21 & & 92.1 \\
-          & & Magma (old) & 8.070 & 15.260 & 283 & \\
-          \bottomrule
-      \end{tabular}
-      \caption{timings in seconds for hyperelliptic curves.}
-  \end{table}
-      \end{center}
+  In the case of hyperelliptic curves, we compare our timings with the existing
+  Magma code \cite{vanWamelen06}. We obtain a huge speedup which is mostly due
+  to the better integration scheme, but more interesting is the fact that the
+  running time of our algorithm mainly depends on the genus and the precision,
+  while that of Magma depends a lot on the branch points and behaves very badly
+  in terms of the precision.
 
- 
-\biblio
-\end{document}
+  \begin{table}[H]
+      \begin{center}
+          \begin{tabular}{lllrrrrr}
+              \toprule
+              & & \hfill bits & 128 & 512 & 2000 & 4000 & 10000 \\
+              genus & curve & \hfill digits & 38 & 154 & 600 & 1200 & 3000 \\
+              \midrule
+              3 & $\bern_{2,8}$
+              & Arb   & 3.5e-3 & 9.2e-3 & 9.6e-2 & 4.4e-1 & 4.27 \\
+              & & Magma (old) & 0.76 & 1.63 & 21.9 & 1190 & >1 month \\
+              \cmidrule{3-8}
+              & $\bernrev_{2,8}$
+              & Arb & 3.8e-3 & 1.2e-2 & 1.5e-1 & 6.9e-1 & 6.79 \\
+              & & Magma (old) & 0.81 & 1.35 & 22.2 & --- & --- \\
+              \midrule
+              14 & $\bern_{2,30}$
+              & Arb & 2.7e-2 & 1.2e-1 & 1.95 & 8.64 & 83.3 \\
+              & & Magma (old) & 6.5 & 11.5 & 283 & \\
+              \cmidrule{3-8}
+              & $\bernrev_{2,30}$
+              & Arb & 2.9e-2 & 1.3e-1 & 2.09 & 9.33 & 89.7 \\
+              & & Magma (old) & 147 & 415 & --- & \\
+              \bottomrule
+          \end{tabular}
+          \caption{timings for hyperelliptic curves (in seconds).}
+      \end{center}
+  \end{table}
+
+  \biblio
+  \end{document}
