@@ -82,6 +82,9 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     sec_t c = aj->c;
 
     aj->type = (flag & AJ_USE_DE || (c.m > 2 && c.n > 2)) ? INT_DE : (c.m == 2) ? INT_GC : INT_D2;
+#if DEBUG
+    acb_poly_printd(c.pol, 20);
+#endif
 
     /* branch points */
     progress("## branch points\n");

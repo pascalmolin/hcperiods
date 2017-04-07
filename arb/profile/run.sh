@@ -1,31 +1,33 @@
 #!/bin/bash
-if (( $# < 1 )); then
-    echo "$0 [callgrind|bench] [periods arguments]"
+if (( $# < 2 )); then
+    echo "$0 [callgrind|bench] pol [other arguments]"
     exit 0
 else
     run="$1"; shift
+    pol="$1"; shift
 fi
 export LD_LIBRARY_PATH=.:${HOME}/install/lib;
 mkdir -p profile/out
-PREC="128 512 2000 10000"
+PREC="128 512 2000 4000 10000"
 MARG="2 3 4 9 13"
-NARG="3 5 7 13 31"
+MARG="2 3 4"
+NARG="3 5 7 8 13 30"
 echo "# extra args $*"
-echo "# prec; m; n; time"
-for p in $PREC
+echo "# pol; m; n; prec; time"
+for m in $MARG
 do
-    for m in $MARG
+    for n in $NARG
     do
-        for n in $NARG
+        for p in $PREC
         do
             if [ "$run" == "callgrind" ]; then
-                echo "$p $m $n $1"
-                valgrind -q --tool=callgrind --callgrind-out-file=profile/out/callgrind.p$p.m$m.n$n$1.out build/example/periods --bench 1 --int --bern $n -m $m --prec $p $1
+                echo "$pol $m $n $p $1"
+                valgrind -q --tool=callgrind --callgrind-out-file=profile/out/callgrind.$pol.m$m.n$n.p$p$1.out build/example/periods --bench 1 --int --$pol $n -m $m --prec $p $1
             elif [ "$run" == "bench" ]; then
-                echo -n "$p; $m; $n; $*"
-                dumbbench --raw -- build/example/periods --bench 1 --bern $n -m $m --prec $p $*
+                echo -n "$pol; $m; $n; $p; $*"
+                dumbbench --raw -- build/example/periods --bench 1 --int --$pol $n -m $m --prec $p $*
             else
-                echo "build/example/periods --bench 1 --bern $n -m $m --prec $p $*"
+                echo "build/example/periods --bench 1 --$pol $n -m $m --prec $p $*"
             fi
         done
     done
