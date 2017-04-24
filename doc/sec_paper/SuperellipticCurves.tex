@@ -13,9 +13,6 @@
    \end{align}
    \end{defn}
    where $m > 1$ and $f \in \C[x]$ is separable of degree $n \ge 3$.
-   
-   Over $\C$ we identify the curve $\cu$ with the Riemann surface $\cu(\hat{\C})$ and denote by $\pr : \cu \rightarrow \P^1_{\C}$ the corresponding smooth cyclic branched covering of the projective line
-   defined by the $x$-coordinate.
 
   There are $\delta = \gcd(m,n)$ infinite points $P_{\infty}^{(1)},\dots,P_{\infty}^{(\delta)} \in \cu$, that behave differently depending on $m$ and $n$ (see \cite{CT1996}, \S 1 for details).
   Especially, $\infty \in \P^1_{\C}$ is a branch point for $\delta \ne m$. Thus, we introduce the set of finite branch points $X = \X$ as well as the set of all branch points
@@ -29,7 +26,8 @@
   \begin{align}\label{eq:genus}
     g = \frac{1}{2}( (m-1)(n-1) - \delta + 1).
   \end{align}
-
+  We denote the corresponding ramification points $P_k = (x_k,0) \in \cu$ for $k = 1,\dots,n$.
+  
   \begin{rmk}
    Without loss of generality we may assume $c_f = 1$ (if not, apply the transformation $(x,y) \mapsto (x,\sqrt[m]{c_f}y)$).
   \end{rmk}
@@ -80,9 +78,21 @@
   particular, the monodromy at $x=0$ is cyclic of order $m$.
 
   \subsubsection{The Riemann surface}\label{subsec:riemann_surface}
-
-  As mentioned before, the equation $\caff : y^m = \prod_{k = 1}^n (x - x_k)$ defines an $m$-sheeted Riemann surface $\cu(\hat{\C})$. 
-  Hence, there
+  
+  For an introduction to the theory of Riemann surfaces, algebraic curves and holomorphic covering maps we recommend the reader
+  to \cite{Miranda1995}.
+  
+  
+  
+   Over $\C$ we can identify the curve $\cu$ with the compact Riemann surface $\cu(\P^2_{\C})$. Since our defining equation
+   has the nice form
+   $y^m = \prod_{k = 1}^n (x - x_k)$ we view $\cu$ as Riemann surface with $m$ sheets and 
+   all computations will be done in the $x$-plane.
+   
+   We denote by $\pr : \cu \rightarrow \P^1_{\C}$ the corresponding smooth cyclic branched covering of the projective line
+   defined by the $x$-coordinate. 
+   
+  There
   are $m$ possibilities to continue $y$ as an analytic function following a path in the $x$-plane. This is crucial for the intergration
   of differentials on $\cu$. Due to the cyclic structure of $\cu$, they are related in a convenient way:
   
@@ -94,14 +104,14 @@
   \bigskip
   
   Similar to the complex $m$-th root, we can assume that crossing the branch cut at $x_k \in X$ in positive direction corresponds to multiplication by $\zeta$ on the Riemann surface. We
-  obtain an ordering of the sheets relative to the analytic branches of $\cu$ by imposing that multiplication by $\zeta$, i.e. applying the map
+  obtain an ordering of the sheets relative to the analytic branches of by imposing that multiplication by $\zeta$, i.e. applying the map
   $(x,y(x)) \mapsto (x,\zeta y(x))$ corresponds to moving one sheet up on the Riemann surface.
   
    \bigskip
   
   
-  Consequently, the local monodromy (of the cyclic covering $\pr$) at every $x_k \in X$
-  is equal and cyclic of order $m$ and the monodromy group is, up to conjugation, the cyclic group $C_m$. This makes it possible to find explicit generators for the
+  Consequently, the local monodromy of the cyclic covering $\pr$  is equal and cyclic of order $m$ at every $x_k \in X$
+ and the monodromy group is, up to conjugation, the cyclic group $C_m$. This makes it possible to find explicit generators for the
   homology group $\homo$ without specifying a base point, as shown in \S \ref{m-subsec:cycles_homo}.
 
   \subsubsection{Locally analytic branches}\label{subsubsec:analytic_branches}
@@ -320,7 +330,8 @@
  \WM = \left\{  \omega_{i,j}   \right\}_{\substack{1 \le i \le n-1, \\ 1 \le j \le m-1}} \quad \text{with} \quad \omega_{i,j} = \frac{ \dx^i}{i y^j},
   \end{align*}
   there are exactly $g$ that are holomorphic  and they can be found by imposing a simple combinatorial condition on $i$ and $j$.
-
+ The following Proposition is basically a more general version of
+  \cite[Proposition 2]{CT1996}.
 
    \bigskip
 
@@ -335,7 +346,7 @@
       Let $\w_{i,j} = x^{i-1}y^{-j} \dx \in \WM$. We write down the relevant divisors
       \begin{align*}
        \div(x) & = \sum_{k=1}^m \left(0,\zeta^k\sqrt[m]{f(0)}\right) - \frac{m}{\delta} \cdot \sum_{l = 1}^{\delta} P_{\infty}^{(l)}, \\
-       \div(y) & = \sum_{k = 1}^n (x_k,0) - \frac{n}{\delta} \cdot \sum_{l = 1}^{\delta}  P_{\infty}^{(l)}, \\
+       \div(y) & = \sum_{k = 1}^n P_k - \frac{n}{\delta} \cdot \sum_{l = 1}^{\delta}  P_{\infty}^{(l)}, \\
        \div(\dx) & = (m-1)\sum_{k = 1}^n (x_k,0) - \left(\frac{m}{\delta} + 1\right)\cdot \sum_{l = 1}^{\delta}  P_{\infty}^{(l)}.
       \end{align*}
      Putting together the information, for $P \in \cu$ lying over $x_0 \in \P^1_{\C}$, we obtain
