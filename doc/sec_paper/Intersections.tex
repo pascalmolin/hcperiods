@@ -21,7 +21,7 @@
   Thus, $K_{\Gamma}$ can be explicitly determined by the formulas in Theorem \ref{m-thm:intsec_numb} as stated below.
   The rest of this section is concerned with its proof.
 
-  Very importantly, for edges $(a,b),(c,d) \in E$, by construction of the spanning tree, we can restrict to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$ 
+  It is crucial that, for edges $(a,b),(c,d) \in E$, by construction of the spanning tree, we can restrict to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$ 
   such that $c$ is either $a$ or $b$.
 
    \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
@@ -61,7 +61,7 @@
  \end{thm}
  
  \bigskip
- The proof of Theorem is contained in the following exposition. \\ 
+ The proof of Theorem \ref{m-thm:intsec_numb}is contained in the following exposition. \\ 
   Consider
   two cycles $\cyab^{(k)},\cycd^{(l)} \in \Gamma$ and
   recall from \S \ref{m-subsec:roots_branches} their definition 
@@ -180,7 +180,7 @@
  In these cases we have $a = c$. We choose $\xt$ on the inner bisectrix (as shown in Figure \ref{m-fig:set_v_both}) and 
    and compute $s(\xt)$ with \eqref{m-eq:sxt}. 
  
- For for $\varphi = \arg\left(\frac{b-a}{d-c}\right) > 0$, the non trivial cases, i.e. $s(\xt) + l - k \in \{-1,0,1\}$, are shown in Figure \ref{m-fig:int_a=c} 
+ For $\varphi = \arg\left(\frac{b-a}{d-c}\right) > 0$, the non trivial cases, i.e. $s(\xt) + l - k \in \{-1,0,1\}$, are shown in Figure \ref{m-fig:int_a=c} 
   We illustrate are the cycles $\cyab^{(k)}$ (black), $\cyad^{(k-s(\xt))}$ (gray), $\cyad^{(k-s(\xt) + 1)}$ (green) and
     $\cyad^{k-s(\xt)-1}$ (red).
   \begin{figure}[H]
@@ -202,12 +202,8 @@
 \begin{lemma}\label{lemma:sxt=sx}
   With the choices made in the proof of Theorem \ref{m-thm:intsec_numb} the following statements are true:
   \begin{itemize}
-   \item[(1)] %Choosing $\xt$ on the upper bisectrix of $[a,b],[c,d]$ (Proof of Theorem \ref{m-thm:intsec_numb},$(ii)$), 
-    $s(\xt) \equiv s_b \bmod m$ in case $(ii)$,
-    %as defined in \eqref{m-eq:sxt} and \eqref{m-eq:s_x} respectively.
-    \item[(2)] %In the proof of the cases $(iii)$ and $(iv)$ of Theorem \ref{m-thm:intsec_numb}, choosing $\xt$ on the upper bisectrix
-   %of $[a,b],[a,d]$, suffices $s(\xt) = s_a$ as defined in \eqref{m-eq:sxt} and \eqref{m-eq:s_x} respectively.
-   $s(\xt) \equiv s_b \bmod m$ in the cases $(iii)$ and $(iv)$.
+   \item[(1)] $s(\xt) \equiv s_b \bmod m$ in case $(ii)$,
+    \item[(2)]  $s(\xt) \equiv s_b \bmod m$ in the cases $(iii)$ and $(iv)$.
   \end{itemize}
 \end{lemma}
  \begin{proof}
@@ -261,7 +257,7 @@ thus proving (1).
 \end{proof} 
 
 \begin{rmk}
-  The intersection numbers given by Theorem \ref{m-thm:intsec_numb} are independent of the choice of $\xt$ that were made in the proof. This approach works for any $\xt \in V$.
+  The intersection numbers given by Theorem \ref{m-thm:intsec_numb} are independent of the choices of $\xt$ that were made in the proof. This approach works for any $\xt \in V$.
   
   Even though the value of
   $s(\xt)$ changes, if we choose $\xt$ in a different connected component of $V$, e.g.\ on the lower bisectrix in case $(ii)$,  
