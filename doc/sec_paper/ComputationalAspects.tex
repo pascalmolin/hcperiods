@@ -30,10 +30,12 @@
    complexity $\cmul(D)=O(D \log^{1+\varepsilon}D)$,
    while simple transcendental functions (log, exp, tanh, sinh,\dots) can be evaluated
    in complexity $\ctrig(D)=O(D\log^{2+\varepsilon} D$).
-    Moreover, we assume that inversion and multiplication of a $g \times g$ matrix can be done using
-    $O(g^{\eta})$ multiplications for some constant $2 < \eta < 3$.
+    Moreover, we assume that multiplication of a $g \times g$ matrix can
+    be done using $O(g^{\eta})$ multiplications for some constant
+    $2 < \eta < 3$.
    
    \subsubsection{Computation of elementary integrals}
+   \label{sec:comp_elem}
 
    For each elementary cycle $\gamma_e\in \Gamma$, we evaluate numerically the vector of $g$
    elementary integrals from \eqref{eq:elem_num_int} as sums of the form
@@ -113,9 +115,8 @@
 
    \subsubsection{Small period matrix}
 
-   Finally, the small period matrix is obtained as $\tau=\OA^{-1}\OB$,
-   i.e. one $g\times g$ matrix inversion and one multiplication, which
-   can be done using $O(g^{\eta})$ multiplications.
+   Finally, the small period matrix is obtained by solving $\OA\tau=\OB$,
+   which can be done using $O(g^{\eta})$ multiplications.
    
    \subsubsection{Abel-Jacobi map}
    
@@ -246,20 +247,17 @@
    Here we simply give some ideas that we used in our implementation(s) to improve constant factors hidden in the big-$O$ notation, i.e. the absolute running time.
    
    In practice, 80 to 90\% of the running time is spent on numerical integration
-   of integrals  \eqref{m-eq:periods}.
-   For each integration point $u\in]-1,1[$, one needs to evaluate the $y$-value
-   \begin{equation*}
-   \ytab(u) = \prod_{u_k\in U^-} \sqrt[m]{u-u_k}\prod_{u_k\in U^+}\sqrt[m]{u_k-u},
-   \end{equation*}
-   then add a contribution $w\frac{u^i}{y^j}$ to the integral of each
-   of the $g$ differential forms, for varying powers $i$ and $j$.
+   of integrals \eqref{m-eq:periods}. According to \S~\ref{sec:comp_elem},
+   for each integration point $u_k\in]-1,1[$ one first evaluates the $y$-value
+   $y_k=\ytab(u_k)$, then add the contributions $w_k\frac{u_k^i}{y_k^j}$ to
+   the integral of each of the $g$ differential forms.
 
    We shall improve on these two aspects, the former being prominent for superelliptic curves,
    and the latter when the $g>n$.
 
     \subsubsection{Computing products of complex roots}\label{subsec:computing_roots}
 
-    Following our definition \eqref{eq:def_yab}, $\ytab(u)$ involves
+    Following our definition \eqref{eq:def_yab}, computing $\ytab(u_k)$ involves
     $(n-2)$ $m$-th roots for each integration point.
 
     Instead, we fall back to one single (usual) $m$-th root
@@ -314,7 +312,7 @@
 
    Improving $τ$ from $.1$ to say $.6$ immediately saves a factor $6$ on the running time.
 
-   \subsubsection{Maximal spanning tree}
+   \subsubsection{Near-optimal tree}
     As explained in \S \ref{m-subsec:cycles_homo} we integrate along the edges of a maximal-flow spanning tree $T = (X,E)$, where the capacity $r_e$ of an edge $e = (a,b) \in E$ is computed as
     \begin{equation}
      r_e =  \min_{c \in X \setminus \{ a,b\}} \begin{cases}
@@ -324,20 +322,28 @@
     \end{equation}
     Although this can be done in low precision, computing $r_e$ for all $(n-1)(n-2)/2$ edges of the complete graph
     demands $O(n^3)$ evaluation of elementary costs (involving transcendantal functions if $m>2$)
-    For large values of $n$ (comparable to the precision), the computation of these capacities has a noticable impact on the running time. This can be avoided by computing a \emph{minimal spanning tree} that uses the euclidean distance
-    between the end points of an edge as capacity, i.e. $r_e = \abs{b-a}$, which  reduces the complexity to $O(n^2)$ multiplications.
+    For large values of $n$ (comparable to the precision), the computation of
+    these capacities has a noticable impact on the running time. This can be
+    avoided by computing a \emph{minimal spanning tree} that uses the euclidean
+    distance between the end points of an edge as capacity, i.e.
+    $r_e = \abs{b-a}$, which  reduces the complexity to $O(n^2)$
+    multiplications.
     
-    Given sufficiently many branch points that are randomly distributed in the complex plane, the shortest edges of the complete graph tend to agree with the edges that are well suited for integration.
-    %Heuristically we find that starting with $n \approx 15$ this approach becomes favourable.
+    Given sufficiently many branch points that are randomly distributed in the
+    complex plane, the shortest edges of the complete graph tend to agree with
+    the edges that are well suited for integration.
+    %Heuristically we find that starting with $n \approx 15$ this approach
+    %becomes favourable.
     % -> Pascal disagrees here, spanning tree ~ 1% of the running time for prec=128 and n=31...
 
-    \subsubsection{Splitting bad integrals}
+    \subsubsection{Splitting bad integrals or moving integration path}
 
     Numerical integration becomes very bad when there are other branch points
     relatively close to an edge. The spanning tree optimization does not help
     if some branch points tend to cluster while other are far away.
     In this case, one can always split the bad integrals to improve the
-    relative distances of the singularities.
+    relative distances of the singularities. Another option with
+    double exponential integration is to shift the integration path.
     
 \biblio
 \end{document}
