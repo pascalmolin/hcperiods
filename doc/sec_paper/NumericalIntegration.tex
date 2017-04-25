@@ -4,27 +4,16 @@
 
   \section{Numerical integration}\label{sec:numerical_integration}
 
-  For each edge $(a,b) \in E$, we want to evaluate the elementary integrals
-  (see Remark \ref{m-rmk:elem_ints})
-\begin{align*}
- \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du.
-\end{align*}
-  by numerical integration.
-  
- As explained in \S \ref{m-subsec:real_mult}, the actual computations will be done on integrals of the form
-\begin{equation}
-    \label{eq:elem_num_int}
+As explained in Section \ref{subsec:numerical_integration}, the periods
+of generating cycles $\gamma\in \Gamma$ are expressed in terms of
+elementary integrals
+\eqref{eq:elem_num_int}
+\begin{equation*}
     I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{\frac jm}\ytab(u)^j}
-\end{equation}
-(that is, replacing $(u+\frac{b+a}{b-a})^{i-1}$ by $u^{i-1}$ in the numerator)
-so that we restrict the numerical analysis to this case,
-the value of elementary integrals being recovered by the polynomial shift
-\begin{equation}
-    \label{eq:polshift}
-    \int_{-1}^1\frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac jm}}\du
-    = \sum_{l=0}^{i-1} {i-1 \choose l} \left(\frac{b+a}{b-a}\right)^{i-1-l} I_{a,b}(l,j).
-\end{equation}
- 
+\end{equation*}
+where $(a,b)\in E$ and $\omega_{i,j}\in\W$.
+We restrict the numerical analysis to this case.
+
 In this section, we denote by $α$ the value $1-j/m$, which is the crucial parameter for numerical integration.
 Notice that $α=1/2$ for hyperelliptic curves, while for general superelliptic curves $α$ ranges
 from $1/m$ to $\frac{m-1}m$ depending on the differential form $\omega_{i,j}$ considered.

@@ -4,24 +4,12 @@
 
   \section{Intersections}\label{sec:intersections}
 
-  Recall, that in \S \ref{m-subsec:cycles_homo} we constructed an explicit set of generators for $\homo$ (see Theorem
-  \ref{thm:gen_set}), namely
-  \begin{equation*}
-    \Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l < m-1,  e \in E  \right\}.
-  \end{equation*}
-  Here, we show how to compute the intersection pairing on $\Gamma$. The resulting intersection matrix $K_{\Gamma}$ is composed of
-  $(n-1)^2$ blocks of dimension $m-1$. In particular,
-  \begin{equation*}
-   K_{\Gamma} = \left( K_{i,j} \right)_{1\le i,j \le n-1}
-  \end{equation*}
-  where $i,j$ correspond to edges $e_i,e_j$ in the spanning tree $T = (X,E)$ and
-  \begin{equation*}
-    K_{i,j} = \left(\gamma_{e_i}^{(k)} \circ \gamma_{e_j}^{(l)} \right)_{0 \le k,l < m-1}.
-  \end{equation*}
-  Thus, $K_{\Gamma}$ can be explicitly determined by the formulas in Theorem \ref{m-thm:intsec_numb} as stated below.
-  The rest of this section is concerned with its proof.
+   Let $(a,b)$ and $(c,d)$ be two edges of the spanning tree $E$.
+  The formulas in Theorem \ref{m-thm:intsec_numb} allow to compute the intersection
+  between lifts of elementary cycles $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$.
 
-  It is crucial that, for edges $(a,b),(c,d) \in E$, by construction of the spanning tree, we can restrict to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$ 
+  Note that by construction of the spanning tree,
+  we can restrict the analysis to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$ 
   such that $c$ is either $a$ or $b$.
 
    \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
@@ -56,12 +44,29 @@
       \end{equation}
      and
       \begin{equation*}
-          \rho = \arg \left( \frac{b-a}{d-c} \right) + \delta_{b=c}\pi
+          \rho = \arg \left( \frac{b-a}{d-c} \right) + \delta_{b=c}\pi.
       \end{equation*}
  \end{thm}
- 
+
+ \begin{rmk}
+     From this, we see that the intersection matrix $K_{\Gamma}$ is composed of
+  $(n-1)^2$ blocks of dimension $m-1$, each block corresponding to the intersection
+  of shifts of two elementary cycles in the spanning tree. It is very sparse.
+  %In particular,
+  %\begin{equation*}
+  % K_{\Gamma} = \left( K_{i,j} \right)_{1\le i,j \le n-1}
+  %\end{equation*}
+  %where $i,j$ correspond to edges $e_i,e_j$ in the spanning tree $T = (X,E)$ and
+  %\begin{equation*}
+  %  K_{i,j} = \left(\gamma_{e_i}^{(k)} \circ \gamma_{e_j}^{(l)} \right)_{0 \le k,l < m-1}.
+  %\end{equation*}
+ \end{rmk}
+
+
  \bigskip
- The proof of Theorem \ref{m-thm:intsec_numb}is contained in the following exposition. \\ 
+ The proof of Theorem \ref{m-thm:intsec_numb}is contained in the following exposition.
+ \bigskip
+
   Consider
   two cycles $\cyab^{(k)},\cycd^{(l)} \in \Gamma$ and
   recall from \S \ref{m-subsec:roots_branches} their definition 
