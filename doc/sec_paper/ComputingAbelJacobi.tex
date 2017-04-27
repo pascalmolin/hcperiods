@@ -45,7 +45,7 @@
   Let $\w_{i,j} \in \W$ be a differential. According to the proof of Theorem \ref{m-thm:periods} the corresponding integral is given by
   \begin{align}
    \int_{\gamma_{[a,b]}^{(0)}} \w_{i,j}  & = 
-   (1-\zeta^{-j}) C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du,
+   C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du,
   \end{align}
   which is  (up to the constants) an elementary integral and has already been evaluated during the period matrix computation.
   
@@ -60,7 +60,7 @@
   Let $P = (x_P,y_P) \in \cu$ be a finite point and $P_a = (a,0)$ a ramification point such that $X\cap]a,x_P]=\varnothing$. In order to define a smooth path between $P$ and $P_a$ 
   we need to find a suitable analytic branch of $\cu$. 
   
-  This can be done (almost analogously) following  the approach from \S \ref{m-subsubsec:analytic_branches}, the only difference being that
+  This can be done following  the approach from \S \ref{m-subsubsec:analytic_branches}, the only difference being that
   $x_P$ is not a branch point. Therefore, we are going to adjust the definitions and highlight the differences.
   
   Let  $\uaxp$ be the affine linear transformation
@@ -83,10 +83,9 @@
   \end{equation}
   where 
    \begin{equation}
-      C_{a,x_P} = \left(\frac{x_P-a}{2}\right)^{\frac{n}{m}} e^{\frac{\pi i}{m}(\#U^+ \bmod 2)}.
+      C_{a,x_P} = \left(\frac{x_P-a}{2}\right)^{\frac{n}{m}} e^{\frac{\pi i}{m}(\#U^+ \bmod 2)},
   \end{equation}
-  
-  More concretely: The statements of Proposition \ref{m-prop:yab} continue to hold for $\ytaxp$ and $\yaxp$, 
+  so that the statements of Proposition \ref{m-prop:yab} continue to hold for $\ytaxp$ and $\yaxp$, 
   if we choose the sets $\epsilon_{a,x_P}$ and $V_{a,x_P}$ as if $x_P$ was a branch point.
   
   Therefore, the lifts of $[a,x_P]$ to $\cu$ are given by
@@ -94,10 +93,10 @@
       \gamma^{(l)}_{[a,x_P]} = \{  (x,\zeta^l \yaxp(x))  \mid  x \in [a,x_P]  \}, \quad l \in \Z/m\Z.
    \end{equation}
   In order to reach $P = (x_P,y_P)$ we have to pick the correct lift. This is done by computing a \emph{shifting number} $s \in \Z/m\Z$ at the endpoint $x_P$:
-  \begin{align}
-   \zeta^s & = \frac{y_P}{\yaxp(x_P)} = \frac{y_P}{ C_{a,x_P} \ytaxp( \uaxp^{-1}(x_P) ) \sqrt[m]{2}  } \\
-   \Rightarrow s & = \frac{m}{2\pi} \arg\left(  \frac{y_P}{C_{a,x_P} \ytaxp( \uaxp^{-1}(x_P) )} \right)
-  \end{align}
+  \begin{equation}
+      \label{eq:saj}
+   \zeta^s = \frac{y_P}{\yaxp(x_P)} = \frac{y_P}{ C_{a,x_P} \ytaxp( \uaxp^{-1}(x_P) ) \sqrt[m]{2}  }
+  \end{equation}
   Consequently, $\gamma^{(s)}_{[a,x_P]}$ is a smooth path between $P_a$ and $P$ on $\cu$. We can now state the main theorem of this section.
   
   \begin{thm}\label{thm:ajm_finite_int}
@@ -109,7 +108,11 @@
    \begin{equation}
     \varphi_{i,j}  = \left(u+\frac{x_P+a}{x_P-a}\right)^{i-1} \ytaxp(u)^{-j}
    \end{equation}
-   is holomorphic in a neighbourhood $\epsilon_{a,x_P}$ of $[-1,1]$.
+   is holomorphic in a neighbourhood $\epsilon_{a,x_P}$ of $[-1,1]$
+   and
+   \begin{equation}
+   s = \frac{m}{2\pi} \arg\left(  \frac{y_P}{C_{a,x_P} \ytaxp( \uaxp^{-1}(x_P) )} \right).
+   \end{equation}
   \end{thm}
   \begin{proof}
     We have
@@ -122,7 +125,9 @@
    & =  \zeta^{-sj} C_{a,x_P}^{-j} \left(\frac{x_P-a}{2}\right) \int_a^{x_P} \frac{\uaxp(u)^{i-1}}{(1+u)^{\frac{j}{m}}\ytaxp(u)^j}  \du \\ & =
    \zeta^{-sj} C_{a,x_P}^{-j} \left(\frac{x_P-a}{2}\right)^i \int_a^{x_P} \frac{\left(u + \frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}}\ytaxp(u)^j}  \du.
   \end{align}
-  The statement about holomorphicity of $\varphi_{i,j}$ is implied, since Proposition \ref{m-prop:yab} holds for $\ytaxp$ and $\yaxp$ as discussed above.
+  The statement about holomorphicity of $\varphi_{i,j}$ is implied, since
+  Proposition \ref{m-prop:yab} holds for $\ytaxp$ and $\yaxp$ as discussed
+  above.
   \end{proof}
 
   \begin{rmk}\label{rmk:ajm_finite_int}
@@ -130,8 +135,10 @@
     \begin{equation}
        \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1+u)^{\frac{j}{m}}}  \du.
    \end{equation}
-   Since these integrals are very similar to the elementary integrals \eqref{m-eq:elem_ints} that occur during the period matrix computation, they can be computed with a little twist to
-   the methods presented in Section \ref{m-sec:numerical_integration}.
+
+   Those integrals are singular at only one end-point, still they
+   can be computed using the double-exponential estimates presented in Section
+   \ref{m-sec:numerical_integration} (this is not true for the Gauss-Chebychev method).
    \end{rmk}
 
   

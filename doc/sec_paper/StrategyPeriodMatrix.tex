@@ -53,20 +53,20 @@
   \end{thm}
   \begin{proof}
     By the definition in \eqref{m-eq:def_cyabl} we can write $\gamma_e^{(l)} = \gamma_{[a,b]}^{(l)} \cup \gamma_{[b,a]}^{(l+1)}$. Hence we split up the integral and compute
-    \begin{align}\label{eq:thm_periods_2}
+    \begin{align*}\label{eq:thm_periods_2}
      \int_{\gamma_{[a,b]}^{(l)}} \w_{i,j}  & =  \int_{\gamma_{[a,b]}^{(l)}} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-lj} \int_a^b \frac{x^{i-1}}{\yab(x)^j}  \dx \\  & =
      \zeta^{-lj} C_{a,b}^{-j}   \int_a^b \frac{x^{i-1}}{\ytab(\uab^{-1}(x))^j (1-\uab^{-1}(x)^2)^{\frac{j}{m}}}  \dx
-  \end{align}
+     \intertext{
   Applying the transformation $x \mapsto \uab(u)$ introduces the derivative $\dx = \left(\frac{b-a}{2}\right) \du$.
-  \begin{align}
+  }
    & = \zeta^{-lj} C_{a,b}^{-j} \left(\frac{b-a}{2}\right) \int_{-1}^1 \frac{\uab(u)^{i-1}}{\ytab(u)^j (1-u^2)^{\frac{j}{m}}}  \du \\ & =
     \zeta^{-lj} C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\ytab(u)^j (1-u^2)^{\frac{j}{m}}}  \du
-  \end{align}
+  \end{align*}
   Similarly, we obtain
-  \begin{align}
-        \int_{\gamma_{[b,a]}^{(l+1)}} w_{i,j}  & =  -\zeta^{-j} \int_{\gamma_{[a,b]}^{(l)}} w_{i,j}.
-  \end{align}
-  By Proposition \ref{m-prop:yab} $\ytab$ is holomorphic and has no zeros on $\epsilon_{a,b}$, therefore \\ $\varphi_{i,j}  = \left(u+\frac{b+a}{b-a}\right)^{i-1} \ytab(u)^{-j}$
+  \begin{equation*}
+        \int_{\gamma_{[b,a]}^{(l+1)}} w_{i,j}  =  -\zeta^{-j} \int_{\gamma_{[a,b]}^{(l)}} w_{i,j}.
+  \end{equation*}
+  By Proposition \ref{m-prop:yab} $\ytab$ is holomorphic and has no zero on $\epsilon_{a,b}$, therefore \\ $\varphi_{i,j}  = \left(u+\frac{b+a}{b-a}\right)^{i-1} \ytab(u)^{-j}$
   is holomorphic on $\epsilon_{a,b}$.
   \end{proof}
 
@@ -102,7 +102,7 @@ an explicit scheme allowing to attain any prescribed precision.
   \subsection{Minimal spanning tree}\label{subsec:spanning_tree}
 
 
-  From an a priori analysis of all numerical integrals $I_{a,b}$ along
+  From the a priori analysis of all numerical integrals $I_{a,b}$ along
   the interval $[a,b]$, we choose an optimal set of edges forming a spanning tree as follows:
   \begin{itemize}
       \item
@@ -112,7 +112,7 @@ an explicit scheme allowing to attain any prescribed precision.
    Each edge $e = (a,b) \in E'$ gets assigned a capacity $r_e$ that indicates
    the cost of numerical integration along the interval $[a,b]$.
    \item
-   Apply a standard 'maximal-flow' algorithm from graph theory, based on a greedy approach,
+   Apply a standard `maximal-flow' algorithm from graph theory, based on a greedy approach,
    that results in a spanning tree $T = (X,E)$, where $E \subset E'$ contains the $n-1$ best edges
    for integration that connect all vertices without producing cycles.
   \end{itemize}
@@ -127,7 +127,7 @@ an explicit scheme allowing to attain any prescribed precision.
   a symplectic basis of $\homo$. In \S \ref{m-subsec:cycles_homo} we gave
   a generating set $\Gamma$ for $\homo$, namely
   \begin{equation*}
-    \Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l < m-1,  e \in E  \right\}.
+    \Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l < m-1,  e \in E  \right\}
   \end{equation*}
   where $E$ is the spanning tree chosen above. This generating set is
   in general not a (symplectic) basis.

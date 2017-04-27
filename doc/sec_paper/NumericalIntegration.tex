@@ -87,6 +87,7 @@ We also introduce the following quantities
 Once we have computed the two bounds $M_1$, $M_2$ and the constant $B(r,α)$,
 we obtain a rigorous integration scheme as follows
 \begin{thm}
+    \label{th:de}
     With the notations above, for all $D>0$, choose $h$ and $N$ such that
     \begin{equation}
         \begin{cases}
@@ -287,7 +288,8 @@ We simply compute the distance
  $2\cosh(r_k)=\abs{u_k-1}+\abs{u_k+1}$.
 \end{proof}
 
-\begin{prop}
+\begin{thm}
+    \label{th:gc}
     With $r$ and $M(r)$ satisfying lemme \ref{m-lem:param_r},
     for all $N$ such that
     \begin{equation}
@@ -301,7 +303,7 @@ We simply compute the distance
             \leq e^{-D}
     \end{equation}
     where $u_k=\cos(\frac{2k-1}{2N}π)$.
-\end{prop}
+\end{thm}
 
 More details on the choice of $r$ and the computation of $M(r)$
 are given in section \ref{m-choice_r_ellipse}.

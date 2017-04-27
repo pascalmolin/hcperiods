@@ -25,6 +25,7 @@
       where $s_+$, $s_-$ are given by the following table, which covers all
       cases occurring in the algorithm
       \begin{center}
+          \normalfont
       \begin{tabular}{cccc}
           \toprule
           & Case & $s_+$ & $s_-$ \\
@@ -49,7 +50,7 @@
  \end{thm}
 
  \begin{rmk}
-     From this, we see that the intersection matrix $K_{\Gamma}$ is composed of
+     Notice that the intersection matrix $K_{\Gamma}$ is composed of
   $(n-1)^2$ blocks of dimension $m-1$, each block corresponding to the intersection
   of shifts of two elementary cycles in the spanning tree. It is very sparse.
   %In particular,
@@ -76,11 +77,13 @@
    \end{align*}
   where $\zeta^k\yab(x),\zeta^l\ycd(x)$ are branches of $\cu$ that are analytic on open sets $\vab$ and $\vcd$ 
   (see Figure \ref{m-fig:set_vab}) respectively.
+
   \begin{proof}\let\qed\relax (of case $(v)$) \\
   From the definition we see that $\cyabk \cap \cycdl = \varnothing$, whenever $[a,b] \cap [c,d] = \varnothing$. For edges in a spanning tree
   this is equivalent to $\{a,b\} \cap \{c,d\} = \varnothing$, thus
   proving $(v)$.
   \end{proof}
+
    Henceforth, we can assume $\{a,b\} \cap \{c,d\} \ne \varnothing$. In order to prove $(i)-(iv)$ we have to introduce some machinery. Since the $\yab(x),\ycd(x)$ are branches of $\cu$,
    on the set $\C \setminus X$
    we can define the \emph{shifting function}
@@ -143,11 +146,9 @@
   For $(ii)-(iv)$ we have that $[a,b] \cap [c,d] = \{c \}$, where $c$ is either $a$ or $b$. Unfortunately, in these cases $s(c)$ is not
   well-defined.
   
- Following our strategy, we choose a point $\xt \in \C \setminus X$ on the bisectrix of
+ Instead, we choose a point $\xt \in \C \setminus X$ on the bisectrix of
   $[a,b]$ and $[c,d]$ that is close enough to $c$ such that $[\xt,c[ \subset V = \vab \cap \vcd$
-  (see Figure \ref{m-fig:set_v_both} below).
-  
-  Then we can easily compute $s(\xt)$ using the argument function
+  (see Figure \ref{m-fig:set_v_both} below), and where
   \begin{equation}\label{eq:sxt}
    s(\xt) = \frac{m}{2\pi} \arg \left( \frac{\ycd(\xt)}{\yab(\xt)} \right).
   \end{equation}
@@ -158,7 +159,7 @@
      \vspace{-1cm}
     \caption{The set $V = \vab \cap \vcd$ for $b=c$ (left) and $a=c$ (right).}
     \label{fig:set_v_both}
-\end{figure}
+   \end{figure}
    
    \begin{proof}\let\qed\relax (of case $(ii)$) \\
    In this case we have $b = c$. Choosing $\xt$ on the upper bisectrix (as shown in Figure \ref{m-fig:set_v_both}) 
@@ -208,7 +209,7 @@
   With the choices made in the proof of Theorem \ref{m-thm:intsec_numb} the following statements are true:
   \begin{itemize}
    \item[(1)] $s(\xt) \equiv s_b \bmod m$ in case $(ii)$,
-    \item[(2)]  $s(\xt) \equiv s_b \bmod m$ in the cases $(iii)$ and $(iv)$.
+    \item[(2)]  $s(\xt) \equiv s_a \bmod m$ in the cases $(iii)$ and $(iv)$.
   \end{itemize}
 \end{lemma}
  \begin{proof}
