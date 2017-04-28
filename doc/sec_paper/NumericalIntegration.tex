@@ -34,6 +34,12 @@ of parameters $\alpha,\alpha$. However a different scheme has to be computed for
 and it now involves computing roots of general Jacobi polynomials to large accuracy, which
 makes it hard to compete with the double-exponential scheme.
 
+\begin{rmk}
+    It happens that the double exponential scheme performs better than Gauss-Chebychev on
+    particular integrals. This is easy to detect in practice and we can always switch to
+    the best method.
+\end{rmk}
+
 \subsection{Double-exponential integration}\label{sec:de_int}
 
 Using the double-exponential change of variable
