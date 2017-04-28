@@ -42,13 +42,19 @@ makes it hard to compete with the double-exponential scheme.
 
 \subsection{Double-exponential integration}\label{sec:de_int}
 
+Throughout this section, $λ\in[1,\frac{π}2]$ is a fixed parameter.
+By default the value $λ=\frac{π}2$ is a good choice, however
+smaller values may improve the constants. We will not address
+this issue here.
+\medskip
+
 Using the double-exponential change of variable
 \begin{equation}
     \label{eq:de_change}
 u=\tanh(λ\sinh(t)),
 \end{equation}
-the singularities at $\pm1$ are pushed to infinity and
-the integral \eqref{m-eq:elem_num_int} becomes
+the singularities of \eqref{eq:elem_num_int} at $\pm1$ are pushed to infinity and
+the integral becomes
 \begin{equation}
     I_{a,b}(i,j) = \int_\R g(t)\dt
 \end{equation}
@@ -62,7 +68,7 @@ Let
 \begin{equation}
     Z_r = \set{\tanh(λ\sinh(z)), -r<\Im(z)<r }
 \end{equation}
-be the image of the strip $\Delta_r$ under the change of
+be the image of the strip of width $2r$ under the change of
 variable \eqref{eq:de_change}.
 
 Since we can compute the distance of each branch point $u_i$ to
