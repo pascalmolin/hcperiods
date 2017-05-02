@@ -48,18 +48,18 @@
    We proceed as follows:
    \begin{itemize}
    \item for each $k$, we evaluate the absissa and weight $u_k,w_k$ using
-       a few \footnote{this can be reduced to evaluating only one exponential
-       and a few multiplications.} trigonometric or hyperbolic functions,
+       a few \footnote{this can be reduced to evaluating
+           a few multiplications and at most one exponential.} trigonometric or hyperbolic functions,
    \item we compute $y_k=\ytab(u_k)$ using $n-2$ multiplications and one $m$-th root,
        as shown in \S \ref{m-subsec:computing_roots} below;
-   \item starting from $w_k\frac{1}{y_k}$, we evaluate all $g$ terms $w_k\frac{x_k^{i-1}}{y_k^j}$
+   \item starting from $\frac{w_k}{y_k}$, we evaluate all $g$ terms $w_k\frac{u_k^{i-1}}{y_k^j}$
        each time either multiplying by $u_k$ or by $\frac{1}{y_k}$, and add each to the corresponding
        integral.
    \end{itemize}
 
    Altogether, the computation of one vector of elementary integrals takes
    \begin{equation}\label{eq:elem_int_complexity}
-    \ctot(D) := N(D)\ctrig(D)+N(D)(n-1)\cmul(D)+N(D)g\cmul(D)
+    \ctot(D) = N(D)\ctrig(D)+N(D)(n-1)\cmul(D)+N(D)g\cmul(D)
    \end{equation}
     operations,
    so that depending on the integration scheme we obtain:
@@ -101,8 +101,8 @@
 
    In practice, these sums are sparse and their coefficients are very small integers
    (less than $m$), so that the change of basis is performed using
-   $O(g^2D\log^{1+\varepsilon}D)$ operations
-   (each of the $O(g^2)$ periods is a linear combination of $O(1)$ elementary integrals,
+   $O(g^3D\log^{1+\varepsilon}D)$ operations
+   (each of the $O(g^2)$ periods is a linear combination of $O(g)$ elementary integrals,
    the coefficients involving precision $D$ roots of unity).
 
    However we have no proof of this fact and in general the symplectic reduction
@@ -122,7 +122,7 @@
    
   This part of the complexity analysis is based on the results of Section \ref{m-sec:comp_ajm} and assumes that we already computed a big period matrix and all related data.
    
-  Let $\ctot(D)$ be the number of operations needed to compute a vector of $g$ elemenatary integrals  (see \eqref{m-eq:elem_int_complexity}). The complexity class of $E(D)$ in $O$-notation is given in
+  Let $\ctot(D)$ be the number of operations needed to compute a vector of $g$ elemenatary integrals  (see \eqref{m-eq:elem_int_complexity}). The complexity class of $\ctot(D)$ in $O$-notation is given in
   Theorem \ref{m-thm:complexity_integrals}.
   
    \begin{thm} \

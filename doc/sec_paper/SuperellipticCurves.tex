@@ -93,7 +93,7 @@
    defined by the $x$-coordinate. 
    
   There
-  are $m$ possibilities to continue $y$ as an analytic function following a path in the $x$-plane. This is crucial for the intergration
+  are $m$ possibilities to continue $y$ as an analytic function following a path in the $x$-plane. This is crucial for the integration
   of differentials on $\cu$. Due to the cyclic structure of $\cu$, they are related in a convenient way:
   
   We call a \emph{branch of $\cu$} a function $y(x)$ such that
@@ -154,14 +154,19 @@
   In general we proceed the same way: For branch points $a,b \in X$ we consider the affine linear
   transformation
   \begin{equation}
-      \label{def:uab}
-      u_{a,b} : x \mapsto \frac{b-a}{2}\left(x+\frac{b+a}{b-a}\right),
+      \label{def:xab}
+      \xab : u \mapsto \frac{b-a}{2}\left(u+\frac{b+a}{b-a}\right),
   \end{equation}
-  which maps $[-1,1]$ to the complex line segment $[a,b]$.
+  which maps $[-1,1]$ to the complex line segment $[a,b]$, and denote the inverse map by
+  \begin{equation}
+      \label{def:uab}
+      \uab : x \mapsto \frac{2x-a-b}{b-a}.
+  \end{equation}
+
   
    We split the preimages of branch points into the following subsets
   \begin{equation*}\label{eq:uab_preimage}
-      \set{ u_{a,b}^{-1}(x) = \frac{2x-b-a}{b-a}, x\in X} = \set{-1,1} \cup U^+ \cup U^-,
+      \set{ \uab(x), x\in X} = \set{-1,1} \cup U^+ \cup U^-,
   \end{equation*}
   where points in $U^+$ (resp. $U^-$) have strictly positive (resp. non-positive) real part.
 
@@ -182,7 +187,7 @@
   We can now define a branch of the curve
   \begin{equation}
       \label{eq:def_yab}
-      \yab(x) =   C_{a,b} \yt_{a,b}( u_{a,b}^{-1}(x) ) \sqrt[m]{1 - u_{a,b}^{-1}(x)^2}
+      \yab(x) =   C_{a,b} \yt_{a,b}( \uab(x) ) \sqrt[m]{1 - \uab(x)^2}
   \end{equation}
   by setting $r = 1+\#U^+ \bmod 2$ and choosing the constant
   \begin{equation}
@@ -193,8 +198,8 @@
   The function $\yab(x)$ has $n$ branch cuts all parallel to $[a,b]$ in outward direction and
   is holomorphic inside $]a,b[$ (see Figure \ref{fig:mth_root_signed}).
 
-  More precisely, let $\vab = \uab(ε_{a,b}\cap \overline U_{a,b})$,
-  so that $V_{a,b}$ is an ellipse shaped neighborhood of $]a,b[$ with two segments removed
+  More precisely, $\vab = \uab(ε_{a,b}\cap \overline U_{a,b})$,
+  is an ellipse shaped neighborhood of $]a,b[$ with two segments removed
   (see Figure \ref{m-fig:set_vab})
   on which the local branch $\yab$ is well defined and holomorphic.
 
@@ -213,7 +218,7 @@ We sum up the properties of these local roots.
       satisfy
      \begin{itemize}
          \item $\ytab$ is holomorphic and does not vanish on $ε_{a,b}$,
-         \item $\yab(x) = C_{a,b} \ytab(\uab^{-1}(x)) \sqrt[m]{1-\uab^{-1}(x)^2}$ is holomorphic
+         \item $\yab(x) = C_{a,b} \ytab(\uab(x)) \sqrt[m]{1-\uab(x)^2}$ is holomorphic
          on $\vab$,
          \item $\yab(x)^m = f(x)$ for all $x\in\C$,
          \item $\yab(x),\zeta\yab(x),\dots,\zeta^{m-1}\yab(x)$ are the $m$ different analytic continuations of $y$ on $\vab$.

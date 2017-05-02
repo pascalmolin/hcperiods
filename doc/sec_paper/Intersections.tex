@@ -216,28 +216,28 @@
  Starting from equation \eqref{m-eq:sxt}, for all $x \in \C \setminus X$ we have
    \begin{align*}
    s(x) & = \frac{m}{2\pi} \arg \left( \frac{\ycd(x)}{\yab(x)} \right)
-   \equiv \frac{m}{2\pi} \left( \arg \left( \frac{(1- \ucd^{-1}(x)^2)\mr}{(1-\uab^{-1}(x)^2)\mr} \right) + \arg \left( \frac{ \ccd \ytcd(x)}{\cab
+   \equiv \frac{m}{2\pi} \left( \arg \left( \frac{(1- \ucd(x)^2)\mr}{(1-\uab(x)^2)\mr} \right) + \arg \left( \frac{ \ccd \ytcd(x)}{\cab
    \ytab(x)} \right) \right) \\
-   & \equiv \frac{1}{2\pi} \left( \arg(1+\ucd^{-1}(x)) + \arg(1-\ucd^{-1}(x)) - \arg(1+\uab^{-1}(x)) - \arg(1-\uab^{-1}(x)) \right) \\
+   & \equiv \frac{1}{2\pi} \left( \arg(1+\ucd(x)) + \arg(1-\ucd(x)) - \arg(1+\uab(x)) - \arg(1-\uab(x)) \right) \\
    & +  \frac{m}{2\pi} \left( \arg \left( \frac{ \ccd \ytcd(x)}{\cab\ytab(x)} \right)\right) \mod m.
   \end{align*}
  In case $(ii)$ we have $b = c$ and denote $\varphi_0 = \arg \left( \frac{b-a}{d-c} \right)$. Then, we can parametrize all points $\xt \ne b$ on 
  the upper bisectrix of $[a,b]$ and
  $[a,d]$ (see Figure \ref{m-fig:set_v_both}) via
  \begin{align*}
-  \xt & = \ubd(-1+t \exp(i(\pi+\varphi_0)/2)) \text{  as well as} \\
-  \xt & = \uab(1-t \exp(-i (\pi+\varphi_0)/2))
+  \xt & = \xbd(-1+t \exp(i(\pi+\varphi_0)/2)) \text{  as well as} \\
+  \xt & = \xab(1-t \exp(-i (\pi+\varphi_0)/2))
  \end{align*}
  for some $t > 0$. Therefore,
  \begin{align*}
-   & \arg (1+\ubd^{-1}(\xt)) = \frac{\pi+\varphi_0}{2} \text{ and} \\
-   & \arg (1-\uab^{-1}(\xt)) = -\frac{\pi+\varphi_0}{2}.
+   & \arg (1+\ubd(\xt)) = \frac{\pi+\varphi_0}{2} \text{ and} \\
+   & \arg (1-\uab(\xt)) = -\frac{\pi+\varphi_0}{2}.
  \end{align*}
  For $\xt$ chosen close enough to $b$ we have that $[\xt,b[ \subset V$ and the shifting function $s(\xt)$ is constant as $\xt$ tends towards $b$. Hence, 
  we can compute its value at $\xt$ as
  \begin{align*}
-  s(\xt) & \equiv \frac{1}{2\pi} \left( \pi + \varphi_0 + \arg(1-\ubd^{-1}(\xt)) - \arg(1+\uab^{-1}(\xt)) +  m \arg \left( \frac{ \cbd \ytcd(\xt)}{\cab\ytab(\xt)} \right)\right) \\
-	 & \equiv \frac{1}{2\pi} \left ( \varphi +\arg(1-\ubd^{-1}(b)) - \arg(1+\uab^{-1}(b)) +  m \arg \left( \frac{ \cbd \ytbd(b)}{\cab\ytab(b)} \right)\right) \\
+  s(\xt) & \equiv \frac{1}{2\pi} \left( \pi + \varphi_0 + \arg(1-\ubd(\xt)) - \arg(1+\uab(\xt)) +  m \arg \left( \frac{ \cbd \ytcd(\xt)}{\cab\ytab(\xt)} \right)\right) \\
+	 & \equiv \frac{1}{2\pi} \left ( \varphi +\arg(1-\ubd(b)) - \arg(1+\uab(b)) +  m \arg \left( \frac{ \cbd \ytbd(b)}{\cab\ytab(b)} \right)\right) \\
 	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \ccd \ytbd(b)}{\cab\ytab(b)} \right)\right) \equiv s_b \mod m,
  \end{align*}
 thus proving (1).
@@ -245,18 +245,18 @@ thus proving (1).
   In the cases $(iii)$ and $(iv)$ we have $a = c$ and denote $\varphi =  \arg \left( \frac{b-a}{d-c} \right)$. For $\varphi > 0$ we can parametrize all points $\xt \ne a$ on the inner
   bisectrix of $[a,b]$ and $[a,d]$ (see Figure \ref{m-fig:set_v_both}) via
  \begin{align*}
-  \xt & = \uad(-1+t \exp(i \varphi /2)) \text{  as well as} \\
-  \xt & = \uab(-1+t \exp(-i \varphi/2))
+  \xt & = \xad(-1+t \exp(i \varphi /2)) \text{  as well as} \\
+  \xt & = \xab(-1+t \exp(-i \varphi/2))
  \end{align*}
  for some $t > 0$. Therefore,
  \begin{align*}
-   & \arg (1+\uad^{-1}(\xt)) = \frac{\varphi}{2} \text{ and} \\
-   & \arg (1+\uab^{-1}(\xt)) = -\frac{\varphi}{2}.
+   & \arg (1+\uad(\xt)) = \frac{\varphi}{2} \text{ and} \\
+   & \arg (1+\uab(\xt)) = -\frac{\varphi}{2}.
  \end{align*}
  As before, we let $\xt$ tend towards $a$ and compute the shifting function at $\xt$ as
  \begin{align*}
-  s(\xt) & \equiv \frac{1}{2\pi} \left( \varphi + \arg(1-\uad^{-1}(\xt)) - \arg(1+\uab^{-1}(\xt)) +  m \arg \left( \frac{ \cad \ytad(\xt)}{\cab\ytab(\xt)} \right)\right) \\
-	 & \equiv \frac{1}{2\pi} \left ( \varphi +\arg(1-\uad^{-1}(a)) - \arg(1-\uab^{-1}(a)) +  m \arg \left( \frac{ \cad \ytad(a)}{\cab\ytab(a)} \right)\right) \\
+  s(\xt) & \equiv \frac{1}{2\pi} \left( \varphi + \arg(1-\uad(\xt)) - \arg(1+\uab(\xt)) +  m \arg \left( \frac{ \cad \ytad(\xt)}{\cab\ytab(\xt)} \right)\right) \\
+	 & \equiv \frac{1}{2\pi} \left ( \varphi +\arg(1-\uad(a)) - \arg(1-\uab(a)) +  m \arg \left( \frac{ \cad \ytad(a)}{\cab\ytab(a)} \right)\right) \\
 	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \ccd \ytad(a)}{\cab\ytab(a)} \right)\right) \equiv s_a \mod m,
  \end{align*}
  The case $\varphi < 0$ is proved analogously.
