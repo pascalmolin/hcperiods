@@ -13,6 +13,7 @@ function ImSgn( z )
 		return Sign(Im(z));
 	end if;
 end function;
+
 function AC_mthRoot(x,CCV,Zetas,up,m,n)
 // Used for analytic continuation of y = f(x)^(1/m)
 	WindingNr := 0;

@@ -16,7 +16,7 @@ import "se_spanning_tree.m": DE_AJM_Weight;
 ///////////////////////////////////////////////////////////////
 
 
-C20<i> := ComplexField(20);
+C20<I> := ComplexField(20);
 RPi20 := Real(Pi(C20));
 
 function Distance_1(P)
@@ -30,22 +30,23 @@ function Distance_1(P)
 end function;
 
 function Bound_M1(CCV,len,m)
-	B1 := 1/(&*[ Distance_1(CCV[k]) : k in [1..len] ])^(1/m);
-	if B1 gt 1 then
-		return B1^(m-1);
+// Compute the bound M1
+	M1 := Exp( -(1/m) * &+[ Log(Distance_1(CCV[k])) : k in [1..len] ] );
+	if M1 gt 1 then
+		return M1^(m-1);
 	else
-		return B1;
+		return M1;
 	end if;
 end function;
 
 function Distance_thsh( P, r : Lambda := RPi20/2 )
-	P := Abs(Re(P)) + i*Abs(Im(P));
+	P := Abs(Re(P)) + I*Abs(Im(P));
 	x0 := 0; x1 := Argcosh(RPi20/(2*Lambda*Sin(r))); // s.t. \Lambda Cosh(x)Sin(r)= Pi/2;
 	Phi := function(x)
-		return Tanh(Lambda*Sinh(x+i*r));
+		return Tanh(Lambda*Sinh(x+I*r));
 	end function;
 	ArgPhiP := function(x)
-		return Arg(Cosh(x+i*r))-2*Arg(Cosh(Lambda*Sinh(x+i*r)));
+		return Arg(Cosh(x+I*r))-2*Arg(Cosh(Lambda*Sinh(x+I*r)));
 	end function;
 	ArgPhi := function(x)
 		return Arg(P - Phi(x));
@@ -67,116 +68,41 @@ end function;
 
 
 function Bound_M2(CCV,len,m,r)
-// Compute the bound M2 on the integrand
-	B2 := 1/(&*[ Distance_thsh(CCV[k],r) : k in [1..len] ])^(1/m);
-	//print "B2:",B2;
-	if B2 gt 1 then
-		return B2^(m-1);
+// Compute the bound M2
+	M2 := Exp( -(1/m) * &+[ Log(Distance_thsh(CCV[k],r)) : k in [1..len] ] );
+	if M2 gt 1 then
+		return M2^(m-1);
 	else
-		return B2;
+		return M2;
 	end if;
 end function;
 
-// CurveData = [n,g,lc_m,C,m]
-function DE_Int_Params_Tree( SEC )
-// Computes double-exponential integration integration parameters for a spanning tree
+
+function DE_Int_Params( Params, SEC : AJM := false )
+// Computes a double-exponential integration type from integration parameters <M1,M2,r>
 	
-	C<i> := SEC`ComplexField;
-	RPi2 := Real(Pi(C))/2;
+	R := RealField(Precision(SEC`ComplexField));
+	RPi2 := Pi(R)/2;
+	Lambda := RPi2;
 	m := SEC`Degree[1];
 	n := SEC`Degree[2];
+
+	// Get parameters
+	M1 := Params[1];
+	M2 := Params[2];
+	r :=  R!Params[3];
 	
 	// Compute D
-	D := SEC`Prec * Log(C!10);
+	D := SEC`Prec * Log(R!10);
 
-	// Check r
-	r := SEC`SpanningTree`IntPar;
-	if r ge RPi2 then
-		error Error("Not supposed to happen.");
-	end if;
-	assert &and[r lt RPi2, r gt 0];
-
-	// Make it precise
-	r *:= (19/20);	
-	//r *:= 9/10;
-	vprint SE,2 : "r:",r;
-
-	// Parameter Lambda = Pi/2 for DE integration
-	Lambda := RPi2;	
-
-	// Compute bounds M1,M2
-	Data := SEC`SpanningTree`Data[SEC`SpanningTree`WorstEdge];
-	LowPrecData := ChangeUniverse(Data,C20);
-	M1 := Ceiling(Bound_M1(LowPrecData,n-2,m));
-	M2 := Ceiling(Bound_M2(LowPrecData,n-2,m,r));	
-	vprint SE,2 : "M1:",M1;
-	vprint SE,2 : "M2:",M2;
 	// New parameters
 	Alpha := 1/m;
-	//Alpha := (m-1)/m;
-	r := C!r; 
-	D := C!D;
-	X_r := Cos(r) * Sqrt( (Pi(C) / (2*Lambda*Sin(r))) - 1 );
+	X_r := Cos(r) * Sqrt( ( Pi(R) / (2*Lambda*Sin(r))) - 1 );
 	B_ra := (2/Cos(r)) * ( (X_r/2) * (1/(Cos(Lambda*Sin(r))^(2*Alpha)) + (1/X_r^(2*Alpha))) ) + (1/(2*Alpha*Sinh(X_r)^(2*Alpha)));
 	h := Real( 4 * RPi2 * r /  ( D+Log(2*M2 * B_ra + 1)));
 	N := Ceiling(Argsinh((D+ Log((2^(2*Alpha+1)*M1)/Alpha )) / ( 2*Alpha*Lambda ))/h);
 	
-	return DE_Integration(h,N,Lambda,SEC`Degree[1]);
-end function;
-
-
-function DE_Int_Params_AJM( Edges, SEC )
-// Computes double-exponential integration integration parameters for a spanning tree
-	
-	C<i> := SEC`ComplexField;
-	RPi2 := Real(Pi(C))/2;
-	m := SEC`Degree[1];
-	n := SEC`Degree[2];
-	
-	// Compute D
-	D := SEC`Prec * Log(C!10);
-
-	// Compute r
-	r := 4.;
-	// Edge = <index,complex number>
-	for E in Edges do
-		r_E := DE_AJM_Weight(<E[3],E[1][1]>,SEC`LowPrecBranchPoints,n);
-		if r_E lt r then
-			r := r_E;
-			MinEdge := E;
-		end if;
-	end for;
-	vprint SE,2 : "r(AJM):",r;
-	if r ge RPi2 then
-		error Error("Not supposed to happen.");
-	end if;
-	assert &and[r lt RPi2, r gt 0];
-	
-	// Make it precise
-	r *:= (19/20);	
-	//r *:= (9/10);
-
-	// Parameter Lambda = Pi/2 for DE integration
-	Lambda := RPi2;	
-
-	// Compute bounds M1,M2
-	LowPrecData := MakeCCVector(<MinEdge[3],MinEdge[1][1]>,SEC`LowPrecBranchPoints);
-	M1 := Ceiling(Bound_M1(LowPrecData,n-1,m));
-	M2 := Ceiling(Bound_M2(LowPrecData,n-1,m,r));
-
-	vprint SE,2 : "M1(AJM):",M1;
-	vprint SE,2 : "M2(AJM):",M2;
-	// Parameters
-	Alpha := 1/m;
-	//Alpha := (m-1)/m;
-	r := C!r; 
-	D := C!D;
-	X_r := Cos(r) * Sqrt( (Pi(C) / (2*Lambda*Sin(r))) - 1 );
-	B_ra := (2/Cos(r)) * ( (X_r/2) * (1/(Cos(Lambda*Sin(r))^(2*Alpha)) + (1/X_r^(2*Alpha))) ) + (1/(2*Alpha*Sinh(X_r)^(2*Alpha)));
-	h := Real( 4 * RPi2 * r /  ( D+Log(2*M2 * B_ra + 1)));
-	N := Ceiling(Argsinh((D+ Log((2^(2*Alpha+1)*M1)/Alpha )) / ( 2*Alpha*Lambda ))/h);
-	
-	return DE_Integration(h,N,Lambda,m:AJM:=true);
+	return DE_Integration(h,N,Lambda,m:AJM:=AJM);
 end function;
 
 
@@ -293,14 +219,14 @@ intrinsic Print(DEInt::DE_Int)
 end intrinsic;
 
 
-
 //////////////////////////////////////////////////////////
 // ***** Double-exponential numerical integration ***** // 
 //////////////////////////////////////////////////////////
 
+
 function DE_Integrals_Factor( VectorIntegral, EdgeData, SEC )
 // EdgeData = [ u_1,...,u_{n-2}, (b-a)/2, (b+a)/(b-a), up ]
-	C<i> := SEC`ComplexField; 
+	C<I> := SEC`ComplexField; 
 	C0 := Zero(C);
 	g := SEC`Genus; 
 	m := SEC`Degree[1];
@@ -351,12 +277,11 @@ function DE_Integrals_Factor( VectorIntegral, EdgeData, SEC )
 end function;
 
 
-
 function DE_Integrals(EdgeData,SEC,DEInt)
-	C<i> := SEC`ComplexField;
+	C<I> := SEC`ComplexField;
 	C_0 := Zero(C); g := SEC`Genus; m := SEC`Degree[1]; n := SEC`Degree[2];
 	DFF := SEC`HolomorphicDifferentials;
-	Integrals := [ C_0 : j in [1..g] ];
+	VectorIntegral := [ C_0 : j in [1..g] ];
 	up := Floor(EdgeData[n+1]);
 
 	// Evaluate differentials at abisccsas
@@ -370,15 +295,14 @@ function DE_Integrals(EdgeData,SEC,DEInt)
 				wy *:= y;
 			end if;
 			wyx := wy;
-			Integrals[ct] +:= wyx;
+			VectorIntegral[ct] +:= wyx;
 			ct +:= 1;
 			for k in [1..DFF[3][j]-1] do
 				wyx *:= x;
-				Integrals[ct] +:= wyx;
+				VectorIntegral[ct] +:= wyx;
 				ct +:= 1;
 			end for;
 		end for;
-		assert ct eq g+1;
 		if t eq 1 then
 			continue;
 		end if;
@@ -391,20 +315,19 @@ function DE_Integrals(EdgeData,SEC,DEInt)
 				wy *:= y;
 			end if;
 			wyx := wy;
-			Integrals[ct] +:= wyx;
+			VectorIntegral[ct] +:= wyx;
 			ct +:= 1;
 			for k in [1..DFF[3][j]-1] do
 				wyx *:= x;
-				Integrals[ct] +:= wyx;
+				VectorIntegral[ct] +:= wyx;
 				ct +:= 1;
 			end for;
 		end for;
-		assert ct eq g+1;
 	end for;
 	for j in [1..g] do
-		Integrals[j] *:= DEInt`Factor;
+		VectorIntegral[j] *:= DEInt`Factor;
 	end for;
-	return Integrals;
+	return VectorIntegral;
 end function;
 
 
@@ -425,7 +348,7 @@ end function;
 function DE_Integrals_Tree( SEC, DEInt )
 // Compute integrals for spanning tree
 	Periods := []; ElementaryIntegrals := [];
-	for k in [1..SEC`SpanningTree`Len] do
+	for k in [1..SEC`Degree[2]-1] do
 		P, EI := DE_Integrals_Edge(SEC`SpanningTree`Data[k],SEC,DEInt);
 		Append(~Periods,P);
 		Append(~ElementaryIntegrals,EI);
@@ -441,7 +364,7 @@ end function;
 
 function DE_Integrals_Factor_AJM( VectorIntegral,EdgeData,SEC)
 // EdgeData = [ u_1 , ... , u_{n-1}, (p_x-a)/2, (p_x+a)/(p_x-a), up, <p_x,p_y> 
-	C<i> := SEC`ComplexField; 
+	C<I> := SEC`ComplexField; 
 	g := SEC`Genus; 
 	m := SEC`Degree[1];
 	n := SEC`Degree[2];
@@ -472,10 +395,11 @@ function DE_Integrals_Factor_AJM( VectorIntegral,EdgeData,SEC)
 	P_y_AC := Exp( (n/m) * Log(2*EdgeData[n]) + (1/m) * Log(SEC`LeadingCoeff))  * SEC`Zetas[up mod (2*m) + 1]  * AC_mthRoot(1,EdgeData,SEC`Zetas,up,m,n-1);
 
 	// Shifting number at P_y
-	s_ := (m/(2*Real(Pi(C)))) * ( Arg(EdgeData[n+3]) - Arg(P_y_AC) );
+	s := Round((m/(2*Real(Pi(C)))) * ( Arg(EdgeData[n+3]) - Arg(P_y_AC) ));
+	/*print "s_:",s_;
 	s := Round(s_);
 	// Check: k \in \Z ?
-	if Abs(s-s_) gt 10^-10 then
+	if Abs(s-s_) gt SEC`Error then
 		print "s:",s_;
 		print "CCV:",EdgeData;
 		print "SEC`LeadingCoeff:",SEC`LeadingCoeff;
@@ -483,9 +407,10 @@ function DE_Integrals_Factor_AJM( VectorIntegral,EdgeData,SEC)
 		print "P_y_AC:",P_y_AC;
 		print "Arg(P_y):",Arg(EdgeData[n+3]);
 		print "Arg(P_y_AC):",Arg(P_y_AC);
+		print "Degree:",m;
 		print "Poly:",SEC`DefiningPolynomial;
-		assert Abs(s-s_) lt 10^-15;
-	end if;
+		assert Abs(s-s_) lt SEC`Error;
+	end if;*/
 
 	// Multiply by correct power of zeta and ((p-a)/2)^(i+1-jn/m)
 	ct := 1;
@@ -502,13 +427,13 @@ end function;
 
 
 function DE_Integrals_AJM( EdgeData, SEC, DEInt )
-	C<i> := SEC`ComplexField;
+	C<I> := SEC`ComplexField;
 	C_0 := Zero(C); 
 	g := SEC`Genus;
 	m := SEC`Degree[1]; 
 	n := SEC`Degree[2];
 	DFF := SEC`HolomorphicDifferentials;
-	Integrals := [ C_0 : j in [1..g] ];
+	VectorIntegral := [ C_0 : j in [1..g] ];
 	up := Floor(EdgeData[n+2]);
 
 	// Evaluate differentials at abisccsas
@@ -522,15 +447,14 @@ function DE_Integrals_AJM( EdgeData, SEC, DEInt )
 				wy *:= y;
 			end if;
 			wyx := wy;
-			Integrals[ct] +:= wyx;
+			VectorIntegral[ct] +:= wyx;
 			ct +:= 1;
 			for k in [1..DFF[3][j]-1] do
 				wyx *:= x;
-				Integrals[ct] +:= wyx;
+				VectorIntegral[ct] +:= wyx;
 				ct +:= 1;
 			end for;
 		end for;
-		assert ct eq g+1;
 		if t eq 1 then
 			continue;
 		end if;
@@ -543,22 +467,20 @@ function DE_Integrals_AJM( EdgeData, SEC, DEInt )
 				wy *:= y;
 			end if;
 			wyx := wy;
-			Integrals[ct] +:= wyx;
+			VectorIntegral[ct] +:= wyx;
 			ct +:= 1;
 			for k in [1..DFF[3][j]-1] do
 				wyx *:= x;
-				Integrals[ct] +:= wyx;
+				VectorIntegral[ct] +:= wyx;
 				ct +:= 1;
 			end for;
 		end for;
-		assert ct eq g+1;
 	end for;
 	for j in [1..g] do
-		Integrals[j] *:= DEInt`Factor;
+		VectorIntegral[j] *:= DEInt`Factor;
 	end for;
-	return Integrals;
+	return VectorIntegral;
 end function;
-
 
 
 function DE_Integrals_Edge_AJM( ComplexEdge, SEC, DEInt)
@@ -570,17 +492,11 @@ function DE_Integrals_Edge_AJM( ComplexEdge, SEC, DEInt)
 	Append(~EdgeData,up);
 	Append(~EdgeData,ComplexEdge[1][2]);
 
-	// Numerical integration
+	// Numerical integration on [-1,1]
 	VectorIntegral := DE_Integrals_AJM( EdgeData, SEC, DEInt );
 
-	// Multiplication by constants
+	// Multiplication with constants
 	Integral_Edge_AJM := DE_Integrals_Factor_AJM( VectorIntegral,EdgeData,SEC);
 
 	return Integral_Edge_AJM;
 end function;
-
-
-
-
-
-
