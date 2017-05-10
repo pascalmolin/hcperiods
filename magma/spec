@@ -2,9 +2,9 @@ se_periods
 {
 	se_abel_jacobi.m
 	se_anal_cont.m
-	se_intersection.m
 	se_curve.m
 	se_de_int.m
+	se_gc_int.m
 	se_help_funcs.m
 	se_infty_points.m
 	se_intersection.m
@@ -12,6 +12,5 @@ se_periods
 	se_symplectic_basis.m
 	se_spanning_tree.m
 	se_tests.m
-	se_gc_int.m
 }
 

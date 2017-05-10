@@ -8,38 +8,46 @@
 
 // Import functions;
 import "se_spanning_tree.m": SpanningTree;
-import "se_de_int.m": DE_Int_Params_Tree, DE_Integrals_Tree;
+import "se_de_int.m": DE_Int_Params, DE_Integrals_Tree;
 import "se_gc_int.m": GC_Integrals_Tree;
 import "se_anal_cont.m:": AC_mthRoot;
 import "se_intersection.m": SE_IntersectionMatrix, SE_IntersectionNumber;
 import "se_symplectic_basis.m":SymplecticBasis;
 
 
-// Verbose
-declare verbose SE,3;
-
 intrinsic SE_BigPeriodMatrix( f::RngMPolElt : Prec := 20 ) -> Mtrx
-{ Computes a big periodmatrix associated to f(x,y) = y^m - g(x) to precision Prec }
+{ Computes a big period matrix associated to f(x,y) = y^m - g(x) to precision Prec }
 	S := SE_Curve(f:Prec:=Prec,Small:=false,AbelJacobi:=false);
 	return S`BigPeriodMatrix;
 end intrinsic;
 intrinsic SE_BigPeriodMatrix( f::RngUPolElt,m::RngIntElt : Prec := 20 ) -> Mtrx
-{ Computes a big periodmatrix associated to y^m = f(x) to precision Prec }
+{ Computes a big period matrix associated to y^m = f(x) to precision Prec }
 	S := SE_Curve(f,m:Prec:=Prec,Small:=false,AbelJacobi:=false);
 	return S`BigPeriodMatrix;
 end intrinsic;
+intrinsic SE_BigPeriodMatrix( Points::SeqEnum[FldComElt],m::RngIntElt : LeadingCoeff := 1, Prec := 20 ) -> Mtrx
+{ Computes a big period matrix associated to y^m = LeadingCoeff * \prod[(x-p) : p in Points] to precision Prec }
+	S := SE_Curve(Points,m:Prec:=Prec,Small:=false,AbelJacobi:=false);
+	return S`BigPeriodMatrix;
+end intrinsic;
 intrinsic SE_SmallPeriodMatrix( f::RngMPolElt : Prec := 20 ) -> Mtrx
-{ Computes a big periodmatrix associated to f(x,y) = y^m - g(x) to precision Prec }
+{ Computes a small period matrix associated to f(x,y) = y^m - g(x) to precision Prec }
 	S := SE_Curve(f:Prec:=Prec,Small:=true,AbelJacobi:=false);
 	return S`SmallPeriodMatrix;
 end intrinsic;
 intrinsic SE_SmallPeriodMatrix( f::RngUPolElt,m::RngIntElt : Prec := 20 ) -> Mtrx
-{ Computes a big periodmatrix associated to y^m = f(x) to precision Prec }
+{ Computes a small period matrix associated to y^m = f(x) to precision Prec }
 	S := SE_Curve(f,m:Prec:=Prec,Small:=true,AbelJacobi:=false);
 	return S`SmallPeriodMatrix;
 end intrinsic;
+intrinsic SE_SmallPeriodMatrix( Points::SeqEnum[FldComElt],m::RngIntElt : LeadingCoeff := 1, Prec := 20 ) -> Mtrx
+{ Computes a small period matrix associated to y^m = LeadingCoeff * \prod[(x-p) : p in Points] to precision Prec }
+	S := SE_Curve(Points,m:Prec:=Prec,Small:=true,AbelJacobi:=false);
+	return S`SmallPeriodMatrix;
+end intrinsic;
 
-procedure SE_PeriodMatrix( SEC : Small := true, AbelJacobi := true )
+
+procedure SE_PeriodMatrix( SEC : Small := true )
 // Computes period matrices associated to the SE_Curve object SEC }
 
 	if &and[Small,not assigned SEC`SmallPeriodMatrix] or &and[not Small, not assigned SEC`BigPeriodMatrix] then 
@@ -47,11 +55,9 @@ procedure SE_PeriodMatrix( SEC : Small := true, AbelJacobi := true )
 	// Degrees
 	m := SEC`Degree[1]; n := SEC`Degree[2];
 
-	// Complex fields and constants
-	C20<i> := ComplexField(20);
+	// Complex fields
 	C<i> := SEC`ComplexField;
 	CS<i> := ComplexField(SEC`Prec);
-	C_0 := Zero(C);
 	
 	// Spanning tree
 	STree := SEC`SpanningTree;
@@ -70,7 +76,7 @@ procedure SE_PeriodMatrix( SEC : Small := true, AbelJacobi := true )
 	if SEC`IntegrationType eq "DE" then
 		// Integration parameters
 		vprint SE,1 : "Computing integration parameters...";
-		DEInt := DE_Int_Params_Tree(SEC);
+		DEInt := DE_Int_Params(STree`Params,SEC);
 		vprint SE,1 : "using double-exponential integration...";
 		vprint SE,2 : DEInt;	
 		Periods, ElemInts := DE_Integrals_Tree(SEC,DEInt);
@@ -148,7 +154,7 @@ procedure SE_PeriodMatrix( SEC : Small := true, AbelJacobi := true )
 				MaxSymDiff := Max(MaxSymDiff,Abs(Tau[j][k] - Tau[k][j]));
 			end for;
 		end for;
-		vprint SE,1 : "Maximal symmetry deviation:",MaxSymDiff;
+		vprint SE,2 : "Maximal symmetry deviation:",MaxSymDiff;
 
 
 		if MaxSymDiff ge SEC`Error then
@@ -157,15 +163,17 @@ procedure SE_PeriodMatrix( SEC : Small := true, AbelJacobi := true )
 		end if;	
 		
 		// Testing positive definiteness of the imaginary part of the period matrix
-		vprint SE,1 : "Testing positive definite...";
-		Tau_Im := ZeroMatrix(SEC`RealField,g,g);
-		for j in [1..g] do
-			for k in [j..g] do
-				Tau_Im[j][k] := Real(Im(Tau[j][k]));
-				Tau_Im[k][j] := Tau_Im[j][k];
+		if false then
+			vprint SE,1 : "Testing positive definite...";
+			Tau_Im := ZeroMatrix(SEC`RealField,g,g);
+			for j in [1..g] do
+				for k in [j..g] do
+					Tau_Im[j][k] := Real(Im(Tau[j][k]));
+					Tau_Im[k][j] := Tau_Im[j][k];
+				end for;
 			end for;
-		end for;
-		assert IsPositiveDefinite(Tau_Im);
+			assert IsPositiveDefinite(Tau_Im);
+		end if;
 		SEC`SmallPeriodMatrix := Tau;
 	end if;
 
