@@ -11,23 +11,23 @@
   The main ingredients were already described in
   Section \ref{m-sec:se_curves}: we integrate the holomorphic differentials in $\W$ (\S \ref{m-subsec:diff_forms})
   over the cycles in $\Gamma$ (\S \ref{m-subsec:cycles_homo}) using numerical integration (\S \ref{m-sec:de_int}), which results in a period matrix (\S \ref{m-subsec:comp_of_periods})
-  \begin{equation}
+  \begin{equation*}
       \label{eq:OC}
     \OC = \left( \int_{\gamma} \w \right)_{\substack{\w \in \W, \\ \gamma \in \Gamma}} \in \C^{g \times 2g}.
-  \end{equation}
+  \end{equation*}
   The matrices $\OA$ and $\OB$ require a symplectic basis of $\homo$.
   So, we compute the intersection pairing on $\Gamma$, as explained in Section \ref{m-sec:intersections}, which results in a
   intersection matrix $K_{\Gamma} \in \Z^{2g \times 2g}$.
   After computing a symplectic base change $S \in \GL(\Z,2g)$ for $K_{\Gamma}$ (\S \ref{m-subsec:symp_basis}), we obtain a big period matrix
-  \begin{equation}
+  \begin{equation*}
       \label{eq:OAOB}
       (\OA,\OB) = \OC S,
-  \end{equation}
+  \end{equation*}
    and finally a small period matrix in the Siegel upper half-space
-  \begin{equation}
+  \begin{equation*}
       \label{eq:tau}
    \tau = \OA^{-1} \OB \in \mathfrak{H}_g.
-  \end{equation}
+  \end{equation*}
 
   \bigskip
 
@@ -46,18 +46,18 @@
       \int_{\gamma_e^{(l)}} \w_{i,j}  =  \zeta^{-lj} (1-\zeta^{-j}) C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du
    \end{equation}
    where
-   \begin{equation}
+   \begin{equation*}
     \varphi_{i,j}  = \left(u+\frac{b+a}{b-a}\right)^{i-1} \ytab(u)^{-j}
-   \end{equation}
+   \end{equation*}
    is holomorphic in a neighbourhood $\epsilon_{a,b}$ of $[-1,1]$.
   \end{thm}
   \begin{proof}
     By the definition in \eqref{m-eq:def_cyabl} we can write $\gamma_e^{(l)} = \gamma_{[a,b]}^{(l)} \cup \gamma_{[b,a]}^{(l+1)}$. Hence we split up the integral and compute
     \begin{align*}\label{eq:thm_periods_2}
      \int_{\gamma_{[a,b]}^{(l)}} \w_{i,j}  & =  \int_{\gamma_{[a,b]}^{(l)}} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-lj} \int_a^b \frac{x^{i-1}}{\yab(x)^j}  \dx \\  & =
-     \zeta^{-lj} C_{a,b}^{-j}   \int_a^b \frac{x^{i-1}}{\ytab(\uab^{-1}(x))^j (1-\uab^{-1}(x)^2)^{\frac{j}{m}}}  \dx
+     \zeta^{-lj} C_{a,b}^{-j}   \int_a^b \frac{x^{i-1}}{\ytab(\uab(x))^j (1-\uab(x)^2)^{\frac{j}{m}}}  \dx
      \intertext{
-  Applying the transformation $x \mapsto \uab(u)$ introduces the derivative $\dx = \left(\frac{b-a}{2}\right) \du$.
+  Applying the transformation $x \mapsto \xab(u)$ introduces the derivative $\dx = \left(\frac{b-a}{2}\right) \du$.
   }
    & = \zeta^{-lj} C_{a,b}^{-j} \left(\frac{b-a}{2}\right) \int_{-1}^1 \frac{\uab(u)^{i-1}}{\ytab(u)^j (1-u^2)^{\frac{j}{m}}}  \du \\ & =
     \zeta^{-lj} C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\ytab(u)^j (1-u^2)^{\frac{j}{m}}}  \du
@@ -88,11 +88,11 @@
 \end{equation}
 (that is, replacing $(u+\frac{b+a}{b-a})^{i-1}$ by $u^{i-1}$ in the numerator of $\phi_{i,j}$)
 the value of elementary integrals being recovered by the polynomial shift
-\begin{equation}
+\begin{equation*}
     \label{eq:polshift}
     \int_{-1}^1\frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac jm}}\du
     = \sum_{l=0}^{i-1} {i-1 \choose l} \left(\frac{b+a}{b-a}\right)^{i-1-l} I_{a,b}(l,j).
-\end{equation}
+\end{equation*}
 
 The rigorous numerical evaluation of \eqref{eq:elem_num_int} is
 adressed in Section~\ref{sec:numerical_integration}: for any edge $(a,b)$,
