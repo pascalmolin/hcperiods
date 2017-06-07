@@ -27,9 +27,18 @@
   
    Typically, we choose as basepoint the ramification point $P_0 = (x_0,0)$, where $x_0 \in X$ is the root of the spanning tree $E$.
    
-  Finally, the resulting vector integral has to be reduced modulo the period lattice $\Lambda$, which is covered in \S \ref{m-subsec:lat_red}. For practical reasons, we will compute the
-  image of the Abel-Jacobi map in the torus $\R^{2g} / \Z^{2g}$.
+  Finally, the resulting vector integral has to be reduced modulo the period lattice $\Lambda$, which is covered in \S \ref{m-subsec:lat_red}.
   
+   \begin{rmk}[Image of Abel-Jacobi map] \
+  For practical reasons, we will compute the
+  image of the Abel-Jacobi map in the torus $\R^{2g} / \Z^{2g}$.
+This representation has the following advantages:
+    \begin{itemize}
+     \item[$\bullet$] Operations on the Jacobian variety $\Jac(\cu)$ correspond to operations in $\R^{2g}/\Z^{2g}$.
+     \item[$\bullet$] $m$-torsion divisors under $\AJ$ are mapped to vectors of rational numbers with 
+     denominator dividing $m$.
+         \end{itemize}
+   \end{rmk}
   
   \subsection{Between ramification points}\label{subsec:ajm_ram_pts}
 
@@ -47,13 +56,16 @@
    \int_{\gamma_{[a,b]}^{(0)}} \w_{i,j}  & = 
    C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du,
   \end{align*}
-  which is  (up to the constants) an elementary integral \ref{m-eq:elem_ints} and has already been evaluated during the period matrix computation.
+  which is (up to the constants) an elementary integral \ref{m-eq:elem_ints}
+  and has already been evaluated during the period matrix computation.
   
+  \begin{rmk}
   Moreover, the image of the Abel-Jacobi map between ramification points is $m$-torsion, i.e. for any two $k,j \in \{1,\dots,n\}$ we have
   \begin{equation}\label{eq:m_tors}
     m \int_{P_j}^{P_k} \bar\w \equiv \AJ( [ mP_k - mP_j ] ) \equiv 0 \mod  \Lambda,
   \end{equation}
   since $\div\left( \frac{x-x_k}{x-x_j} \right) = mP_k - mP_j$ is a principal divisor.
+  \end{rmk}
 
   \subsection{Reaching non-ramification points}\label{subsec:ajm_finite}
 
@@ -64,7 +76,9 @@
   $x_P$ is not a branch point. Therefore, we are going to adjust the definitions and highlight the differences.
   
   Let  $\uaxp$ be the affine linear transformation
-  that maps $[-1,1]$ to $[a,x_P]$. Similar to \eqref{m-eq:uab_image} we split up the image of $X$ under $\uaxp$ into subsets, but this time
+  that maps $[a,x_P]$ to $[-1,1]$.
+  Similar to \eqref{m-eq:uab_preimage} we split up the image of $X$ under $\uaxp$ into subsets,
+  but this time
  \begin{equation*}
   \uaxp(X) = \{-1\} \cup U^+ \cup U^-.
  \end{equation*}
@@ -120,7 +134,7 @@
      \int_{P_a}^P \w_{i,j}  & =  \int_{\gamma^{(s)}_{[a,x_P]}} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-sj} \int_a^{x_P} \frac{x^{i-1}}{\yaxp(x)^j}  \dx \\  & = 
      \zeta^{-sj} C_{a,x_P}^{-j}  \int_a^{x_P} \frac{x^{i-1}}{(1+\uaxp(x))^{\frac{j}{m}}\ytaxp(\uaxp(x))^j}  \dx
   \end{align*}
-   Applying the transformation $x \mapsto \xaxp(u)$ introduces the derivative $\dx = \left(\frac{x_P-a}{2}\right) \du$.
+   Applying the transformation $u = \uaxp(x)$ introduces the derivative $\dx = \left(\frac{x_P-a}{2}\right) \du$.
   \begin{align*}
    & =  \zeta^{-sj} C_{a,x_P}^{-j} \left(\frac{x_P-a}{2}\right) \int_a^{x_P} \frac{\uaxp(u)^{i-1}}{(1+u)^{\frac{j}{m}}\ytaxp(u)^j}  \du \\ & =
    \zeta^{-sj} C_{a,x_P}^{-j} \left(\frac{x_P-a}{2}\right)^i \int_a^{x_P} \frac{\left(u + \frac{x_P+a}{x_P-a}\right)^{i-1}}{(1+u)^{\frac{j}{m}}\ytaxp(u)^j}  \du.
@@ -396,10 +410,6 @@
   \Omega\Z^{2g}$, where $\Omega = (\OA, \OB)$ is the big period matrix, computed as explained in
   Section \ref{m-sec:strat_pm}.
    
-   For reasons that will be addressed later in this paragraph
-   we choose to
-   represent the image of the Abel-Jacobi map in 
-    $\R^{2g} / \Z^{2g}$.
     
    Let $v = \int_P^Q \bar\w \in \C^g$ be an vector obtained by integrating the holomorphic differentials in
    $\W$.
@@ -419,18 +429,12 @@
    \begin{equation*}
     v \bmod \Lambda \leftrightarrow \lfloor \Omega_{\R}^{-1}\iota(v) \rceil.
    \end{equation*}
-   This representation has the following advantages:
-   \begin{rmk}[Image of Abel-Jacobi map] \
-    \begin{itemize}
-     \item[$\bullet$] Operations on the Jacobian variety $\Jac(\cu)$ correspond to operations in $\R^{2g}/\Z^{2g}$.
-     \item[$\bullet$] $m$-torsion divisors under $\AJ$ are mapped to vectors of rational numbers with 
-     denominator dividing $m$, i.e. for $k,j \in \{ 1,\dots,n \}$ we have
-     \begin{equation*}
-      \AJ([P_k - P_j]) \equiv \lfloor \Omega_{\R}^{-1} \iota \int_{P_j}^{P_k} \bar\w
-      \rceil \in \frac{1}m\Z^{2g}.
-     \end{equation*}
-    \end{itemize}
-   \end{rmk}
 
-\biblio
+     %, i.e. for $k,j \in \{ 1,\dots,n \}$ we have
+     %\begin{equation}
+     % \AJ([P_k - P_j]) \equiv \lfloor \Omega_{\R}^{-1} \iota \int_{P_j}^{P_k} \bar\w
+     % \rceil \in \frac{1}m\Z^{2g}.
+     %\end{equation}
+
+   \biblio
 \end{document}
