@@ -39,10 +39,10 @@
       \end{tabular}
       \end{center}
       and where $s_x \in \Z$ for $x\in\set{a,b}$ is given by
-      \begin{equation}\label{eq:s_x}
+      \begin{equation*}\label{eq:s_x}
 	    s_x := \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{C_{c,d} \ytcd(x)}{C_{a,b}\ytab(x)} \right) 
 	    \right)
-      \end{equation}
+      \end{equation*}
      and
       \begin{equation*}
           \rho = \arg \left( \frac{b-a}{d-c} \right) + \delta_{b=c}\pi.
@@ -78,13 +78,13 @@
   where $\zeta^k\yab(x),\zeta^l\ycd(x)$ are branches of $\cu$ that are analytic on open sets $\vab$ and $\vcd$ 
   (see Figure \ref{m-fig:set_vab}) respectively.
 
-  \begin{proof}\let\qed\relax (of case $(v)$) \\
+  \begin{proof}\let\qed\relax (of case (v)) \\
   From the definition we see that $\cyabk \cap \cycdl = \varnothing$, whenever $[a,b] \cap [c,d] = \varnothing$. For edges in a spanning tree
   this is equivalent to $\{a,b\} \cap \{c,d\} = \varnothing$, thus
-  proving $(v)$.
+  proving (v).
   \end{proof}
 
-   Henceforth, we can assume $\{a,b\} \cap \{c,d\} \ne \varnothing$. In order to prove $(i)-(iv)$ we have to introduce some machinery. Since the $\yab(x),\ycd(x)$ are branches of $\cu$,
+   Henceforth, we can assume $\{a,b\} \cap \{c,d\} \ne \varnothing$. In order to prove (i)-(iv) we have to introduce some machinery. Since the $\yab(x),\ycd(x)$ are branches of $\cu$,
    on the set $\C \setminus X$
    we can define the \emph{shifting function}
    $s(x)$, that takes values in $\Z/m\Z$, implicitly via
@@ -126,7 +126,7 @@
   sign of possible intersections by taking into account the orientation of the cycles.
   
  We continue the proof with the next simplest case:
- \begin{proof}\let\qed\relax (of case $(i)$) \\
+ \begin{proof}\let\qed\relax (of case (i)) \\
  Here we have $[a,b] = [c,d]$. Trivially, $\left( \cyabk \circ \cyabk \right) = 0$ holds. For $k \ne l$ we deform the cycles such that they only intersect above
  $\xt = \frac{b+a}{2} \in  \vab= V$.
   We easily see that $s(\xt) = 0$ and therefore $s(\xt) + l - k = l - k$. The remaining non-trivial cases
@@ -143,7 +143,7 @@
   We see that, independently of $s(\xt)$, $s_+ = (k+1)-k = 1$ and $s_- = (k-1)-k = -1$ are as claimed.
  \end{proof}
 
-  For $(ii)-(iv)$ we have that $[a,b] \cap [c,d] = \{c \}$, where $c$ is either $a$ or $b$. Unfortunately, in these cases $s(c)$ is not
+  For (ii)-(iv) we have that $[a,b] \cap [c,d] = \{c \}$, where $c$ is either $a$ or $b$. Unfortunately, in these cases $s(c)$ is not
   well-defined.
   
  Instead, we choose a point $\xt \in \C \setminus X$ on the bisectrix of
@@ -161,7 +161,7 @@
     \label{fig:set_v_both}
    \end{figure}
    
-   \begin{proof}\let\qed\relax (of case $(ii)$) \\
+   \begin{proof}\let\qed\relax (of case (ii)) \\
    In this case we have $b = c$. Choosing $\xt$ on the upper bisectrix (as shown in Figure \ref{m-fig:set_v_both}) 
    and computing $s(\xt)$ with \eqref{m-eq:sxt} makes it possible to determine the intersection numbers geometrically.
    
@@ -182,7 +182,7 @@
     \end{align*}
    \end{proof}
  
- \begin{proof}(of cases $(iii)$ and  $(iv)$)
+ \begin{proof}(of cases (iii) and  (iv))
  In these cases we have $a = c$. We choose $\xt$ on the inner bisectrix (as shown in Figure \ref{m-fig:set_v_both}) and 
    and compute $s(\xt)$ with \eqref{m-eq:sxt}. 
  
@@ -201,15 +201,15 @@
     & s_+ = k-s(\xt)+1-k \equiv 1-s_a \mod m, \\
     & s_- = k-s(\xt)-k \equiv -s_a \mod m.
     \end{align*}
-  The case $\varphi < 0$ is easily derived as a symmetry: if we mirror Figure \ref{m-fig:int_a=c} at the horizontal line through $a$ we are in case $(iv)$.
+  The case $\varphi < 0$ is easily derived as a symmetry: if we mirror Figure \ref{m-fig:int_a=c} at the horizontal line through $a$ we are in case (iv).
   There, the intersection is positive if $\cyabk$ and $\cyadl$ start on the same sheet and negative if $\cyadl$ starts one sheet below $\cyabk$. 
   \end{proof}
   
 \begin{lemma}\label{lemma:sxt=sx}
   With the choices made in the proof of Theorem \ref{m-thm:intsec_numb} the following statements are true:
   \begin{itemize}
-   \item[(1)] $s(\xt) \equiv s_b \bmod m$ in case $(ii)$,
-    \item[(2)]  $s(\xt) \equiv s_a \bmod m$ in the cases $(iii)$ and $(iv)$.
+   \item[(1)] $s(\xt) \equiv s_b \bmod m$ in case {\upshape{(ii)}},
+    \item[(2)]  $s(\xt) \equiv s_a \bmod m$ in the cases {\upshape{(iii)}} and {\upshape{(iv)}}.
   \end{itemize}
 \end{lemma}
  \begin{proof}
@@ -221,7 +221,7 @@
    & \equiv \frac{1}{2\pi} \left( \arg(1+\ucd(x)) + \arg(1-\ucd(x)) - \arg(1+\uab(x)) - \arg(1-\uab(x)) \right) \\
    & +  \frac{m}{2\pi} \left( \arg \left( \frac{ \ccd \ytcd(x)}{\cab\ytab(x)} \right)\right) \mod m.
   \end{align*}
- In case $(ii)$ we have $b = c$ and denote $\varphi_0 = \arg \left( \frac{b-a}{d-c} \right)$. Then, we can parametrize all points $\xt \ne b$ on 
+ In case (ii) we have $b = c$ and denote $\varphi_0 = \arg \left( \frac{b-a}{d-c} \right)$. Then, we can parametrize all points $\xt \ne b$ on 
  the upper bisectrix of $[a,b]$ and
  $[a,d]$ (see Figure \ref{m-fig:set_v_both}) via
  \begin{align*}
@@ -242,7 +242,7 @@
  \end{align*}
 thus proving (1).
 
-  In the cases $(iii)$ and $(iv)$ we have $a = c$ and denote $\varphi =  \arg \left( \frac{b-a}{d-c} \right)$. For $\varphi > 0$ we can parametrize all points $\xt \ne a$ on the inner
+  In the cases (iii) and (iv) we have $a = c$ and denote $\varphi =  \arg \left( \frac{b-a}{d-c} \right)$. For $\varphi > 0$ we can parametrize all points $\xt \ne a$ on the inner
   bisectrix of $[a,b]$ and $[a,d]$ (see Figure \ref{m-fig:set_v_both}) via
  \begin{align*}
   \xt & = \xad(-1+t \exp(i \varphi /2)) \text{  as well as} \\
@@ -266,7 +266,7 @@ thus proving (1).
   The intersection numbers given by Theorem \ref{m-thm:intsec_numb} are independent of the choices of $\xt$ that were made in the proof. This approach works for any $\xt \in V$.
   
   Even though the value of
-  $s(\xt)$ changes, if we choose $\xt$ in a different connected component of $V$, e.g.\ on the lower bisectrix in case $(ii)$,  
+  $s(\xt)$ changes, if we choose $\xt$ in a different connected component of $V$, e.g.\ on the lower bisectrix in case (ii),  
   the parametrization of the bisectrix and the corresponding arguments will change accordingly.
 \end{rmk}
 

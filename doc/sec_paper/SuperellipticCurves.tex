@@ -8,24 +8,24 @@
 
     \begin{defn}\label{def:se_curve}
     In this paper, a superelliptic curve $\cu$ over $\C$ is a smooth plane projective curve that has an affine model given by an equation of the form
-   \begin{align}\label{eq:aff_model}
+   \begin{equation*}\label{eq:aff_model}
     \caff : \quad y^m = f(x) =  c_f \cdot \prod_{k=1}^n (x-x_k),
-   \end{align}
+   \end{equation*}
    \end{defn}
    where $m > 1$ and $f \in \C[x]$ is separable of degree $n \ge 3$.
 
   There are $\delta = \gcd(m,n)$ infinite points $P_{\infty}^{(1)},\dots,P_{\infty}^{(\delta)} \in \cu$, that behave differently depending on $m$ and $n$ (see \cite{CT1996}, \S 1 for details).
   Especially, $\infty \in \P^1_{\C}$ is a branch point for $\delta \ne m$. Thus, we introduce the set of finite branch points $X = \X$ as well as the set of all branch points
-  \begin{align}\label{eq:branch_points}
+  \begin{align*}\label{eq:branch_points}
          \hat{X} = \begin{cases}   X \cup \{ \infty \} \quad \text{if} \; m  \nmid  d,\\
          X \hfill \text{otherwise.}
      \end{cases}
-  \end{align}
+  \end{align*}
   The ramification indices at the branch points are given by $e_x = m$ for all $x \in X$ and $e_{\infty} = \frac{m}{\delta}$. Using the
   Riemann-Hurwitz formula, we obtain the genus of $\cu$ as
-  \begin{align}\label{eq:genus}
+  \begin{equation*}\label{eq:genus}
     g = \frac{1}{2}( (m-1)(n-1) - \delta + 1).
-  \end{align}
+  \end{equation*}
   We denote the corresponding finite ramification points $P_k = (x_k,0) \in \cu$ for $k = 1,\dots,n$.
   
   \begin{rmk}
@@ -153,15 +153,15 @@
 
   In general we proceed the same way: For branch points $a,b \in X$ we consider the affine linear
   transformation
-  \begin{equation}
+  \begin{equation*}
       \label{def:xab}
       \xab : u \mapsto \frac{b-a}{2}\left(u+\frac{b+a}{b-a}\right),
-  \end{equation}
+  \end{equation*}
   which maps $[-1,1]$ to the complex line segment $[a,b]$, and denote the inverse map by
-  \begin{equation}
+  \begin{equation*}
       \label{def:uab}
       \uab : x \mapsto \frac{2x-a-b}{b-a}.
-  \end{equation}
+  \end{equation*}
 
   
    We split the image of the branch points under $\uab$ into the following subsets
@@ -237,9 +237,9 @@ We sum up the properties of these local branches:
    Let $a, b \in X$ be branch points such that $X\cap]a,b[=\varnothing$, where  $[a,b]$ is the oriented line segment connecting $a$ and $b$. 
    
    By Proposition \ref{m-prop:yab} the lifts of $[a,b]$ to $\cu$ are given by
-   \begin{equation}\label{eq:def_path_ab}
+   \begin{equation*}\label{eq:def_path_ab}
       \gamma^{(l)}_{[a,b]} = \{  (x,\zeta^l \yab(x))  \mid  x \in [a,b]  \}, \quad l \in \Z/m\Z.
-   \end{equation}
+   \end{equation*}
    These are smooth oriented paths that connect $P_a = (a,0)$ and $P_b = (b,0)$ on $\cu$. We obtain cycles by concatenating these lifts in the following way:
     \begin{equation}\label{eq:def_cyabl}
       \cyabl = \gamma^{(l)}_{[a,b]} \cup \gamma^{(l+1)}_{[b,a]} \in \pi_1(\cu).
@@ -330,9 +330,9 @@ We sum up the properties of these local branches:
 
      \begin{prop}\label{prop:holom_diff}
  Let $\delta = \gcd(m,n)$. The following differentials form  a $\C$-basis of $\hd$:
- \begin{align}\label{eq:holm_diff}
+ \begin{equation*}\label{eq:holm_diff}
    \W =  \left\{  \omega_{i,j} \in \WM  \mid  -mi + jn - \delta \ge 0  \right\}
- \end{align}
+ \end{equation*}
      \end{prop}
      \begin{proof}
       First we show that the differentials in $\W$ are holomorphic.
@@ -382,11 +382,11 @@ Summing verticals of the trapezoid, we find the following formula that counts th
 The equality  $\#\W = \frac{1}{2}((n-1)(m-1)-\delta+1) = g$ immediately follows from
 the following
 \begin{lemma}
-      \begin{align}\label{eq:r_j2}
+      \begin{equation*}\label{eq:r_j2}
        \sum_{j=1}^{m-1} r_j = \frac{1}{2}(m^2 - (\delta+2)m + 2\delta).
-      \end{align}
+      \end{equation*}
 \end{lemma}
-\begin{proof}
+\begin{proof}\let\qed\relax
       Let $l := \frac{m}{\delta}$. First we note that $r_j = r_{j+l}$:
       $$r_{j+l} = n(j+l) - \delta  \bmod m = nj + \frac{n}{\delta}m - \delta  \bmod m =  nj - \delta  \bmod m =  r_j$$
       and hence
@@ -400,13 +400,13 @@ the following
       \begin{align}\label{eq:r_j4}
        \sum_{j = 1}^l r_j = \sum_{j = 0}^{l-1} \delta j = \delta \cdot \frac{l(l-1)}{2}
       \end{align}
-      and thus (\ref{eq:r_j3}) and (\ref{eq:r_j4}) imply
+      and thus \eqref{m-eq:r_j3} and \eqref{m-eq:r_j4} imply
       $$\sum_{j=1}^{m-1} r_j = \delta \cdot \sum_{j=1}^{l} r_j + \delta - m = \delta^2 \cdot \frac{l(l-1)}{2} + \delta - m = \frac{1}{2}(m^2 - (\delta+2)m + 2\delta).$$
 \end{proof}
 \end{proof}
 
 \begin{rmk}
-    Note that from \eqref{eq:diff_cases} it follows that the meromorphic differentials in $\WM$ are homolorphic at all finite points.
+    Note that from \eqref{m-eq:diff_cases} it follows that the meromorphic differentials in $\WM$ are homolorphic at all finite points.
 \end{rmk}
 
 \biblio
