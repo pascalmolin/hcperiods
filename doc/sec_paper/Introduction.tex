@@ -18,6 +18,26 @@
   integrals to large precision (say thousand digits) and to have
   rigorous results.
 
+  
+  
+  The paper is structured in the following way: 
+  In Section \ref{m-sec:ajm} we briefly review the objects we are interested in, namely period matrices and the Abel-Jacobi map of nice algebraic curves.
+  
+  The ingredients to obtain these objects, a basis of holomorphic differentials and a homology basis, are made explicit in the case of superelliptic curves in Section \ref{m-sec:se_curves}.
+  
+  We give formulas for the computation of periods in Section \ref{m-sec:strat_pm} and explain how to obtain from them the standard period matrices using symplectic reduction.
+  
+  In Section \ref{sec:intersections} we give explicit formulas for the intersection numbers of our homology basis.
+  
+  For numerical integration we employ two different integration schemes that are explained in Section \ref{m-sec:numerical_integration}: the double-exponential integration and
+  (in the case of hyperelliptic curves) Gauss-Chebychev integration.
+  
+  The actual computation of the Abel-Jacobi map is explained in detail in Section \ref{m-sec:comp_ajm}.
+  
+  In Section \ref{m-sec:comp_asp} we analyze the complexity of our algorithm and share some insights on the implementation.
+  
+  Finally, Section \ref{m-sec:examples_timings} contains some tables with running times to demonstrate the performance of the code.
+  
   \subsection{Existing algorithms}
 
   For genus 1 and 2, methods based on isogenies (AGM \cite{CremonaAGM13},
@@ -48,17 +68,17 @@
   \subsection{Main results}
 
   This paper adresses the problem of computing period matrices and the
-  Abel-Jacobi map of algebraic curves given by an affine equation of the form
+  Abel-Jacobi map of algebraic curves given by an affine equation of the form  (see Definion \ref{m-def:se_curve})
   \begin{equation*}
-   y^m = f(x), \quad m > 1, f \in \C[x] \text{ separable of degree} \deg(f) = n \ge 3.
+  y^m = f(x), \quad m > 1, f \in \C[x] \text{ separable of degree} \deg(f) = n \ge 3.
   \end{equation*}
   They generalize
-  hyperelliptic curves and are usually called \textit{superelliptic curves}.
+  hyperelliptic curves and are usually called \textit{superelliptic curves}. 
   
   We take advantage of their specific geometry to obtain the following
   (see Theorem \ref{m-thm:complexity_integrals})
   \begin{thm}
-      Let $y^m=f(x)$ be a superelliptic curve of genus $g$,
+      Let $\cu$ be a superelliptic curve of genus $g$ defined by the equation an $y^m=f(x)$ 
       where $f$ has degree $n$.
       We can compute a basis of the period lattice to precision
       $D$ digits using $$O(n(g+\log D)D^2\log^{2+\varepsilon} D) \text{ binary operations,}$$
@@ -79,11 +99,11 @@
   so we leave it as a supplementary hypothesis to claim the
   following
   \begin{thm}
-      Let $y^m=f(x)$ be a superelliptic curve of genus $g$ whose periods
+     Let $\cu$ be a superelliptic curve of genus $g$ defined by the equation an $y^m=f(x)$ whose periods
       have been computed.
       Provided the symplectic reduction
       step runs in $O(g^2)$ operations and produces $O(1)$ coefficients,
-      we compute the reduced period matrix $τ$ to precision $D$
+      we compute the small period matrix $τ$ to precision $D$
       digits using an extra $O(g^{2.8}D\log^{1+\varepsilon}D)$ operations.
   \end{thm}
 
@@ -100,14 +120,14 @@
   the accuracy of the numerical results of our algorithm (up to human or even
   compiler errors, as usual).
 
-  Another implementation has been done in Magma. Both are publicly available
+  Another implementation has been done in Magma \cite{Magma}. Both are publicly available
   on github \url{https://github.com/pascalmolin/hcperiods}.
 
   
   \subsection{Computations for the LMFDB}
     
     During a meeting aimed at expanding the 'L-functions and modular forms database' \cite[LMFDB]{lmfdb} to genus $3$ curves, 
-  the Magma implementation of the algorithm was used, in conjunction with methods of Jeroen Sijsling (et al.) \todo citation, to successfully compute (without any bugs)
+  the Magma implementation of the algorithm was used, in conjunction with methods developed by Jeroen Sijsling et al. \cite{CMSVEndos}, to successfully compute
   the endomorphism rings of Jacobians of $67,879$ hyperelliptic curves of genus $3$.
   
   Moreover, we have confirmed the endomorphism rings for all $66,158$ genus 2 curves that are currently in the LMFDB.
@@ -120,29 +140,5 @@
   a first version of this work was carried out in the case of hyperelliptic
   curves.
   
-  The second author wants to thank Steffen Müller and Florian Hess for helpful discussions. Moreover, he acknowledges the support from the DAAD under grant \todo (CN) insert nr.
- 
-   
-  \subsection{Summary of the sections}
-  
-  \todo This is just a first version.
-  
-  In Section \ref{m-sec:ajm} we briefly review the objects we are interested in, namely period matrices and the Abel-Jacobi map of nice algebraic curves.
-  
-  The ingredients to obtain these objects, e.g.\ a basis of holomorphic differentials or a homology basis, are made explicit in the case of superelliptic curves in Section \ref{m-sec:se_curves}.
-  
-  We give formulas for the computation of periods in Section \ref{m-sec:strat_pm} and explain how to obtain from them the standard period matrices using symplectic reduction.
-  
-  In Section \ref{sec:intersections} we give explicit formulas for the intersection numbers of our homology basis.
-  
-  For numerical integration we employ two different integration schemes that are explained in Section \ref{m-sec:numerical_integration}: the double-exponential integration and
-  (in the case of hyperelliptic curves) Gauss-Chebychev integration.
-  
-  Finally, Section \ref{m-sec:comp_ajm} explains in details the actual computation of the Abel-Jacobi map.
-  
-  In Section \ref{m-sec:comp_asp} we analyze the complexity of our algorithm and share some insights on the implementation.
-  
-  Section \ref{m-sec:examples_timings} contains some tables with running times to demonstrate the performance of the code.
- 
- 
+  The second author wants to thank Steffen Müller and Florian Hess for helpful discussions. Moreover, he acknowledges the support from the DAAD under grant $57212102$. 
 \end{document}

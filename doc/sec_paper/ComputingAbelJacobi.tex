@@ -21,17 +21,17 @@
   \begin{itemize}
    \item $\bar\w$ is the vector of differentials in $\W$,
    \item $P = (x_P,y_P) \in \cu$ is a finite point on the curve,
-   \item $P_k = (x_k,0) \in \cu$ is a ramification point, i.e.\ $x_k \in X$, and
+   \item $P_k = (x_k,0) \in \cu$ is a finite ramification point, i.e.\ $x_k \in X$, and
    \item $P_{\infty} \in \cu$ is an infinite point.
   \end{itemize}
   
-   Typically, we choose as basepoint the ramification point $P_0 = (x_0,0)$, where $x_0 \in X$ is the root of the spanning tree $E$.
+   Typically, we choose as basepoint the ramification point $P_0 = (x_0,0)$, where $x_0 \in X$ is the root of the spanning tree $G = (X,E)$.
    
   Finally, the resulting vector integral has to be reduced modulo the period lattice $\Lambda$, which is covered in \S \ref{m-subsec:lat_red}.
   
    \begin{rmk}[Image of Abel-Jacobi map] \
   For practical reasons, we will compute the
-  image of the Abel-Jacobi map in the torus $\R^{2g} / \Z^{2g}$.
+  image of the Abel-Jacobi map in the canonical torus $\R^{2g} / \Z^{2g}$.
 This representation has the following advantages:
     \begin{itemize}
      \item[$\bullet$] Operations on the Jacobian variety $\Jac(\cu)$ correspond to operations in $\R^{2g}/\Z^{2g}$.
@@ -77,7 +77,7 @@ This representation has the following advantages:
   
   Let  $\uaxp$ be the affine linear transformation
   that maps $[a,x_P]$ to $[-1,1]$.
-  Similar to \eqref{m-eq:uab_preimage} we split up the image of $X$ under $\uaxp$ into subsets,
+  Similar to \eqref{m-eq:uab_image} we split up the image of $X$ under $\uaxp$ into subsets,
   but this time
  \begin{equation*}
   \uaxp(X) = \{-1\} \cup U^+ \cup U^-.
@@ -103,30 +103,30 @@ This representation has the following advantages:
   if we choose the sets $\epsilon_{a,x_P}$ and $V_{a,x_P}$ as if $x_P$ was a branch point.
   
   Therefore, the lifts of $[a,x_P]$ to $\cu$ are given by
-    \begin{equation}\label{eq:def_path_axp}
+    \begin{equation*}\label{eq:def_path_axp}
       \gamma^{(l)}_{[a,x_P]} = \{  (x,\zeta^l \yaxp(x))  \mid  x \in [a,x_P]  \}, \quad l \in \Z/m\Z.
-   \end{equation}
+   \end{equation*}
   In order to reach $P = (x_P,y_P)$ we have to pick the correct lift. This is done by computing a \emph{shifting number} $s \in \Z/m\Z$ at the endpoint $x_P$:
-  \begin{equation}
+  \begin{equation*}
       \label{eq:saj}
    \zeta^s = \frac{y_P}{\yaxp(x_P)} = \frac{y_P}{ C_{a,x_P} \ytaxp( \uaxp(x_P) ) \sqrt[m]{2}  }
-  \end{equation}
+  \end{equation*}
   Consequently, $\gamma^{(s)}_{[a,x_P]}$ is a smooth path between $P_a$ and $P$ on $\cu$. We can now state the main theorem of this section.
   
   \begin{thm}\label{thm:ajm_finite_int}
   Let $\w_{i,j} \in \WM$ be a differential. With the choices and notation as above we have
- \begin{equation}\label{eq:aj_int}
+ \begin{equation*}\label{eq:aj_int}
        \int_{P_a}^P \w_{i,j} = \zeta^{-sj} C_{a,x_P}^{-j} \left(\frac{x_P-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1+u)^{\frac{j}{m}}}  \du,
-  \end{equation}
+  \end{equation*}
    where
    \begin{equation*}
     \varphi_{i,j}  = \left(u+\frac{x_P+a}{x_P-a}\right)^{i-1} \ytaxp(u)^{-j}
    \end{equation*}
    is holomorphic in a neighbourhood $\epsilon_{a,x_P}$ of $[-1,1]$
    and
-   \begin{equation}
+   \begin{equation*}
    s = \frac{m}{2\pi} \arg\left(  \frac{y_P}{C_{a,x_P} \ytaxp( \uaxp(x_P) )} \right).
-   \end{equation}
+   \end{equation*}
   \end{thm}
   \begin{proof}
     We have

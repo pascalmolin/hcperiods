@@ -2,7 +2,7 @@
 
 \begin{document}
 
-  \section{Computational aspects}
+  \section{Computational aspects}\label{sec:comp_asp}
 
    \subsection{Complexity analysis}
 
@@ -37,7 +37,7 @@
    \label{sec:comp_elem}
 
    For each elementary cycle $\gamma_e\in \Gamma$, we evaluate numerically the vector of $g$
-   elementary integrals from \eqref{eq:elem_num_int} as sums of the form
+   elementary integrals from \eqref{m-eq:elem_num_int} as sums of the form
    \begin{equation*}
        I_{a,b} \approx \sum_{k=1}^N w_k\frac{u_k^{i-1}}{y_k^j}
    \end{equation*}
@@ -64,13 +64,13 @@
    so that depending on the integration scheme we obtain:
    \begin{thm}\label{thm:complexity_integrals}
        Each of the $(n-1)$ elementary vector integrals can be computed to precision $D$ using
-       \begin{equation}
+       \begin{equation*}
            O(N(D)\cmul(D)(g+\log D)) =
            \begin{cases}
                O(D^2\log^{1+\varepsilon} D (g + \log D)) \text{ operations, if $m=2$,}\\
                O(D^2\log^{2+\varepsilon} D (g + \log D)) \text{ operations, if $m>2$.}
            \end{cases}
-       \end{equation}
+       \end{equation*}
    \end{thm}
    %\begin{proof}
    %  Plugging in $N(D),T(D),M(D)$ in equation \eqref{m-eq:elem_int_complexity} and using that $n-1 = O(g)$.
@@ -126,15 +126,15 @@
   
    \begin{thm} \
    \begin{itemize}
-     \item[(i)] For each finite point $P \in \caff$ we can compute $\int_{P_0}^P \bar\w$ to precision $D$ using 
+     \item[{\upshape{(i)}}] For each finite point $P \in \caff$ we can compute $\int_{P_0}^P \bar\w$ to precision $D$ using 
       $\ctot(D)$ operations. 
-     \item[(ii)] For each infinite point $P_{\infty} \in \cu$ we can compute a representative of $\int_{P_0}^{P_{\infty}} \bar\w \mod \lambda$ to precision $D$ using
+     \item[{\upshape{(ii)}}] For each infinite point $P_{\infty} \in \cu$ we can compute a representative of $\int_{P_0}^{P_{\infty}} \bar\w \mod \lambda$ to precision $D$ using
       \begin{itemize}
        \item[$\bullet$] $n$ vector additions in $\C^g$, if $\delta = \gcd(m,n) = 1$,
        \item[$\bullet$] $n \ctot(D)$ operations in the case of Theorem \ref{m-thm:ajm_inf_ord1},
        \item[$\bullet$] $n(n+\frac{m}\delta)\ctot(D)$ operations  in the case of Theorem \ref{m-thm:ajm_inf_ordgt1}.
       \end{itemize}
-      \item[(iii)] Reducing a vector $v \in \C^g$ modulo $\Lambda$ can be done using $O(g^{2.8})$ multiplications.
+      \item[{\upshape{(iii)}}] Reducing a vector $v \in \C^g$ modulo $\Lambda$ can be done using $O(g^{2.8})$ multiplications.
     \end{itemize}
   \end{thm}
    \begin{proof}
@@ -156,8 +156,8 @@
    \begin{figure}[H]
        \begin{center}
        \includegraphics[width=5cm,page=3]{images/ellipse.pdf}
-   \end{center} \caption{Ellipse parameters.}
-   \label{fig:ellipse}
+   \end{center} \caption{ellipse parameters.}
+   \label{fig:ellipse2}
    \end{figure}
 
    The sum of its semi-axes is $e^{r}$
@@ -179,7 +179,7 @@
    
    Let $\abs{u_k-1}+\abs{u_k+1}=2\cosh(r_k)$. We need to choose
    $r<r_0=\min_k r_k$ (so that $u_k\not\in ε_r$) in order to minimize
-   the number of integration points \eqref{eq:Ngc}. We first
+   the number of integration points \eqref{m-eq:Ngc}. We first
    estimate how the bound $M(r)$ varies for $r<r_0$.
    \begin{itemize}
        \item 
@@ -208,7 +208,7 @@
    \[ r = r_0 - η = r_0 ( 1 - \frac{1}{A+\log\frac{A}{r_0}}), \]
    where $A = 1+\frac2K(D+\log(2πM_0))$.
  
-   \subsubsection{Double-exponential case}
+   \subsubsection{Double-exponential case}\label{subsec:de_case}
 
    We use the parametrization
    $\partial Z_r = \set{ z = \tanh(λ\sinh(t+ir), t\in\R }$ to compute
@@ -246,7 +246,7 @@
    Here we simply give some ideas that we used in our implementation(s) to improve constant factors hidden in the big-$O$ notation, i.e. the absolute running time.
    
    In practice, 80 to 90\% of the running time is spent on numerical integration
-   of integrals \eqref{m-eq:periods}. According to \S~\ref{sec:comp_elem},
+   of integrals \eqref{m-eq:periods}. According to \S~\ref{m-sec:comp_elem},
    for each integration point $u_k\in]-1,1[$ one first evaluates the $y$-value
    $y_k=\ytab(u_k)$, then add the contributions $w_k\frac{u_k^i}{y_k^j}$ to
    the integral of each of the $g$ differential forms.
@@ -256,7 +256,7 @@
 
     \subsubsection{Computing products of complex roots}\label{subsec:computing_roots}
 
-    Following our definition \eqref{eq:def_yab}, computing $\ytab(u_k)$ involves
+    Following our definition \eqref{m-eq:def_yab}, computing $\ytab(u_k)$ involves
     $(n-2)$ $m$-th roots for each integration point.
 
     Instead, we fall back to one single (usual) $m$-th root
@@ -313,14 +313,15 @@
 
    \subsubsection{Near-optimal tree}
     As explained in \S \ref{m-subsec:cycles_homo} we integrate along the edges of a maximal-flow spanning tree $T = (X,E)$, where the capacity $r_e$ of an edge $e = (a,b) \in E$ is computed as
-    \begin{equation}
+    \begin{equation*}
      r_e =  \min_{c \in X \setminus \{ a,b\}} \begin{cases}
          \frac{\abs{c-a}+\abs{c-b}}{\abs{b-a}}, \text{ if $m=2$,}\\
          \abs{ \Im(\sinh^{-1}(\tanh^{-1}(\frac{2c - b -a}{b-a})/\lambda) }, \text{ if $m>2$.}
             \end{cases}
-    \end{equation}
+    \end{equation*}
     Although this can be done in low precision, computing $r_e$ for all $(n-1)(n-2)/2$ edges of the complete graph
-    demands $O(n^3)$ evaluation of elementary costs (involving transcendantal functions if $m>2$)
+    demands $O(n^3)$ evaluation of elementary costs (involving transcendantal functions if $m>2$).
+    
     For large values of $n$ (comparable to the precision), the computation of
     these capacities has a noticable impact on the running time. This can be
     avoided by computing a \emph{minimal spanning tree} that uses the euclidean
