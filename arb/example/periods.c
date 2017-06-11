@@ -77,36 +77,18 @@ int main(int argc, char * argv[])
     {
         /* parameters */
         if (!strcmp(argv[i], "-m"))
-        {
-            i++;
-            m = atol(argv[i++]);
-        }
+            i++, m = atol(argv[i++]);
         else if (!strcmp(argv[i], "--prec"))
-        {
-            i++;
-            prec = atol(argv[i++]);
-        }
+            i++, prec = atol(argv[i++]);
         else if (!strcmp(argv[i], "--de"))
-        {
-            i++;
-            flag |= AJ_USE_DE;
-        }
+            i++, flag |= AJ_USE_DE;
         /* mth root */
         else if (!strcmp(argv[i], "--rootdef"))
-        {
-            i++;
-            flag |= AJ_ROOT_DEF;
-        }
+            i++, flag |= AJ_ROOT_DEF;
         else if (!strcmp(argv[i], "--rootprod"))
-        {
-            i++;
-            flag |= AJ_ROOT_PROD;
-        }
+            i++, flag |= AJ_ROOT_PROD;
         else if (!strcmp(argv[i], "--rootturn"))
-        {
-            i++;
-            flag |= AJ_ROOT_TURN;
-        }
+            i++, flag |= AJ_ROOT_TURN;
         /* families */
         else if (!strcmp(argv[i], "--xn1"))
         {
@@ -141,35 +123,17 @@ int main(int argc, char * argv[])
         }
         /* restrict computations / output */
         else if (!strcmp(argv[i], "--big"))
-        {
-            i++;
-            flag |= AJ_NO_TAU;
-        }
+            i++, flag |= AJ_NO_TAU;
         else if (!strcmp(argv[i], "--int"))
-        {
-            i++;
-            flag |= AJ_NO_AB;
-        }
+            i++, flag |= AJ_NO_AB;
         else if (!strcmp(argv[i], "--tree"))
-        {
-            i++;
-            flag |= AJ_NO_INT;
-        }
+            i++, flag |= AJ_NO_INT;
         else if (!strcmp(argv[i], "--gp"))
-        {
-            i++;
-            f_print = &acb_mat_print_gp;
-        }
+            i++, f_print = &acb_mat_print_gp;
         else if (!strcmp(argv[i], "--trim"))
-        {
-            i++;
-            flag |= AJ_TRIM;
-        }
+            i++, flag |= AJ_TRIM;
         else if (!strcmp(argv[i], "--digits"))
-        {
-            i++;
-            digits = atol(argv[i++]);
-        }
+            i++, digits = atol(argv[i++]);
         /* benchmark mode */
         else if (!strcmp(argv[i], "--bench"))
         {
