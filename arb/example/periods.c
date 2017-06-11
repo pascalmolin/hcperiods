@@ -188,7 +188,7 @@ int main(int argc, char * argv[])
 
     /* compute pol to actual accuracy */
     if (f_pol)
-        f_pol(poly, n, prec);
+        f_pol(poly, n, prec + n + 40);
     if (rev)
         acb_poly_reverse(poly);
 
