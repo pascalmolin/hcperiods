@@ -2,7 +2,7 @@
 
 \begin{document}
 
-  \section{Computational aspects}
+  \section{Computational aspects}\label{sec:comp_asp}
 
    \subsection{Complexity analysis}
 
@@ -31,17 +31,16 @@
    while simple transcendental functions (log, exp, tanh, sinh,\dots) can be evaluated
    in complexity $\ctrig(D)=O(D\log^{2+\varepsilon} D$).
     Moreover, we assume that multiplication of a $g \times g$ matrix can
-    be done using $O(g^{\eta})$ multiplications for some constant
-    $2 < \eta < 3$.
+    be done using $O(g^{2.8})$ multiplications.
    
    \subsubsection{Computation of elementary integrals}
    \label{sec:comp_elem}
 
    For each elementary cycle $\gamma_e\in \Gamma$, we evaluate numerically the vector of $g$
-   elementary integrals from \eqref{eq:elem_num_int} as sums of the form
-   \begin{equation}
+   elementary integrals from \eqref{m-eq:elem_num_int} as sums of the form
+   \begin{equation*}
        I_{a,b} \approx \sum_{k=1}^N w_k\frac{u_k^{i-1}}{y_k^j}
-   \end{equation}
+   \end{equation*}
    where $N$ is the number of integration points, $w_k,u_k$ are integration weights and points,
    and $y_k=\ytab(u_k)$.
 
@@ -65,13 +64,13 @@
    so that depending on the integration scheme we obtain:
    \begin{thm}\label{thm:complexity_integrals}
        Each of the $(n-1)$ elementary vector integrals can be computed to precision $D$ using
-       \begin{equation}
+       \begin{equation*}
            O(N(D)\cmul(D)(g+\log D)) =
            \begin{cases}
                O(D^2\log^{1+\varepsilon} D (g + \log D)) \text{ operations, if $m=2$,}\\
                O(D^2\log^{2+\varepsilon} D (g + \log D)) \text{ operations, if $m>2$.}
            \end{cases}
-       \end{equation}
+       \end{equation*}
    \end{thm}
    %\begin{proof}
    %  Plugging in $N(D),T(D),M(D)$ in equation \eqref{m-eq:elem_int_complexity} and using that $n-1 = O(g)$.
@@ -87,10 +86,10 @@
    Using the symplectic base change matrix $S$ introduced
    in \S~\ref{m-subsec:symp_basis}, the homology basis is given
    by equations of the form
-   \begin{equation}
+   \begin{equation*}
        \label{eq:base_change_cycles}
        \alpha_i = \sum_{e,l} s_{e,l}\gamma_e^{(l)}
-   \end{equation}
+   \end{equation*}
    where $\gamma_e,e\in E$ spans the elementary cycles
    and $l\in\Z/m\Z$ their shifts,
    and $s_{e,l}\in\Z$ are coefficients of the matrix $S$. 
@@ -105,7 +104,7 @@
    (each of the $O(g^2)$ periods is a linear combination of $O(g)$ elementary integrals,
    the coefficients involving precision $D$ roots of unity).
 
-   However we have no proof of this fact and in general the symplectic reduction
+   However, we have no proof of this fact and in general the symplectic reduction
    could produce dense base change with coefficients of size $O(g)$,
    so that we state the far from optimal result
    \begin{thm}
@@ -116,7 +115,7 @@
    \subsubsection{Small period matrix}
 
    Finally, the small period matrix is obtained by solving $\OA\tau=\OB$,
-   which can be done using $O(g^{\eta})$ multiplications.
+   which can be done using $O(g^{2.8})$ multiplications.
    
    \subsubsection{Abel-Jacobi map}
    
@@ -127,15 +126,15 @@
   
    \begin{thm} \
    \begin{itemize}
-     \item[(i)] For each finite point $P \in \caff$ we can compute $\int_{P_0}^P \bar\w$ to precision $D$ using 
+     \item[{\upshape{(i)}}] For each finite point $P \in \caff$ we can compute $\int_{P_0}^P \bar\w$ to precision $D$ using 
       $\ctot(D)$ operations. 
-     \item[(ii)] For each infinite point $P_{\infty} \in \cu$ we can compute $\int_{P_0}^{P_{\infty}} \bar\w$ to precision $D$ using
+     \item[{\upshape{(ii)}}] For each infinite point $P_{\infty} \in \cu$ we can compute a representative of $\int_{P_0}^{P_{\infty}} \bar\w \mod \lambda$ to precision $D$ using
       \begin{itemize}
        \item[$\bullet$] $n$ vector additions in $\C^g$, if $\delta = \gcd(m,n) = 1$,
        \item[$\bullet$] $n \ctot(D)$ operations in the case of Theorem \ref{m-thm:ajm_inf_ord1},
        \item[$\bullet$] $n(n+\frac{m}\delta)\ctot(D)$ operations  in the case of Theorem \ref{m-thm:ajm_inf_ordgt1}.
       \end{itemize}
-      \item[(iii)] Reducing a vector $v \in \C^g$ modulo $\Lambda$ can be done using $O(g^{\eta})$ multiplications.
+      \item[{\upshape{(iii)}}] Reducing a vector $v \in \C^g$ modulo $\Lambda$ can be done using $O(g^{2.8})$ multiplications.
     \end{itemize}
   \end{thm}
    \begin{proof}
@@ -157,8 +156,8 @@
    \begin{figure}[H]
        \begin{center}
        \includegraphics[width=5cm,page=3]{images/ellipse.pdf}
-   \end{center} \caption{Ellipse parameters.}
-   \label{fig:ellipse}
+   \end{center} \caption{ellipse parameters.}
+   \label{fig:ellipse2}
    \end{figure}
 
    The sum of its semi-axes is $e^{r}$
@@ -176,11 +175,11 @@
    By convexity of the ellipse,
    the solution is unique on the quadrant containing $u_k$.
 
-   \subsubsection{Choice of $r$}
+   \paragraph{Choice of $r$}\label{par:gc_int_r}
    
    Let $\abs{u_k-1}+\abs{u_k+1}=2\cosh(r_k)$. We need to choose
    $r<r_0=\min_k r_k$ (so that $u_k\not\in ε_r$) in order to minimize
-   the number of integration points \eqref{eq:Ngc}. We first
+   the number of integration points \eqref{m-eq:Ngc}. We first
    estimate how the bound $M(r)$ varies for $r<r_0$.
    \begin{itemize}
        \item 
@@ -209,7 +208,7 @@
    \[ r = r_0 - η = r_0 ( 1 - \frac{1}{A+\log\frac{A}{r_0}}), \]
    where $A = 1+\frac2K(D+\log(2πM_0))$.
  
-   \subsubsection{Double-exponential case}
+   \subsubsection{Double-exponential case}\label{subsec:de_case}
 
    We use the parametrization
    $\partial Z_r = \set{ z = \tanh(λ\sinh(t+ir), t\in\R }$ to compute
@@ -227,7 +226,7 @@
    \paragraph{Choice of $r$}
 
    We adapt the method used for Gauss-Chebychev. This time the number $N$ of integration
-   points is obtained from equation \eqref{eq:de-parameters}.
+   points is obtained from equation \eqref{m-eq:de_parameters}.
    
    Writing $u_k = \tanh(λ\sinh(t_k+ir_k))$, we must choose
    $r<r_0=\min_k r_k$ to ensure $u_k\not\in Z_r$. Let 
@@ -247,7 +246,7 @@
    Here we simply give some ideas that we used in our implementation(s) to improve constant factors hidden in the big-$O$ notation, i.e. the absolute running time.
    
    In practice, 80 to 90\% of the running time is spent on numerical integration
-   of integrals \eqref{m-eq:periods}. According to \S~\ref{sec:comp_elem},
+   of integrals \eqref{m-eq:periods}. According to \S~\ref{m-sec:comp_elem},
    for each integration point $u_k\in]-1,1[$ one first evaluates the $y$-value
    $y_k=\ytab(u_k)$, then add the contributions $w_k\frac{u_k^i}{y_k^j}$ to
    the integral of each of the $g$ differential forms.
@@ -257,7 +256,7 @@
 
     \subsubsection{Computing products of complex roots}\label{subsec:computing_roots}
 
-    Following our definition \eqref{eq:def_yab}, computing $\ytab(u_k)$ involves
+    Following our definition \eqref{m-eq:def_yab}, computing $\ytab(u_k)$ involves
     $(n-2)$ $m$-th roots for each integration point.
 
     Instead, we fall back to one single (usual) $m$-th root
@@ -296,7 +295,7 @@
 
    Without polynomial shift \eqref{eq:polshift}, this numerator should be
    $x_k=u_k+\frac{b+a}{b-a}$. However, $x_k$ is a complex number while $u_k$
-   is real, so computing with $u$ saves a factor almost 2 on this aspect.
+   is real, so computing with $u$ saves a factor almost $2$ on this aspect.
    
    \subsection{Further ideas} 
 
@@ -308,25 +307,26 @@
    In practice, when using double-exponential integration, the constant $r$ is usually bigger than $0.5$
    for random points, but we can exhibit bad configurations with $τ\approx 0.1$.
    In this case however, we can perform a change of coordinate by a Moebius transform
-   $x\mapsto \frac{ax+b}{cx+d}$ as explained in Remark \ref{rmk:moebius} to redistribute the points more evenly.
+   $x\mapsto \frac{ax+b}{cx+d}$ as explained in Remark \ref{m-rmk:moebius} to redistribute the points more evenly.
 
-   Improving $τ$ from $.1$ to say $.6$ immediately saves a factor $6$ on the running time.
+   Improving $τ$ from $0.1$ to say $0.6$ immediately saves a factor $6$ on the running time.
 
    \subsubsection{Near-optimal tree}
     As explained in \S \ref{m-subsec:cycles_homo} we integrate along the edges of a maximal-flow spanning tree $T = (X,E)$, where the capacity $r_e$ of an edge $e = (a,b) \in E$ is computed as
-    \begin{equation}
+    \begin{equation*}
      r_e =  \min_{c \in X \setminus \{ a,b\}} \begin{cases}
          \frac{\abs{c-a}+\abs{c-b}}{\abs{b-a}}, \text{ if $m=2$,}\\
          \abs{ \Im(\sinh^{-1}(\tanh^{-1}(\frac{2c - b -a}{b-a})/\lambda) }, \text{ if $m>2$.}
             \end{cases}
-    \end{equation}
+    \end{equation*}
     Although this can be done in low precision, computing $r_e$ for all $(n-1)(n-2)/2$ edges of the complete graph
-    demands $O(n^3)$ evaluation of elementary costs (involving transcendantal functions if $m>2$)
+    demands $O(n^3)$ evaluation of elementary costs (involving transcendantal functions if $m>2$).
+    
     For large values of $n$ (comparable to the precision), the computation of
     these capacities has a noticable impact on the running time. This can be
     avoided by computing a \emph{minimal spanning tree} that uses the euclidean
     distance between the end points of an edge as capacity, i.e.
-    $r_e = \abs{b-a}$, which  reduces the complexity to $O(n^2)$
+    $r_e = \abs{b-a}$, which reduces the complexity to $O(n^2)$
     multiplications.
     
     Given sufficiently many branch points that are randomly distributed in the

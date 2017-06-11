@@ -1,0 +1,29 @@
+# method; pol; m; n; prec; time
+bern; newmagma 31; 8; 128; 2.010
+bern; newmagma 31; 8; 512; 8.600
+bern; newmagma 31; 8; 2000; 114.540
+bern; newmagma 31; 8; 4000; 669.670
+bern; newmagma 31; 8; 10000; 9127.880
+bern; arb 31; 8; 128; 1.39191e-01 +/- 2.4e-05
+bern; arb 31; 8; 512; 9.0689e-01 +/- 2.2e-04
+bern; arb 31; 8; 2000; 2.04393e+01 +/- 4.8e-03
+bern; arb 31; 8; 4000; 1.36586e+02 +/- 1.7e-02
+bern; arb 31; 8; 10000; 1.90984e+03 +/- 4.4e-01
+bern; newmagma 31; 30; 128; 65.550
+bern; newmagma 31; 30; 512; 163.120
+bern; newmagma 31; 30; 2000; 751.430
+bern; newmagma 31; 30; 4000; 3244.180
+bern; newmagma 31; 30; 10000; 33691.460
+bern; arb 31; 30; 128; 2.1335e+00 +/- 1.6e-03
+bern; arb 31; 30; 512; 1.45937e+01 +/- 8.5e-03
+bern; arb 31; 30; 2000; 2.40245e+02 +/- 6.9e-02
+bern; arb 31; 30; 4000; 1.51594e+03 +/- 3.2e-01
+bern; arb 31; 30; 10000; 1.9289e+04 +/- 1.2e+01
+bern; newmagma 31; 80; 128; 1312.520
+bern; newmagma 31; 80; 512; 2107.060
+bern; newmagma 31; 80; 2000; 8915.920
+bern; newmagma 31; 80; 4000; 32226.870
+bern; newmagma 31; 80; 10000; 296980.980
+bern; arb 31; 80; 128; 1.79818e+01 +/- 3.2e-03
+bern; arb 31; 80; 512; 1.44377e+02 +/- 2.3e-02
+bern; arb 31; 80; 2000; 2.17045e+03 +/- 2.3e-01

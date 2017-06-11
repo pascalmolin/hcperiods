@@ -8,25 +8,25 @@
 
     \begin{defn}\label{def:se_curve}
     In this paper, a superelliptic curve $\cu$ over $\C$ is a smooth plane projective curve that has an affine model given by an equation of the form
-   \begin{align}\label{eq:aff_model}
+   \begin{equation*}\label{eq:aff_model}
     \caff : \quad y^m = f(x) =  c_f \cdot \prod_{k=1}^n (x-x_k),
-   \end{align}
+   \end{equation*}
    \end{defn}
    where $m > 1$ and $f \in \C[x]$ is separable of degree $n \ge 3$.
 
   There are $\delta = \gcd(m,n)$ infinite points $P_{\infty}^{(1)},\dots,P_{\infty}^{(\delta)} \in \cu$, that behave differently depending on $m$ and $n$ (see \cite{CT1996}, \S 1 for details).
   Especially, $\infty \in \P^1_{\C}$ is a branch point for $\delta \ne m$. Thus, we introduce the set of finite branch points $X = \X$ as well as the set of all branch points
-  \begin{align}\label{eq:branch_points}
+  \begin{align*}\label{eq:branch_points}
          \hat{X} = \begin{cases}   X \cup \{ \infty \} \quad \text{if} \; m  \nmid  d,\\
          X \hfill \text{otherwise.}
      \end{cases}
-  \end{align}
+  \end{align*}
   The ramification indices at the branch points are given by $e_x = m$ for all $x \in X$ and $e_{\infty} = \frac{m}{\delta}$. Using the
   Riemann-Hurwitz formula, we obtain the genus of $\cu$ as
-  \begin{align}\label{eq:genus}
+  \begin{equation*}\label{eq:genus}
     g = \frac{1}{2}( (m-1)(n-1) - \delta + 1).
-  \end{align}
-  We denote the corresponding ramification points $P_k = (x_k,0) \in \cu$ for $k = 1,\dots,n$.
+  \end{equation*}
+  We denote the corresponding finite ramification points $P_k = (x_k,0) \in \cu$ for $k = 1,\dots,n$.
   
   \begin{rmk}
    Without loss of generality we may assume $c_f = 1$ (if not, apply the transformation $(x,y) \mapsto (x,\sqrt[m]{c_f}y)$).
@@ -37,9 +37,9 @@
       the Moebius transform $\phi:u\mapsto \frac{au+b}{cu+d}$ is an automorphism
       of $\P^1$. By a change of coordinate $x=\phi(u)$ we obtain a different model of $\cu$
       given by the equation
-      \begin{equation}
+      \begin{equation*}
           \tilde v^m = \tilde f(u)
-      \end{equation}
+      \end{equation*}
       where $\tilde f(u)=f(\phi(u))(cu+d)^{\ell m}$ and $v=y(cu+d)^\ell$ for
       the smallest value $\ell$ such that $\ell m\geq n$.
 
@@ -63,17 +63,17 @@
 
   For $x\in\C$, it is natural and computationally convenient to use the
   \emph{principal branch} of the $m$-th root $\sqrt[m]x$ defined by
-  \begin{equation}
-      \label{eq:principal_mth_root}
+  \begin{equation*}
+      %\label{eq:principal_mth_root}
       -\frac{π}m<\arg(\sqrt[m]x)\leq\frac{π}m
-  \end{equation}
+  \end{equation*}
   which has a branch cut along the negative real axis $]\!-\infty,0]$.
   Crossing it in positive orientation corresponds to multiplication by
   the primitive $m$-th root of unity
-  \begin{equation}
-      \label{eq:zeta}
+  \begin{equation*}
+      %\label{eq:zeta}
   \zeta = \zeta_m = e^{\frac{2\pi i }{m}}
-  \end{equation}
+  \end{equation*}
   on the surface. In
   particular, the monodromy at $x=0$ is cyclic of order $m$.
 
@@ -98,7 +98,7 @@
   
   We call a \emph{branch of $\cu$} a function $y(x)$ such that
   $y(x)^m = f(x)$ for all $x \in \C$. At every $x$, the branches of $\cu$ only
-  differ by a factor $\zeta^l$ for some $l \in \{0,\dots,l-1\}$. Thus, following a path, it is sufficient to know \emph{one} branch that is analytic in a suitable neighborhood. In the
+  differ by a factor $\zeta^l$ for some $l \in \{0,\dots,m-1\}$. Thus, following a path, it is sufficient to know \emph{one} branch that is analytic in a suitable neighborhood. In the
   next paragraph, we will introduce locally analytic branches very explicitly.
   
   \bigskip
@@ -153,21 +153,21 @@
 
   In general we proceed the same way: For branch points $a,b \in X$ we consider the affine linear
   transformation
-  \begin{equation}
+  \begin{equation*}
       \label{def:xab}
       \xab : u \mapsto \frac{b-a}{2}\left(u+\frac{b+a}{b-a}\right),
-  \end{equation}
+  \end{equation*}
   which maps $[-1,1]$ to the complex line segment $[a,b]$, and denote the inverse map by
-  \begin{equation}
+  \begin{equation*}
       \label{def:uab}
       \uab : x \mapsto \frac{2x-a-b}{b-a}.
-  \end{equation}
+  \end{equation*}
 
   
-   We split the preimages of branch points into the following subsets
-  \begin{equation*}\label{eq:uab_preimage}
+   We split the image of the branch points under $\uab$ into the following subsets
+  \begin{equation}\label{eq:uab_image}
       \set{ \uab(x), x\in X} = \set{-1,1} \cup U^+ \cup U^-,
-  \end{equation*}
+  \end{equation}
   where points in $U^+$ (resp. $U^-$) have strictly positive (resp. non-positive) real part.
 
   Then the product
@@ -178,9 +178,9 @@
   is holomorphic on a neighborhood $ε_{a,b}$ of $[-1,1]$ which we can take as
   an ellipse \footnote{we will exhibit such a neighborhood in Section \ref{m-sub:gauss_chebychev_integration}}
   containing no point $u_k\in U^-\cup U^+$, while the term corresponding to $a,b$
-  \begin{equation}
+  \begin{equation*}
       \sqrt[m]{1-u^2}
-  \end{equation}
+  \end{equation*}
   has two branch cuts $]-\infty,-1]$ and $[1,\infty[$, and is holomorphic on the complementary
   $\overline U$ of these cuts.
   
@@ -190,9 +190,9 @@
       \yab(x) =   C_{a,b} \yt_{a,b}( \uab(x) ) \sqrt[m]{1 - \uab(x)^2}
   \end{equation}
   by setting $r = 1+\#U^+ \bmod 2$ and choosing the constant
-  \begin{equation}
+  \begin{equation*}
       C_{a,b} = \left(\frac{b-a}{2}\right)^{\frac{n}{m}} e^{\frac{\pi i}{m}r}
-  \end{equation}
+  \end{equation*}
   such that $\yab(x)^m = f(x)$.
   
   The function $\yab(x)$ has $n$ branch cuts all parallel to $[a,b]$ in outward direction and
@@ -209,7 +209,7 @@
 
 
 
-We sum up the properties of these local roots.
+We sum up the properties of these local branches:
   
  \begin{prop}\label{prop:yab}
       Let $a,b\in X$ be branch points such that $X\cap]a,b[=\varnothing$.
@@ -229,7 +229,7 @@ We sum up the properties of these local roots.
  \subsection{Cycles and homology}\label{subsec:cycles_homo}
    
    For us, a \emph{cycle} on $\cu$ is a smooth oriented closed path in $\pi_1(\cu)$.
-   For simplicity we identify all cycles with their classes in $\homo = \pi_1(\cu)/[\pi_1(\cu),\pi_1(\cu)]$. 
+   For simplicity we identify all cycles with their homology classes in $\homo = \pi_1(\cu)/[\pi_1(\cu),\pi_1(\cu)]$. 
    
    In the following we present an 
    explicit generating set of $\homo$ that relies on the locally analytic branches $\yab$ as defined in \eqref{m-eq:def_yab} and the superelliptic structure of $\cu$.
@@ -237,9 +237,9 @@ We sum up the properties of these local roots.
    Let $a, b \in X$ be branch points such that $X\cap]a,b[=\varnothing$, where  $[a,b]$ is the oriented line segment connecting $a$ and $b$. 
    
    By Proposition \ref{m-prop:yab} the lifts of $[a,b]$ to $\cu$ are given by
-   \begin{equation}\label{eq:def_path_ab}
+   \begin{equation*}\label{eq:def_path_ab}
       \gamma^{(l)}_{[a,b]} = \{  (x,\zeta^l \yab(x))  \mid  x \in [a,b]  \}, \quad l \in \Z/m\Z.
-   \end{equation}
+   \end{equation*}
    These are smooth oriented paths that connect $P_a = (a,0)$ and $P_b = (b,0)$ on $\cu$. We obtain cycles by concatenating these lifts in the following way:
     \begin{equation}\label{eq:def_cyabl}
       \cyabl = \gamma^{(l)}_{[a,b]} \cup \gamma^{(l+1)}_{[b,a]} \in \pi_1(\cu).
@@ -272,7 +272,7 @@ We sum up the properties of these local roots.
   the corresponding elementary cycle $\cyab$.
   
   \begin{thm}\label{thm:gen_set}
-      Let $E$ by a spanning tree for the branch points $X$.
+      Let $E$ be a spanning tree for the branch points $X$.
    The cycles $\Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l <m-1,  e \in E  \right\}$ generate $\homo$.
   \end{thm}
   \begin{proof}
@@ -330,9 +330,9 @@ We sum up the properties of these local roots.
 
      \begin{prop}\label{prop:holom_diff}
  Let $\delta = \gcd(m,n)$. The following differentials form  a $\C$-basis of $\hd$:
- \begin{align}\label{eq:holm_diff}
+ \begin{equation*}\label{eq:holm_diff}
    \W =  \left\{  \omega_{i,j} \in \WM  \mid  -mi + jn - \delta \ge 0  \right\}
- \end{align}
+ \end{equation*}
      \end{prop}
      \begin{proof}
       First we show that the differentials in $\W$ are holomorphic.
@@ -340,7 +340,7 @@ We sum up the properties of these local roots.
       \begin{align*}
        \div(x) & = \sum_{k=1}^m \left(0,\zeta^k\sqrt[m]{f(0)}\right) - \frac{m}{\delta} \cdot \sum_{l = 1}^{\delta} P_{\infty}^{(l)}, \\
        \div(y) & = \sum_{k = 1}^n P_k - \frac{n}{\delta} \cdot \sum_{l = 1}^{\delta}  P_{\infty}^{(l)}, \\
-       \div(\dx) & = (m-1)\sum_{k = 1}^n (x_k,0) - \left(\frac{m}{\delta} + 1\right)\cdot \sum_{l = 1}^{\delta}  P_{\infty}^{(l)}.
+       \div(\dx) & = (m-1)\sum_{k = 1}^n P_k - \left(\frac{m}{\delta} + 1\right)\cdot \sum_{l = 1}^{\delta}  P_{\infty}^{(l)}.
       \end{align*}
      Putting together the information, for $P \in \cu$ lying over $x_0 \in \P^1_{\C}$, we obtain
      \begin{align}\label{eq:diff_cases}
@@ -382,11 +382,11 @@ Summing verticals of the trapezoid, we find the following formula that counts th
 The equality  $\#\W = \frac{1}{2}((n-1)(m-1)-\delta+1) = g$ immediately follows from
 the following
 \begin{lemma}
-      \begin{align}\label{eq:r_j2}
+      \begin{equation*}\label{eq:r_j2}
        \sum_{j=1}^{m-1} r_j = \frac{1}{2}(m^2 - (\delta+2)m + 2\delta).
-      \end{align}
+      \end{equation*}
 \end{lemma}
-\begin{proof}
+\begin{proof}\let\qed\relax
       Let $l := \frac{m}{\delta}$. First we note that $r_j = r_{j+l}$:
       $$r_{j+l} = n(j+l) - \delta  \bmod m = nj + \frac{n}{\delta}m - \delta  \bmod m =  nj - \delta  \bmod m =  r_j$$
       and hence
@@ -400,13 +400,13 @@ the following
       \begin{align}\label{eq:r_j4}
        \sum_{j = 1}^l r_j = \sum_{j = 0}^{l-1} \delta j = \delta \cdot \frac{l(l-1)}{2}
       \end{align}
-      and thus (\ref{eq:r_j3}) and (\ref{eq:r_j4}) imply
+      and thus \eqref{m-eq:r_j3} and \eqref{m-eq:r_j4} imply
       $$\sum_{j=1}^{m-1} r_j = \delta \cdot \sum_{j=1}^{l} r_j + \delta - m = \delta^2 \cdot \frac{l(l-1)}{2} + \delta - m = \frac{1}{2}(m^2 - (\delta+2)m + 2\delta).$$
 \end{proof}
 \end{proof}
 
 \begin{rmk}
-    Note that from \eqref{eq:diff_cases} it follows that the meromorphic differentials in $\WM$ are homolorphic at every finite place.
+    Note that from \eqref{m-eq:diff_cases} it follows that the meromorphic differentials in $\WM$ are homolorphic at all finite points.
 \end{rmk}
 
 \biblio
