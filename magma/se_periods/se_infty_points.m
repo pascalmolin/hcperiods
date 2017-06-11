@@ -5,11 +5,13 @@
 *******************************************************************************/
 
 // Import functions
-import "se_de_int.m": DE_Integrals_Edge_AJM, DE_Int_Params_AJM;
+import "se_de_int.m": DE_Integrals_Edge_AJM, DE_Int_Params;
 import "se_abel_jacobi.m": PeriodLatticeReduction;
-import "se_help_funcs.m":IsPoint,Distance;
+import "se_help_funcs.m": IsPoint,Distance;
+import "se_spanning_tree.m": DE_Params_AJM;
 
-intrinsic SE_InfinitePoints_AJM( k::RngIntElt, SEC::SECurve )
+
+intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 { Abel-Jacobi map of D = [ P_infty^k - P_0 ], where P_infty^k = (\zeta_\delta^k,0) in the (r,t)-model of the curve }
 	m := SEC`Degree[1];
 	n := SEC`Degree[2];
@@ -31,9 +33,9 @@ intrinsic SE_InfinitePoints_AJM( k::RngIntElt, SEC::SECurve )
 		assert a*m + b*n eq delta;
 		M := Round(m/delta);
 		N := Round(n/delta);
-
+		
 		// Need more precision
-		C<i> := ComplexField(2*Precision(SEC`ComplexField));
+		C<I> := ComplexField((Ceiling((m/10))+1)*SEC`Prec+2*n);
 		Ct<t> := PolynomialRing(C); 
 
 		// Embed data
@@ -71,7 +73,7 @@ intrinsic SE_InfinitePoints_AJM( k::RngIntElt, SEC::SECurve )
 					y_j := Exp(-N*ltj)*LC_mi;
 					Append(~Points,<[x_j,y_j],Rts_g_t[j][2]>);
 				end for;
-				vprint SE,1 : "Bad case: have to compute:",#Points,"Integrals!";
+				vprint SE,1 : "Good case: have to compute:",#Points,"Integrals!";
 				// Rational part
 				RationalIntegral := Matrix(Q,2*SEC`Genus,1,[]);
 				// Is zero a branch point?
@@ -90,8 +92,22 @@ intrinsic SE_InfinitePoints_AJM( k::RngIntElt, SEC::SECurve )
 					end if;
 				end for;
 
-				// Compute integration parameters
-				DEInt := DE_Int_Params_AJM( ComplexEdges, SEC );
+				// Integration parameters
+				Params := DE_Params_AJM(ComplexEdges,SEC);
+				vprint SE,2 : "Parameter(AJM):",Params;
+				ExtraPrec := 2*Ceiling(Log(10,Params[1]/SEC`SpanningTree`Params[1]));
+				if ExtraPrec gt 0 then
+					vprint SE,2 :"Extra precision (AJM):",ExtraPrec;
+					C<I> := ComplexField(Precision(SEC`ComplexField)+ExtraPrec);
+					SEC`ComplexField := C;
+					// Update curve data
+					f_x := ChangeRing(SEC`DefiningPolynomial,C);
+					SEC`ComplexPolynomial := f_x;
+					// Roots of f_x
+					Roots_fx := Roots(f_x);
+					SEC`BranchPoints := [ R[1] : R in Roots_fx ];
+				end if;
+				DEInt := DE_Int_Params(Params,SEC:AJM:=true);
 
 				// Actual integrations from P_k to P
 				ComplexIntegrals := [ Matrix(SEC`ComplexField,SEC`Genus,1,[]) : j in [1..delta] ];
@@ -109,12 +125,14 @@ intrinsic SE_InfinitePoints_AJM( k::RngIntElt, SEC::SECurve )
 				RealIntegrals := [ Matrix(R,2*SEC`Genus,1,PeriodLatticeReduction(Eltseq(CI),SEC)) : CI in ComplexIntegrals ];
 				// Add integrals corresponding to ramification points
 				TotalRealIntegrals := [ ChangeRing(RationalIntegral,R) + RealIntegrals[j] : j in [1..delta] ];
-				// Reduce again modulo \Z and return results
-				SEC`AJM_InftyPoints := [ Matrix(R,2*SEC`Genus,1,[ Round(v)-v : v in Eltseq(TRI) ]) : TRI in TotalRealIntegrals ];
+
+				// Reduce again modulo \Z and return results in correct order (according to the paper)
+				SEC`AJM_InftyPoints := [ Matrix(R,2*SEC`Genus,1,[ Round(v)-v : v in Eltseq(TotalRealIntegrals[k]) ]) : k in [2..delta] ];
+				Append(~SEC`AJM_InftyPoints,Matrix(R,2*SEC`Genus,1,[ Round(v)-v : v in Eltseq(TotalRealIntegrals[1]) ]));
 			end if;
 		end if;
 		if M gt 1 or Inf_Ord ne 1 then
-			r := Exp(2*Pi(C)*i*(k-1)/delta);
+			r := Exp(2*Pi(C)*I*k/delta);
 			g_t := &*[ (1 - x*(r+t)^b*(t^M)) : x in BPs ] - (r+t)^delta;
 			g_C := Coefficients(g_t);
 			g_t := &+[ g_C[j] * t^(j-1) : j in [1..Degree(g_t)+1] | Abs(g_C[j]) gt SEC`Error ];
@@ -123,7 +141,7 @@ intrinsic SE_InfinitePoints_AJM( k::RngIntElt, SEC::SECurve )
 			Roots_gt := Roots(g_t);
 			Rts_g_t := [ R[1] : R in Roots_gt ];
 			assert #Rts_g_t eq Degree(g_t);
-			Points := [];
+			Points := [ ];
 			for j in [1..Degree(g_t)] do
 				t_j := Rts_g_t[j];
 				if Abs(t_j) gt SEC`Error then
@@ -136,13 +154,12 @@ intrinsic SE_InfinitePoints_AJM( k::RngIntElt, SEC::SECurve )
 			end for;
 			assert #Points in [n*b+n*M-1,n*b+n*M-b-M-1];
 			vprint SE,1 : "Bad case: have to compute:",#Points,"Integrals!";
-			//print "Points:",Points;
 			if Degree(g_t) eq (n-1)*(M+b) then
 				Append(~Points,<[0,0],N*m+M+b>);
 			end if;
 			// Compute divisor	
-			D := SE_Divisor(Points,SEC:Check:=true);
-			V := -SE_AbelJacobi(D,SEC);
+			D := SE_Divisor(Points,SEC:Check:=false);
+			V := -SE_AbelJacobi(D,[BPs[SEC`Basepoint],0],SEC);
 			// Substract the sum of infinite points
 			V -:= b * ChangeRing(SEC`AJM_SumOfInftyPoints,R);
 			SEC`AJM_InftyPoints[k] := Matrix(R,2*SEC`Genus,1,[ z - Round(z) : z in Eltseq(V) ]);

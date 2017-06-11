@@ -15,30 +15,55 @@ import "se_abel_jacobi.m": SE_TreeMatrix, SE_ReductionMatrix, SE_RamificationPoi
 // Verbose
 declare verbose SE,3;
 
-C_20<i> := ComplexField(20);
+C_20<I> := ComplexField(20);
 C_Pi := Real(Pi(C_20));
 
 // Superelliptic curves
 declare type SECurve;
 
 declare attributes SECurve: 
-	DefiningPolynomial, Genus, Degree, BranchPoints, LowPrecBranchPoints, ComplexField, RealField, HolomorphicDifferentials, Prec, SmallPeriodMatrix, BigPeriodMatrix, ReductionMatrix, 
-	AJM_RamificationPoints, AJM_InftyPoints, AJM_SumOfInftyPoints, AbelJacobiMap, TreeMatrix, Error, IntegrationType, InfinitePoint,
-ElementaryIntegrals, IntersectionMatrix, Basepoint, Zetas, LeadingCoeff, LeadingCoeff_T, LC2, ComplexPolynomial,
-DifferentialChangeMatrix, SpanningTree;
+	DefiningPolynomial, 
+	Genus, 
+	Degree, 
+	BranchPoints, 
+	LowPrecBranchPoints, 
+	ComplexField, 
+	RealField, 
+	HolomorphicDifferentials, 
+	Prec, 
+	SmallPeriodMatrix, 
+	BigPeriodMatrix,
+	ReductionMatrix, 
+	AJM_RamificationPoints, 
+	AJM_InftyPoints, 
+	AJM_SumOfInftyPoints, 
+	TreeMatrix, 
+	Error, 
+	IntegrationType, 
+	InftyPoint,
+	ElementaryIntegrals, 
+	IntersectionMatrix, 
+	Basepoint, 
+	Zetas, 
+	LeadingCoeff, 
+	LeadingCoeff_T, 
+	LC2, 
+	ComplexPolynomial,
+	DifferentialChangeMatrix, 
+	SpanningTree;
 
 // Constructor via multivariate polynomial
-intrinsic SE_Curve( f::RngMPolElt : Prec := 20, Small := false, AbelJacobi := true, IntegrationType := "Opt", InfinitePoints := false ) -> SECurve
+intrinsic SE_Curve( f::RngMPolElt : Prec := 20, Small := true, AbelJacobi := true, IntegrationType := "Opt", InftyPoints := false ) -> SECurve
 { Creates an superelliptic curve object with defining polynomial f(x,y) = y^m - f(x) }
 	K := BaseRing(Parent(f));
 	Kx<x> := PolynomialRing(K);
 	g := -Evaluate(f,[x,0]);
 	m := Degree(f,2);
-	return SE_Curve( g, m : Prec := Prec, Small := Small, AbelJacobi := AbelJacobi, IntegrationType := IntegrationType, InfinitePoints := InfinitePoints );
+	return SE_Curve( g, m : Prec := Prec, Small := Small, AbelJacobi := AbelJacobi, IntegrationType := IntegrationType, InftyPoints := InftyPoints );
 end intrinsic; 
 
 // Constructor via univariate polynomial and degree
-intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 20, Small := false, AbelJacobi := true, IntegrationType := "Opt", InfinitePoints := false ) -> SECurve
+intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 20, Small := true, AbelJacobi := true, IntegrationType := "Opt", InftyPoints := false ) -> SECurve
 { Creates an superelliptic curve object with defining equation y^m = f(x) }
 
 	// Create object
@@ -52,11 +77,13 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 20, Small := false, Ab
 	// Precision
 	K := BaseRing(Parent(f));
 	if not IsExact(K) then
-		Prec := Max(Prec,Precision(K));
+		Prec := Min(Prec,Precision(K));
 	end if;
+	vprint SE,1 : "Precision:",Prec; 
 
 	// Degrees
 	n := Degree(f); delta := Gcd(m,n);
+	SEC`Degree := [m,n,delta];
 
 	// Requirements
 	require &and[m ge 2, n ge 3] : "Degrees not supported."; 
@@ -75,29 +102,32 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 20, Small := false, Ab
 		SEC`IntegrationType := "GC";
 	end if;
 
-
-	// Extra precision
-	ExtraPrec := 2*Ceiling(Log(10,Binomial(n,Floor(n/2))))+5;
-	vprint SE,1 : "Extra precision:",ExtraPrec; 	
-
-	// Fields
-	C20<i> := ComplexField(20);
-
 	// Error
 	SEC`Error := 10^-Prec;
 	
-	if AbelJacobi then
-		// Increase precision for Abel-Jacobi map precomputations
-		Prec +:= 5;
-	end if;
+	// Increase precision for precomputations
+	CompPrec := Prec+Floor(m/5)+2;
+	SEC`Prec := CompPrec;
+	SEC`RealField := RealField(CompPrec);
+	vprint SE,1 : "Computational precision:",CompPrec;
 
-	C<i> := ComplexField(Prec+ExtraPrec);
-	Cx<x> := PolynomialRing(C);
+	// Low precision branch points
+	C20<I> := ComplexField(20);
+	f_lp := ChangeRing(f,C20);
+	Roots_lp := Roots(f_lp);
+	require #Roots_lp eq n : "Defining polynomial has to be squarefree.";
+	SEC`LowPrecBranchPoints := [ R[1] : R in Roots_lp ];
+
+	// Compute spanning tree
+	SpanningTree(SEC);
+
+	// Extra precision
+	ExtraPrec := Max(0,Ceiling( Log(10,Binomial(n,Floor(n/4))*SEC`SpanningTree`Params[1]*Max([Abs(c):c in Coefficients(f)]))));
+	vprint SE,1 : "Extra precision:",ExtraPrec; 	
+
+	// Complex field of maximal precision
+	C<I> := ComplexField(CompPrec+ExtraPrec);
 	SEC`ComplexField := C; 
-	SEC`Prec := Prec;
-	SEC`RealField := RealField(Prec+5);
-	vprint SE,1 : "Precision:",Prec; 	
-	
 
 	// Embed univariate Polynomial
 	f_x := ChangeRing(f,C);
@@ -131,25 +161,27 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 20, Small := false, Ab
 	DFF := <jm,#DF,DF,jPows>;
 	SEC`HolomorphicDifferentials := DFF;
 
-	// Transformation, if m = delta (?)
+	// Transformation, if m = delta (not working properly)
 	if false then
 	//if n mod m eq 0 then
-		D := ScalarMatrix(C,g,0);
+		CC<I> := ComplexField(2*Precision(SEC`ComplexField));
+		SEC`ComplexField := CC;
+		D := ScalarMatrix(CC,g,0);
+		CCx<x> := PolynomialRing(CC);
+		f_x := ChangeRing(f,CC);
+		Roots_fx := Roots(f_x);
+		Points := [ R[1] : R in Roots_fx ];
 		x_n := Points[n];
 		f_x := &*[ (x_n - x_k )*x+1 : x_k in Prune(Points)];
-		print "f_x:",f_x;
 		SEC`LeadingCoeff_T := LeadingCoefficient(f_x);
-		print "LC-org:",SEC`LeadingCoeff;
-		print "LC2:",SEC`LeadingCoeff_T;
 		Roots_f := Roots(f_x);
 		Points := [ R[1] : R in Roots_f ];
-		print "Points:",Points;
 		require #Points eq n-1 : "f(x) has to be separable.";
 		D_LC := [ 1/(SEC`LeadingCoeff^(DFF[4][k]/m) * SEC`LeadingCoeff_T^(DFF[4][k]/m)) : k in [1..g] ];
 		print "D_LC:",D_LC;
-		SEC`InfinitePoint := C!x_n;
+		SEC`InftyPoint := C!x_n;
 		if Abs(x_n) lt SEC`Error then
-			D := -DiagonalMatrix(C,g,D_LC);
+			D := -DiagonalMatrix(CC,g,D_LC);
 		else
 			M := n/m; 	
 			ct := 1;
@@ -173,22 +205,16 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 20, Small := false, Ab
 		D := DiagonalMatrix(C,SEC`Genus,[ Exp( DFF[4][k] * LLC1 ) : k in [1..SEC`Genus] ]);
 	end if;
 
-	// Degrees
-	SEC`Degree := [m,n,delta];
-
 	// Change due to transformations
 	SEC`DifferentialChangeMatrix := D;
 
 	// Branch points
 	SEC`BranchPoints := Points;
-	// Low precision branch Points
-	SEC`LowPrecBranchPoints := ChangeUniverse(SEC`BranchPoints,C20);
 
 	// Root of unity powers
-	SEC`Zetas := [ Exp(k*Pi(C)*i/m) : k in [0..2*m-1] ];
+	SEC`Zetas := [ Exp(k*Pi(C)*I/m) : k in [0..2*m-1] ];
 
 	// Compute spanning tree
-	SpanningTree(SEC);
 	TreeData(~SEC`SpanningTree,SEC`BranchPoints);
 
 	// Compute big (and small) period matrix
@@ -210,35 +236,34 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 20, Small := false, Ab
 
 		SEC`AJM_InftyPoints := [];
 		// Compute Abel-Jacobi map between P_0 and P_{\infty}
-		if InfinitePoints then
+		if InftyPoints then
 			for k in [1..delta] do
-				SE_InfinitePoints_AJM(k,SEC);
+				SE_AJM_InftyPoints(k,SEC);
 			end for;
 			// Test results
 			V := (m/delta) * &+[ v : v in SEC`AJM_InftyPoints ];
 			assert &and[ Abs(V[j][1]-Round(V[j][1])) lt SEC`Error : j in [1..2*SEC`Genus] ];
 		end if;
-
-		// Reset to original precision
-		SEC`RealField := RealField(SEC`Prec);
-		SEC`Prec -:= 5;
 	end if;
+	// Reset to original precision
+	SEC`Prec := Prec;
+	SEC`RealField := RealField(Prec);
 	return SEC;
 end intrinsic;
 
 
 // Constructor via branch points and degree
-intrinsic SE_Curve( Points::SeqEnum[FldComElt], m::RngIntElt : LeadingCoeff := 1, Prec := 20, Small := true, AbelJacobi := true, IntegrationType := "Opt", InfinitePoints := false) -> SECurve
-{ Creates an superelliptic curve object via y^m = LeadingCoeff * &*[ (x-p) : p in Points] }
+intrinsic SE_Curve( Points::SeqEnum[FldComElt], m::RngIntElt : LeadingCoeff := 1, Prec := 20, Small := true, AbelJacobi := true, IntegrationType := "Opt", InftyPoints := false) -> SECurve
+{ Creates an superelliptic curve object via y^m = LeadingCoeff * \prod[(x-p) : p in Points] }
 	Cx<x> := PolynomialRing(Universe(Points));
 	f := LeadingCoeff * &*[ (x - p) : p in Points ];
-	return SE_Curve(f,m:Prec:=Prec,Small:=Small,AbelJacobi:=AbelJacobi,IntegrationType := IntegrationType, InfinitePoints := InfinitePoints);
+	return SE_Curve(f,m:Prec:=Prec,Small:=Small,AbelJacobi:=AbelJacobi,IntegrationType:=IntegrationType,InftyPoints:=InftyPoints);
 end intrinsic; 
 
 
 // Printing
 intrinsic Print( SEC::SECurve : Extended := false )
-{ Print Riemann surface }
+{ Print data the of complex superelliptic curve SEC }
 	print "Complex superelliptic curve of genus",SEC`Genus ,"defined as degree",SEC`Degree[1],"cover of",SEC`DefiningPolynomial,"with prescribed precision",SEC`Prec;
 	if Extended then
 		print "";
@@ -253,24 +278,21 @@ intrinsic Print( SEC::SECurve : Extended := false )
 		print " ElementaryIntegrals:", assigned SEC`ElementaryIntegrals;
 		print " BigPeriodMatrix:",assigned SEC`BigPeriodMatrix;
 		print " SmallPeriodMatrix:",assigned SEC`SmallPeriodMatrix;
-		print " Basepoint:", assigned SEC`Basepoint;
 		print " TreeMatrix:", assigned SEC`TreeMatrix;
 		print " ReductionMatrix:", assigned SEC`ReductionMatrix;
+		print " Basepoint:", SEC`Basepoint;
 		print " AJM_RamificationPoints:", assigned SEC`AJM_RamificationPoints;
 		print " AJM_SumOfInftyPoints:", assigned SEC`AJM_SumOfInftyPoints;
-		print " AJM_InftyPoints:", #SEC`AJM_InftyPoints eq SEC`Degree[1];
+		print " AJM_InftyPoints:", #SEC`AJM_InftyPoints eq SEC`Degree[3];
 	end if;
 end intrinsic;
 
-
-
-
 function IsPoint(Point,SEC,Err)
 // Checks, whether [x,y] is a point on the curve or not, up to some error
-	t := Evaluate(SEC`ComplexPolynomial,Point[1])- Point[2]^SEC`Degree[1];
+	t := Abs(Point[2]) - Abs(SE_Branches(Point[1],SEC:Principal));
 	if Abs(t) gt Err then
 		print "SEC:",SEC;
-		print "Tup:",Tup;
+		print "Point:",Point;
 		print "t:",t;
 		return false;
 	else
@@ -278,32 +300,56 @@ function IsPoint(Point,SEC,Err)
 	end if;
 end function;
 
-// Divisors
+
+intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 20, Ht := 10^2, Monic:=false ) -> RngMPolElt
+{ Returns a random superelliptic curve object defined over the rationals }
+	Qx<x> := PolynomialRing(Rationals());
+	while true do
+		if Monic then
+			f := x^n;
+		else
+			f := Random([-1,1])*Random([1..Ht])*x^n;
+		end if;
+		for j in [0..n-1] do
+			c := Random([-1,0,1]);
+			f +:= c*Random([1..Ht])*x^j;
+		end for;
+		if Gcd(f,Derivative(f)) eq One(Qx) then
+			break;
+		end if;
+	end while;
+	return SE_Curve(f,m:Prec:=Prec);
+end intrinsic;
+
+
+// (Simple) Divisor-class on complex superelliptic curves
 declare type SEDivisor;
 
 declare attributes SEDivisor: Curve, Support, Degree;
 
-
 // Constructor
-intrinsic SE_Divisor(Points::SeqEnum[Tup],SEC::SECurve:Check:=true) -> SEDivisor
-{ Construct the divisor \sum v_P P }
+intrinsic SE_Divisor(Points::SeqEnum,SEC::SECurve:Check:=true) -> SEDivisor
+{ Creates a divisor on the superelliptic curve SEC }
+	// Create object
 	SED := New(SEDivisor);	
 	SED`Degree := &+[ P[2] : P in Points ];
 	SED`Curve := <SEC`Degree[1],SEC`DefiningPolynomial>;
-	
+
 	// Error
-	Err := 10^-10;
+	Err := 10^-Floor(SEC`Prec/2);
+	//Err := SEC`Error;
 
 	// Complex field
-	C<i> :=  SEC`ComplexField; 
-	C_1 := One(C); C_0 := Zero(C);
+	C<I> :=  SEC`ComplexField;
+	C_0 := Zero(C);
+	C_1 := One(C);
 
-	// Support
+	// Support and coefficients
 	Support := [];
 	for P in Points do
-		require Type(P[2]) eq RngIntElt and P[2] ne 0 : "Multiplicity (second entry) of",P,"has to be non-zero integer!";
+		require Type(P[2]) eq RngIntElt and P[2] ne 0 : "Multiplicity (second entry) of",P,"has to be a non-zero integer!";
 		if #P[1] eq 1 then
-			require Floor(P[1][1]) in [1..SEC`Degree[3]] : "Please enter infinite points as <[k],c_k>, where k in",[1..SEC`Degree[3]]," and c_k is an integer.";
+			require Floor(P[1][1]) in [1..SEC`Degree[3]] : "Please enter Infty points as <[k],c_k>, where k in",[1..SEC`Degree[3]]," and c_k is a non-zero integer.";
 			Append(~Support,P);
 		elif #P[1] eq 2 then
 			// Embed affine coordinates into complex field
@@ -316,7 +362,7 @@ intrinsic SE_Divisor(Points::SeqEnum[Tup],SEC::SECurve:Check:=true) -> SEDivisor
 			Append(~Support,<[P_x,P_y],P[2]>);
 		elif #P[1] eq 3 then
 			P_z := C!P[1][3];
-			require P_z ne C_0 : "Please enter infinite points as <[k],c_k>, where k in",[1..SEC`Degree[3]]," and c_k is an integer.";
+			require P_z ne C_0 : "Please enter Infty points as <[k],c_k>, where k in",[1..SEC`Degree[3]]," and c_k is a non-zero integer.";
 			// Embed projective coordinates into affine space over complex field
 			P_x := C!P[1][1]/P_z;
 			P_y := C!P[1][2]/P_z;
@@ -326,13 +372,23 @@ intrinsic SE_Divisor(Points::SeqEnum[Tup],SEC::SECurve:Check:=true) -> SEDivisor
 			end if;
 			Append(~Support,<[P_x,P_y],P[2]>);
 		else
-			require false : "Please input SEDivisors as list of tuples [< P,c_P >,...], where P = [x,y] or P = [x,y,z] and non-zero z for finite points and P = [k] for infinite points";   
+			require false : "Please input SEDivisors as list of tuples [< P,c_P >,...], where P = [x,y] or P = [x,y,z] and non-zero z for finite points and P = [k] for Infty points";   
 		end if;
 	end for;
 	SED`Support := Support;
 	return SED;
 end intrinsic;
 
+
+// Addition
+intrinsic '+'(D1::SEDivisor,D2::SEDivisor) -> SEDivisor
+{ Add two divisors on SEC }
+	require D1`Curve eq D2`Curve : "Divisors have to be defined on the same curve.";
+	D1`Support cat:= D2`Support;
+	D1`Degree +:= D2`Degree;
+	return D1;
+end intrinsic;
+	
 
 // Printing
 intrinsic Print( SED::SEDivisor )
@@ -343,15 +399,27 @@ intrinsic Print( SED::SEDivisor )
 end intrinsic;
 
 
-intrinsic SE_RandomDivisor(NrOfPts::RngIntElt,SEC::SECurve : Ht := 1000 ) -> SEDivisor
+intrinsic SE_RandomPoint( SEC::SECurve : Ht := 10^2 ) -> SeqEnum
+{ Returns a random point (x,y) on the superelliptic curve SEC }
+	m := SEC`Degree[1];
+	n := SEC`Degree[2];
+	C<I> := ComplexField((Ceiling((m/10))+1)*SEC`Prec+2*n);
+	x := C!Random([-Ht..Ht])/Random([1..Ht]) + I*C!Random([-Ht..Ht])/Random([1..Ht]);
+	y := SE_Branches(x,SEC:Principal);	
+	return [x,y];
+end intrinsic;
+
+
+intrinsic SE_RandomDivisor( NrOfPts::RngIntElt,SEC::SECurve : Ht := 10^2, Zero := false ) -> SEDivisor
 { Creates a random divisor on the superelliptic curve SEC }
-	C<i> := SEC`ComplexField;
 	Points := [];
 	for k in [1..NrOfPts] do
-		x := C!Random([-Ht..Ht])/Random([1..Ht]) + i*C!Random([-Ht..Ht])/Random([1..Ht]);
-		y := SE_PrincipalBranch(x,SEC);	
-		Append(~Points,<[x,y],Random([-1,1])*Random([1..Ht])>);
+		Append(~Points,<SE_RandomPoint(SEC:Ht:=Ht),Random([-1,1])*Random([1..Ht])>);
 	end for;
+	if Zero then
+		Deg := &+[ P[2] : P in Points ];
+		Points[1][2] -:= Deg;
+	end if;
 	return SE_Divisor(Points,SEC);
 end intrinsic;
 

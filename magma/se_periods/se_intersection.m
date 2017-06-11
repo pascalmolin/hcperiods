@@ -93,9 +93,9 @@ function SE_IntersectionNumber( Edge1,Edge2,Points,m,n,Zetas )
 		Val_ab := C_ab * AR1;
 		Val_cd := C_cd * AR2;		
 		Val := Val_cd/Val_ab;
-		k_ := ((1/(2*Pi30)) * ( phi + m * Arg(Val) ));
-		k := Round(k_);
-		assert Abs(k-k_) lt 10^-10;
+		k := Round(((1/(2*Pi30)) * ( phi + m * Arg(Val) )));
+		/*k := Round(k_);
+		assert Abs(k-k_) lt 10^-10;*/
 		if phi gt 0 then
 			return <1-k,-k>;
 		else
@@ -108,9 +108,9 @@ function SE_IntersectionNumber( Edge1,Edge2,Points,m,n,Zetas )
 		Val_ab := C_ab * AR1;
 		Val_cd := C_cd * AR2;		
 		Val := Val_cd/Val_ab;
-		k_ := (1/(2*Pi30)) * ( phi + m * Arg(Val) ) + (1/2);
-		k := Round(k_);
-		assert Abs(k-k_) lt 10^-10;
+		k := Round((1/(2*Pi30)) * ( phi + m * Arg(Val) ) + (1/2));
+		/*k := Round(k_);
+		assert Abs(k-k_) lt 10^-10;*/
 		return <-k,1-k>;
 	else
 		error Error("Bad edge in spanning tree.");

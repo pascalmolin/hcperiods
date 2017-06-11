@@ -2,23 +2,22 @@
 
 \begin{document}
 
-  \section{Examples and Timings}\label{sec:examples_timings}
+  \section{Examples and timings}\label{sec:examples_timings}
 
-  \subsection{Timings}
-  \newcommand{\bern}{\mathcal{B}}
+    \newcommand{\bern}{\mathcal{B}}
   \newcommand{\bernrev}{\widetilde{\bern}}
 
   For testing purposes we consider a family of curves given by Bernoulli polynomials
-          \begin{equation}
+          \begin{equation*}
               \bern_{m,n} : y^m = B_n(x) = \sum_{k=0}^n\binom nkb_{n-k}x^k
-          \end{equation}
-  as well as their reciprocals:
-          \begin{equation}
-              \bernrev_{m,n} : y^m = x^nB_n(\frac1x).
-          \end{equation}
+          \end{equation*}
+  as well as their reciprocals
+          \begin{equation*}
+              \bernrev_{m,n} : y^m = x^nB_n\left(\frac1x\right).
+          \end{equation*}
 
   The branch points of these curves present interesting patterns which can be respectively considered
-  as good and bad cases from a numerical integration perspective (Figure \ref{fig:roots_bern}).
+  as good and bad cases from a numerical integration perspective (Figure \ref{m-fig:roots_bern}).
 
   \begin{figure}[H]
       \begin{center}
@@ -69,6 +68,39 @@
           \caption{timings for hyperelliptic curves, single core Xeon E5 2.27GHz (in seconds).}
       \end{center}
   \end{table}
+
+  \begin{table}[H]
+      \begin{center}
+          \begin{tabular}{lllrrrrr}
+              \toprule
+              & & \hfill bits & 128 & 512 & 2000 & 4000 & 10000 \\
+              genus & curve & \hfill digits & 38 & 154 & 600 & 1200 & 3000 \\
+              \midrule
+              21 & $\bern_{7,8}$
+              & Arb & 5.4e-2 & 0.5 & 9.9 & 72.2 & 1181 \\
+              & & Magma (new) & 0.38 & 2.0 & 27.6 & 152 & 2161 \\
+              \cmidrule{3-8}
+              & $\bernrev_{7,8}$
+              & Arb & 5.9e-2 & 6.3e-1 & 12.7 & 92.8 & 1520 \\
+              & & Magma (new) & 0.66 & 4.0 & 56 & 312 & 4257 \\
+              \midrule
+              84 & $\bern_{25,8}$
+              & Arb & 0.11 & 0.79 & 17.8 & 119 & 1731 \\
+              & & Magma (new) & 1.4 & 6.8 & 100 & 596 & 8686 \\
+              \midrule
+              87 & $\bern_{7,30}$
+              & Arb & 0.9 & 8.5 & 93 & 610 & 8734 \\
+              & & Magma (new) & 4.8 & 23.1 & 242 & 1224 & 14745 \\
+              \midrule
+              348 & $\bern_{25,30}$
+              & Arb & 1.6 & 12.7 & 202 & 1284 \\
+              & & Magma (new) & 38 & 92 & 598 & 2597 \\
+              \bottomrule
+          \end{tabular}
+          \caption{timings for superelliptic curves, single core Xeon E5 2.27GHz (in seconds).}
+      \end{center}
+  \end{table}
+
 
   \biblio
   \end{document}

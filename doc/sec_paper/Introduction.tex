@@ -2,62 +2,67 @@
 
 \begin{document}
 
-  Content: Problem formulation, Applications, Existing work, Thm: Complexity Abel-Jacobi
-
   \section{Introduction}
 
   The Abel-Jacobi map links a curve to a complex torus.
   In particular the matrix of periods makes it possible to define the Riemann
   theta function of the curve, which is an object of central interest in
-  mathematics: let us
-  mention the theory of abelian function or integration of partial differential
+  mathematics and physics: let us
+  mention the theory of abelian functions or integration of partial differential
   equations.
 
   In the context of cryptography and number theory, periods also appear
   in the BSD conjecture or as a tool to identify isogenies or to find
   curves having prescribed complex multiplication \cite{vanWamelen06}.
   For such diophantine applications, it is necessary to compute
-  integrals to large precision (say thousand digits), and to have
+  integrals to large precision (say thousand digits) and to have
   rigorous results.
 
   \subsection{Existing algorithms}
 
   For genus 1 and 2, methods based on isogenies (AGM \cite{CremonaAGM13},
-  Richelot \cite{BostMestre88}, Borchards means \cite{Labrande16})
+  Richelot \cite{BostMestre88}, Borchardt mean \cite{Labrande16})
   make it possible to compute periods to arbitrary precision in almost
-  linear time. However these techniques scale very badly when the genus grows.
+  linear time. However, these techniques scale very badly when the genus grows.
 
   For modular curves, the modular symbols machinery and termwise integration of
-  modular forms expansions also give excellent algorithms
-  \cite[sec 3.2]{Mascot13}.
+  expansions of modular forms give excellent algorithms
+  \cite[\S 3.2]{Mascot13}.
 
-  For general hyperelliptic curve of arbitrary genus, the Magma implementation
+  For hyperelliptic curves of arbitrary genus, the Magma implementation
   due to van Wamelen \cite{vanWamelen06} computes this map.
-  However it is limited in terms of precision (less
+  However, it is limited in terms of precision (less
   than 2000 digits) and some bugs are experienced on
-  certain configurations of branch points. This implementation motivated our
+  certain configurations of branch points. The shortcomings of this implementation motivated our
   work. Using a different strategy
   (integration along a tree instead of around Voronoi cells)
-  we obtain a much better algorithm and rigorous results.
+  we obtain a much faster, more reliable algorithm and rigorous results.
 
-  For completely general algebraic curves, there is an implementation in Maple
-  due to van Hoeij and Deconinck \cite{DeconinckvanHoeij01}.
+  For general algebraic curves, there is an implementation in Maple
+  due to Deconinck and van Hoeij \cite{DeconinckvanHoeij01}.
   We found that this package is not suitable for high precision purposes.
 
-  \subsection{Main result}
+  We also mention the Matlab implementations due to Frauendiener and Klein for hyperelliptic curves \cite{FrauendienerKlein2015}
+  and for general algebraic curves \cite{FrauendienerKlein2011}.
 
-  This paper adresses the problem of computing the period matrix and the
-  Abel-Jacobi on curves of the form $y^m = f(x)$, which generalize immediately
-  hyperelliptic curves and are usually called superelliptic.
+  \subsection{Main results}
+
+  This paper adresses the problem of computing period matrices and the
+  Abel-Jacobi map of algebraic curves given by an affine equation of the form  (see Definion \ref{m-def:se_curve})
+  \begin{equation*}
+  y^m = f(x), \quad m > 1, f \in \C[x] \text{ separable of degree} \deg(f) = n \ge 3.
+  \end{equation*}
+  They generalize
+  hyperelliptic curves and are usually called \textit{superelliptic curves}.
 
   We take advantage of their specific geometry to obtain the following
-  (see Theorem \ref{thm:complexity_integrals})
+  (see Theorem \ref{m-thm:complexity_integrals})
   \begin{thm}
-      Let $y^m=f(x)$ be a superelliptic curve of genus $g$,
-      where $f$ has degree $d$.
+      Let $\cu$ be a superelliptic curve of genus $g$ defined by the equation an $y^m=f(x)$
+      where $f$ has degree $n$.
       We can compute a basis of the period lattice to precision
-      $D$ digits using $O(n(g+\log D)D^2\log^{2+\varepsilon} D)$
-      binary operations, where $\epsilon>0$ is chosen so that
+      $D$ digits using $$O(n(g+\log D)D^2\log^{2+\varepsilon} D) \text{ binary operations,}$$
+     where $\epsilon>0$ is chosen so that
       the multiplication of precision $D$ numbers has complexity
       $O(D\log^{1+\epsilon}D)$.
   \end{thm}
@@ -67,20 +72,23 @@
 
   In order
   to obtain standard periods we rely on some linear algebra to obtain a
-  symplectic basis of homology (see Section \ref{sec:symp_basis}).
-  In practice this step has negligible complexity
-  and produces a base change with tiny coefficients. However we have no proof
+  symplectic basis of the homology group (see Section \ref{m-subsec:symp_basis}).
+  In practice this step takes negligible time
+  and produces a base change with tiny coefficients. However, we have no proof
   of this fact which has to do with the very specific form of our input,
   so we leave it as a supplementary hypothesis to claim the
   following
   \begin{thm}
-      Let $y^m=f(x)$ be a superelliptic curve of genus $g$ whose periods
+     Let $\cu$ be a superelliptic curve of genus $g$ defined by the equation an $y^m=f(x)$ whose periods
       have been computed.
       Provided the symplectic reduction
       step runs in $O(g^2)$ operations and produces $O(1)$ coefficients,
-      we compute the reduced period matrix $τ$ to precision $D$
+      we compute the small period matrix $τ$ to precision $D$
       digits using an extra $O(g^{2.8}D\log^{1+\varepsilon}D)$ operations.
   \end{thm}
+
+  \todo Theorem on Abel-Jacobi map?
+
 
   \subsection{Rigorous implementation}
 
@@ -92,13 +100,59 @@
   the accuracy of the numerical results of our algorithm (up to human or even
   compiler errors, as usual).
 
-  Another implementation has been done in Magma. Both are publicly available
+  Another implementation has been done in Magma \cite{Magma}. Both are publicly available
   on github \url{https://github.com/pascalmolin/hcperiods}.
+
+  \subsection{Interface with the LMFDB}
+
+  Having rigorous period matrices is a valuable input for the methods developped by
+  Sijsling et al. \cite{CMSVEndos} to compute endormorphism rings of Jacobians of hyperelliptic
+  curves.
+  During a meeting aimed at expanding the `L-functions and modular forms database' \cite[LMFDB]{lmfdb}
+  to genus $3$ curves, the Magma implementation of our algorithm was incorporated in their framework
+  to successfully compute the endomorphism rings of Jacobians of $67,879$ hyperelliptic
+  curves of genus $3$, and confirm those of the $66,158$ genus
+  2 curves that are currently in the database.
+
+  For these applications big period matrices were computed to $300$ digits precision.
+
+  \subsection{Structure of the paper}
+
+  In Section \ref{m-sec:ajm} we briefly review the objects we are interested
+  in, namely period matrices and the Abel-Jacobi map of nice algebraic curves.
+
+  The ingredients to obtain these objects, a basis of holomorphic differentials
+  and a homology basis, are made explicit in the case of superelliptic curves
+  in Section \ref{m-sec:se_curves}.
+
+  We give formulas for the computation of periods in Section
+  \ref{m-sec:strat_pm} and explain how to obtain from them the standard period
+  matrices using symplectic reduction.
+
+  In Section \ref{sec:intersections} we give explicit formulas for the
+  intersection numbers of our homology basis.
+
+  For numerical integration we employ two different integration schemes that
+  are explained in Section \ref{m-sec:numerical_integration}: the
+  double-exponential integration and
+  (in the case of hyperelliptic curves) Gauss-Chebychev integration.
+
+  The actual computation of the Abel-Jacobi map is explained in detail in
+  Section \ref{m-sec:comp_ajm}.
+
+  In Section \ref{m-sec:comp_asp} we analyze the complexity of our algorithm
+  and share some insights on the implementation.
+
+  Finally, Section \ref{m-sec:examples_timings} contains some tables with
+  running times to demonstrate the performance of the code.
 
   \subsection{Acknowledgements}
 
   The first author wants to thank the crypto team at Inria Nancy, where
   a first version of this work was carried out in the case of hyperelliptic
   curves.
+
+  The second author wants to thank Steffen Müller and Florian Hess for helpful discussions.
+  Moreover, he acknowledges the support from the DAAD under grant $57212102$.
 
 \end{document}

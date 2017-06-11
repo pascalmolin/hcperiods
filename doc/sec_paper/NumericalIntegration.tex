@@ -2,29 +2,18 @@
 
 \begin{document}
 
-  \section{Numerical integration}\label{sec:numerical_integration}
+\section{Numerical integration}\label{sec:numerical_integration}
 
-  For each edge $(a,b) \in E$, we want to evaluate the elementary integrals
-  (see Remark \ref{m-rmk:elem_ints})
-\begin{align*}
- \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du.
-\end{align*}
-  by numerical integration.
-  
- As explained in \S \ref{m-subsec:real_mult}, the actual computations will be done on integrals of the form
-\begin{equation}
-    \label{eq:elem_num_int}
+As explained in Section \ref{m-subsec:numerical_integration}, the periods
+of generating cycles $\gamma\in \Gamma$ are expressed in terms of
+elementary integrals
+\eqref{m-eq:elem_num_int}
+\begin{equation*}
     I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{\frac jm}\ytab(u)^j}
-\end{equation}
-(that is, replacing $(u+\frac{b+a}{b-a})^{i-1}$ by $u^{i-1}$ in the numerator)
-so that we restrict the numerical analysis to this case,
-the value of elementary integrals being recovered by the polynomial shift
-\begin{equation}
-    \label{eq:polshift}
-    \int_{-1}^1\frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac jm}}\du
-    = \sum_{l=0}^{i-1} {i-1 \choose l} \left(\frac{b+a}{b-a}\right)^{i-1-l} I_{a,b}(l,j).
-\end{equation}
- 
+\end{equation*}
+where $(a,b)\in E$ and $\omega_{i,j}\in\W$.
+We restrict the numerical analysis to this case.
+
 In this section, we denote by $α$ the value $1-j/m$, which is the crucial parameter for numerical integration.
 Notice that $α=1/2$ for hyperelliptic curves, while for general superelliptic curves $α$ ranges
 from $1/m$ to $\frac{m-1}m$ depending on the differential form $\omega_{i,j}$ considered.
@@ -41,49 +30,60 @@ even with different values of $\alpha$;
     provides a better scheme (fewer and simpler integration points).
 \end{itemize}
 For larger $m$, the periods could also be computed using general Gauss-Jacobi integration
-of parameters $\alpha,\alpha$. However a different scheme has to be computed for each $\alpha$,
+of parameters $\alpha,\alpha$. However, a different scheme has to be computed for each $\alpha$
 and it now involves computing roots of general Jacobi polynomials to large accuracy, which
 makes it hard to compete with the double-exponential scheme.
 
+\begin{rmk}
+    It happens that the double exponential scheme performs better than Gauss-Chebychev on
+    particular integrals. This is easy to detect in practice and we can always switch to
+    the best method.
+\end{rmk}
+
 \subsection{Double-exponential integration}\label{sec:de_int}
+
+Throughout this section, $λ\in[1,\frac{π}2]$ is a fixed parameter.
+By default the value $λ=\frac{π}2$ is a good choice, however
+smaller values may improve the constants. We will not address
+this issue here.
+\medskip
 
 Using the double-exponential change of variable
 \begin{equation}
     \label{eq:de_change}
 u=\tanh(λ\sinh(t)),
 \end{equation}
-the singularities at $\pm1$ are pushed to infinity and
-the integral \eqref{m-eq:elem_num_int} becomes
-\begin{equation}
+the singularities of \eqref{eq:elem_num_int} at $\pm1$ are pushed to infinity and
+the integral becomes
+\begin{equation*}
     I_{a,b}(i,j) = \int_\R g(t)\dt
-\end{equation}
+\end{equation*}
 with
-\begin{equation}
-   % g(t) = \frac{u(t)^{i-1}}{\ytab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
-   g(t) = \frac{u(t)^{i-1}}{\ytab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
-\end{equation}
+\begin{equation*}
+   g(t) = \frac{u(t)^{i-1}}{\ytab(u(t))^j}\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}.
+\end{equation*}
 
 Let
-\begin{equation}
+\begin{equation*}
     Z_r = \set{\tanh(λ\sinh(z)), -r<\Im(z)<r }
-\end{equation}
-be the image of the strip $\Delta_r$ under the change of
-variable \eqref{eq:de_change}.
+\end{equation*}
+be the image of the strip of width $2r$ under the change of
+variable \eqref{m-eq:de_change}.
 
 Since we can compute the distance of each branch point $u_i$ to
-both $[-1,1]$ and its neighborhood $Z_r$ (see \S \ref{m-sec:dist_zr}), we obtain
+both $[-1,1]$ and its neighborhood $Z_r$ (see \S \ref{m-subsec:de_case}), we obtain
   \begin{lemma}
       There exist explicitly computable
       constants $M_1$, $M_2$ such
       that
       \begin{itemize}
-          \item for $u\in[-1,1]$, $\abs{\frac{u^{i-1}}{\ytab(u)^{j}}}\leq M_1$
-          \item for $u\in Z_r$, $\abs{\frac{u^{i-1}}{\ytab(u)^{j}}}\leq M_2$.
+          \item $\abs{\frac{u^{i-1}}{\ytab(u)^{j}}}\leq M_1$ for all $u\in[-1,1]$, 
+          \item $\abs{\frac{u^{i-1}}{\ytab(u)^{j}}}\leq M_2$ for all $u\in Z_r$.
       \end{itemize}
   \end{lemma}
 
 We also introduce the following quantities
-\begin{equation}
+\begin{equation*}
     \begin{cases}
     X_r &=\cos(r)\sqrt{\frac{π}{2λ\sin r}-1} \\
     B(r,α) &=
@@ -93,13 +93,15 @@ We also introduce the following quantities
         +\frac{1}{2α\sinh^{2α}X_r}
     \right).
     \end{cases}
-\end{equation}
+\end{equation*}
 
 Once we have computed the two bounds $M_1$, $M_2$ and the constant $B(r,α)$,
 we obtain a rigorous integration scheme as follows
 \begin{thm}
+    \label{thm:de_int}
     With the notations above, for all $D>0$, choose $h$ and $N$ such that
     \begin{equation}
+    \label{eq:de_parameters}
         \begin{cases}
             h \le \frac{2πr}{D + \log(2M_2 B(r,α) + e^{-D})}\\
             Nh \ge \asinh\left(\frac{D+\log(\frac{2^{2α+1}M_1}{α})}{2αλ}\right),
@@ -114,15 +116,15 @@ we obtain a rigorous integration scheme as follows
         } \leq e^{-D},
     \end{equation*}
     where
-    \begin{equation}
+    \begin{equation*}
         \begin{cases}
-            u_k = \tanh(λ\sinh(kh))\\
+            u_k = \tanh(λ\sinh(kh)),\\
             w_k = \frac{λ\cosh(kh)}{\cosh^{2α}(λ\sinh(kh)}
         \end{cases}
-    \end{equation}
+    \end{equation*}
 \end{thm}
 
-The proof follows the same lines as the one in \cite{Molin2010}:
+The proof follows the same lines as the one in \cite[Thm. 2.10]{Molin2010}:
 we write the Poisson formula on $h\Z$ for the function $g$
 \begin{equation*}
     \underbrace{h\sum_{\abs{k}>n}g(kh)}_{e_T}
@@ -130,16 +132,16 @@ we write the Poisson formula on $h\Z$ for the function $g$
  = \int_\R g
  + \underbrace{\sum_{k\in\Z^\ast} \hat g(\frac{k}{h})}_{e_Q}
 \end{equation*}
-and control both error terms $e_T$ and $e_q$ by Lemma \ref{m-lem:de_error_trunc}
+and control both error terms $e_T$ and $e_Q$ by Lemma \ref{m-lem:de_error_trunc}
 and \ref{m-lem:de_error_quad} below. The actual parameters $h$ and $N$ follow
 by bounding each error by $e^{-D}/2$.
 
 \begin{lemma}[truncation error]
     \label{lem:de_error_trunc}
-    \begin{equation}
+    \begin{equation*}
         \sum_{\abs{k}>N}\abs{hg(kh)}
         \leq \frac{2^{2α} M_1}{αλ}\exp(-2αλ\sinh(nh)).
-    \end{equation}
+    \end{equation*}
 \end{lemma}
 \begin{proof}
     We bound the sum by the integral of a decreasing function
@@ -155,11 +157,11 @@ by bounding each error by $e^{-D}/2$.
 \begin{lemma}[discretization error]
     \label{lem:de_error_quad}
     With the current notations,
-    \begin{equation}
+    \begin{equation*}
         \sum_{k\neq0}\abs{\hat g(\frac kh)}
         \leq
         \frac{M_2B(r,α)}{e^{2πr/h}-1}.
-    \end{equation}
+    \end{equation*}
 \end{lemma}
 
 
@@ -168,12 +170,12 @@ We first bound the Fourier transform by a shift of contour
     \forall X>0, \hat g(\pm X) = e^{-2πXr} \int_{\R} g(t\mp ir) e^{-2iπtX}\dt
 \end{equation*}
 so that
-\begin{equation}
+\begin{equation*}
     \sum_k \abs{\hat g(\frac kh)}
     \leq
     \frac{2M_2}{e^{2πr/h}-1}\int_\R \abs{
     \frac{λ\cosh(t+ir)}{\cosh(λ\sinh(t+ir))^{2α}}}\dt.
-\end{equation}
+\end{equation*}
 
 Now the point $λ\sinh(t+ir) = X(t)+iY(t)$ lies on the hyperbola
 $Y^2 =λ^2(\sin^2r+\tan^2 rX^2)$, and
@@ -194,18 +196,18 @@ For $X_0=0$, $Y_0=λ\sin r<\frac{π}2$, and $Y_r=\frac{π}2$ for
 $X_r=\cos(r)\sqrt{\frac{π}{2Y_0}-1}$.
 
   We cut the integral at $X=X_r$ and write
-  \begin{align}
+  \begin{align*}
       \int_0^{X_r}\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^α}
       & \leq \int_0^{X_r}\frac{\d X}{(X^2+\cos^2Y)^α} \\
       \int_{X_r}^\infty\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^α}
       & \leq \int_{X_r}^\infty\frac{\d X}{(\sinh X)^{2α}}.
-  \end{align}
+  \end{align*}
 
   We bound the first integral by convexity:
   since $Y(X)$ is convex and $\cos$ is concave decreasing for $Y\leq Y_r$ we
   obtain by concavity of the composition
   \begin{equation*}
-      \forall X\leq X_r, \cos(Y)\geq \cos(Y_0)(1-\frac{X}{X_r})
+      \forall X\leq X_r, \cos(Y)\geq \cos(Y_0)(1-\frac{X}{X_r}).
   \end{equation*}
   Now $X^2+\cos^2Y\geq P_2(X)$ where
   \begin{equation*}
@@ -228,9 +230,9 @@ $X_r=\cos(r)\sqrt{\frac{π}{2Y_0}-1}$.
 \label{sub:gauss_chebychev_integration}
 
 In the case of hyperelliptic curves, we have $α=\frac12$ and the integral
-\begin{equation}
+\begin{equation*}
     \int_{-1}^1\frac{\varphi_{i,j}(u)}{\sqrt{1-u^2}}\du
-\end{equation}
+\end{equation*}
 can be efficiently handled by Gaussian integration with weight
 $1/\sqrt{1-u^2}$,
 for which the corresponding orthogonal polynomials are
@@ -255,21 +257,21 @@ since their roots are explicitly given as cosine functions \cite[25.4.38]{Abramo
 
 Moreover, very nice estimates on the error $E_N$ can by obtained by applying
 the residue theorem on an ellipse $ε_r$ of the form
-\begin{equation}
-    ε_r = \set{z, \abs{z-1}+\abs{z+1} = 2\cosh(r) }
-\end{equation}
+\begin{equation*}
+    ε_r = \set{z, \abs{z-1}+\abs{z+1} = 2\cosh(r) }.
+\end{equation*}
 
   \begin{figure}[H] \begin{center}
       \includegraphics[width=5cm,page=1]{images/ellipse.pdf}
-  \end{center} \caption{Ellipse parameters.}
-  \label{fig:ellipse} \end{figure}
+  \end{center} \caption{ellipse parameters.}
+  \label{fig:ellipse1} \end{figure}
 
 \begin{thm}[\cite{ChawlaJain68},Theorem 5]
     Let $r>0$ such that $g$ is holomorphic on $ε_r$. Then
-    the error in \eqref{eq:gauss_chebychev} satisfies
-    \begin{equation}
+    the error in \eqref{m-eq:gauss_chebychev} satisfies
+    \begin{equation*}
         \abs{E(N)}\leq \frac{2πM(r)}{e^{2rN}-1}
-    \end{equation}
+    \end{equation*}
     where $M(r)=\max\set{\abs{f(z)},z\in ε_r}$.
 \end{thm}
 
@@ -280,13 +282,13 @@ explicitly controlled.
 
 \begin{lemma}
     \label{lem:param_r}
-    Let $r>0$ be such that $2\cosh(r)<\abs{u_i-1}+\abs{u_i+1}$ for all
-    roots $u_i$ of $Q$,
+    Let $r>0$ be such that $2\cosh(r)<\abs{u_k-1}+\abs{u_k+1}$ for all
+    roots $u_k$ of $Q$,
     then there exists an explicitly computable
     constant $M(r)$ such that for all $u\in ε_r$
-    \begin{equation}
-        \abs{\frac{u^{i-1}}{\ytab(u)}}\leq M(r)
-    \end{equation}
+    \begin{equation*}
+        \abs{\frac{u^{i-1}}{\ytab(u)}}\leq M(r).
+    \end{equation*}
 \end{lemma}
 \begin{proof}
 We simply compute the distance
@@ -298,24 +300,25 @@ We simply compute the distance
  $2\cosh(r_k)=\abs{u_k-1}+\abs{u_k+1}$.
 \end{proof}
 
-\begin{prop}
+\begin{thm}
+    \label{thm:gc_int}
     With $r$ and $M(r)$ satisfying lemme \ref{m-lem:param_r},
     for all $N$ such that
-    \begin{equation}
+    \begin{equation*}
         \label{eq:Ngc}
         N \geq \frac{D+\log(2πM(r))+1}{2r}
-    \end{equation}
+    \end{equation*}
     we have
-    \begin{equation}
+    \begin{equation*}
         \abs{I_{a,b}(i,j)
         - \frac{π}N\sum_{k=1}^N\frac{u_k^{i-1}}{\ytab(u_k)}}
-            \leq e^{-D}
-    \end{equation}
+            \leq e^{-D},
+    \end{equation*}
     where $u_k=\cos(\frac{2k-1}{2N}π)$.
-\end{prop}
+\end{thm}
 
 More details on the choice of $r$ and the computation of $M(r)$
-are given in section \ref{m-choice_r_ellipse}.
+are given in \S \ref{m-par:gc_int_r}.
 
 \iffalse
 the $2n$-th derivative can be
