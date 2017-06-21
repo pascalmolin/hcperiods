@@ -162,15 +162,17 @@ abel_jacobi_struct;
 
 typedef abel_jacobi_struct abel_jacobi_t[1];
 
+/*  flag bits */
 enum {
-    AJ_USE_DE    = 1 << 0,
-    AJ_NO_TAU    = 1 << 1,
+    AJ_USE_DE    = 1 << 0,  /* force DE integration */
+    AJ_NO_TAU    = 1 << 1,  /* do not compute tau */
     AJ_NO_AB     = 1 << 2,
     AJ_NO_INT    = 1 << 3,
     AJ_TRIM      = 1 << 4,
     AJ_ROOT_DEF  = 1 << 5,
     AJ_ROOT_TURN = 1 << 6,
-    AJ_ROOT_PROD = 1 << 7
+    AJ_ROOT_PROD = 1 << 7,
+    AJ_VERBOSE   = 5 << 8
 };
 
 

@@ -40,7 +40,7 @@ acb_poly_reverse(acb_poly_t pol)
 int
 usage()
 {
-    flint_printf("periods [-m m] [--prec p] poly \n");
+    flint_printf("periods [-v] [-m m] [--prec p] poly \n");
     flint_printf("Print period matrix of curve y^m = f_n(x).\n");
     flint_printf("Default m = 2, f_n(x) = x^5 + 1, prec = 128.\n");
     flint_printf("Polynomials f_n(x):\n");
@@ -50,6 +50,7 @@ usage()
     flint_printf("  --pol n cn ... c1 c0 : cn x^n + ... + c1 x + c0\n");
     flint_printf("  --bernrev n: reverse Bernoulli x^nBn(1/x)\n");
     flint_printf("  --exprev n: reverse exponential sum x^k/(n-k)!\n");
+    flint_printf("  --stoll: 82342800*x^6 - 470135160*x^5 + 52485681*x^4 + 2396040466*x^3 + 567207969*x^2 - 985905640*x + 247747600\n");
     flint_printf("Output options:\n");
     flint_printf("  --quiet: no printing\n");
     flint_printf("  --trim: reduce to obtained precision\n");
@@ -76,7 +77,9 @@ int main(int argc, char * argv[])
     for (i = 1; i < argc;)
     {
         /* parameters */
-        if (!strcmp(argv[i], "-m"))
+        if (!strcmp(argv[i], "-v"))
+            i++, flag += AJ_VERBOSE;
+        else if (!strcmp(argv[i], "-m"))
             i++, m = atol(argv[i++]);
         else if (!strcmp(argv[i], "--prec"))
             i++, prec = atol(argv[i++]);
@@ -119,6 +122,18 @@ int main(int argc, char * argv[])
             n = atol(argv[i++]);
             for (j = 0; j <= n && i < argc; j++)
                 acb_poly_set_coeff_si(poly, n - j, atol(argv[i++]));
+            f_pol = NULL;
+        }
+        else if (!strcmp(argv[i], "--stoll"))
+        {
+            i++;
+            acb_poly_set_coeff_si(poly, 6, 82342800);
+            acb_poly_set_coeff_si(poly, 5, - 470135160);
+            acb_poly_set_coeff_si(poly, 4, + 52485681);
+            acb_poly_set_coeff_si(poly, 3, + 2396040466);
+            acb_poly_set_coeff_si(poly, 2, + 567207969);
+            acb_poly_set_coeff_si(poly, 1, - 985905640);
+            acb_poly_set_coeff_si(poly, 0, 247747600);
             f_pol = NULL;
         }
         /* restrict computations / output */
