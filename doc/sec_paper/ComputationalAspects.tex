@@ -145,6 +145,41 @@
     \end{itemize}
    \end{proof}
 
+   \subsection{Precision issues}
+
+   As explained in \S \ref{subsec:arb}, the ball arithmetic model allows
+   to certify that the results returned by the arb program are correct.
+   It does not guaranty that the result actually achieves the desired
+   precision.
+
+   As a matter of fact, we cannot prove a priori that bad accuracy loss
+   will not occur while summing numerical integration terms or
+   during matrix inversion.
+
+   However we take into account all predictable loss of precision:
+   \begin{itemize}
+       \item while computing the periods using equations \eqref{eq:periods}
+           and \eqref{eq:polshift}, we compute a sum with coefficients
+           \begin{equation*}
+               C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i
+               {i-1 \choose l} \left(\frac{b+a}{b-a}\right)^{i-1-l}
+           \end{equation*}
+           whose magnitude can be controlled a priori. It has size $O(g)$.
+       \item the size of the coefficients of the symplectic reduction
+           matrix are tiny (less than $m$ in practice), but we can take
+           their size into account before entering the numerical steps.
+           Notice that generic NHF estimates lead to a very pessimistic
+           estimate of size $O(g)$ coefficients.
+       \item matrix inversion of size $g$ needs $O(g)$ extra bits.
+   \end{itemize}
+   This leads to increasing the internal precision from $D$ to $D + O(g)$,
+   the implied constant depending on the configuration of branch points.
+
+   \begin{rmk}
+   In case the end result is imprecise by $d$ bits, the user simply needs to
+   run another instance at precision $D+d$.
+   \end{rmk}
+
    \subsection{Integration parameters}
 
    \subsubsection{Gauss-Chebychev case}
