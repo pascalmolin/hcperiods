@@ -251,7 +251,7 @@
    $y_k=\ytab(u_k)$, then add the contributions $w_k\frac{u_k^i}{y_k^j}$ to
    the integral of each of the $g$ differential forms.
 
-   We shall improve on these two aspects, the former being prominent for superelliptic curves,
+   We shall improve on these two aspects, the former being prominent for hyperelliptic curves,
    and the latter when the $g>n$.
 
     \subsubsection{Computing products of complex roots}\label{subsec:computing_roots}
@@ -261,10 +261,10 @@
 
     Instead, we fall back to one single (usual) $m$-th root
     by computing $q(u)\in\frac12\Z$ such that
-  \begin{equation*}
+  \begin{equation}
       \label{eq:ytab_comp}
-   \ytab(u) = \zeta^q \Big( \prod_{u_k\in U^-}(u-u_k) \prod_{u_k\in U^+} (u_k-u) \Big)\mr.
-  \end{equation*}
+      \ytab(u) = \zeta^{q(u)} \Big( \prod_{u_k\in U^-}(u-u_k) \prod_{u_k\in U^+} (u_k-u) \Big)\mr.
+  \end{equation}
   This can be done by tracking
   the winding number of the product while staying away from the branch cut
   of the $m$-th root.
@@ -345,7 +345,7 @@
     the computation of $y(\xab(u))=f(x)^{\frac1m}$.
     The advantage is that baby-step giant-step splitting can be used for
     the evaluation of $f(x)$, reducing the number of multiplications to
-    $\sqrt(n)$. In order to recover $\ytab(u)$, one needs to divide by
+    $O(\sqrt{n})$. In order to recover $\ytab(u)$, one needs to divide by
     $\sqrt[m]{1-u^2}$ and adjust a multiplicative constant including
     the winding number $q(u)$, which can be evaluated at low precision.
     This technique must not be used when $u$ gets close to $\pm1$.
