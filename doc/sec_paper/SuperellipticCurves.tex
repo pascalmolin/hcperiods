@@ -8,9 +8,9 @@
 
     \begin{defn}\label{def:se_curve}
     In this paper, a superelliptic curve $\cu$ over $\C$ is a smooth plane projective curve that has an affine model given by an equation of the form
-   \begin{equation*}\label{eq:aff_model}
+   \begin{equation}\label{eq:aff_model}
     \caff : \quad y^m = f(x) =  c_f \cdot \prod_{k=1}^n (x-x_k),
-   \end{equation*}
+   \end{equation}
    \end{defn}
    where $m > 1$ and $f \in \C[x]$ is separable of degree $n \ge 3$.
 
@@ -27,7 +27,7 @@
     g = \frac{1}{2}( (m-1)(n-1) - \delta + 1).
   \end{equation*}
   We denote the corresponding finite ramification points $P_k = (x_k,0) \in \cu$ for $k = 1,\dots,n$.
-  
+
   \begin{rmk}
    Without loss of generality we may assume $c_f = 1$ (if not, apply the transformation $(x,y) \mapsto (x,\sqrt[m]{c_f}y)$).
   \end{rmk}
@@ -78,38 +78,38 @@
   particular, the monodromy at $x=0$ is cyclic of order $m$.
 
   \subsubsection{The Riemann surface}\label{subsec:riemann_surface}
-  
+
   For an introduction to the theory of Riemann surfaces, algebraic curves and holomorphic covering maps we recommend the reader
   to \cite{Miranda1995}.
-  
-  
-  
+
+
+
    Over $\C$ we can identify the curve $\cu$ with the compact Riemann surface $\cu(\P^2_{\C})$. Since our defining equation
    has the nice form
-   $y^m = \prod_{k = 1}^n (x - x_k)$ we view $\cu$ as Riemann surface with $m$ sheets and 
+   $y^m = \prod_{k = 1}^n (x - x_k)$ we view $\cu$ as Riemann surface with $m$ sheets and
    all computations will be done in the $x$-plane.
-   
+
    We denote by $\pr : \cu \rightarrow \P^1_{\C}$ the corresponding smooth cyclic branched covering of the projective line
-   defined by the $x$-coordinate. 
-   
+   defined by the $x$-coordinate.
+
   There
   are $m$ possibilities to continue $y$ as an analytic function following a path in the $x$-plane. This is crucial for the integration
   of differentials on $\cu$. Due to the cyclic structure of $\cu$, they are related in a convenient way:
-  
+
   We call a \emph{branch of $\cu$} a function $y(x)$ such that
   $y(x)^m = f(x)$ for all $x \in \C$. At every $x$, the branches of $\cu$ only
   differ by a factor $\zeta^l$ for some $l \in \{0,\dots,m-1\}$. Thus, following a path, it is sufficient to know \emph{one} branch that is analytic in a suitable neighborhood. In the
   next paragraph, we will introduce locally analytic branches very explicitly.
-  
+
   \bigskip
-  
+
   Similar to the complex $m$-th root, we can assume that crossing the branch cut at $x_k \in X$ in positive direction corresponds to multiplication by $\zeta$ on the Riemann surface. We
   obtain an ordering of the sheets relative to the analytic branches of by imposing that multiplication by $\zeta$, i.e. applying the map
   $(x,y(x)) \mapsto (x,\zeta y(x))$ corresponds to moving one sheet up on the Riemann surface.
-  
+
    \bigskip
-  
-  
+
+
   Consequently, the local monodromy of the cyclic covering $\pr$  is equal and cyclic of order $m$ at every $x_k \in X$
  and the monodromy group is, up to conjugation, the cyclic group $C_m$. This makes it possible to find explicit generators for the
   homology group $\homo$ without specifying a base point, as shown in \S \ref{m-subsec:cycles_homo}.
@@ -126,7 +126,7 @@
   \end{equation*}
   but this is not a good model to compute with: it has branch cuts
   wandering around the $x$-plane (see Figure \ref{fig:mth_root_principal}).
-  
+
   A better option is to split the product as follows:
   assume that $a,b$ are the points $-1,1$. Then the function
   \begin{equation*}
@@ -139,7 +139,7 @@
       y(x) = e^{\frac{iπr^+}m}\prod_{\Re(x_k)\leq0}\sqrt[m]{x-x_k} \prod_{\Re(x_k)>0}\sqrt[m]{x_k-x},
   \end{equation*}
   where $r^+$ is the number of points with positive real part.
-  
+
   \begin{figure}[H]
       \begin{center}
           \subfloat[principal branch]{
@@ -163,7 +163,7 @@
       \uab : x \mapsto \frac{2x-a-b}{b-a}.
   \end{equation*}
 
-  
+
    We split the image of the branch points under $\uab$ into the following subsets
   \begin{equation}\label{eq:uab_image}
       \set{ \uab(x), x\in X} = \set{-1,1} \cup U^+ \cup U^-,
@@ -183,18 +183,18 @@
   \end{equation*}
   has two branch cuts $]-\infty,-1]$ and $[1,\infty[$, and is holomorphic on the complementary
   $\overline U$ of these cuts.
-  
+
   We can now define a branch of the curve
   \begin{equation}
       \label{eq:def_yab}
       \yab(x) =   C_{a,b} \yt_{a,b}( \uab(x) ) \sqrt[m]{1 - \uab(x)^2}
   \end{equation}
   by setting $r = 1+\#U^+ \bmod 2$ and choosing the constant
-  \begin{equation*}
+  \begin{equation}
       C_{a,b} = \left(\frac{b-a}{2}\right)^{\frac{n}{m}} e^{\frac{\pi i}{m}r}
-  \end{equation*}
+  \end{equation}
   such that $\yab(x)^m = f(x)$.
-  
+
   The function $\yab(x)$ has $n$ branch cuts all parallel to $[a,b]$ in outward direction and
   is holomorphic inside $]a,b[$ (see Figure \ref{fig:mth_root_signed}).
 
@@ -210,7 +210,7 @@
 
 
 We sum up the properties of these local branches:
-  
+
  \begin{prop}\label{prop:yab}
       Let $a,b\in X$ be branch points such that $X\cap]a,b[=\varnothing$.
       Then, with the notations above, the functions
@@ -227,15 +227,15 @@ We sum up the properties of these local branches:
  \end{prop}
 
  \subsection{Cycles and homology}\label{subsec:cycles_homo}
-   
+
    For us, a \emph{cycle} on $\cu$ is a smooth oriented closed path in $\pi_1(\cu)$.
-   For simplicity we identify all cycles with their homology classes in $\homo = \pi_1(\cu)/[\pi_1(\cu),\pi_1(\cu)]$. 
-   
-   In the following we present an 
+   For simplicity we identify all cycles with their homology classes in $\homo = \pi_1(\cu)/[\pi_1(\cu),\pi_1(\cu)]$.
+
+   In the following we present an
    explicit generating set of $\homo$ that relies on the locally analytic branches $\yab$ as defined in \eqref{m-eq:def_yab} and the superelliptic structure of $\cu$.
 
-   Let $a, b \in X$ be branch points such that $X\cap]a,b[=\varnothing$, where  $[a,b]$ is the oriented line segment connecting $a$ and $b$. 
-   
+   Let $a, b \in X$ be branch points such that $X\cap]a,b[=\varnothing$, where  $[a,b]$ is the oriented line segment connecting $a$ and $b$.
+
    By Proposition \ref{m-prop:yab} the lifts of $[a,b]$ to $\cu$ are given by
    \begin{equation*}\label{eq:def_path_ab}
       \gamma^{(l)}_{[a,b]} = \{  (x,\zeta^l \yab(x))  \mid  x \in [a,b]  \}, \quad l \in \Z/m\Z.
@@ -266,11 +266,11 @@ We sum up the properties of these local branches:
   are connected without producing any cycle. It must contain exactly $n-1$ edges.
   The actual tree will be chosen in \S \ref{subsec:spanning_tree} in order to minimize
   the complexity of numerical integration.
-  
+
     \medskip
   For an edge $e = (a,b) \in E$, we denote by $\gamma_e^{(l)}$ the shifts of
   the corresponding elementary cycle $\cyab$.
-  
+
   \begin{thm}\label{thm:gen_set}
       Let $E$ be a spanning tree for the branch points $X$.
    The cycles $\Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l <m-1,  e \in E  \right\}$ generate $\homo$.
@@ -299,7 +299,7 @@ We sum up the properties of these local branches:
    In $\homo$ we have that $\alpha_a^{-s}\alpha_b^{s} = ( \alpha_a^{-1}\alpha_b)^s$, so we obtain the other powers by concatenating
   the shifts $\prod_{l = 0}^{s-1} \gamma_e^{(l_0+l)} = (\alpha_a^{-1}\alpha_b)^s$.
   This implies $1 = \prod_{l = 0}^{m-1} \gamma_e^{(l_0+l)} = \prod_{l = 0}^{m-1} \gamma_e^{(l)}$ and
-   $$\{  \alpha_a^{-s} \alpha_b^{s}  \mid  s \in \Z/m\Z  \} \subset  \langle  \gamma_e^{(l)} 
+   $$\{  \alpha_a^{-s} \alpha_b^{s}  \mid  s \in \Z/m\Z  \} \subset  \langle  \gamma_e^{(l)}
   \mid  0 \le l < m-1 \rangle$$ and therefore $\homo = \langle  \Gamma  \rangle$.
   \end{proof}
 
@@ -310,7 +310,7 @@ We sum up the properties of these local branches:
    $\# \Gamma = (m-1)(n-2) = 2g$ and $\Gamma$ is a basis for $\homo$.
    \item[$\bullet$] In step $(*)$ of the proof, filling in the points above infinity creates relations among
   these generators:
-  $1 = (\prod_{a \in X} \alpha_a)^{k \cdot e_{\infty}}$, $k = 1,\dots,\delta$. This corresponds to the term $-\delta+1$ in the formula \eqref{m-eq:genus} for the genus of $\cu$. 
+  $1 = (\prod_{a \in X} \alpha_a)^{k \cdot e_{\infty}}$, $k = 1,\dots,\delta$. This corresponds to the term $-\delta+1$ in the formula \eqref{m-eq:genus} for the genus of $\cu$.
   \end{itemize}
   \end{rmk}
 

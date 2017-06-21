@@ -9,7 +9,7 @@
   between lifts of elementary cycles $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$.
 
   Note that by construction of the spanning tree,
-  we can restrict the analysis to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$ 
+  we can restrict the analysis to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$
   such that $c$ is either $a$ or $b$.
 
    \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
@@ -40,7 +40,7 @@
       \end{center}
       and where $s_x \in \Z$ for $x\in\set{a,b}$ is given by
       \begin{equation*}\label{eq:s_x}
-	    s_x := \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{C_{c,d} \ytcd(x)}{C_{a,b}\ytab(x)} \right) 
+	    s_x := \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{C_{c,d} \ytcd(x)}{C_{a,b}\ytab(x)} \right)
 	    \right)
       \end{equation*}
      and
@@ -70,12 +70,12 @@
 
   Consider
   two cycles $\cyab^{(k)},\cycd^{(l)} \in \Gamma$ and
-  recall from \S \ref{m-subsec:roots_branches} their definition 
+  recall from \S \ref{m-subsec:roots_branches} their definition
    \begin{align*}
       \cyabk & = \{  (x,\zeta^k \yab(x))  \mid  x \in [a,b]  \} \cup \{  (x,\zeta^{k+1} \yab(x))  \mid  x \in [b,a]  \}, \\
       \cycdl & = \{  (x,\zeta^l \ycd(x))  \mid  x \in [c,d]  \} \cup \{  (x,\zeta^{l+1} \ycd(x))  \mid  x \in [c,d]  \},
    \end{align*}
-  where $\zeta^k\yab(x),\zeta^l\ycd(x)$ are branches of $\cu$ that are analytic on open sets $\vab$ and $\vcd$ 
+  where $\zeta^k\yab(x),\zeta^l\ycd(x)$ are branches of $\cu$ that are analytic on open sets $\vab$ and $\vcd$
   (see Figure \ref{m-fig:set_vab}) respectively.
 
   \begin{proof}\let\qed\relax (of case (v)) \\
@@ -99,19 +99,19 @@
    \begin{equation*}
     V := \vab \cap \vcd \subset \C \setminus X.
    \end{equation*}
- The shifting function $s(x)$ is well-defined on $V$ and, since $\yab(x)$ and $\ycd(x)$ are 
-  both analytic on $V$, $s(x)$ is constant on its 
+ The shifting function $s(x)$ is well-defined on $V$ and, since $\yab(x)$ and $\ycd(x)$ are
+  both analytic on $V$, $s(x)$ is constant on its
   connected components.
-  
+
   In \S \ref{m-subsec:riemann_surface} we established that multiplication of a branch by $\zeta$ corresponds to moving
   one sheet up on the Riemann surface.
   We can interpret the value of the shifting function geometrically as
   $\cycdl$ running $s(\xt)+l-k$ sheets above $\cyabk$ at a point $\xt \in V$.
-  
+
  This can be used to determine the intersection number in the following way. We deform the cycles homotopically
  such that
  \begin{equation*}
-   \pr\left(\cyabk\right) \cap \pr\left(\cycdl\right) = \{ \xt \}  \text{ for some $\xt \in V$.} 
+   \pr\left(\cyabk\right) \cap \pr\left(\cycdl\right) = \{ \xt \}  \text{ for some $\xt \in V$.}
  \end{equation*}
  Consequently, the cycles can at most intersect at the
  points in the fiber above $\xt$, i.e.
@@ -124,7 +124,7 @@
  \end{equation*}
   In the other cases we can determine the
   sign of possible intersections by taking into account the orientation of the cycles.
-  
+
  We continue the proof with the next simplest case:
  \begin{proof}\let\qed\relax (of case (i)) \\
  Here we have $[a,b] = [c,d]$. Trivially, $\left( \cyabk \circ \cyabk \right) = 0$ holds. For $k \ne l$ we deform the cycles such that they only intersect above
@@ -145,7 +145,7 @@
 
   For (ii)-(iv) we have that $[a,b] \cap [c,d] = \{c \}$, where $c$ is either $a$ or $b$. Unfortunately, in these cases $s(c)$ is not
   well-defined.
-  
+
  Instead, we choose a point $\xt \in \C \setminus X$ on the bisectrix of
   $[a,b]$ and $[c,d]$ that is close enough to $c$ such that $[\xt,c[ \subset V = \vab \cap \vcd$
   (see Figure \ref{m-fig:set_v_both} below), and where
@@ -160,11 +160,11 @@
     \caption{The set $V = \vab \cap \vcd$ for $b=c$ (left) and $a=c$ (right).}
     \label{fig:set_v_both}
    \end{figure}
-   
+
    \begin{proof}\let\qed\relax (of case (ii)) \\
-   In this case we have $b = c$. Choosing $\xt$ on the upper bisectrix (as shown in Figure \ref{m-fig:set_v_both}) 
+   In this case we have $b = c$. Choosing $\xt$ on the upper bisectrix (as shown in Figure \ref{m-fig:set_v_both})
    and computing $s(\xt)$ with \eqref{m-eq:sxt} makes it possible to determine the intersection numbers geometrically.
-   
+
    Figure \ref{m-fig:int_b=c} shows the non-trivial cases $s(\xt) + l - k \in \{-1,0,1\}$.
    Illustrated are the cycles $\cyab^k$ (black), $\cybd^{k-s(\xt)}$ (gray), $\cybd^{k-s(\xt) + 1 }$ (green) and
     $\cybd^{k-s(\xt)-1}$ (red).
@@ -181,12 +181,12 @@
     & s_- \equiv k-s(\xt)+1-k \equiv 1-s_b \mod m.
     \end{align*}
    \end{proof}
- 
+
  \begin{proof}(of cases (iii) and  (iv))
- In these cases we have $a = c$. We choose $\xt$ on the inner bisectrix (as shown in Figure \ref{m-fig:set_v_both}) and 
-   and compute $s(\xt)$ with \eqref{m-eq:sxt}. 
- 
- For $\varphi = \arg\left(\frac{b-a}{d-c}\right) > 0$, the non trivial cases, i.e. $s(\xt) + l - k \in \{-1,0,1\}$, are shown in Figure \ref{m-fig:int_a=c} 
+ In these cases we have $a = c$. We choose $\xt$ on the inner bisectrix (as shown in Figure \ref{m-fig:set_v_both}) and
+   and compute $s(\xt)$ with \eqref{m-eq:sxt}.
+
+ For $\varphi = \arg\left(\frac{b-a}{d-c}\right) > 0$, the non trivial cases, i.e. $s(\xt) + l - k \in \{-1,0,1\}$, are shown in Figure \ref{m-fig:int_a=c}
   We illustrate are the cycles $\cyab^{(k)}$ (black), $\cyad^{(k-s(\xt))}$ (gray), $\cyad^{(k-s(\xt) + 1)}$ (green) and
     $\cyad^{k-s(\xt)-1}$ (red).
   \begin{figure}[H]
@@ -202,9 +202,9 @@
     & s_- = k-s(\xt)-k \equiv -s_a \mod m.
     \end{align*}
   The case $\varphi < 0$ is easily derived as a symmetry: if we mirror Figure \ref{m-fig:int_a=c} at the horizontal line through $a$ we are in case (iv).
-  There, the intersection is positive if $\cyabk$ and $\cyadl$ start on the same sheet and negative if $\cyadl$ starts one sheet below $\cyabk$. 
+  There, the intersection is positive if $\cyabk$ and $\cyadl$ start on the same sheet and negative if $\cyadl$ starts one sheet below $\cyabk$.
   \end{proof}
-  
+
 \begin{lemma}\label{lemma:sxt=sx}
   With the choices made in the proof of Theorem \ref{m-thm:intsec_numb} the following statements are true:
   \begin{itemize}
@@ -221,7 +221,7 @@
    & \equiv \frac{1}{2\pi} \left( \arg(1+\ucd(x)) + \arg(1-\ucd(x)) - \arg(1+\uab(x)) - \arg(1-\uab(x)) \right) \\
    & +  \frac{m}{2\pi} \left( \arg \left( \frac{ \ccd \ytcd(x)}{\cab\ytab(x)} \right)\right) \mod m.
   \end{align*}
- In case (ii) we have $b = c$ and denote $\varphi_0 = \arg \left( \frac{b-a}{d-c} \right)$. Then, we can parametrize all points $\xt \ne b$ on 
+ In case (ii) we have $b = c$ and denote $\varphi_0 = \arg \left( \frac{b-a}{d-c} \right)$. Then, we can parametrize all points $\xt \ne b$ on
  the upper bisectrix of $[a,b]$ and
  $[a,d]$ (see Figure \ref{m-fig:set_v_both}) via
  \begin{align*}
@@ -233,7 +233,7 @@
    & \arg (1+\ubd(\xt)) = \frac{\pi+\varphi_0}{2} \text{ and} \\
    & \arg (1-\uab(\xt)) = -\frac{\pi+\varphi_0}{2}.
  \end{align*}
- For $\xt$ chosen close enough to $b$ we have that $[\xt,b[ \subset V$ and the shifting function $s(\xt)$ is constant as $\xt$ tends towards $b$. Hence, 
+ For $\xt$ chosen close enough to $b$ we have that $[\xt,b[ \subset V$ and the shifting function $s(\xt)$ is constant as $\xt$ tends towards $b$. Hence,
  we can compute its value at $\xt$ as
  \begin{align*}
   s(\xt) & \equiv \frac{1}{2\pi} \left( \pi + \varphi_0 + \arg(1-\ubd(\xt)) - \arg(1+\uab(\xt)) +  m \arg \left( \frac{ \cbd \ytcd(\xt)}{\cab\ytab(\xt)} \right)\right) \\
@@ -260,13 +260,13 @@ thus proving (1).
 	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \ccd \ytad(a)}{\cab\ytab(a)} \right)\right) \equiv s_a \mod m.
  \end{align*}
  The case $\varphi < 0$ is proved analogously.
-\end{proof} 
+\end{proof}
 
 \begin{rmk}
   The intersection numbers given by Theorem \ref{m-thm:intsec_numb} are independent of the choices of $\xt$ that were made in the proof. This approach works for any $\xt \in V$.
-  
+
   Even though the value of
-  $s(\xt)$ changes, if we choose $\xt$ in a different connected component of $V$, e.g.\ on the lower bisectrix in case (ii),  
+  $s(\xt)$ changes, if we choose $\xt$ in a different connected component of $V$, e.g.\ on the lower bisectrix in case (ii),
   the parametrization of the bisectrix and the corresponding arguments will change accordingly.
 \end{rmk}
 

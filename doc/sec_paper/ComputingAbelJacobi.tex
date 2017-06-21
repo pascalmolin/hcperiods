@@ -3,11 +3,11 @@
 \begin{document}
 
   \section{Computing the Abel-Jacobi map}\label{sec:comp_ajm}
-  
+
    Here we are concerned with explicitly computing the Abel-Jacobi map of degree zero divisors; for a general introduction see Section \ref{m-sec:ajm}.
-   
-   Assume for this section that we already computed a big period period matrix (and all related data) following the Strategy from Section \ref{m-sec:strat_pm}. 
-   
+
+   Assume for this section that we already computed a big period period matrix (and all related data) following the Strategy from Section \ref{m-sec:strat_pm}.
+
    Let $D = \sum_{P \in \cu} v_P P \in \Div^0(\cu)$. After choosing a basepoint $P_0 \in \cu$, the computation of $\AJ$ reduces (using linearity) to
    \begin{equation*}
      \AJ([D]) \equiv \sum_{P \in \cu} v_P \int_{P_0}^P \bar\w \mod \Lambda.
@@ -24,22 +24,22 @@
    \item $P_k = (x_k,0) \in \cu$ is a finite ramification point, i.e.\ $x_k \in X$, and
    \item $P_{\infty} \in \cu$ is an infinite point.
   \end{itemize}
-  
+
    Typically, we choose as basepoint the ramification point $P_0 = (x_0,0)$, where $x_0 \in X$ is the root of the spanning tree $G = (X,E)$.
-   
+
   Finally, the resulting vector integral has to be reduced modulo the period lattice $\Lambda$, which is covered in \S \ref{m-subsec:lat_red}.
-  
+
    \begin{rmk}[Image of Abel-Jacobi map] \
   For practical reasons, we will compute the
   image of the Abel-Jacobi map in the canonical torus $\R^{2g} / \Z^{2g}$.
 This representation has the following advantages:
     \begin{itemize}
      \item[$\bullet$] Operations on the Jacobian variety $\Jac(\cu)$ correspond to operations in $\R^{2g}/\Z^{2g}$.
-     \item[$\bullet$] $m$-torsion divisors under $\AJ$ are mapped to vectors of rational numbers with 
+     \item[$\bullet$] $m$-torsion divisors under $\AJ$ are mapped to vectors of rational numbers with
      denominator dividing $m$.
          \end{itemize}
    \end{rmk}
-  
+
   \subsection{Between ramification points}\label{subsec:ajm_ram_pts}
 
   Suppose we want to integrate $\bar\w$ from $P_0 =(x_0,0)$ to $P_k = (x_k,0)$. By construction there exists a path
@@ -53,12 +53,12 @@ This representation has the following advantages:
   \end{align*}
   Let $\w_{i,j} \in \W$ be a differential. According to the proof of Theorem \ref{m-thm:periods} the corresponding integral is given by
   \begin{align*}
-   \int_{\gamma_{[a,b]}^{(0)}} \w_{i,j}  & = 
+   \int_{\gamma_{[a,b]}^{(0)}} \w_{i,j}  & =
    C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du,
   \end{align*}
   which is (up to the constants) an elementary integral \ref{m-eq:elem_ints}
   and has already been evaluated during the period matrix computation.
-  
+
   \begin{rmk}
   Moreover, the image of the Abel-Jacobi map between ramification points is $m$-torsion, i.e. for any two $k,j \in \{1,\dots,n\}$ we have
   \begin{equation}\label{eq:m_tors}
@@ -69,12 +69,12 @@ This representation has the following advantages:
 
   \subsection{Reaching non-ramification points}\label{subsec:ajm_finite}
 
-  Let $P = (x_P,y_P) \in \cu$ be a finite point and $P_a = (a,0)$ a ramification point such that $X\cap]a,x_P]=\varnothing$. In order to define a smooth path between $P$ and $P_a$ 
-  we need to find a suitable analytic branch of $\cu$. 
-  
+  Let $P = (x_P,y_P) \in \cu$ be a finite point and $P_a = (a,0)$ a ramification point such that $X\cap]a,x_P]=\varnothing$. In order to define a smooth path between $P$ and $P_a$
+  we need to find a suitable analytic branch of $\cu$.
+
   This can be done following  the approach from \S \ref{m-subsubsec:analytic_branches}, the only difference being that
   $x_P$ is not a branch point. Therefore, we are going to adjust the definitions and highlight the differences.
-  
+
   Let  $\uaxp$ be the affine linear transformation
   that maps $[a,x_P]$ to $[-1,1]$.
   Similar to \eqref{m-eq:uab_image} we split up the image of $X$ under $\uaxp$ into subsets,
@@ -89,19 +89,19 @@ This representation has the following advantages:
    \sqrt[m]{1+u},
   \end{equation*}
    has a branch cut $]-\infty,-1]$ and is holomorphic on the complement of this cut.
-   
+
   Now we can define a branch of the curve,
    that is analytic in a neighbourhood $V_{a,x_P}$ of $]a,x_P]$, by
   \begin{equation*}
     \yaxp(x) =   C_{a,x_P} \ytaxp( \uaxp(x) ) \sqrt[m]{1 + \uaxp(x)}
   \end{equation*}
-  where 
+  where
    \begin{equation*}
       C_{a,x_P} = \left(\frac{x_P-a}{2}\right)^{\frac{n}{m}} e^{\frac{\pi i}{m}(\#U^+ \bmod 2)},
   \end{equation*}
-  so that the statements of Proposition \ref{m-prop:yab} continue to hold for $\ytaxp$ and $\yaxp$, 
+  so that the statements of Proposition \ref{m-prop:yab} continue to hold for $\ytaxp$ and $\yaxp$,
   if we choose the sets $\epsilon_{a,x_P}$ and $V_{a,x_P}$ as if $x_P$ was a branch point.
-  
+
   Therefore, the lifts of $[a,x_P]$ to $\cu$ are given by
     \begin{equation*}\label{eq:def_path_axp}
       \gamma^{(l)}_{[a,x_P]} = \{  (x,\zeta^l \yaxp(x))  \mid  x \in [a,x_P]  \}, \quad l \in \Z/m\Z.
@@ -112,7 +112,7 @@ This representation has the following advantages:
    \zeta^s = \frac{y_P}{\yaxp(x_P)} = \frac{y_P}{ C_{a,x_P} \ytaxp( \uaxp(x_P) ) \sqrt[m]{2}  }
   \end{equation*}
   Consequently, $\gamma^{(s)}_{[a,x_P]}$ is a smooth path between $P_a$ and $P$ on $\cu$. We can now state the main theorem of this section.
-  
+
   \begin{thm}\label{thm:ajm_finite_int}
   Let $\w_{i,j} \in \WM$ be a differential. With the choices and notation as above we have
  \begin{equation*}\label{eq:aj_int}
@@ -131,7 +131,7 @@ This representation has the following advantages:
   \begin{proof}
     We have
     \begin{align*}
-     \int_{P_a}^P \w_{i,j}  & =  \int_{\gamma^{(s)}_{[a,x_P]}} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-sj} \int_a^{x_P} \frac{x^{i-1}}{\yaxp(x)^j}  \dx \\  & = 
+     \int_{P_a}^P \w_{i,j}  & =  \int_{\gamma^{(s)}_{[a,x_P]}} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-sj} \int_a^{x_P} \frac{x^{i-1}}{\yaxp(x)^j}  \dx \\  & =
      \zeta^{-sj} C_{a,x_P}^{-j}  \int_a^{x_P} \frac{x^{i-1}}{(1+\uaxp(x))^{\frac{j}{m}}\ytaxp(\uaxp(x))^j}  \dx
   \end{align*}
    Applying the transformation $u = \uaxp(x)$ introduces the derivative $\dx = \left(\frac{x_P-a}{2}\right) \du$.
@@ -154,15 +154,15 @@ This representation has the following advantages:
    \ref{m-sec:numerical_integration} (this is not true for the Gauss-Chebychev method).
    \end{rmk}
 
-  
-  
+
+
   \subsection{Infinite points}\label{subsec:ajm_infty}
 
   Recall from \S \ref{m-subsec:se_def} that there are $\delta = \gcd(m,n)$ infinite points on our projective curve $\cu$, so
   we introduce the set $\mathcal{P}
   = \{ P_{\infty}^{(1)},\dots, P_{\infty}^{(\delta)} \}$.
-  
-  
+
+
   Suppose we want to integrate from $P_0$ to $P_{\infty} \in \mathcal{P}$, which is equivalent to computing the Abel-Jacobi map of the divisor
   $D_{\infty} = P_{\infty} - P_0$.
 
@@ -172,14 +172,14 @@ This representation has the following advantages:
   \AJ([D_{\infty} \mp D]) \equiv \AJ([D_{\infty}]) \equiv \int_{P_0}^{P_{\infty}} \bar\w \mod \Lambda
   \end{equation*}
   and $\supp(D_{\infty} \mp D) \cap \mathcal{P} = \varnothing$.
-  
+
   The exposition in this paragraph will explain the construction of $D$, while distinguishing three different cases.
-  
+
   In the following denote by  $-\mu,\nu > 0$ the coefficients of the Bézout identity
   \begin{equation*}
     \mu m + \nu n = \delta.
   \end{equation*}
-  
+
   \begin{rmk}
    Note that there are other ways of computing $\AJ([D_{\infty}])$. For instance, using transformations or direct numerical
    integration. Especially in the case $\delta = m$ a transformation (see \ref{m-rmk:moebius}) is the better option and may be used in practice.
@@ -187,10 +187,10 @@ This representation has the following advantages:
    keep the integration scheme.
   \end{rmk}
 
-  
-  
+
+
   \subsubsection{Coprime degrees}\label{subsec:ajm_inf_cop}
-  
+
   For $\delta = 1$ there is only one infinite point $\mathcal{P} = \{ P_{\infty} \}$ and
   we can easily compute  $\AJ( [D_{\infty}] )$ by adding a suitable
   principal divisor $D$
@@ -201,7 +201,7 @@ This representation has the following advantages:
     \end{align*}
     We immediately obtain
     \begin{align*}
-     \AJ( [D_{\infty}] )  & \equiv  \AJ([D_{\infty} + D])  =  \AJ( [ \nu \sum_{k = 1}^n P_k + (\mu m - 1) P_0 ]  ) \\ & 
+     \AJ( [D_{\infty}] )  & \equiv  \AJ([D_{\infty} + D])  =  \AJ( [ \nu \sum_{k = 1}^n P_k + (\mu m - 1) P_0 ]  ) \\ &
       \equiv   \nu \sum_{k=1}^n \int_{P_0}^{P_k} \bar\w \mod \Lambda
     \end{align*}
     and conclude that $\AJ( [D_{\infty}] )$ can be expressed in terms of integrals between
@@ -216,19 +216,19 @@ This representation has the following advantages:
   \nu \sum_{k=1}^n \int_{P_0}^{P_k} \bar\w \equiv \sum_{l = 1}^{\delta} \int_{P_0}^{P^{(l)}_{\infty}} \bar\w \mod \Lambda.
   \end{equation*}
   \end{rmk}
-  
-  
-  
+
+
+
  \subsubsection{Non-coprime degrees}\label{subsec:ajm_inf_ncop}
 
   For $\delta > 1$ the problem becomes a lot harder. First we need a way to distinguish between the infinite points in $\mathcal{P}
   = \{ P_{\infty}^{(1)},\dots, P_{\infty}^{(\delta)} \}$ and second they are singular points
   on the projective closure of our affine model $\caff$
   whenever $m \ne \{n,n\pm1\}$.
-  
+
   As shown in \cite[\S 1]{CT1996} we obtain a second affine patch of $\cu$ that is non-singular along $\mathcal{P}$
   in the following way:
-  
+
   Denoting $M = \frac{m}\delta$ and $N = \frac{n}\delta$, we consider the birational transformation
   \begin{equation*}
    (x,y) = \Phi(r,t) = \left(\frac{1}{r^{\nu}t^M},\frac{r^{\mu}}{t^N}\right)
@@ -245,13 +245,13 @@ This representation has the following advantages:
   \begin{equation*}
    (r,t) = (\zeta_{\delta}^s,0) \quad s= 1,\dots,\delta
   \end{equation*}
-  where $\zeta_{\delta} = e^{\frac{2\pi i }{\delta}}$. 
+  where $\zeta_{\delta} = e^{\frac{2\pi i }{\delta}}$.
   Hence, we can describe the infinite points in $\mathcal{P} \subset \cu$ via
    \begin{equation*}
       P_{\infty}^{(s)} = \Phi^{-1}(\zeta_{\delta}^s,0).
    \end{equation*}
-   
-   
+
+
    Suppose we want to compute the Abel-Jacobi map of $D_{\infty}^{(s)} = P_{\infty}^{(s)} - P_0$ for $s \in \{1,\dots,\delta\}$.
    Again following our strategy,
    this time working on $\cafft$, we look at the intersection of the vertical line through $(\zeta_{\delta}^s,0)$ with
@@ -272,7 +272,7 @@ This representation has the following advantages:
        D_1 := \div \left( \frac{y^M}{x^N} - \zeta_{\delta}^s \right);
     \end{equation*}
    then $\ord_{P_{\infty}^{(s)}}(D_1) \ge 1$ by construction.
-    
+
   \begin{thm}\label{thm:ajm_inf_ord1}
     Assume $\ord_{P_{\infty}^{(s)}}(D_1) = 1$ and $0 \not\in X$. Then, for $s = 1,\dots,\delta$, there exist points $Q_1^{(s)},\dots,Q_{d-1}^{(s)} \in \cu \setminus \mathcal{P}$ such that
     \begin{equation}\label{eq:ajm_inf_ord1}
@@ -285,11 +285,11 @@ This representation has the following advantages:
     Moreover, we can assume that $t_n^{(s)} = 0$ and $t_i^{(s)} \ne 0$ for $i=1,\dots,n-1$.
     Therefore,
     \begin{align*}
-      \AJ( [D_{\infty}^{(s)}] )  & \equiv  \AJ([D_{\infty}^{(s)} - D_1])  
+      \AJ( [D_{\infty}^{(s)}] )  & \equiv  \AJ([D_{\infty}^{(s)} - D_1])
       \equiv  -\AJ( [\sum_{i = 1}^{d-1} \Phi(\zeta_{\delta}^s,t_i^{(s)}) - N \sum_{Q \in \pr^{-1}(0)} Q  ] )
        \mod \Lambda.
     \end{align*}
-    Since  $0 \not\in X$ (in fact this is true for any non-branch point) the sum over the integrals from $P_0$ to all $Q \in \pr^{-1}(0)$ vanishes modulo the period lattice. 
+    Since  $0 \not\in X$ (in fact this is true for any non-branch point) the sum over the integrals from $P_0$ to all $Q \in \pr^{-1}(0)$ vanishes modulo the period lattice.
     Namely, for every $\wtij \in \W$ we have
     \begin{align*}
       & \sum_{Q \in \pr^{-1}(0)} \int_{P_0}^Q \wtij =  \sum_{l=0}^{m-1} \int_{P_0}^{(0,\zeta^l \sqrt[m]{f(0)})} \wtij \\
@@ -301,12 +301,12 @@ This representation has the following advantages:
     \end{equation*}
     If we take $Q_i^{(s)} = \Phi(\zeta_{\delta}^s,t_i^{(s)}) \in \cu \setminus \mathcal{P}$, $i = 1,\dots,d-1$, we are done:
     \begin{align*}
-    -\AJ( [\sum_{i = 1}^{d-1} \Phi(\zeta_{\delta}^s,t_i^{(s)}) - N \sum_{Q \in \pr^{-1}(0)} Q ] ) \equiv 
+    -\AJ( [\sum_{i = 1}^{d-1} \Phi(\zeta_{\delta}^s,t_i^{(s)}) - N \sum_{Q \in \pr^{-1}(0)} Q ] ) \equiv
     -\sum_{i = 1}^{n-1} \int_{P_0}^{Q_i^{(s)}} \bar\w \mod \Lambda.
     \end{align*}
      \end{proof}
-    
-    In the case of Theorem \ref{m-thm:ajm_inf_ord1} there exist additional relations between the vector integrals in 
+
+    In the case of Theorem \ref{m-thm:ajm_inf_ord1} there exist additional relations between the vector integrals in
     \eqref{m-eq:ajm_inf_ord1}, which we are going to establish now.
     Let $s \in \{1,\dots,\delta\}$, fix $i \in \{1,\dots,n-1\}$ and denote $Q^{(s)} = Q_i^{(s)}$ and $t^{(s)} = t_i^{(s)}$.
     On $\cafft$ we have the relation
@@ -323,10 +323,10 @@ This representation has the following advantages:
      \end{equation*}
      while the relation between their $y$-coordinates yields
      \begin{equation*}
-       \int_{P_k}^{Q^{(s)}} \wtij = \zeta_{\delta}^{-(\mu+\nu N)sj} \int_{P_k}^{Q^{(\delta)}} \wtij 
+       \int_{P_k}^{Q^{(s)}} \wtij = \zeta_{\delta}^{-(\mu+\nu N)sj} \int_{P_k}^{Q^{(\delta)}} \wtij
      \end{equation*}
      for all $\wtij \in \W$. This proves the following corollary:
-     
+
     \begin{coro}\label{coro:ajm_inf_ord1}
     Under the assumptions of Theorem \ref{m-thm:ajm_inf_ord1} and with the above notation we can obtain the
     image of $D_{\infty}^{(s)}$ under the Abel-Jacobi map
@@ -335,16 +335,16 @@ This representation has the following advantages:
      \int_{P_k}^{Q_i^{(\delta)}} \bar\w, \quad i = 1,\dots,n-1.
     \end{equation*}
     \end{coro}
-   
+
 
     \bigskip
-    
+
     Unfortunately, this is just a special case. If $\ord_{P_{\infty}^{(s)}}(D_1)$ is greater than $1$ (for instance, if $\delta \ne m$),
-     the vertical line $r-\zeta_{\delta}^s$ is tangent to the curve $\cafft$ 
+     the vertical line $r-\zeta_{\delta}^s$ is tangent to the curve $\cafft$
     at $(\zeta_{\delta}^s,0)$ and cannot be used for our purpose.
-    
+
     Consequently, we must find another function. One possible choice here is the line $r - t -  \zeta_{\delta}^s$, which
-    is now guaranteed to have a simple intersection with $\cafft$ 
+    is now guaranteed to have a simple intersection with $\cafft$
     at $(\zeta_{\delta}^s,0)$ and does not intersect $\cafft$ in $(\zeta_{\delta}^{s'},0)$, $s \ne s'$.
 
     The corresponding principal divisor is given by
@@ -359,13 +359,13 @@ This representation has the following advantages:
              \sum_{Q \in \pr^{-1}(0)} \Phi^{-1}Q, \quad \text{otherwise.}
              \end{cases}
     \end{equation}
-    Now, 
+    Now,
     \begin{equation*}
      D_2 := \div \left( \frac{y^M}{x^N} - \frac{1}{x^{\mu}y^{\nu}} - \zeta_{\delta}^s \right)
     \end{equation*}
     is a principal divisor on $\caff$ such that
     $\ord_{P_{\infty}^{(s)}}(D_2) = 1$.
-    
+
     \begin{thm}\label{thm:ajm_inf_ordgt1}
       Assume $\ord_{P_{\infty}^{(s)}}(D_1) > 1$ and $0 \not\in X$. Then, for $s = 1,\dots,\delta$, there exist points $Q_1^{(s)},\dots,Q_{d-1}^{(s)} \in \cu \setminus \mathcal{P}$ such that
     \begin{equation*}%\label{eq:ajm_int_ord0}
@@ -383,15 +383,15 @@ This representation has the following advantages:
       (x_k,0) - N \sum_{Q \in \pr^{-1}(0)} Q ] )
        \mod \Lambda.
     \end{align*}
-   Choosing the points 
+   Choosing the points
     $Q_i^{(s)} = \Phi(t_i^{(s)}+\zeta_{\delta}^s,t_i^{(s)}) \in \cu \setminus \mathcal{P}$ and
-     using the same reasoning as in the proof of Theorem \ref{m-thm:ajm_inf_ord1} and 
+     using the same reasoning as in the proof of Theorem \ref{m-thm:ajm_inf_ord1} and
     proves the statement.
      \end{proof}
-    
+
     \begin{rmk}\label{rmk:zero_bp}
      We can easily modify the statements of the Theorems \ref{m-thm:ajm_inf_ord1} and \ref{thm:ajm_inf_ordgt1} to hold for
-     $0 \in X$, i.e. when $0$ is a branch point. 
+     $0 \in X$, i.e. when $0$ is a branch point.
      Using equation \eqref{m-eq:zero_bp1}, the statement of Theorem \ref{m-thm:ajm_inf_ord1} becomes
       \begin{equation*}
        \AJ( [D_{\infty}^{(s)}] ) \equiv -\sum_{i = 1}^{n-1} \int_{P_0}^{Q_i^{(s)}} \bar\w + N(m-M) \int_{P_0}^{(0,0)} \bar\w \mod \Lambda,
@@ -406,11 +406,11 @@ This representation has the following advantages:
 
   \subsection{Reduction modulo period lattice}\label{subsec:lat_red}
 
-    In order for the Abel-Jacobi map to be well defined we have to reduce modulo the period lattice $\Lambda = 
+    In order for the Abel-Jacobi map to be well defined we have to reduce modulo the period lattice $\Lambda =
   \Omega\Z^{2g}$, where $\Omega = (\OA, \OB)$ is the big period matrix, computed as explained in
   Section \ref{m-sec:strat_pm}.
-   
-    
+
+
    Let $v = \int_P^Q \bar\w \in \C^g$ be an vector obtained by integrating the holomorphic differentials in
    $\W$.
    We identify $\C^g$ and $\R^{2g}$ via the bijection
@@ -419,7 +419,7 @@ This representation has the following advantages:
    \end{equation*}
     Applying $\iota$ to the columns of $\Omega$ yields the invertible real matrix
    \begin{equation*}
-    \Omega_{\R} = 
+    \Omega_{\R} =
    \begin{pmatrix}
      \Re(\OA) & \Re(\OB) \\
      \Im(\OA) & \Im(\OB)
