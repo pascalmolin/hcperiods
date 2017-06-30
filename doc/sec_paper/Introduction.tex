@@ -58,35 +58,14 @@
   We take advantage of their specific geometry to obtain the following
   (see Theorem \ref{m-thm:complexity_integrals})
   \begin{thm}
-      Let $\cu$ be a superelliptic curve of genus $g$ defined by the equation an $y^m=f(x)$
+      Let $\cu$ be a superelliptic curve of genus $g$ defined by an equation $y^m=f(x)$
       where $f$ has degree $n$.
       We can compute a basis of the period lattice to
-      precision $D$ using $$O(n(g+\log D)D^2\log^{2+\varepsilon} D) \text{ binary operations,}$$
-     where $\epsilon>0$ is chosen so that
+      precision $D$ using $$O(n(g+\log D)(g+D)^2\log^{2+\varepsilon} (g+D)) \text{ binary operations,}$$
+      where $\epsilon>0$ is chosen so that
       the multiplication of precision $D$ numbers has complexity
       $O(D\log^{1+\epsilon}D)$.
   \end{thm}
-
-  This part only involves numerical integration of differentials. We remark
-  that this complexity is very favorable in terms of the genus.
-
-  In order
-  to obtain standard periods we rely on some linear algebra to obtain a
-  symplectic basis of the homology group (see Section \ref{m-subsec:symp_basis}).
-  In practice this step takes negligible time
-  and produces a base change with tiny coefficients. However, we have no proof
-  of this fact which has to do with the very specific form of our input,
-  so we leave it as a supplementary hypothesis to claim the
-  following
-  \begin{thm}
-     Let $\cu$ be a superelliptic curve of genus $g$ defined by the equation an $y^m=f(x)$ whose periods
-      have been computed.
-      Provided the symplectic reduction
-      step runs in $O(g^2)$ operations and produces $O(1)$ coefficients,
-      we compute the small period matrix $τ$ to precision $D$
-      using an extra $O(g^{2.8}D\log^{1+\varepsilon}D)$ operations.
-  \end{thm}
-
 
   \subsection{Rigorous implementation}
   \label{subsec:arb}
