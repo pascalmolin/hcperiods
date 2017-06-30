@@ -24,7 +24,7 @@
    Let $N(D)$ be the number of points of numerical integration.
    If $m=2$, we have
    $N(D)=O(D)$ using Gauss-Chebychev integration, while $N(D)=O(D\log D)$
-   via double exponential integration.
+   via double-exponential integration.
 
    For multiprecision numbers, we consider (see \cite{BrentZimmermann}) that the multiplication has
    complexity $\cmul(D)=O(D \log^{1+\varepsilon}D)$,
@@ -36,7 +36,7 @@
    \subsubsection{Computation of elementary integrals}
    \label{sec:comp_elem}
 
-   For each elementary cycle $\gamma_e\in \Gamma$, we evaluate numerically the vector of $g$
+   For each elementary cycle $\gamma_e\in \Gamma$, we numerically evaluate the vector of $g$
    elementary integrals from \eqref{m-eq:elem_num_int} as sums of the form
    \begin{equation*}
        I_{a,b} \approx \sum_{k=1}^N w_k\frac{u_k^{i-1}}{y_k^j}
@@ -148,15 +148,15 @@
    \subsection{Precision issues}
 
    As explained in \S \ref{subsec:arb}, the ball arithmetic model allows
-   to certify that the results returned by the arb program are correct.
-   It does not guaranty that the result actually achieves the desired
+   to certify that the results returned by the Arb program are correct.
+   It does not guarantee that the result actually achieves the desired
    precision.
 
    As a matter of fact, we cannot prove a priori that bad accuracy loss
    will not occur while summing numerical integration terms or
    during matrix inversion.
 
-   However we take into account all predictable loss of precision:
+   However, we take into account all predictable loss of precision:
    \begin{itemize}
        \item while computing the periods using equations \eqref{eq:periods}
            and \eqref{eq:polshift}, we compute a sum with coefficients
@@ -237,10 +237,10 @@
    \]
 
    The main term is minimized for $η$ satisfying
-   $η(2\frac{D+\log(2πM_0)}K+1-\log(η))=r_0$. The solution
+   $η\left(2\frac{D+\log(2πM_0)}K+1-\log(η)\right)=r_0$. The solution
    can be written as a Lambert function or we use
    the approximation
-   \[ r = r_0 - η = r_0 ( 1 - \frac{1}{A+\log\frac{A}{r_0}}), \]
+   \[ r = r_0 - η = r_0 \left( 1 - \frac{1}{A+\log\frac{A}{r_0}} \right), \]
    where $A = 1+\frac2K(D+\log(2πM_0))$.
 
    \subsubsection{Double-exponential case}\label{subsec:de_case}
@@ -252,7 +252,7 @@
    %$f(t) = \Re(\overline{z'}(u_k-z))$, where $z = \tanh(λ\sinh(t+ir))$
    %and starting point $t=\Re(z^{-1}(p))$.
 
-   Unfortunately the solution may not be unique, so once
+   Unfortunately, the solution may not be unique, so once
    the parameter $r<r_0$ is chosen (see below), we use ball arithmetic to compute a rigorous
    bound of the integrand on the boundary of $Z_r$. The process consists in
    recursively subdividing the interval until the images of the subintervals by the
