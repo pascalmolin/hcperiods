@@ -48,7 +48,7 @@
   \subsection{Main results}
 
   This paper adresses the problem of computing period matrices and the
-  Abel-Jacobi map of algebraic curves given by an affine equation of the form  (see Definion \ref{m-def:se_curve})
+  Abel-Jacobi map of algebraic curves given by an affine equation of the form  (see Definition \ref{m-def:se_curve})
   \begin{equation*}
   y^m = f(x), \quad m > 1, f \in \C[x] \text{ separable of degree} \deg(f) = n \ge 3.
   \end{equation*}
@@ -58,39 +58,17 @@
   We take advantage of their specific geometry to obtain the following
   (see Theorem \ref{m-thm:complexity_integrals})
   \begin{thm}
-      Let $\cu$ be a superelliptic curve of genus $g$ defined by the equation an $y^m=f(x)$
+      Let $\cu$ be a superelliptic curve of genus $g$ defined by an equation $y^m=f(x)$
       where $f$ has degree $n$.
-      We can compute a basis of the period lattice to precision
-      $D$ digits using $$O(n(g+\log D)D^2\log^{2+\varepsilon} D) \text{ binary operations,}$$
-     where $\epsilon>0$ is chosen so that
+      We can compute a basis of the period lattice to
+      precision $D$ using $$O(n(g+\log D)(g+D)^2\log^{2+\varepsilon} (g+D)) \text{ binary operations,}$$
+      where $\epsilon>0$ is chosen so that
       the multiplication of precision $D$ numbers has complexity
       $O(D\log^{1+\epsilon}D)$.
   \end{thm}
 
-  This part only involves numerical integration of differentials. We remark
-  that this complexity is very favorable in terms of the genus.
-
-  In order
-  to obtain standard periods we rely on some linear algebra to obtain a
-  symplectic basis of the homology group (see Section \ref{m-subsec:symp_basis}).
-  In practice this step takes negligible time
-  and produces a base change with tiny coefficients. However, we have no proof
-  of this fact which has to do with the very specific form of our input,
-  so we leave it as a supplementary hypothesis to claim the
-  following
-  \begin{thm}
-     Let $\cu$ be a superelliptic curve of genus $g$ defined by the equation an $y^m=f(x)$ whose periods
-      have been computed.
-      Provided the symplectic reduction
-      step runs in $O(g^2)$ operations and produces $O(1)$ coefficients,
-      we compute the small period matrix $τ$ to precision $D$
-      digits using an extra $O(g^{2.8}D\log^{1+\varepsilon}D)$ operations.
-  \end{thm}
-
-  \todo Theorem on Abel-Jacobi map?
-
-
   \subsection{Rigorous implementation}
+  \label{subsec:arb}
 
   The algorithm has been implemented in C using the Arb library \cite{Johansson2013arb}.
   This system represents a complex numbers as a floating point approximation

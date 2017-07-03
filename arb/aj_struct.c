@@ -87,36 +87,47 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     intprec = prec + c.n; /* binom(n,n/2) <= 2^n */
 
     aj->type = (flag & AJ_USE_DE || (c.m > 2 && c.n > 2)) ? INT_DE : (c.m == 2) ? INT_GC : INT_D2;
-#if DEBUG
-    progress("## polynomial\n");
-    acb_poly_printd(c.pol, 30);
-#endif
+
+    if (flag & AJ_VERBOSE)
+    {
+        flint_printf("## polynomial\n");
+        if (flag / AJ_VERBOSE > 1)
+            acb_poly_printd(c.pol, 30);
+    }
 
     /* branch points */
-    progress("## branch points\n");
+    if (flag & AJ_VERBOSE)
+        flint_printf("## branch points\n");
     acb_branch_points(aj->roots, c.n, c.pol, cstprec);
+
 #if DEBUG
     flint_printf("\nuse points X = ");
     _acb_vec_printd(aj->roots, c.n, 30, "\n");
 #endif
 
     /* homology */
-    progress("## spanning tree\n");
+    if (flag & AJ_VERBOSE)
+        flint_printf("## spanning tree\n");
     spanning_tree(aj->tree, aj->roots, c.n, aj->type);
+
 #if DEBUG
     tree_print(aj->tree);
 #endif
 
     tree_ydata_init(aj->tree, aj->roots, c.n, c.m, cstprec);
 
-    progress("## symplectic basis\n");
+    if (flag & AJ_VERBOSE)
+        flint_printf("## symplectic basis\n");
+
     symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
 
     if (flag & AJ_NO_INT)
         return;
 
     /* integration */
-    progress("## integrals %s\n", (aj->type == INT_GC) ? "gc" : "de");
+    if (flag & AJ_VERBOSE)
+        flint_printf("## integrals %s\n", (aj->type == INT_GC) ? "gc" : "de");
+
     acb_mat_init(aj->integrals, aj->tree->n, c.g);
     if (aj->type == INT_D2)
         integral_d2(aj->integrals->rows[0], aj->tree->data + 0, c, intprec);
@@ -135,13 +146,18 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
         return;
 
     /* period matrices */
-    progress("## periods\n");
+    if (flag & AJ_VERBOSE)
+        flint_printf("## periods\n");
+
     period_matrix(aj->omega0, aj->loop_a, aj->integrals, c, intprec);
     period_matrix(aj->omega1, aj->loop_b, aj->integrals, c, intprec);
+
 #if DEBUG > 2
-    progress("\n\nperiods A\n");
+    if (flag & AJ_VERBOSE)
+        flint_printf("\n\nperiods A\n");
     acb_mat_printd(aj->omega0, 20);
-    progress("\n\nperiods B\n");
+    if (flag & AJ_VERBOSE)
+        flint_printf("\n\nperiods B\n");
     acb_mat_printd(aj->omega1, 20);
 #endif
 
@@ -155,7 +171,9 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     if (flag & AJ_NO_TAU)
         return;
 
-    progress("## tau\n");
+    if (flag & AJ_VERBOSE)
+        flint_printf("## tau\n");
+
     tau_matrix(aj->tau, aj->omega0, aj->omega1, intprec);
 
     if (flag & AJ_TRIM)

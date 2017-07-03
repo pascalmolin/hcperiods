@@ -24,7 +24,7 @@
    Let $N(D)$ be the number of points of numerical integration.
    If $m=2$, we have
    $N(D)=O(D)$ using Gauss-Chebychev integration, while $N(D)=O(D\log D)$
-   via double exponential integration.
+   via double-exponential integration.
 
    For multiprecision numbers, we consider (see \cite{BrentZimmermann}) that the multiplication has
    complexity $\cmul(D)=O(D \log^{1+\varepsilon}D)$,
@@ -32,11 +32,11 @@
    in complexity $\ctrig(D)=O(D\log^{2+\varepsilon} D$).
     Moreover, we assume that multiplication of a $g \times g$ matrix can
     be done using $O(g^{2.8})$ multiplications.
-   
+
    \subsubsection{Computation of elementary integrals}
    \label{sec:comp_elem}
 
-   For each elementary cycle $\gamma_e\in \Gamma$, we evaluate numerically the vector of $g$
+   For each elementary cycle $\gamma_e\in \Gamma$, we numerically evaluate the vector of $g$
    elementary integrals from \eqref{m-eq:elem_num_int} as sums of the form
    \begin{equation*}
        I_{a,b} \approx \sum_{k=1}^N w_k\frac{u_k^{i-1}}{y_k^j}
@@ -92,7 +92,7 @@
    \end{equation*}
    where $\gamma_e,e\in E$ spans the elementary cycles
    and $l\in\Z/m\Z$ their shifts,
-   and $s_{e,l}\in\Z$ are coefficients of the matrix $S$. 
+   and $s_{e,l}\in\Z$ are coefficients of the matrix $S$.
 
    We use \eqref{m-eq:periods} to compute the coefficients of the big period
    matrix $(\OA,\OB)$, so that each term of \eqref{m-eq:base_change_cycles}
@@ -116,18 +116,18 @@
 
    Finally, the small period matrix is obtained by solving $\OA\tau=\OB$,
    which can be done using $O(g^{2.8})$ multiplications.
-   
+
    \subsubsection{Abel-Jacobi map}
-   
+
   This part of the complexity analysis is based on the results of Section \ref{m-sec:comp_ajm} and assumes that we already computed a big period matrix and all related data.
-   
+
   Let $\ctot(D)$ be the number of operations needed to compute a vector of $g$ elemenatary integrals  (see \eqref{m-eq:elem_int_complexity}). The complexity class of $\ctot(D)$ in $O$-notation is given in
   Theorem \ref{m-thm:complexity_integrals}.
-  
+
    \begin{thm} \
    \begin{itemize}
-     \item[{\upshape{(i)}}] For each finite point $P \in \caff$ we can compute $\int_{P_0}^P \bar\w$ to precision $D$ using 
-      $\ctot(D)$ operations. 
+     \item[{\upshape{(i)}}] For each finite point $P \in \caff$ we can compute $\int_{P_0}^P \bar\w$ to precision $D$ using
+      $\ctot(D)$ operations.
      \item[{\upshape{(ii)}}] For each infinite point $P_{\infty} \in \cu$ we can compute a representative of $\int_{P_0}^{P_{\infty}} \bar\w \mod \lambda$ to precision $D$ using
       \begin{itemize}
        \item[$\bullet$] $n$ vector additions in $\C^g$, if $\delta = \gcd(m,n) = 1$,
@@ -145,6 +145,41 @@
     \end{itemize}
    \end{proof}
 
+   \subsection{Precision issues}
+
+   As explained in \S \ref{subsec:arb}, the ball arithmetic model allows
+   to certify that the results returned by the Arb program are correct.
+   It does not guarantee that the result actually achieves the desired
+   precision.
+
+   As a matter of fact, we cannot prove a priori that bad accuracy loss
+   will not occur while summing numerical integration terms or
+   during matrix inversion.
+
+   However, we take into account all predictable loss of precision:
+   \begin{itemize}
+       \item while computing the periods using equations \eqref{eq:periods}
+           and \eqref{eq:polshift}, we compute a sum with coefficients
+           \begin{equation*}
+               C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i
+               {i-1 \choose l} \left(\frac{b+a}{b-a}\right)^{i-1-l}
+           \end{equation*}
+           whose magnitude can be controlled a priori. It has size $O(g)$.
+       \item the size of the coefficients of the symplectic reduction
+           matrix are tiny (less than $m$ in practice), but we can take
+           their size into account before entering the numerical steps.
+           Notice that generic HNF estimates lead to a very pessimistic
+           estimate of size $O(g)$ coefficients.
+       \item matrix inversion of size $g$ needs $O(g)$ extra bits.
+   \end{itemize}
+   This leads to increasing the internal precision from $D$ to $D + O(g)$,
+   the implied constant depending on the configuration of branch points.
+
+   \begin{rmk}
+   In case the end result is imprecise by $d$ bits, the user simply needs to
+   run another instance at precision $D+d$.
+   \end{rmk}
+
    \subsection{Integration parameters}
 
    \subsubsection{Gauss-Chebychev case}
@@ -161,7 +196,7 @@
    \end{figure}
 
    The sum of its semi-axes is $e^{r}$
-   and one needs 
+   and one needs
    \[
        N \geq \frac{D+\log(2πM(r)+e^{-D})}{2r}
    \]
@@ -176,13 +211,13 @@
    the solution is unique on the quadrant containing $u_k$.
 
    \paragraph{Choice of $r$}\label{par:gc_int_r}
-   
+
    Let $\abs{u_k-1}+\abs{u_k+1}=2\cosh(r_k)$. We need to choose
    $r<r_0=\min_k r_k$ (so that $u_k\not\in ε_r$) in order to minimize
    the number of integration points \eqref{m-eq:Ngc}. We first
    estimate how the bound $M(r)$ varies for $r<r_0$.
    \begin{itemize}
-       \item 
+       \item
    For all $k$ such that $r_k > r_0$, we compute
    explicitly the distance $d_k=\dist(u_k,ε_{r_0})<\dist(u_k,ε_r)$.
    \item
@@ -191,7 +226,7 @@
    where $D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\sin(t_k-ir_k)}$.
    \end{itemize}
 
-   Let $K$ be the number of branch points $u_k$ such that $r_k=r_0$ and 
+   Let $K$ be the number of branch points $u_k$ such that $r_k=r_0$ and
    \[ M_0 = \sqrt{\prod_{r_k = r_0} D_k\prod_{r_k>r_0}d_k}^{-1}, \]
    then the integrand is bounded on $ε_{r_0-η}$ by
    \[ M(r_0-η) = M_0 \sqrt{η}^{-K} (1+O(η)). \]
@@ -202,12 +237,12 @@
    \]
 
    The main term is minimized for $η$ satisfying
-   $η(2\frac{D+\log(2πM_0)}K+1-\log(η))=r_0$. The solution
+   $η\left(2\frac{D+\log(2πM_0)}K+1-\log(η)\right)=r_0$. The solution
    can be written as a Lambert function or we use
    the approximation
-   \[ r = r_0 - η = r_0 ( 1 - \frac{1}{A+\log\frac{A}{r_0}}), \]
+   \[ r = r_0 - η = r_0 \left( 1 - \frac{1}{A+\log\frac{A}{r_0}} \right), \]
    where $A = 1+\frac2K(D+\log(2πM_0))$.
- 
+
    \subsubsection{Double-exponential case}\label{subsec:de_case}
 
    We use the parametrization
@@ -217,7 +252,7 @@
    %$f(t) = \Re(\overline{z'}(u_k-z))$, where $z = \tanh(λ\sinh(t+ir))$
    %and starting point $t=\Re(z^{-1}(p))$.
 
-   Unfortunately the solution may not be unique, so once
+   Unfortunately, the solution may not be unique, so once
    the parameter $r<r_0$ is chosen (see below), we use ball arithmetic to compute a rigorous
    bound of the integrand on the boundary of $Z_r$. The process consists in
    recursively subdividing the interval until the images of the subintervals by the
@@ -227,9 +262,9 @@
 
    We adapt the method used for Gauss-Chebychev. This time the number $N$ of integration
    points is obtained from equation \eqref{m-eq:de_parameters}.
-   
+
    Writing $u_k = \tanh(λ\sinh(t_k+ir_k))$, we must choose
-   $r<r_0=\min_k r_k$ to ensure $u_k\not\in Z_r$. Let 
+   $r<r_0=\min_k r_k$ to ensure $u_k\not\in Z_r$. Let
    \[ M_0 = (\prod_{r_k = r_0} D_k\prod_{r_k>r_0}d_k)^{-j/m} \]
    where $d_k=\dist(u_k,Z_{r_0})<\dist(u_k,Z_r)$ and
    \[ D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\frac{λ \cosh(t_k+ir_k)}{\cosh(λ\sinh(t_k+ir_k))^2}} \]
@@ -240,18 +275,18 @@
    \[ h = \frac{2π(r_0-η)}{D+\log(2B(r_0,α)M_0)-jK/m\log(η)}+O(η) \]
    and the maximum is obtained for $η$ solution of $η(A-\log η)=r_0$
    where $A=1+\frac{m}{jK}(D+\log(2B(r_0,α)M_0))$.
- 
+
    \subsection{Implementation tricks}
 
    Here we simply give some ideas that we used in our implementation(s) to improve constant factors hidden in the big-$O$ notation, i.e. the absolute running time.
-   
+
    In practice, 80 to 90\% of the running time is spent on numerical integration
    of integrals \eqref{m-eq:periods}. According to \S~\ref{m-sec:comp_elem},
    for each integration point $u_k\in]-1,1[$ one first evaluates the $y$-value
    $y_k=\ytab(u_k)$, then add the contributions $w_k\frac{u_k^i}{y_k^j}$ to
    the integral of each of the $g$ differential forms.
 
-   We shall improve on these two aspects, the former being prominent for superelliptic curves,
+   We shall improve on these two aspects, the former being prominent for hyperelliptic curves,
    and the latter when the $g>n$.
 
     \subsubsection{Computing products of complex roots}\label{subsec:computing_roots}
@@ -261,9 +296,10 @@
 
     Instead, we fall back to one single (usual) $m$-th root
     by computing $q(u)\in\frac12\Z$ such that
-  \begin{equation*}
-   \ytab(u) = \zeta^q \Big( \prod_{u_k\in U^-}(u-u_k) \prod_{u_k\in U^+} (u_k-u) \Big)\mr.
-  \end{equation*}
+  \begin{equation}
+      \label{eq:ytab_comp}
+      \ytab(u) = \zeta^{q(u)} \Big( \prod_{u_k\in U^-}(u-u_k) \prod_{u_k\in U^+} (u_k-u) \Big)\mr.
+  \end{equation}
   This can be done by tracking
   the winding number of the product while staying away from the branch cut
   of the $m$-th root.
@@ -296,8 +332,8 @@
    Without polynomial shift \eqref{eq:polshift}, this numerator should be
    $x_k=u_k+\frac{b+a}{b-a}$. However, $x_k$ is a complex number while $u_k$
    is real, so computing with $u$ saves a factor almost $2$ on this aspect.
-   
-   \subsection{Further ideas} 
+
+   \subsection{Further ideas}
 
    \subsubsection{Improving branch points}
 
@@ -321,20 +357,33 @@
     \end{equation*}
     Although this can be done in low precision, computing $r_e$ for all $(n-1)(n-2)/2$ edges of the complete graph
     demands $O(n^3)$ evaluation of elementary costs (involving transcendantal functions if $m>2$).
-    
+
     For large values of $n$ (comparable to the precision), the computation of
     these capacities has a noticable impact on the running time. This can be
     avoided by computing a \emph{minimal spanning tree} that uses the euclidean
     distance between the end points of an edge as capacity, i.e.
     $r_e = \abs{b-a}$, which reduces the complexity to $O(n^2)$
     multiplications.
-    
+
     Given sufficiently many branch points that are randomly distributed in the
     complex plane, the shortest edges of the complete graph tend to agree with
     the edges that are well suited for integration.
     %Heuristically we find that starting with $n \approx 15$ this approach
     %becomes favourable.
     % -> Pascal disagrees here, spanning tree ~ 1% of the running time for prec=128 and n=31...
+
+    \subsubsection{Taking advantage of rational equation}
+
+    In case the equation \eqref{eq:aff_model} is given by a polynomial $f(x)$
+    with small rational coefficients, one can still improve the computation
+    of $\ytab(u)$ in \eqref{eq:ytab_comp} by going back to
+    the computation of $y(\xab(u))=f(x)^{\frac1m}$.
+    The advantage is that baby-step giant-step splitting can be used for
+    the evaluation of $f(x)$, reducing the number of multiplications to
+    $O(\sqrt{n})$. In order to recover $\ytab(u)$, one needs to divide by
+    $\sqrt[m]{1-u^2}$ and adjust a multiplicative constant including
+    the winding number $q(u)$, which can be evaluated at low precision.
+    This technique must not be used when $u$ gets close to $\pm1$.
 
     \subsubsection{Splitting bad integrals or moving integration path}
 
@@ -344,6 +393,6 @@
     In this case, one can always split the bad integrals to improve the
     relative distances of the singularities. Another option with
     double exponential integration is to shift the integration path.
-    
+
 \biblio
 \end{document}
