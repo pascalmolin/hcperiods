@@ -5,7 +5,7 @@
 \section{Numerical integration}\label{sec:numerical_integration}
 
 As explained in Section \ref{m-subsec:numerical_integration}, the periods
-of generating cycles $\gamma\in \Gamma$ are expressed in terms of
+of the generating cycles $\gamma\in \Gamma$ are expressed in terms of
 elementary integrals
 \eqref{m-eq:elem_num_int}
 \begin{equation*}
@@ -29,7 +29,7 @@ even with different values of $\alpha$;
     the Gauss-Chebychev method \cite[25.4.38]{AbramowitzStegun} applies and
     provides a better scheme (fewer and simpler integration points).
 \end{itemize}
-For larger $m$, the periods could also be computed using general Gauss-Jacobi integration
+For $m > 2$, the periods could also be computed using general Gauss-Jacobi integration
 of parameters $\alpha,\alpha$. However, a different scheme has to be computed for each $\alpha$
 and it now involves computing roots of general Jacobi polynomials to large accuracy, which
 makes it hard to compete with the double-exponential scheme.
@@ -229,9 +229,9 @@ $X_r=\cos(r)\sqrt{\frac{π}{2Y_0}-1}$.
 \subsection{Gauss-Chebychev integration}
 \label{sub:gauss_chebychev_integration}
 
-In the case of hyperelliptic curves, we have $α=\frac12$ and the integral
+In the case of hyperelliptic curves, we have $α=\frac12$ (and $j=1$) and the integral
 \begin{equation*}
-    \int_{-1}^1\frac{\varphi_{i,j}(u)}{\sqrt{1-u^2}}\du
+    \int_{-1}^1\frac{\varphi_{i,1}(u)}{\sqrt{1-u^2}}\du
 \end{equation*}
 can be efficiently handled by Gaussian integration with weight
 $1/\sqrt{1-u^2}$,
@@ -252,7 +252,7 @@ since their roots are explicitly given as cosine functions \cite[25.4.38]{Abramo
      = E(N),
     \end{equation}
     with constant weights $w_k = w =\frac{π}N$
-    and nodes $u_k = \cos(\frac{2k-1}{2N}π)$.
+    and nodes $u_k = \cos\left(\frac{2k-1}{2N}π\right)$.
 \end{thm}
 
 Moreover, very nice estimates on the error $E(N)$ can by obtained by applying
@@ -276,7 +276,7 @@ the residue theorem on an ellipse $ε_r$ of the form
 \end{thm}
 
 Now we use this theorem with a function
-$g_{i,j}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitly factored
+$g_{i}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitly factored
 polynomial $Q(u)=\prod(u-u_k)$, so that the error can be
 explicitly controlled.
 
@@ -310,11 +310,11 @@ We simply compute the distance
     \end{equation*}
     we have
     \begin{equation*}
-        \abs{I_{a,b}(i,j)
+        \abs{I_{a,b}(i,1)
         - \frac{π}N\sum_{k=1}^N\frac{u_k^{i-1}}{\ytab(u_k)}}
             \leq e^{-D},
     \end{equation*}
-    where $u_k=\cos(\frac{2k-1}{2N}π)$.
+    where $u_k=\cos\left(\frac{2k-1}{2N}π\right)$.
 \end{thm}
 
 More details on the choice of $r$ and the computation of $M(r)$
