@@ -12,8 +12,8 @@ import "se_help_funcs.m": MakeCCVector, PolynomialShiftVector;
 import "se_spanning_tree.m": GC_AJM_Weight;
 
 // Low precision complex field
-C20<I> := ComplexField(20);
-Pi20 := Real(Pi(C20));
+C30<I> := ComplexField(30);
+Pi30 := Real(Pi(C30));
 
 ////////////////////////////////////////////////////////////
 // ***** Parameters for Gauss-Chebychev integration ***** //
@@ -37,7 +37,7 @@ function GC_Params(CCV,Len,n,Prec)
 // Computes n and e
 	// Compute r_k and r_0
 	V_r := []; r_0 := 4.;
-	ChangeUniverse(~CCV,C20);
+	ChangeUniverse(~CCV,C30);
 	for k in [1..Len] do
 		r_k := (1/2) * ( Abs(CCV[k]+1) + Abs(CCV[k]-1) );
 		assert r_k gt 1;
@@ -45,7 +45,7 @@ function GC_Params(CCV,Len,n,Prec)
 		Append(~V_r,r_k);
 	end for;
 	// M_0 = D + Log(2Pi) + n*Log(r_0)
-	M_0 := Log(2*Pi20) + n*Log(r_0) + Log(10)*Prec;
+	M_0 := Log(2*Pi30) + n*Log(r_0) + Log(10)*Prec;
 	vprint SE,2 : "M_0:",M_0;
 
    	// Make it precise
@@ -173,14 +173,16 @@ end function;
 function GC_Integrals_Tree(SEC)
 // Compute integrals for tree
 	// Compute integration parameters for spanning tree
-	//N := GC_Params_Tree(SEC`SpanningTree,SEC`Prec);
-	N := SEC`SpanningTree`Params[2];
+	NPoints := SEC`SpanningTree`Params[2]; NInts := #NPoints;
 
 	Periods := []; 
 	ElementaryIntegrals := [];
-
 	for k in [1..SEC`SpanningTree`Length] do
-		Period, EI := GC_Integrals_Edge(SEC`SpanningTree`Data[k],SEC,N);
+		l := NInts;
+		while SEC`SpanningTree`Edges[k][3] lt SEC`SpanningTree`Params[3][l] do
+			l -:= 1;
+		end while;
+		Period, EI := GC_Integrals_Edge(SEC`SpanningTree`Data[k],SEC,NPoints[l]);
 		Append(~Periods,[ [ P ] : P in Period ]);
 		Append(~ElementaryIntegrals,EI);
 	end for;

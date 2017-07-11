@@ -112,8 +112,8 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 20, Small := true, Abe
 	vprint SE,1 : "Computational precision:",CompPrec;
 
 	// Low precision branch points
-	C20<I> := ComplexField(20);
-	f_lp := ChangeRing(f,C20);
+	C30<I> := ComplexField(30);
+	f_lp := ChangeRing(f,C30);
 	Roots_lp := Roots(f_lp);
 	require #Roots_lp eq n : "Defining polynomial has to be squarefree.";
 	SEC`LowPrecBranchPoints := [ R[1] : R in Roots_lp ];
@@ -140,7 +140,7 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 20, Small := true, Abe
 
 	// Leading coefficient
 	SEC`LeadingCoeff := LeadingCoefficient(f_x);
-	vprint SE,2 : "Leading coefficient:",C20!SEC`LeadingCoeff; 	
+	vprint SE,2 : "Leading coefficient:",C30!SEC`LeadingCoeff; 	
 
 	// Holomorphic differentials in the form
 	// DFF = [ min_j, #j's, [ max_ij : j in [min_j..max_j] ], [ jPows ] ];
