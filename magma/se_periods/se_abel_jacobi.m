@@ -189,7 +189,7 @@ intrinsic SE_AbelJacobi( D::SEDivisor, SEC::SECurve ) -> Mtrx
 	end if;
 
 	// Integration parameters
-	Params := DE_Params_AJM(ComplexEdges,SEC);
+	Params, ComplexEdges := DE_Params_AJM(ComplexEdges,SEC);
 	vprint SE,2 : "Parameter(AJM):",Params;
 	ExtraPrec := 2*Ceiling(Log(10,Params[1]/SEC`SpanningTree`Params[1]));
 	if ExtraPrec gt 0 then
@@ -204,12 +204,16 @@ intrinsic SE_AbelJacobi( D::SEDivisor, SEC::SECurve ) -> Mtrx
 		SEC`BranchPoints := [ R[1] : R in Roots_fx ];
 		//SEC`DifferentialChangeMatrix := ChangeRing(SEC`DifferentialChangeMatrix,C);
 	end if;
-	DEInt := DE_Int_Params(Params,SEC:AJM:=true);
+	DEInts := DE_Integration(Params,SEC:AJM); NInts := #DEInts;
 
 	// Actual integrations from P_k to P
 	ComplexIntegral := Matrix(C,SEC`Genus,1,[]);
 	for CE in ComplexEdges do
-		ComplexIntegral +:= CE[2] * Matrix(C,SEC`Genus,1,DE_Integrals_Edge_AJM(CE,SEC,DEInt));
+		l := NInts;
+		while CE[4] lt DEInts[l]`r do
+			l -:= 1;
+		end while;
+		ComplexIntegral +:= CE[2] * Matrix(C,SEC`Genus,1,DE_Integrals_Edge_AJM(CE,SEC,DEInts[l]));
 	end for;
 
 	// Differential change matrix
