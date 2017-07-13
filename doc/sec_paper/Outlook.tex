@@ -1,0 +1,40 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+
+  \newpage
+
+  \section{Outlook}\label{sec:outlook}
+
+  In this paper we presented an approach based on numerical integration for multiprecision computation of period matrices and the Abel-Jacobi map of superelliptic curves given by
+ $m > 1$ and squarefree $f \in \C[x]$.
+ 
+  Integration along a spanning tree and the special geometry of such curves make it possible to compute these objects too high precision performing only a few numerical integrations.
+  The resulting algorithm has an excellent scaling with the genus and works for several thousand digits of precision.
+  
+  \subsection{Generalizations}
+  
+  We remark that there is no theoretic obstruction to generalizing this approach to more general curves.
+  In a first step the algorithm could be extended to all complex superelliptic curves given by $m > 1$ and $f \in \C[x]$, where $f$ can have multiple roots of order at most $m-1$.
+  Although several adjustments would have to be made (e.g.\ Differentials, Homology, Integration), staying within the superelliptic setting promises a fast and rigorous extension of our algorithm. 
+  
+  \medskip
+  
+  For completely general algebraic curves given by $f \in \C[x,y]$ it is very hard to make this approach work.
+  It is unclear how to integrate between branch points numerically without using Puiseux series expansions (and splitting up each integral into three parts).  
+  All advantages of superelliptic curves that are utilized by our approach are lost.
+  Even though a generalization is possible, we highly doubt that this is the most efficient approach.
+  
+  \subsection{Reduced small period matrix}
+
+   For a given curve our algorithm computes an arbitrary small period matrix $\tau$ in the Siegel upper half-space $\mathcal{H}_g$ in the sense that we can't say
+   anything about its imaginary part. 
+   
+   For applications like the computation of theta functions it is useful
+   to have a small period matrix in the fundamental domain $\mathcal{F}_g \subset \mathcal{H}_g$ (see \cite[\S 1.3]{PlaneQuarticsCM}).
+  
+   Moreover, the authors of \cite{PlaneQuarticsCM} give a theoretical sketch of an algorithm (Algorithm 1.9) that achieves this reduction step, as well as two practical versions (Algorithms 1.12 and 1.14) which at least
+   work for $g \le 3$.
+
+  \biblio
+  \end{document}
