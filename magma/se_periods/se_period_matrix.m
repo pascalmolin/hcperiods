@@ -76,10 +76,11 @@ procedure SE_PeriodMatrix( SEC : Small := true )
 	if SEC`IntegrationType eq "DE" then
 		// Integration parameters
 		vprint SE,1 : "Computing integration parameters...";
-		DEInt := DE_Int_Params(STree`Params,SEC);
+		//DEInt := DE_Int_Params(STree`Params,SEC);
+		DEInts := DE_Integration(STree`Params,SEC);
 		vprint SE,1 : "using double-exponential integration...";
-		vprint SE,2 : DEInt;	
-		Periods, ElemInts := DE_Integrals_Tree(SEC,DEInt);
+		vprint SE,2 : DEInts;	
+		Periods, ElemInts := DE_Integrals_Tree(SEC,DEInts);
 	elif SEC`IntegrationType eq "GC" then
 		vprint SE,1 : "using Gauss-Chebychev integration...";
 		Periods, ElemInts := GC_Integrals_Tree(SEC);
