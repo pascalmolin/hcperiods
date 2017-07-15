@@ -28,7 +28,6 @@ CFLAGS=-fno-common -ansi -pedantic -Wall -O2 -funroll-loops -g -mpopcnt -std=c99
 ABI_FLAG=
 PIC_FLAG=-fPIC
 EXTRA_SHARED_FLAGS=
-#-install_name /usr/local/lib/libarb-1.1.1.dylib -compatibility_version 1.1 -current_version 1.1.1
 
 QUIET_CC  = @echo '   ' CC  ' ' $@;
 QUIET_CXX = @echo '   ' CXX ' ' $@;

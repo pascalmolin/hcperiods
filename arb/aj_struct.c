@@ -6,29 +6,16 @@
 
 #include "abel_jacobi.h"
 void
-acb_branch_points(acb_ptr x, slong n, const acb_poly_t pol, slong prec)
+acb_branch_points(acb_ptr x, slong n, const fmpz_poly_t pol, slong prec)
 {
-    /* isolate roots */
-    if (acb_poly_find_roots(x, pol, NULL, 0, prec) < n)
-    {
-        acb_poly_printd(pol, 20);
-        flint_printf("missing roots, abort.\n");
-        abort();
-    }
-    /* set real roots to exact real */
-    if (acb_poly_validate_real_roots(x, pol, prec))
-    {
-        slong k;
-        for (k = 0; k < n; k++)
-            if (arb_contains_zero(acb_imagref(x + k)))
-                arb_zero(acb_imagref(x + k));
-    }
+    /* compute roots */
+    arb_fmpz_poly_complex_roots(x, pol, 0, prec + 2);
     /* and order them */
     _acb_vec_sort_lex(x, n);
 }
 
 void
-abel_jacobi_init_poly(abel_jacobi_t aj, slong m, const acb_poly_t pol)
+abel_jacobi_init_poly(abel_jacobi_t aj, slong m, const fmpz_poly_t pol)
 {
     slong n, g;
 
@@ -92,7 +79,7 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     {
         flint_printf("## polynomial\n");
         if (flag / AJ_VERBOSE > 1)
-            acb_poly_printd(c.pol, 30);
+            fmpz_poly_print(c.pol);
     }
 
     /* branch points */
