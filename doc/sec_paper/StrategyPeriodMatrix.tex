@@ -19,15 +19,15 @@
   So, we compute the intersection pairing on $\Gamma$, as explained in Section \ref{m-sec:intersections}, which results in a
   intersection matrix $K_{\Gamma} \in \Z^{2g \times 2g}$.
   After computing a symplectic base change $S \in \GL(\Z,2g)$ for $K_{\Gamma}$ (\S \ref{m-subsec:symp_basis}), we obtain a big period matrix
-  \begin{equation*}
+  \begin{equation}
       \label{eq:OAOB}
       (\OA,\OB) = \OC S,
-  \end{equation*}
+  \end{equation}
    and finally a small period matrix in the Siegel upper half-space
-  \begin{equation*}
+  \begin{equation}
       \label{eq:tau}
    \tau = \OA^{-1} \OB \in \mathfrak{H}_g.
-  \end{equation*}
+  \end{equation}
 
   \bigskip
 
@@ -44,7 +44,7 @@
    to an edge $e = (a,b) \in E$. Then, for all differentials $\w_{i,j} \in \WM$, we have
    \begin{equation}\label{eq:periods}
       \int_{\gamma_e^{(l)}} \w_{i,j}
-      =  \zeta^{-lj} (1-\zeta^{-j}) C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du
+      =  \zeta^{-lj} (1-\zeta^{-j}) C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\varphi_{i,j}(u)}{(1-u^2)^{\frac{j}{m}}}  \du,
    \end{equation}
    where
    \begin{equation*}
@@ -56,18 +56,18 @@
     By the definition in \eqref{m-eq:def_cyabl} we can write $\gamma_e^{(l)} = \gamma_{[a,b]}^{(l)} \cup \gamma_{[b,a]}^{(l+1)}$. Hence we split up the integral and compute
     \begin{align*}\label{eq:thm_periods_2}
      \int_{\gamma_{[a,b]}^{(l)}} \w_{i,j}  & =  \int_{\gamma_{[a,b]}^{(l)}} \frac{x^{i-1}}{y^j}  \dx  =  \zeta^{-lj} \int_a^b \frac{x^{i-1}}{\yab(x)^j}  \dx \\  & =
-     \zeta^{-lj} C_{a,b}^{-j}   \int_a^b \frac{x^{i-1}}{\ytab(\uab(x))^j (1-\uab(x)^2)^{\frac{j}{m}}}  \dx
+     \zeta^{-lj} C_{a,b}^{-j}   \int_a^b \frac{x^{i-1}}{\ytab(\uab(x))^j (1-\uab(x)^2)^{\frac{j}{m}}} \dx.
      \intertext{
-  Applying the transformation $x \mapsto \xab(u)$ introduces the derivative $\dx = \left(\frac{b-a}{2}\right) \du$.
+  Applying the transformation $x \mapsto \xab(u)$ introduces the derivative $\dx = \left(\frac{b-a}{2}\right) \du$ yields
   }
-   & = \zeta^{-lj} C_{a,b}^{-j} \left(\frac{b-a}{2}\right) \int_{-1}^1 \frac{\xab(u)^{i-1}}{\ytab(u)^j (1-u^2)^{\frac{j}{m}}}  \du \\ & =
+   \int_{\gamma_{[a,b]}^{(l)}} \w_{i,j} & = \zeta^{-lj} C_{a,b}^{-j} \left(\frac{b-a}{2}\right) \int_{-1}^1 \frac{\xab(u)^{i-1}}{\ytab(u)^j (1-u^2)^{\frac{j}{m}}}  \du \\ & =
     \zeta^{-lj} C_{a,b}^{-j} \left(\frac{b-a}{2}\right)^i \int_{-1}^1 \frac{\left(u+\frac{b+a}{b-a}\right)^{i-1}}{\ytab(u)^j (1-u^2)^{\frac{j}{m}}}  \du
   \end{align*}
   Similarly, we obtain
   \begin{equation*}
         \int_{\gamma_{[b,a]}^{(l+1)}} w_{i,j}  =  -\zeta^{-j} \int_{\gamma_{[a,b]}^{(l)}} w_{i,j}.
   \end{equation*}
-  By Proposition \ref{m-prop:yab} $\ytab$ is holomorphic and has no zero on $\epsilon_{a,b}$, therefore \\ $\varphi_{i,j}  = \left(u+\frac{b+a}{b-a}\right)^{i-1} \ytab(u)^{-j}$
+  By Proposition \ref{m-prop:yab}\,, $\ytab$ is holomorphic and has no zero on $\epsilon_{a,b}$, therefore \\ $\varphi_{i,j}  = \left(u+\frac{b+a}{b-a}\right)^{i-1} \ytab(u)^{-j}$
   is holomorphic on $\epsilon_{a,b}$.
   \end{proof}
 
@@ -87,7 +87,7 @@
     \label{eq:elem_num_int}
     I_{a,b}(i,j) = \int_{-1}^1\frac{u^{i-1}\du}{(1-u^2)^{\frac jm}\ytab(u)^j}
 \end{equation}
-(that is, replacing $(u+\frac{b+a}{b-a})^{i-1}$ by $u^{i-1}$ in the numerator of $\phi_{i,j}$)
+(that is, replacing $(u+\frac{b+a}{b-a})^{i-1}$ by $u^{i-1}$ in the numerator of $\phi_{i,j}$),
 the value of elementary integrals being recovered by the polynomial shift
 \begin{equation}
     \label{eq:polshift}
@@ -97,8 +97,8 @@ the value of elementary integrals being recovered by the polynomial shift
 
 The rigorous numerical evaluation of \eqref{m-eq:elem_num_int} is
 adressed in Section~\ref{m-sec:numerical_integration}: for any edge $(a,b)$,
-Theorem~\ref{m-thm:de_int} and \ref{m-thm:gc_int} provide
-an explicit scheme allowing to attain any prescribed precision.
+Theorems~\ref{m-thm:de_int} and \ref{m-thm:gc_int} provide
+explicit schemes allowing to attain any prescribed precision.
 
   \subsection{Minimal spanning tree}\label{subsec:spanning_tree}
 
@@ -113,12 +113,12 @@ an explicit scheme allowing to attain any prescribed precision.
    Each edge $e = (a,b) \in E'$ gets assigned a capacity $r_e$ that indicates
    the cost of numerical integration along the interval $[a,b]$.
    \item
-   Apply a standard `maximal-flow' algorithm from graph theory, based on a greedy approach,
-   that results in a spanning tree $G = (X,E)$, where $E \subset E'$ contains the $n-1$ best edges
+   Apply a standard `maximal-flow' algorithm from graph theory, based on a greedy approach.
+   This results in a spanning tree $G = (X,E)$, where $E \subset E'$ contains the $n-1$ best edges
    for integration that connect all vertices without producing cycles.
   \end{itemize}
 
-   Notice that the integration process is most favourable
+   Note that the integration process is most favourable
    between branch points that are far away from the others
    (this notion is made explicit in Section \ref{m-sec:numerical_integration}).
 
@@ -128,7 +128,7 @@ an explicit scheme allowing to attain any prescribed precision.
   a symplectic basis of $\homo$. In \S \ref{m-subsec:cycles_homo} we gave
   a generating set $\Gamma$ for $\homo$, namely
   \begin{equation*}
-    \Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l < m-1,  e \in E  \right\}
+    \Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l < m-1,  e \in E  \right\},
   \end{equation*}
   where $E$ is the spanning tree chosen above. This generating set is
   in general not a (symplectic) basis.
@@ -149,7 +149,7 @@ an explicit scheme allowing to attain any prescribed precision.
 
   The linear combinations of periods given by the first $2g$ columns of $\OC S$ then correspond to a symplectic homology basis
   \begin{equation*}\label{eq:symp_basis}
-   (\OA,\OB, 0_{\delta-1}) = \OC S
+   (\OA,\OB, 0_{\delta-1}) = \OC S,
   \end{equation*}
   whereas the last $\delta-1$ columns are zero and can be ignored, as they correspond to the dependent cycles
   in $\Gamma$ and contribute nothing.
