@@ -54,7 +54,16 @@ gc_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, cons
     if (gc->n % 2)
     {
         arb_zero(x);
-        sqrt_pol(y, u, d1, d, x, prec);
+        /* FIXME: pb with turn */
+        sqrt_pol_def(y, u, d1, d, x, prec);
+#if DEBUG > 1
+        flint_printf("\nend integration sum");
+        _acb_vec_printd(res, g, 30, "\n");
+        flint_printf("\nroots (d1=%ld, d=%ld)\n",d1,d);
+        _acb_vec_printd(u, d, 30, "\n");
+        flint_printf("\n -> y = ");
+        acb_printd(y, 30);
+#endif
         acb_inv(y, y, prec);
         acb_add(res + 0, res + 0, y, prec);
     }
@@ -63,6 +72,10 @@ gc_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, slong g, cons
     arb_const_pi(w, prec);
     arb_div_ui(w, w, gc->n, prec);
     _acb_vec_scalar_mul_arb(res, res, g, w, prec);
+#if DEBUG > 1
+        flint_printf("\nend integration ");
+        _acb_vec_printd(res, g, 30, "\n");
+#endif
 
     arb_clear(x);
     arb_clear(w);

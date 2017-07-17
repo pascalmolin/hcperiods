@@ -1,40 +1,33 @@
 #include <string.h>
 
 #include "flint/arith.h"
-#include "acb_poly.h"
+#include "fmpz_poly.h"
 #include "abel_jacobi.h"
+
+void
+fmpz_poly_numer(fmpz_poly_t num, fmpq_poly_t pol)
+{
+    int k, n = fmpq_poly_degree(pol);
+    fmpz * coeffs = fmpq_poly_numref(pol);
+    for (k = 0; k <= n; k++)
+        fmpz_poly_set_coeff_fmpz(num, k, coeffs + k);
+}
 
 /* x^n-1 */
 void
-pol_xn1(acb_poly_t poly, slong n, slong prec)
+pol_xn1(fmpz_poly_t poly, slong n, slong prec)
 {
-    acb_poly_set_coeff_si(poly, 0, 1);
-    acb_poly_set_coeff_si(poly, n, -1);
-}
-/* sum x^k/k! */
-void
-pol_exp(acb_poly_t poly, slong n, slong prec)
-{
-    acb_poly_one(poly);
-    acb_poly_shift_left(poly, poly, 1);
-    acb_poly_exp_series(poly, poly, n, prec);
+    fmpz_poly_set_coeff_si(poly, 0, 1);
+    fmpz_poly_set_coeff_si(poly, n, -1);
 }
 void
-pol_bern(acb_poly_t pol, slong n, slong prec)
+pol_bern(fmpz_poly_t pol, slong n, slong prec)
 {
     fmpq_poly_t h;
     fmpq_poly_init(h);
     arith_bernoulli_polynomial(h, n);
-    acb_poly_set_fmpq_poly(pol, h, prec);
+    fmpz_poly_numer(pol, h);
     fmpq_poly_clear(h);
-}
-void
-acb_poly_reverse(acb_poly_t pol)
-{
-    slong k, n;
-    n = acb_poly_degree(pol);
-    for (k = 0; k <= n / 2; k++)
-        acb_swap(pol->coeffs + k, pol->coeffs + n - k);
 }
 
 int
@@ -65,11 +58,11 @@ int main(int argc, char * argv[])
     int i, print = 1, flag = 0, run = 1, rev = 0;
     slong n = 5, m = 2, prec = 128, digits = 0;
     void (*f_print) (const acb_mat_t, slong) = &acb_mat_printd;
-    void (*f_pol) (acb_poly_t pol, slong n, slong prec) = &pol_xn1;
-    acb_poly_t poly;
+    void (*f_pol) (fmpz_poly_t pol, slong n, slong prec) = &pol_xn1;
+    fmpz_poly_t poly;
     abel_jacobi_t aj;
 
-    acb_poly_init(poly);
+    fmpz_poly_init(poly);
 
     if (argc < 2)
         return usage();
@@ -99,14 +92,6 @@ int main(int argc, char * argv[])
             n = atol(argv[i++]);
             f_pol = &pol_xn1;
         }
-        else if (!strcmp(argv[i], "--exp"))
-        {
-            i++, n = atol(argv[i++]), f_pol = &pol_exp;
-        }
-        else if (!strcmp(argv[i], "--exprev"))
-        {
-            i++, n = atol(argv[i++]), f_pol = &pol_exp, rev = 1;
-        }
         else if (!strcmp(argv[i], "--bern"))
         {
             i++, n = atol(argv[i++]), f_pol = &pol_bern;
@@ -121,19 +106,19 @@ int main(int argc, char * argv[])
             i++;
             n = atol(argv[i++]);
             for (j = 0; j <= n && i < argc; j++)
-                acb_poly_set_coeff_si(poly, n - j, atol(argv[i++]));
+                fmpz_poly_set_coeff_si(poly, n - j, atol(argv[i++]));
             f_pol = NULL;
         }
         else if (!strcmp(argv[i], "--stoll"))
         {
             i++;
-            acb_poly_set_coeff_si(poly, 6, 82342800);
-            acb_poly_set_coeff_si(poly, 5, - 470135160);
-            acb_poly_set_coeff_si(poly, 4, + 52485681);
-            acb_poly_set_coeff_si(poly, 3, + 2396040466);
-            acb_poly_set_coeff_si(poly, 2, + 567207969);
-            acb_poly_set_coeff_si(poly, 1, - 985905640);
-            acb_poly_set_coeff_si(poly, 0, 247747600);
+            fmpz_poly_set_coeff_si(poly, 6, 82342800);
+            fmpz_poly_set_coeff_si(poly, 5, - 470135160);
+            fmpz_poly_set_coeff_si(poly, 4, + 52485681);
+            fmpz_poly_set_coeff_si(poly, 3, + 2396040466);
+            fmpz_poly_set_coeff_si(poly, 2, + 567207969);
+            fmpz_poly_set_coeff_si(poly, 1, - 985905640);
+            fmpz_poly_set_coeff_si(poly, 0, 247747600);
             f_pol = NULL;
         }
         /* restrict computations / output */
@@ -169,7 +154,7 @@ int main(int argc, char * argv[])
     if (f_pol)
         f_pol(poly, n, prec + n + 40);
     if (rev)
-        acb_poly_reverse(poly);
+        fmpz_poly_reverse(poly, poly, n);
 
     abel_jacobi_init_poly(aj, m, poly);
 
@@ -198,6 +183,6 @@ int main(int argc, char * argv[])
     }
 
     abel_jacobi_clear(aj);
-    acb_poly_clear(poly);
+    fmpz_poly_clear(poly);
     flint_cleanup();
 }

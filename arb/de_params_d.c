@@ -69,7 +69,9 @@ de_params_d(double * h, double * lambda, double * r, const cdouble * w, slong le
                 *r = rk;
         }
         *r *= .9;
-        //flint_printf("### r was not set, choose r = %lf\n",r);
+#if DEBUG
+        flint_printf("### r was not set, choose r = %lf\n",r);
+#endif
     }
     B = de_constant_b(*r, alpha);
 

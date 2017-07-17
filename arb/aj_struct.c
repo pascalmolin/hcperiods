@@ -27,6 +27,11 @@ abel_jacobi_init_poly(abel_jacobi_t aj, slong m, const fmpz_poly_t pol)
         flint_printf("\nno periods if genus < 1 (g = %ld)\n", g);
         abort();
     }
+    if (!fmpz_poly_is_squarefree(pol))
+    {
+        flint_printf("\npolynomial must be squarefree\n");
+        abort();
+    }
 
     aj->type = 0;
 

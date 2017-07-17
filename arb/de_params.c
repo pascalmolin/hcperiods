@@ -117,7 +117,8 @@ de_constant_m2(arb_t m2, const arf_t l, acb_srcptr u, slong len, double r, slong
     arb_acosh(m2, m2, prec);
     arb_get_ubound_arf(tmax, m2, prec);
 
-    arb_bound_func_arf(m2, (arb_func_t)&max_f, &p, tmin, tmax, 30, -1, prec);
+#define MAXDEPTH 20
+    arb_bound_func_arf(m2, (arb_func_t)&max_f, &p, tmin, tmax, 30, MAXDEPTH, prec);
 
     arb_clear(tmp);
     arb_clear(p.r);
@@ -274,7 +275,7 @@ de_params(mag_t e, arf_t h, arf_t l, acb_srcptr u, slong len, double r, slong d,
 {
     slong n, k;
     cdouble * w;
-    double hh, ll = 1.57, rr = r;
+    double hh, ll = 1.57, rr = .9 * r;
     const slong paramprec = 64;
     w = malloc(len * sizeof(cdouble));
     for (k = 0; k < len; k++)

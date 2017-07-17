@@ -10,28 +10,18 @@ slong vp[np] = { 256 };
 /* families of polynomials */
 #define nf 2
 
-typedef void (*pol_f) (acb_poly_t poly, ulong n, slong prec);
+typedef void (*pol_f) (fmpz_poly_t poly, ulong n);
 
 /* x^n+1 */
 void
-pol_xn1(acb_poly_t poly, ulong n, slong prec)
+pol_xn1(fmpz_poly_t poly, ulong n)
 {
-    acb_poly_fit_length(poly, n + 1);
-    acb_poly_set_coeff_si(poly, 0, 1);
-    acb_poly_set_coeff_si(poly, n, 1);
+    fmpz_poly_fit_length(poly, n + 1);
+    fmpz_poly_set_coeff_si(poly, 0, 1);
+    fmpz_poly_set_coeff_si(poly, n, 1);
 }
 
-/* sum x^k/k! */
-void
-pol_exp(acb_poly_t poly, ulong n, slong prec)
-{
-    acb_poly_one(poly);
-    acb_poly_fit_length(poly, n + 1);
-    acb_poly_shift_left(poly, poly, 1);
-    acb_poly_exp_series(poly, poly, n, prec);
-}
-
-pol_f vf[nf] = { pol_xn1, pol_exp };
+pol_f vf[nf] = { pol_xn1, fmpz_poly_fibonacci };
 
 /* degrees */
 #define nn 5
@@ -84,11 +74,11 @@ generate()
         {
             for (in = 0; in < nn; in++)
             {
-                acb_poly_t pol;
+                fmpz_poly_t pol;
                 abel_jacobi_t aj;
 
-                acb_poly_init(pol);
-                vf[f](pol, vn[in], prec);
+                fmpz_poly_init(pol);
+                vf[f](pol, vn[in]);
 
                 abel_jacobi_init_poly(aj, 2, pol);
                 /* should not be necessary */
@@ -105,7 +95,7 @@ generate()
                     flint_printf(",%ld",vm[im]);
                 flint_printf("]>,\n");
 
-                acb_poly_clear(pol);
+                fmpz_poly_clear(pol);
                 abel_jacobi_clear(aj);
             }
         }
@@ -138,11 +128,11 @@ check_periods()
         {
             for (in = 0; in < nn; in++)
             {
-                acb_poly_t pol;
+                fmpz_poly_t pol;
 
-                acb_poly_init(pol);
+                fmpz_poly_init(pol);
 
-                vf[f](pol, vn[in], prec);
+                vf[f](pol, vn[in]);
 
                 for (im = 0; im < nm; im++)
                 {
@@ -164,7 +154,7 @@ check_periods()
                         {
                             flint_printf("FAIL:\n\n");
                             flint_printf("pol = ");
-                            acb_poly_printd(pol, 10);
+                            fmpz_poly_print(pol);
                             flint_printf("\nn = %ld, m = %ld, prec = %ld\n", vn[in], vm[im], prec);
                             flint_printf("\nref = ");
                             acb_printd(ref, 20);
@@ -177,7 +167,7 @@ check_periods()
                     abel_jacobi_clear(aj);
                 }
 
-                acb_poly_clear(pol);
+                fmpz_poly_clear(pol);
             }
         }
         acb_clear(ref);
