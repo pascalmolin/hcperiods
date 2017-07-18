@@ -27,7 +27,7 @@ double
 max_func_d_gs(max_func_d f, void * p, double a, double b, int steps)
 {
     int k;
-    double h, m, r;
+    double h, m, r = - 1;
 
     h = (b-a)/steps;
 
