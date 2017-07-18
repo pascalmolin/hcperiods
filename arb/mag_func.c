@@ -68,7 +68,6 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
     {
         if (f(abs, t, params, prec) == 0
                 || !arb_is_finite(abs)
-                || arb_contains_zero(abs)
                 || ( arb_rel_error_bits(abs) > tolerance
                      && mag_cmp_2exp_si(arb_radref(abs), 2) > 0)
            )
