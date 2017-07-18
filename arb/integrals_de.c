@@ -139,45 +139,61 @@ de_integrals(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c, int flag, sl
 }
 
 void
-integrals_edge_de(acb_ptr res, ydata_t ye, sec_t c, const de_int_t de, int flag, slong prec)
+integrals_edge_de(acb_ptr res, ydata_t ye, sec_t c, de_int_t de, int flag, slong prec)
 {
-    de_integrals_precomp(res, ye->u, ye->n1, c.n - 2, c, de, flag, prec);
-    if (0 && !mag_is_zero(de->e))
-        _acb_vec_add_error_mag(res, c.g, de->e);
-    integrals_edge_factors(res, ye->ba2, ye->ab, ye->c, c, prec);
-}
-
-void
-integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, int flag, slong prec)
-{
-    slong k;
-    ulong n;
+    slong n;
     arf_t h, l;
     mag_t e;
-    de_int_t de;
 
     arf_init(h);
     arf_init(l);
     mag_init(e);
 
-    n = de_params_tree(e, h, l, tree, c, prec);
+    n = de_params(e, h, l, ye->u, c.n - 2, 0., c.n - 1, c.j1, c.m, prec);
+    if (!de->n || (de->n - n) * (c.n + c.g) > n)
+    {
 #if DEBUG
-    flint_printf("\nprecomputed DE, n = %ld, h = %lf, prec=%ld\n", n, arf_get_d(h, ARF_RND_NEAR), prec);
+        flint_printf("\nprecomputed DE, n = %ld, h = %lf, prec=%ld\n", n, arf_get_d(h, ARF_RND_NEAR), prec);
 #endif
-    de_int_init(de, h, l, n, e, c.m, prec);
+        de_int_clear(de);
+        de_int_init(de, h, l, n, e, c.m, prec);
+    }
 
-    for (k = 0; k < tree->n; k++)
+    de_integrals_precomp(res, ye->u, ye->n1, c.n - 2, c, de, flag, prec);
+    if (0 && !mag_is_zero(de->e))
+        _acb_vec_add_error_mag(res, c.g, de->e);
+    integrals_edge_factors(res, ye->ba2, ye->ab, ye->c, c, prec);
+
+    arf_clear(h);
+    arf_clear(l);
+    mag_clear(e);
+}
+
+void
+integrals_tree_de(acb_mat_t integrals, sec_t c, const tree_t tree, int flag, slong prec)
+{
+    slong l;
+    comp_t * t;
+    de_int_t de;
+
+    t = flint_malloc(tree->n * sizeof(comp_t));
+    for (l = 0; l < tree->n; l++)
+        t[l].k = l, t[l].r = tree->e[l].r;
+    qsort(t, tree->n, sizeof(comp_t), (int(*)(const void*,const void*))comp_cmp);
+
+    de->n = 0;
+    for (l = 0; l < tree->n; l++)
+    {
+        slong k = t[l].k;
         integrals_edge_de(integrals->rows[k], tree->data + k, c, de, flag, prec);
+    }
+    de_int_clear(de);
+    flint_free(t);
 
 #if DEBUG > 1
     flint_printf("\ntree integrals\n");
     acb_mat_printd(integrals, 30);
 #endif
-
-    de_int_clear(de);
-    arf_clear(h);
-    arf_clear(l);
-    mag_clear(e);
 }
 
 void

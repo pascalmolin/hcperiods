@@ -86,6 +86,10 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
         if (flag / AJ_VERBOSE > 1)
             fmpz_poly_print(c.pol);
     }
+#if DEBUG
+    flint_printf("\npolynomial ");
+    fmpz_poly_print_pretty(c.pol, "x");
+#endif
 
     /* branch points */
     if (flag & AJ_VERBOSE)

@@ -52,7 +52,7 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
     if (mag_is_special(arb_radref(b)))
     {
         flint_printf("\nERROR: illegal ball in mag_func ");
-        arb_printd(b, 20); flint_printf("\n");
+        arb_printd(b, 20); flint_printf(" [depth = %d]\n",depth);
         abort();
     }
     if (!depth)
@@ -68,6 +68,7 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
     {
         if (f(abs, t, params, prec) == 0
                 || !arb_is_finite(abs)
+                || arb_contains_zero(abs)
                 || ( arb_rel_error_bits(abs) > tolerance
                      && mag_cmp_2exp_si(arb_radref(abs), 2) > 0)
            )
@@ -86,7 +87,7 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
     }
 
 #if VERBOSE > 0
-    flint_printf("\n  mag on "); arb_printd(b, 10);
+    flint_printf("\n  [%d] mag on ",depth); arb_printd(b, 10);
     flint_printf(" -> "); arb_printd(m, 10);
 #endif
 

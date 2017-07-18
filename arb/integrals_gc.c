@@ -111,8 +111,6 @@ integrals_edge_gc(acb_ptr res, gc_int_t gc, const ydata_t ye, sec_t c, int flag,
     mag_clear(e);
 }
 
-typedef struct { double r; slong k; } comp_t;
-
 int
 comp_cmp(const comp_t * x, const comp_t * y)
 {

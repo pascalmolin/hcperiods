@@ -256,6 +256,10 @@ void mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, a
 void mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec);
 void mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec);
 
+/* other */
+typedef struct { double r; slong k; } comp_t;
+int comp_cmp(const comp_t * x, const comp_t * y);
+
 /* vec utilities */
 /*void _acb_vec_scalar_addmul(acb_ptr res, acb_srcptr vec, slong len, const acb_t c, slong prec);*/
 void _acb_vec_add_error_mag(acb_ptr res, slong len, const mag_t e);
@@ -273,4 +277,5 @@ void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, 
 void _acb_vec_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void acb_mat_print_gp(const acb_mat_t m, slong digits);
+
 
