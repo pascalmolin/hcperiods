@@ -35,13 +35,13 @@ static double
 param_edge(param_f param, const cdouble * w, slong i, slong j, slong len)
 {
     slong k;
-    double tmp, p = 0;
+    double tmp, p = -1;
     for (k = 0; k < len; k++)
     {
         if (k == i || k == j)
             continue;
         tmp = param(w[i], w[j], w[k]);
-        if (!p || tmp < p)
+        if (p < 0 || tmp < p)
             p = tmp;
     }
     return p;
