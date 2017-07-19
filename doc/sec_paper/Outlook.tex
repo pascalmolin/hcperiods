@@ -23,45 +23,46 @@
    during the algorithm.
    
    For applications like the computation of theta functions it is useful to
-   have the small period matrix in the Siegel fundamental domain $\mathcal{F}_g \subset
+   have a small period matrix in the Siegel fundamental domain $\mathcal{F}_g \subset
    \mathcal{H}_g$ (see \cite[\S 1.3]{PlaneQuarticsCM}).
   
    We did not implement any such reduction.
    The authors of \cite{PlaneQuarticsCM} give a theoretical sketch of
    an algorithm (Algorithm 1.9) that achieves this reduction step, as well as
-   two practical versions (Algorithms 1.12 and 1.14) which at least work for $g
-   \le 3$.
+   two practical versions (Algorithms 1.12 and 1.14) which work in any genus and have been implemented for $g
+   \le 3$. It would be interesting to combine this with our implementation.
   
   \subsection{Generalizations}
   
-  We remark that there is no theoretic obstruction to generalizing our
+  We remark that there is no theoretical obstruction to generalizing our
   approach to more general curves. In a first step the algorithm could be
   extended to all complex superelliptic curves given by $m > 1$ and $f \in
   \C[x]$, where $f$ can have multiple roots of order at most $m-1$.
-  Although several adjustments would have to be made (e.g.\ Differentials,
-  Homology, Integration), staying within the superelliptic setting promises
+  Although several adjustments would have to be made (e.g.\ differentials,
+  homology, integration), staying within the superelliptic setting promises
   a fast and rigorous extension of our algorithm. 
   
   \medskip
   
-  We also believe that the strategy employed here (numerical integrals between
-  branch points then combined using local intersections information) could
-  be adapted to completely general algebraic curves given by $f \in \C[x,y]$.
-  However serious issues have to be overcome:
+  We also believe that the strategy employed here (numerical integration between
+  branch points combined with information about local intersections) could
+  be adapted to completely general algebraic curves given by $F \in \C[x,y]$.
+  However, serious issues have to be overcome:
   \begin{itemize}
-      \item on the numeric side we no longer have a nice $m$-th root function, it may be replaced by
-          Newton method between branch points (all the roots have to be followed) and
+      \item On the numerical side we no longer have a nice $m$-th root function, it may be replaced by
+          Newton's method between branch points (analytic continuation has to be performed on all sheets) and
           Puiseux series expansion around them.
-      \item on the geometric side we cannot easily define loops, so that given a set
+      \item On the geometric side we cannot easily define loops, so that given a set
           of ``half'' integrals each connecting two branch points, we need to combine them in order
           to obtain all at once true loops and a symplectic basis.
           An appropriate notion of shifting number and local intersection is needed here,
           as well as a combination technique.
   \end{itemize}
   We did not investigate further: at this point the advantages
-  of superelliptic curves utilized by our approach are already lost
-  (simple geometry of branch points and $m-1$ integrals at the cost of one), so it is
-  not clear whether this approach might be efficient.
+  of superelliptic curves which are utilized by our approach are already lost
+ (simple geometry of branch points and $m-1$ integrals at the cost of one), 
+  so it is
+  not clear whether this approach might be more efficient than other methods.
 
   \biblio
   \end{document}

@@ -4,7 +4,7 @@
 
   \section{Introduction}
 
-  The Abel-Jacobi map links a curve to a complex torus.
+  The Abel-Jacobi map links a complex curve to a complex torus.
   In particular the matrix of periods makes it possible to define the Riemann
   theta function of the curve, which is an object of central interest in
   mathematics and physics: let us
@@ -18,7 +18,7 @@
   integrals to large precision (say thousand digits) and to have
   rigorous results.
 
-  \subsection{Existing algorithms}
+  \subsection{Existing algorithms and implementations}
 
   For genus 1 and 2, methods based on isogenies (AGM \cite{CremonaAGM13},
   Richelot \cite{BostMestre88}, Borchardt mean \cite{Labrande16})
@@ -30,9 +30,9 @@
   \cite[\S 3.2]{Mascot13}.
 
   For hyperelliptic curves of arbitrary genus, the Magma implementation
-  due to van Wamelen \cite{vanWamelen06} computes this map.
+  due to van Wamelen \cite{vanWamelen06} computes period matrices and the Abel-Jacobi map.
   However, it is limited in terms of precision (less
-  than 2000 digits) and some bugs are experienced on
+  than $2000$ digits) and some bugs are experienced on
   certain configurations of branch points. The shortcomings of this implementation motivated our
   work. Using a different strategy
   (integration along a tree instead of around Voronoi cells)
@@ -43,9 +43,11 @@
   We found that this package is not suitable for high precision purposes.
 
   We also mention the Matlab implementations due to Frauendiener and Klein for hyperelliptic curves \cite{FrauendienerKlein2015}
-  and for general algebraic curves \cite{FrauendienerKlein2011}.
-
-  \subsection{Main results}
+    and for general algebraic curves \cite{FrauendienerKlein2011}.
+  
+  Moreover, a Sage implementation for general algebraic curves due to Nils Bruin and Alexandre Zotine is in progress.
+  
+  \subsection{Main result}
 
   This paper adresses the problem of computing period matrices and the
   Abel-Jacobi map of algebraic curves given by an affine equation of the form  (see Definition \ref{m-def:se_curve})
@@ -79,15 +81,15 @@
   compiler errors, as usual).
 
   Another implementation has been done in Magma \cite{Magma}. Both are publicly available
-  on github \url{https://github.com/pascalmolin/hcperiods}.
+  on github at \url{https://github.com/pascalmolin/hcperiods}.
 
   \subsection{Interface with the LMFDB}
 
-  Having rigorous period matrices is a valuable input for the methods developped by
+  Having rigorous period matrices is a valuable input for the methods developed by
   Sijsling et al. \cite{CMSVEndos} to compute endormorphism rings of Jacobians of hyperelliptic
   curves.
   During a meeting aimed at expanding the `L-functions and modular forms database' \cite[LMFDB]{lmfdb}
-  to genus $3$ curves, the Magma implementation of our algorithm was incorporated in their framework
+  to include genus $3$ curves, the Magma implementation of our algorithm was incorporated in their framework
   to successfully compute the endomorphism rings of Jacobians of $67,879$ hyperelliptic
   curves of genus $3$, and confirm those of the $66,158$ genus
   2 curves that are currently in the database.
@@ -98,32 +100,24 @@
 
   In Section \ref{m-sec:ajm} we briefly review the objects we are interested
   in, namely period matrices and the Abel-Jacobi map of nice algebraic curves.
-
   The ingredients to obtain these objects, a basis of holomorphic differentials
   and a homology basis, are made explicit in the case of superelliptic curves
   in Section \ref{m-sec:se_curves}.
-
   We give formulas for the computation of periods in Section
   \ref{m-sec:strat_pm} and explain how to obtain from them the standard period
   matrices using symplectic reduction.
-
   In Section \ref{sec:intersections} we give explicit formulas for the
   intersection numbers of our homology basis.
-
   For numerical integration we employ two different integration schemes that
   are explained in Section \ref{m-sec:numerical_integration}: the
   double-exponential integration and
   (in the case of hyperelliptic curves) Gauss-Chebychev integration.
-
   The actual computation of the Abel-Jacobi map is explained in detail in
   Section \ref{m-sec:comp_ajm}.
-
   In Section \ref{m-sec:comp_asp} we analyze the complexity of our algorithm
   and share some insights on the implementation.
-
   Section \ref{m-sec:examples_timings} contains some tables with
   running times to demonstrate the performance of the code.
-
   Finally, in Section \ref{m-sec:outlook} we conclude with an outlook on what can be done in the future.
   
   \subsection{Acknowledgements}
@@ -133,6 +127,6 @@
   curves.
 
   The second author wants to thank Steffen Müller and Florian Hess for helpful discussions.
-  Moreover, he acknowledges the support from the DAAD under grant $57212102$.
+  Moreover, he acknowledges the support from DAAD under grant $57212102$.
 
 \end{document}
