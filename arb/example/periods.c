@@ -50,6 +50,7 @@ usage()
     flint_printf("  --big: big period matrix\n");
     flint_printf("  --gp: output for pari/gp (discard error balls)\n");
     flint_printf("  --de: force use of DE integration\n");
+    flint_printf("  --desame: keep integration points\n");
     return 1;
 }
 
@@ -78,6 +79,8 @@ int main(int argc, char * argv[])
             i++, prec = atol(argv[i++]);
         else if (!strcmp(argv[i], "--de"))
             i++, flag |= AJ_USE_DE;
+        else if (!strcmp(argv[i], "--desame"))
+            i++, flag |= AJ_DE_SAME;
         /* mth root */
         else if (!strcmp(argv[i], "--rootdef"))
             i++, flag |= AJ_ROOT_DEF;

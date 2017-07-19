@@ -174,7 +174,8 @@ enum {
     AJ_ROOT_DEF  = 1 << 5,
     AJ_ROOT_TURN = 1 << 6,
     AJ_ROOT_PROD = 1 << 7,
-    AJ_VERBOSE   = 5 << 8
+    AJ_DE_SAME   = 1 << 8,
+    AJ_VERBOSE   = 5 << 9
 };
 
 
@@ -277,5 +278,3 @@ void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, 
 void _acb_vec_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void acb_mat_print_gp(const acb_mat_t m, slong digits);
-
-

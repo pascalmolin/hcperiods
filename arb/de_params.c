@@ -170,7 +170,8 @@ de_constant_m1(arb_t m1, acb_srcptr u, slong len, slong m, slong prec)
     {
         if (arb_overlaps(acb_realref(u + k), z1))
         {
-            arb_mul(m1, m1, acb_imagref(u + k), prec);
+            arb_abs(tmp, acb_imagref(u + k));
+            arb_mul(m1, m1, tmp, prec);
         }
         else
         {
@@ -290,6 +291,8 @@ de_error(mag_t e, const arf_t h, const arf_t l, slong n, double r, acb_srcptr u,
 
     arb_add(m1, m1, m2, prec);
     arb_get_mag(e, m1);
+    if (mag_is_inf(e))
+        flint_printf("\nERROR: infinite error bound\n"), abort();
 
     arb_clear(m1);
     arb_clear(m2);
