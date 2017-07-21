@@ -38,9 +38,9 @@ make -j4 > /dev/null 2>&1
 make install
 
 cd $TMP
-wget https://github.com/fredrik-johansson/arb/archive/2.9.0.tar.gz
-tar -xf 2.9.0.tar.gz
-cd arb-2.9.0
+wget https://github.com/fredrik-johansson/arb/archive/master.tar.gz
+tar -xf master.tar.gz
+cd arb-master
 ./configure $GMP $MPFR --with-flint=$DEPS --prefix=$DEPS --disable-static
 make -j4 > /dev/null 2>&1
 make install
