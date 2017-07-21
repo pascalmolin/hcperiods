@@ -8,12 +8,12 @@
 #define TMP 0
 
 void
-sec_init_poly(sec_t * c, slong m, const acb_poly_t pol)
+sec_init_poly(sec_t * c, slong m, const fmpz_poly_t pol)
 {
     slong n;
-    n = acb_poly_degree(pol);
+    n = fmpz_poly_degree(pol);
     sec_init(c, m, n);
-    acb_poly_set(c->pol, pol); /* keep a copy */
+    fmpz_poly_set(c->pol, pol); /* keep a copy */
 }
 
 void
@@ -33,7 +33,7 @@ sec_init(sec_t *c, slong m, slong n)
     c->delta = delta = n_gcd(m, n);
     c->g = ((m-1)*(n-1) - delta + 1)/ 2;
 
-    acb_poly_init(c->pol);
+    fmpz_poly_init(c->pol);
 
     /* differentials */
     c->j1 = jmin(m, n, delta);
@@ -53,6 +53,6 @@ sec_init(sec_t *c, slong m, slong n)
 void
 sec_clear(sec_t c)
 {
-    acb_poly_clear(c.pol);
+    fmpz_poly_clear(c.pol);
     flint_free(c.ni);
 }

@@ -6,7 +6,7 @@
 
    Let $(a,b)$ and $(c,d)$ be two edges of the spanning tree $E$.
   The formulas in Theorem \ref{m-thm:intsec_numb} allow to compute the intersection
-  between lifts of elementary cycles $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$.
+  between shifts of elementary cycles $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$.
 
   Note that by construction of the spanning tree,
   we can restrict the analysis to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$
@@ -28,7 +28,7 @@
           \normalfont
       \begin{tabular}{cccc}
           \toprule
-          & Case & $s_+$ & $s_-$ \\
+          & case & $s_+$ & $s_-$ \\
           \midrule
          (i) & $a=c$ and $b=d$ & $1$ & $-1$ \\
          (ii) & $b=c$ & $-s_b$ & $1-s_b$ \\
@@ -50,7 +50,7 @@
  \end{thm}
 
  \begin{rmk}
-     Notice that the intersection matrix $K_{\Gamma}$ is composed of
+     Note that the intersection matrix $K_{\Gamma}$ is composed of
   $(n-1)^2$ blocks of dimension $m-1$, each block corresponding to the intersection
   of shifts of two elementary cycles in the spanning tree. It is very sparse.
   %In particular,
@@ -65,7 +65,7 @@
 
 
  \bigskip
- The proof of Theorem \ref{m-thm:intsec_numb}is contained in the following exposition.
+ The proof of Theorem \ref{m-thm:intsec_numb} is contained in the following exposition.
  \bigskip
 
   Consider
@@ -78,7 +78,7 @@
   where $\zeta^k\yab(x),\zeta^l\ycd(x)$ are branches of $\cu$ that are analytic on open sets $\vab$ and $\vcd$
   (see Figure \ref{m-fig:set_vab}) respectively.
 
-  \begin{proof}\let\qed\relax (of case (v)) \\
+  \begin{proof}
   From the definition we see that $\cyabk \cap \cycdl = \varnothing$, whenever $[a,b] \cap [c,d] = \varnothing$. For edges in a spanning tree
   this is equivalent to $\{a,b\} \cap \{c,d\} = \varnothing$, thus
   proving (v).
@@ -116,23 +116,22 @@
  Consequently, the cycles can at most intersect at the
  points in the fiber above $\xt$, i.e.
  \begin{equation*}
-  \cyab^{(k)} \cap \cycd^{(l)} \subset \pr^{-1}(\xt).
+  \cyab^{(k)} \cap \cycd^{(l)} \subset \text{pr}_x^{-1}(\xt).
  \end{equation*}
- Notice that, by definition, any cycle in $\Gamma$ only runs on two neighbouring sheets, which already implies
+ Note that, by definition, any cycle in $\Gamma$ only runs on two neighbouring sheets, which already implies
  \begin{equation*}
    \left(\cyab^{(k)} \circ \cycd^{(l)}\right) = 0, \text{ if $s(\xt)+l-k \not\in \{-1,0,1\}$.}
  \end{equation*}
   In the other cases we can determine the
   sign of possible intersections by taking into account the orientation of the cycles.
 
- We continue the proof with the next simplest case:
- \begin{proof}\let\qed\relax (of case (i)) \\
+ We continue the proof with case (i):
  Here we have $[a,b] = [c,d]$. Trivially, $\left( \cyabk \circ \cyabk \right) = 0$ holds. For $k \ne l$ we deform the cycles such that they only intersect above
  $\xt = \frac{b+a}{2} \in  \vab= V$.
   We easily see that $s(\xt) = 0$ and therefore $s(\xt) + l - k = l - k$. The remaining non-trivial cases
- ($l = k \pm 1$), are shown in Figure \ref{m-fig:int_self_shift} below.
-   Illustrated are the cycles $\cyabk$ (black),
-      $\cyab^{(k+1)}$ (red) and $\cyab^{(k-1)}$ (green).
+ ($l = k \pm 1$), are shown in Figure \ref{m-fig:int_self_shift} below where
+   the cycles $\cyabk$ (black),
+      $\cyab^{(k+1)}$ (red) and $\cyab^{(k-1)}$ (green) are illustrated. 
     \begin{figure}[H]
       \begin{center}
    \scalebox{0.8}{\input{images/intsec_selfshift.tex}}
@@ -141,7 +140,6 @@
     \label{fig:int_self_shift}
 \end{figure}
   We see that, independently of $s(\xt)$, $s_+ = (k+1)-k = 1$ and $s_- = (k-1)-k = -1$ are as claimed.
- \end{proof}
 
   For (ii)-(iv) we have that $[a,b] \cap [c,d] = \{c \}$, where $c$ is either $a$ or $b$. Unfortunately, in these cases $s(c)$ is not
   well-defined.
@@ -161,13 +159,13 @@
     \label{fig:set_v_both}
    \end{figure}
 
-   \begin{proof}\let\qed\relax (of case (ii)) \\
+   Case (ii): \\
    In this case we have $b = c$. Choosing $\xt$ on the upper bisectrix (as shown in Figure \ref{m-fig:set_v_both})
    and computing $s(\xt)$ with \eqref{m-eq:sxt} makes it possible to determine the intersection numbers geometrically.
 
    Figure \ref{m-fig:int_b=c} shows the non-trivial cases $s(\xt) + l - k \in \{-1,0,1\}$.
-   Illustrated are the cycles $\cyab^k$ (black), $\cybd^{k-s(\xt)}$ (gray), $\cybd^{k-s(\xt) + 1 }$ (green) and
-    $\cybd^{k-s(\xt)-1}$ (red).
+   There the cycles $\cyab^k$ (black), $\cybd^{k-s(\xt)}$ (gray), $\cybd^{k-s(\xt) + 1 }$ (green) and
+    $\cybd^{k-s(\xt)-1}$ (red) are illustrated.
     \begin{figure}[H]
       \begin{center}
    \scalebox{0.8}{\input{images/intsec_b=c.tex}}
@@ -180,14 +178,13 @@
     & s_+ \equiv k-s(\xt)-k \equiv -s_b \mod m, \\
     & s_- \equiv k-s(\xt)+1-k \equiv 1-s_b \mod m.
     \end{align*}
-   \end{proof}
 
- \begin{proof}(of cases (iii) and  (iv))
- In these cases we have $a = c$. We choose $\xt$ on the inner bisectrix (as shown in Figure \ref{m-fig:set_v_both}) and
+ Cases (iii) and  (iv): \\
+ In these cases we have $a = c$. We choose $\xt$ on the inner bisectrix (as shown in Figure \ref{m-fig:set_v_both})
    and compute $s(\xt)$ with \eqref{m-eq:sxt}.
 
  For $\varphi = \arg\left(\frac{b-a}{d-c}\right) > 0$, the non trivial cases, i.e. $s(\xt) + l - k \in \{-1,0,1\}$, are shown in Figure \ref{m-fig:int_a=c}
-  We illustrate are the cycles $\cyab^{(k)}$ (black), $\cyad^{(k-s(\xt))}$ (gray), $\cyad^{(k-s(\xt) + 1)}$ (green) and
+  We illustrate the cycles $\cyab^{(k)}$ (black), $\cyad^{(k-s(\xt))}$ (gray), $\cyad^{(k-s(\xt) + 1)}$ (green) and
     $\cyad^{k-s(\xt)-1}$ (red).
   \begin{figure}[H]
       \begin{center}
@@ -201,12 +198,11 @@
     & s_+ = k-s(\xt)+1-k \equiv 1-s_a \mod m, \\
     & s_- = k-s(\xt)-k \equiv -s_a \mod m.
     \end{align*}
-  The case $\varphi < 0$ is easily derived as a symmetry: if we mirror Figure \ref{m-fig:int_a=c} at the horizontal line through $a$ we are in case (iv).
+  The case $\varphi < 0$ is easily derived by symmetry: if we mirror Figure \ref{m-fig:int_a=c} at the horizontal line through $a$ we are in case (iv).
   There, the intersection is positive if $\cyabk$ and $\cyadl$ start on the same sheet and negative if $\cyadl$ starts one sheet below $\cyabk$.
-  \end{proof}
 
 \begin{lemma}\label{lemma:sxt=sx}
-  With the choices made in the proof of Theorem \ref{m-thm:intsec_numb} the following statements are true:
+  With the choices made in the proof of Theorem \ref{m-thm:intsec_numb} the following statements hold
   \begin{itemize}
    \item[(1)] $s(\xt) \equiv s_b \bmod m$ in case {\upshape{(ii)}},
     \item[(2)]  $s(\xt) \equiv s_a \bmod m$ in the cases {\upshape{(iii)}} and {\upshape{(iv)}}.

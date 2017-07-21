@@ -5,7 +5,7 @@
 \section{Numerical integration}\label{sec:numerical_integration}
 
 As explained in Section \ref{m-subsec:numerical_integration}, the periods
-of generating cycles $\gamma\in \Gamma$ are expressed in terms of
+of the generating cycles $\gamma\in \Gamma$ are expressed in terms of
 elementary integrals
 \eqref{m-eq:elem_num_int}
 \begin{equation*}
@@ -15,7 +15,7 @@ where $(a,b)\in E$ and $\omega_{i,j}\in\W$.
 We restrict the numerical analysis to this case.
 
 In this section, we denote by $α$ the value $1-j/m$, which is the crucial parameter for numerical integration.
-Notice that $α=1/2$ for hyperelliptic curves, while for general superelliptic curves $α$ ranges
+Note that $α=1/2$ for hyperelliptic curves, while for general superelliptic curves $α$ ranges
 from $1/m$ to $\frac{m-1}m$ depending on the differential form $\omega_{i,j}$ considered.
 
 We study here two numerical integration schemes which are suitable for arbitrary
@@ -29,18 +29,18 @@ even with different values of $\alpha$;
     the Gauss-Chebychev method \cite[25.4.38]{AbramowitzStegun} applies and
     provides a better scheme (fewer and simpler integration points).
 \end{itemize}
-For larger $m$, the periods could also be computed using general Gauss-Jacobi integration
+For $m > 2$, the periods could also be computed using general Gauss-Jacobi integration
 of parameters $\alpha,\alpha$. However, a different scheme has to be computed for each $\alpha$
 and it now involves computing roots of general Jacobi polynomials to large accuracy, which
 makes it hard to compete with the double-exponential scheme.
 
 \begin{rmk}
-    It happens that the double exponential scheme performs better than Gauss-Chebychev on
+    Even for hyperelliptic curves it can happen that the double exponential scheme outperforms Gauss-Chebychev on
     particular integrals. This is easy to detect in practice and we can always switch to
     the best method.
 \end{rmk}
 
-\subsection{Double-exponential integration}\label{sec:de_int}
+\subsection{Double-exponential integration}\label{subsec:de_int}
 
 Throughout this section, $λ\in[1,\frac{π}2]$ is a fixed parameter.
 By default the value $λ=\frac{π}2$ is a good choice, however
@@ -85,7 +85,7 @@ both $[-1,1]$ and its neighborhood $Z_r$ (see \S \ref{m-subsec:de_case}), we obt
 We also introduce the following quantities
 \begin{equation*}
     \begin{cases}
-    X_r &=\cos(r)\sqrt{\frac{π}{2λ\sin r}-1} \\
+    X_r &=\cos(r)\sqrt{\frac{π}{2λ\sin r}-1} \\[0.2cm]
     B(r,α) &=
     \frac{2}{\cos r}
     \left(
@@ -99,11 +99,11 @@ Once we have computed the two bounds $M_1$, $M_2$ and the constant $B(r,α)$,
 we obtain a rigorous integration scheme as follows:
 \begin{thm}
     \label{thm:de_int}
-    With the notations above, for all $D>0$, choose $h$ and $N$ such that
+    With notation as above, for all $D>0$, choose $h$ and $N$ such that
     \begin{equation}
     \label{eq:de_parameters}
         \begin{cases}
-            h \le \frac{2πr}{D + \log(2M_2 B(r,α) + e^{-D})}\\
+            h \le \frac{2πr}{D + \log(2M_2 B(r,α) + e^{-D})}\\[0.2cm]
             Nh \ge \asinh\left(\frac{D+\log(\frac{2^{2α+1}M_1}{α})}{2αλ}\right),
         \end{cases}
     \end{equation}
@@ -118,7 +118,7 @@ we obtain a rigorous integration scheme as follows:
     where
     \begin{equation*}
         \begin{cases}
-            u_k = \tanh(λ\sinh(kh)),\\
+            u_k = \tanh(λ\sinh(kh)),\\[0.2cm]
             w_k = \frac{λ\cosh(kh)}{\cosh(λ\sinh(kh))^{2α}}.
         \end{cases}
     \end{equation*}
@@ -180,8 +180,8 @@ Now the point $λ\sinh(t+ir) = X(t)+iY(t)$ lies on the hyperbola
 $Y^2 =λ^2(\sin^2r+\tan^2 rX^2)$, and
 \begin{equation*}
     \begin{cases}
-    \abs{λ\cosh(t+ir)} &\leq λ\cosh(t) =\frac{X'(t)}{\cos(r)}\\
-    \abs{\cosh(X+iY)}^2 &= \sinh(X)^2+\cos(Y)^2
+    \abs{λ\cosh(t+ir)} &\leq λ\cosh(t) =\frac{X'(t)}{\cos(r)}\\[0.2cm]
+    \abs{\cosh(X+iY)}^2 &= \sinh(X)^2+\cos(Y)^2,
     \end{cases}
 \end{equation*}
 so that
@@ -191,7 +191,7 @@ so that
     \leq
     \frac{2}{\cos r}\int_0^\infty\frac{\d X}{(\sinh(X)^2+\cos(Y)^2)^α}.
 \end{equation*}
-For $X_0=0$, $Y_0=λ\sin r<\frac{π}2$, and $Y_r=\frac{π}2$ for
+For $X_0=0$ we get $Y_0=λ\sin r<\frac{π}2$, and $Y_r=\frac{π}2$ for
 $X_r=\cos(r)\sqrt{\frac{π}{2Y_0}-1}$.
 
   We cut the integral at $X=X_r$ and write
@@ -227,11 +227,11 @@ $X_r=\cos(r)\sqrt{\frac{π}{2Y_0}-1}$.
 \end{proof}
 
 \subsection{Gauss-Chebychev integration}
-\label{sub:gauss_chebychev_integration}
+\label{subsec:gauss_chebychev_integration}
 
-In the case of hyperelliptic curves, we have $α=\frac12$ and the integral
+In the case of hyperelliptic curves, we have $α=\frac12$ (and $j=1$) and the integral
 \begin{equation*}
-    \int_{-1}^1\frac{\varphi_{i,j}(u)}{\sqrt{1-u^2}}\du
+    \int_{-1}^1\frac{\varphi_{i,1}(u)}{\sqrt{1-u^2}}\du
 \end{equation*}
 can be efficiently handled by Gaussian integration with weight
 $1/\sqrt{1-u^2}$,
@@ -252,7 +252,7 @@ since their roots are explicitly given as cosine functions \cite[25.4.38]{Abramo
      = E(N),
     \end{equation}
     with constant weights $w_k = w =\frac{π}N$
-    and nodes $u_k = \cos(\frac{2k-1}{2N}π)$.
+    and nodes $u_k = \cos\left(\frac{2k-1}{2N}π\right)$.
 \end{thm}
 
 Moreover, very nice estimates on the error $E(N)$ can by obtained by applying
@@ -276,7 +276,7 @@ the residue theorem on an ellipse $ε_r$ of the form
 \end{thm}
 
 Now we use this theorem with a function
-$g_{i,j}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitly factored
+$g_{i}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitly factored
 polynomial $Q(u)=\prod(u-u_k)$, so that the error can be
 explicitly controlled.
 
@@ -302,19 +302,19 @@ We simply compute the distance
 
 \begin{thm}
     \label{thm:gc_int}
-    With $r$ and $M(r)$ satisfying lemme \ref{m-lem:param_r},
+    With $r$ and $M(r)$ satisfying Lemma \ref{m-lem:param_r},
     for all $N$ such that
     \begin{equation*}
         \label{eq:Ngc}
-        N \geq \frac{D+\log(2πM(r))+1}{2r}
+        N \geq \frac{D+\log(2πM(r))+1}{2r},
     \end{equation*}
     we have
     \begin{equation*}
-        \abs{I_{a,b}(i,j)
+        \abs{I_{a,b}(i,1)
         - \frac{π}N\sum_{k=1}^N\frac{u_k^{i-1}}{\ytab(u_k)}}
             \leq e^{-D},
     \end{equation*}
-    where $u_k=\cos(\frac{2k-1}{2N}π)$.
+    where $u_k=\cos\left(\frac{2k-1}{2N}π\right)$.
 \end{thm}
 
 More details on the choice of $r$ and the computation of $M(r)$

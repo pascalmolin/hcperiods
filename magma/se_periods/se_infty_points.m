@@ -87,13 +87,14 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 				for P in Points	do
 					Dist, Ind := Distance(P[1][1],BPs);
 					RationalIntegral +:= P[2] * SEC`AJM_RamificationPoints[Ind];
+					//if Dist gt SEC`Error then
 					if Dist gt SEC`Error then
 						Append(~ComplexEdges,Append(P,Ind));
 					end if;
 				end for;
 
 				// Integration parameters
-				Params := DE_Params_AJM(ComplexEdges,SEC);
+				Params, ComplexEdges := DE_Params_AJM(ComplexEdges,SEC);
 				vprint SE,2 : "Parameter(AJM):",Params;
 				ExtraPrec := 2*Ceiling(Log(10,Params[1]/SEC`SpanningTree`Params[1]));
 				if ExtraPrec gt 0 then
@@ -107,12 +108,16 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 					Roots_fx := Roots(f_x);
 					SEC`BranchPoints := [ R[1] : R in Roots_fx ];
 				end if;
-				DEInt := DE_Int_Params(Params,SEC:AJM:=true);
+				DEInts := DE_Integration(Params,SEC:AJM); NInts := #DEInts;
 
 				// Actual integrations from P_k to P
 				ComplexIntegrals := [ Matrix(SEC`ComplexField,SEC`Genus,1,[]) : j in [1..delta] ];
 				for CE in ComplexEdges do
-					ComplexIntegral0 :=  DE_Integrals_Edge_AJM(CE,SEC,DEInt);
+					l := NInts;
+					while CE[4] lt DEInts[l]`r do
+						l -:= 1;
+					end while;
+					ComplexIntegral0 :=  DE_Integrals_Edge_AJM(CE,SEC,DEInts[l]);
 					ComplexIntegrals[1] +:= CE[2] * Matrix(SEC`ComplexField,SEC`Genus,1,ComplexIntegral0);
 					for k in [2..delta] do
 						CI0seq := Eltseq(ComplexIntegral0);

@@ -4,10 +4,12 @@
  
  ******************************************************************************/
 
-#include "arb.h"
-#include "arb_mat.h"
-#include "acb.h"
-#include "acb_mat.h"
+#include <arb.h>
+#include <arb_mat.h>
+#include <acb.h>
+#include <acb_mat.h>
+#include <fmpz_poly.h>
+#include <arb_fmpz_poly.h>
 
 #include "fmpz_mat_extras.h"
 #include "complex_extras.h"
@@ -28,7 +30,7 @@ typedef struct
     /* y^m = prod_{i=1}^d x - roots[i] */
     slong m;             /* degree in y */
     slong n;             /* degree in x */
-    acb_poly_t pol;      /* polynomial */
+    fmpz_poly_t pol;     /* polynomial */
     slong delta;         /* default = gcd(m, d) */
     slong g;             /* genus, 2g = (m-1)(d-1) - delta + 1 */
     slong j1;
@@ -172,7 +174,8 @@ enum {
     AJ_ROOT_DEF  = 1 << 5,
     AJ_ROOT_TURN = 1 << 6,
     AJ_ROOT_PROD = 1 << 7,
-    AJ_VERBOSE   = 5 << 8
+    AJ_DE_SAME   = 1 << 8,
+    AJ_VERBOSE   = 5 << 9
 };
 
 
@@ -182,10 +185,10 @@ enum {
 
  ******************************************************************************/
 void sec_init(sec_t * c, slong m, slong n);
-void sec_init_poly(sec_t * c, slong m, const acb_poly_t pol);
+void sec_init_poly(sec_t * c, slong m, const fmpz_poly_t pol);
 void sec_clear(sec_t c);
 
-void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, const acb_poly_t f);
+void abel_jacobi_init_poly(abel_jacobi_t aj, slong m, const fmpz_poly_t f);
 void abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec);
 void abel_jacobi_clear(abel_jacobi_t aj);
 
@@ -215,6 +218,7 @@ void ydata_init_edge(ydata_t yab, acb_srcptr x, edge_t e, slong n, slong m, slon
 void ydata_clear(ydata_t yab);
 void tree_ydata_init(tree_t tree, acb_srcptr x, slong n, slong m, slong prec);
 void tree_ydata_clear(tree_t tree);
+slong extraprec_tree(tree_t tree, acb_srcptr x, sec_t c);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
@@ -254,6 +258,10 @@ void mth_root_pol_def(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, a
 void mth_root_pol_prod(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec);
 void mth_root_pol_turn(acb_t y, acb_srcptr u, slong d1, slong d, const arb_t x, acb_srcptr z, slong m, slong prec);
 
+/* other */
+typedef struct { double r; slong k; } comp_t;
+int comp_cmp(const comp_t * x, const comp_t * y);
+
 /* vec utilities */
 /*void _acb_vec_scalar_addmul(acb_ptr res, acb_srcptr vec, slong len, const acb_t c, slong prec);*/
 void _acb_vec_add_error_mag(acb_ptr res, slong len, const mag_t e);
@@ -271,4 +279,4 @@ void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, 
 void _acb_vec_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void acb_mat_print_gp(const acb_mat_t m, slong digits);
-
+void acb_mat_print_error(const acb_mat_t m, slong digits);

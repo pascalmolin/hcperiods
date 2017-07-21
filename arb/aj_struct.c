@@ -6,29 +6,16 @@
 
 #include "abel_jacobi.h"
 void
-acb_branch_points(acb_ptr x, slong n, const acb_poly_t pol, slong prec)
+acb_branch_points(acb_ptr x, slong n, const fmpz_poly_t pol, slong prec)
 {
-    /* isolate roots */
-    if (acb_poly_find_roots(x, pol, NULL, 0, prec) < n)
-    {
-        acb_poly_printd(pol, 20);
-        flint_printf("missing roots, abort.\n");
-        abort();
-    }
-    /* set real roots to exact real */
-    if (acb_poly_validate_real_roots(x, pol, prec))
-    {
-        slong k;
-        for (k = 0; k < n; k++)
-            if (arb_contains_zero(acb_imagref(x + k)))
-                arb_zero(acb_imagref(x + k));
-    }
+    /* compute roots */
+    arb_fmpz_poly_complex_roots(x, pol, 0, prec + 2);
     /* and order them */
     _acb_vec_sort_lex(x, n);
 }
 
 void
-abel_jacobi_init_poly(abel_jacobi_t aj, slong m, const acb_poly_t pol)
+abel_jacobi_init_poly(abel_jacobi_t aj, slong m, const fmpz_poly_t pol)
 {
     slong n, g;
 
@@ -38,6 +25,11 @@ abel_jacobi_init_poly(abel_jacobi_t aj, slong m, const acb_poly_t pol)
     if (g < 1)
     {
         flint_printf("\nno periods if genus < 1 (g = %ld)\n", g);
+        abort();
+    }
+    if (!fmpz_poly_is_squarefree(pol))
+    {
+        flint_printf("\npolynomial must be squarefree\n");
         abort();
     }
 
@@ -79,12 +71,9 @@ abel_jacobi_clear(abel_jacobi_t aj)
 void
 abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
 {
-    slong cstprec, intprec;
+    slong baseprec = 64, cstprec, intprec, extraprec;
 
     sec_t c = aj->c;
-
-    cstprec = prec + c.n + 10;
-    intprec = prec + c.n; /* binom(n,n/2) <= 2^n */
 
     aj->type = (flag & AJ_USE_DE || (c.m > 2 && c.n > 2)) ? INT_DE : (c.m == 2) ? INT_GC : INT_D2;
 
@@ -92,13 +81,17 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     {
         flint_printf("## polynomial\n");
         if (flag / AJ_VERBOSE > 1)
-            acb_poly_printd(c.pol, 30);
+            fmpz_poly_print(c.pol);
     }
+#if DEBUG
+    flint_printf("\npolynomial ");
+    fmpz_poly_print_pretty(c.pol, "x");
+#endif
 
     /* branch points */
     if (flag & AJ_VERBOSE)
         flint_printf("## branch points\n");
-    acb_branch_points(aj->roots, c.n, c.pol, cstprec);
+    acb_branch_points(aj->roots, c.n, c.pol, baseprec);
 
 #if DEBUG
     flint_printf("\nuse points X = ");
@@ -114,12 +107,22 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     tree_print(aj->tree);
 #endif
 
+    /* choose prec */
+    extraprec = extraprec_tree(aj->tree, aj->roots, c);
+    intprec = prec + extraprec;
+    cstprec = intprec + 10;
+
+    acb_branch_points(aj->roots, c.n, c.pol, cstprec);
     tree_ydata_init(aj->tree, aj->roots, c.n, c.m, cstprec);
 
     if (flag & AJ_VERBOSE)
         flint_printf("## symplectic basis\n");
 
     symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
+
+#if DEBUG
+    flint_printf("prec = %ld + %ld + %d\n", prec, extraprec, 10);
+#endif
 
     if (flag & AJ_NO_INT)
         return;

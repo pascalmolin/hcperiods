@@ -16,8 +16,8 @@ import "se_spanning_tree.m": DE_AJM_Weight;
 ///////////////////////////////////////////////////////////////
 
 
-C20<I> := ComplexField(20);
-RPi20 := Real(Pi(C20));
+C30<I> := ComplexField(30);
+RPi30 := Real(Pi(C30));
 
 function Distance_1(P)
 	xP := Abs(Re(P));
@@ -39,9 +39,9 @@ function Bound_M1(CCV,len,m)
 	end if;
 end function;
 
-function Distance_thsh( P, r : Lambda := RPi20/2 )
+function Distance_thsh( P, r : Lambda := RPi30/2 )
 	P := Abs(Re(P)) + I*Abs(Im(P));
-	x0 := 0; x1 := Argcosh(RPi20/(2*Lambda*Sin(r))); // s.t. \Lambda Cosh(x)Sin(r)= Pi/2;
+	x0 := 0; x1 := Argcosh(RPi30/(2*Lambda*Sin(r))); // s.t. \Lambda Cosh(x)Sin(r)= Pi/2;
 	Phi := function(x)
 		return Tanh(Lambda*Sinh(x+I*r));
 	end function;
@@ -53,11 +53,11 @@ function Distance_thsh( P, r : Lambda := RPi20/2 )
 	end function;
 	// x := Solve(x := x0, x1, ArgPhi(x)-ArgPhiP(x)-C_Pi/2);
 	x := x0;
-	Val := ArgPhi(x)-ArgPhiP(x)-RPi20/2;
+	Val := ArgPhi(x)-ArgPhiP(x)-RPi30/2;
 	n := 25;
 	for t in [0..n] do
 		x_new := (t/n)*x1 + (1-(t/n))*x0;
-		Val_new := ArgPhi(x_new)-ArgPhiP(x_new)-RPi20/2;
+		Val_new := ArgPhi(x_new)-ArgPhiP(x_new)-RPi30/2;
 		if Abs(Val_new) lt Abs(Val) then
 			x := x_new;
 			Val := Val_new;
@@ -78,34 +78,6 @@ function Bound_M2(CCV,len,m,r)
 end function;
 
 
-function DE_Int_Params( Params, SEC : AJM := false )
-// Computes a double-exponential integration type from integration parameters <M1,M2,r>
-	
-	R := RealField(Precision(SEC`ComplexField));
-	RPi2 := Pi(R)/2;
-	Lambda := RPi2;
-	m := SEC`Degree[1];
-	n := SEC`Degree[2];
-
-	// Get parameters
-	M1 := Params[1];
-	M2 := Params[2];
-	r :=  R!Params[3];
-	
-	// Compute D
-	D := SEC`Prec * Log(R!10);
-
-	// New parameters
-	Alpha := 1/m;
-	X_r := Cos(r) * Sqrt( ( Pi(R) / (2*Lambda*Sin(r))) - 1 );
-	B_ra := (2/Cos(r)) * ( (X_r/2) * (1/(Cos(Lambda*Sin(r))^(2*Alpha)) + (1/X_r^(2*Alpha))) ) + (1/(2*Alpha*Sinh(X_r)^(2*Alpha)));
-	h := Real( 4 * RPi2 * r /  ( D+Log(2*M2 * B_ra + 1)));
-	N := Ceiling(Argsinh((D+ Log((2^(2*Alpha+1)*M1)/Alpha )) / ( 2*Alpha*Lambda ))/h);
-	
-	return DE_Integration(h,N,Lambda,m:AJM:=AJM);
-end function;
-
-
 
 /////////////////////////////////////////////////////
 // ***** Double-exponential integration type ***** //
@@ -114,7 +86,7 @@ end function;
 
 // Define  type DE_Int
 declare type DE_Int;
-declare attributes DE_Int: Factor, Steplength, Lambda, Abscissas, Weights, NPoints, Degree, ExtraFactors;
+declare attributes DE_Int: r, Factor, Steplength, Lambda, Abscissas, Weights, NPoints, Degree, ExtraFactors;
 
 
 // Integration parameters
@@ -185,37 +157,71 @@ end procedure;
 
 
 // Constructor
-intrinsic DE_Integration( h::FldReElt, N::RngIntElt, Lambda::FldReElt, m::RngIntElt : AJM := false ) -> DE_Int
+intrinsic DE_Integration( Params, SEC : AJM := false ) -> SeqEnum[DE_Int]
 { Construct the double exponential integration scheme }
 
-	DEInt := New(DE_Int);
-	DEInt`Steplength := h;
-	DEInt`NPoints := N;
-	DEInt`Lambda := Lambda;
-	DEInt`Degree := m;
+	// Parameters = < M1,M2,[ r_min,..,r_max ]>
+	// r_i < r_{i+1}
 
-	// Factor for integrals
-	DEInt`Factor := DEInt`Lambda * DEInt`Steplength;	
+	R := RealField(Precision(SEC`ComplexField));
+	RPi2 := Pi(R)/2;
+	Lambda := RPi2;
+	m := SEC`Degree[1];
+	Alpha := 1/m;
 
-	// Compute weights and abscissas
-	if AJM then
-		DE_IntegrationPoints_AJM(DEInt);
-	else
-		DE_IntegrationPoints(DEInt);
+	// Get parameters
+	M1 := Params[1];
+	M2 := Params[2];
+	Lr := [ R!r : r in Params[3]];
 
-	end if;
-	return DEInt;
+	// Compute D
+	D := SEC`Prec * Log(R!10);
+	
+	// List of integration schemes
+	DE_Integrations := [];
+
+	for r in Lr do
+		// New scheme
+		DEInt := New(DE_Int);
+
+		// Compute N,h
+		X_r := Cos(r) * Sqrt( ( Pi(R) / (2*Lambda*Sin(r))) - 1 );
+		B_ra := (2/Cos(r)) * ( (X_r/2) * (1/(Cos(Lambda*Sin(r))^(2*Alpha)) + (1/X_r^(2*Alpha))) ) + (1/(2*Alpha*Sinh(X_r)^(2*Alpha)));
+		h := Real( 4 * RPi2 * r /  ( D+Log(2*M2 * B_ra + 1)));
+		N := Ceiling(Argsinh((D+ Log((2^(2*Alpha+1)*M1)/Alpha )) / ( 2*Alpha*Lambda ))/h);
+
+		// Assign attributes
+		DEInt`r := r;
+		DEInt`Steplength := h;
+		DEInt`NPoints := N;
+		DEInt`Lambda := Lambda;
+		DEInt`Degree := m;
+
+		// Factor for integrals
+		DEInt`Factor := DEInt`Lambda * DEInt`Steplength;	
+
+		// Compute weights and abscissas
+		if AJM then
+			DE_IntegrationPoints_AJM(DEInt);
+		else
+			DE_IntegrationPoints(DEInt);
+
+		end if;
+		Append(~DE_Integrations,DEInt);
+	end for;
+	return DE_Integrations;
 end intrinsic;
 
 
 // Printing
 intrinsic Print(DEInt::DE_Int)
 { print }
-	print "Steplength:",C20!DEInt`Steplength;
+	print "r:",C30!DEInt`r;
+	print "Steplength:",C30!DEInt`Steplength;
 	print "Number of abscissas:",DEInt`NPoints;
-	print "Lambda:",C20!DEInt`Lambda;
+	print "Lambda:",C30!DEInt`Lambda;
 	print "Degree:",DEInt`Degree;
-	print "Factor:",C20!DEInt`Factor;
+	print "Factor:",C30!DEInt`Factor;
 end intrinsic;
 
 
@@ -345,11 +351,16 @@ end function;
 
 
 
-function DE_Integrals_Tree( SEC, DEInt )
+function DE_Integrals_Tree( SEC, DEInts )
 // Compute integrals for spanning tree
-	Periods := []; ElementaryIntegrals := [];
+	Periods := []; ElementaryIntegrals := []; NInts := #DEInts;
 	for k in [1..SEC`Degree[2]-1] do
-		P, EI := DE_Integrals_Edge(SEC`SpanningTree`Data[k],SEC,DEInt);
+		// Find best integration scheme
+		l := NInts;
+		while SEC`SpanningTree`Edges[k][3] lt DEInts[l]`r do
+			l -:= 1;
+		end while;
+		P, EI := DE_Integrals_Edge(SEC`SpanningTree`Data[k],SEC,DEInts[l]);
 		Append(~Periods,P);
 		Append(~ElementaryIntegrals,EI);
 	end for;
@@ -396,21 +407,6 @@ function DE_Integrals_Factor_AJM( VectorIntegral,EdgeData,SEC)
 
 	// Shifting number at P_y
 	s := Round((m/(2*Real(Pi(C)))) * ( Arg(EdgeData[n+3]) - Arg(P_y_AC) ));
-	/*print "s_:",s_;
-	s := Round(s_);
-	// Check: k \in \Z ?
-	if Abs(s-s_) gt SEC`Error then
-		print "s:",s_;
-		print "CCV:",EdgeData;
-		print "SEC`LeadingCoeff:",SEC`LeadingCoeff;
-		print "AC_mthRoot(1,CCV,SEC`Zetas,m,n-1):",AC_mthRoot(1,EdgeData,SEC`Zetas,up,m,n-1);
-		print "P_y_AC:",P_y_AC;
-		print "Arg(P_y):",Arg(EdgeData[n+3]);
-		print "Arg(P_y_AC):",Arg(P_y_AC);
-		print "Degree:",m;
-		print "Poly:",SEC`DefiningPolynomial;
-		assert Abs(s-s_) lt SEC`Error;
-	end if;*/
 
 	// Multiply by correct power of zeta and ((p-a)/2)^(i+1-jn/m)
 	ct := 1;

@@ -7,25 +7,25 @@
   \subsection{Definition \& properties}\label{subsec:se_def}
 
     \begin{defn}\label{def:se_curve}
-    In this paper, a superelliptic curve $\cu$ over $\C$ is a smooth plane projective curve that has an affine model given by an equation of the form
+    In this paper, a superelliptic curve $\cu$ over $\C$ is a smooth projective curve that has an affine model given by an equation of the form
    \begin{equation}\label{eq:aff_model}
     \caff : \quad y^m = f(x) =  c_f \cdot \prod_{k=1}^n (x-x_k),
    \end{equation}
    \end{defn}
-   where $m > 1$ and $f \in \C[x]$ is separable of degree $n \ge 3$.
+   where $m > 1$ and $f \in \C[x]$ is separable of degree $n \ge 3$. Note that we do not assume that $\gcd(m,n) = 1$.
 
-  There are $\delta = \gcd(m,n)$ infinite points $P_{\infty}^{(1)},\dots,P_{\infty}^{(\delta)} \in \cu$, that behave differently depending on $m$ and $n$ (see \cite{CT1996}, \S 1 for details).
-  Especially, $\infty \in \P^1_{\C}$ is a branch point for $\delta \ne m$. Thus, we introduce the set of finite branch points $X = \X$ as well as the set of all branch points
-  \begin{align*}\label{eq:branch_points}
+  There are $\delta = \gcd(m,n)$ points $P_{\infty}^{(1)},\dots,P_{\infty}^{(\delta)} \in \cu$ at infinity, that behave differently depending on $m$ and $n$ (see \cite[\S 1]{CT1996} for details).
+  In particular, $\infty \in \P^1_{\C}$ is a branch point for $\delta \ne m$. Thus, we introduce the set of finite branch points $X = \X$ as well as the set of all branch points
+  \begin{align}\label{eq:branch_points}
          \hat{X} = \begin{cases}   X \cup \{ \infty \} \quad \text{if} \; m  \nmid  d,\\
          X \hfill \text{otherwise.}
      \end{cases}
-  \end{align*}
+  \end{align}
   The ramification indices at the branch points are given by $e_x = m$ for all $x \in X$ and $e_{\infty} = \frac{m}{\delta}$. Using the
   Riemann-Hurwitz formula, we obtain the genus of $\cu$ as
-  \begin{equation*}\label{eq:genus}
+  \begin{equation}\label{eq:genus}
     g = \frac{1}{2}( (m-1)(n-1) - \delta + 1).
-  \end{equation*}
+  \end{equation}
   We denote the corresponding finite ramification points $P_k = (x_k,0) \in \cu$ for $k = 1,\dots,n$.
 
   \begin{rmk}
@@ -54,12 +54,12 @@
 
   \subsubsection{The complex $m$-th root}
 
-  Working over the complex we encounter several multi-valued functions
+  Working over the complex numbers we encounter several multi-valued functions
   which we will briefly discuss here.  Closely related to superelliptic
   curves over $\C$ is the complex $m$-th root.
   Before specifying a branch it is a multi-valued function $y^m = x$
   that defines an $m$-sheeted Riemann surface, whose only branch points
-  are at $x = 0,\infty$, and they're totally ramified.
+  are at $x = 0,\infty$, and these are totally ramified.
 
   For $x\in\C$, it is natural and computationally convenient to use the
   \emph{principal branch} of the $m$-th root $\sqrt[m]x$ defined by
@@ -72,21 +72,20 @@
   the primitive $m$-th root of unity
   \begin{equation*}
       %\label{eq:zeta}
-  \zeta = \zeta_m = e^{\frac{2\pi i }{m}}
+  \zeta := \zeta_m := e^{\frac{2\pi i }{m}}
   \end{equation*}
   on the surface. In
   particular, the monodromy at $x=0$ is cyclic of order $m$.
 
   \subsubsection{The Riemann surface}\label{subsec:riemann_surface}
 
-  For an introduction to the theory of Riemann surfaces, algebraic curves and holomorphic covering maps we recommend the reader
-  to \cite{Miranda1995}.
+  For an introduction to the theory of Riemann surfaces, algebraic curves and holomorphic covering maps we recommend \cite{Miranda1995}.
 
 
 
-   Over $\C$ we can identify the curve $\cu$ with the compact Riemann surface $\cu(\P^2_{\C})$. Since our defining equation
+   Over $\C$ we can identify the curve $\cu$ with the compact Riemann surface $\cu(\C)$. Since our defining equation
    has the nice form
-   $y^m = \prod_{k = 1}^n (x - x_k)$ we view $\cu$ as Riemann surface with $m$ sheets and
+   $y^m = \prod_{k = 1}^n (x - x_k)$ we view $\cu$ as a Riemann surface with $m$ sheets and
    all computations will be done in the $x$-plane.
 
    We denote by $\pr : \cu \rightarrow \P^1_{\C}$ the corresponding smooth cyclic branched covering of the projective line
@@ -104,8 +103,8 @@
   \bigskip
 
   Similar to the complex $m$-th root, we can assume that crossing the branch cut at $x_k \in X$ in positive direction corresponds to multiplication by $\zeta$ on the Riemann surface. We
-  obtain an ordering of the sheets relative to the analytic branches of by imposing that multiplication by $\zeta$, i.e. applying the map
-  $(x,y(x)) \mapsto (x,\zeta y(x))$ corresponds to moving one sheet up on the Riemann surface.
+  obtain an ordering of the sheets relative to the analytic branches of $\cu$ by imposing that multiplication by $\zeta$, i.e. applying the map
+  $(x,y(x)) \mapsto (x,\zeta y(x))$, corresponds to moving one sheet up on the Riemann surface.
 
    \bigskip
 
@@ -128,7 +127,7 @@
   wandering around the $x$-plane (see Figure \ref{fig:mth_root_principal}).
 
   A better option is to split the product as follows:
-  assume that $a,b$ are the points $-1,1$. Then the function
+  assume that $(a,b) = (-1,1)$. Then the function
   \begin{equation*}
       y(x) = \prod_{x_k\in X}\sqrt[m]{x-x_k}
   \end{equation*}
@@ -151,7 +150,7 @@
       \caption{Branch cuts of different $m$-th roots.}
   \label{fig:mth_root_pol} \end{figure}
 
-  In general we proceed the same way: For branch points $a,b \in X$ we consider the affine linear
+  In general we proceed in the same way: For branch points $a,b \in X$ we consider the affine linear
   transformation
   \begin{equation*}
       \label{def:xab}
@@ -181,7 +180,7 @@
   \begin{equation*}
       \sqrt[m]{1-u^2}
   \end{equation*}
-  has two branch cuts $]-\infty,-1]$ and $[1,\infty[$, and is holomorphic on the complementary
+  has two branch cuts $]-\infty,-1]$ and $[1,\infty[$, and is holomorphic on the complement
   $\overline U$ of these cuts.
 
   We can now define a branch of the curve
@@ -199,7 +198,7 @@
   is holomorphic inside $]a,b[$ (see Figure \ref{fig:mth_root_signed}).
 
   More precisely, $\vab = \uab(ε_{a,b}\cap \overline U_{a,b})$,
-  is an ellipse shaped neighborhood of $]a,b[$ with two segments removed
+  is an ellipse-shaped neighborhood of $]a,b[$ with two segments removed
   (see Figure \ref{m-fig:set_vab})
   on which the local branch $\yab$ is well defined and holomorphic.
 
@@ -212,8 +211,8 @@
 We sum up the properties of these local branches:
 
  \begin{prop}\label{prop:yab}
-      Let $a,b\in X$ be branch points such that $X\cap]a,b[=\varnothing$.
-      Then, with the notations above, the functions
+      Let $a,b\in X$ be branch points such that $X\cap\,]a,b[\,=\varnothing$.
+      Then, with the notation as above, the functions
       $\ytab$ \eqref{eq:ytab} and $\yab$ \eqref{eq:def_yab}
       satisfy
      \begin{itemize}
@@ -223,7 +222,7 @@ We sum up the properties of these local branches:
          \item $\yab(x)^m = f(x)$ for all $x\in\C$,
          \item $\yab(x),\zeta\yab(x),\dots,\zeta^{m-1}\yab(x)$ are the $m$ different analytic continuations of $y$ on $\vab$.
      \end{itemize}
-     Moreover, we can assume that for $x \in \vab$ applying the map $(x,\yab(x)) \mapsto (x,\zeta^l\yab(x))$ corresponds to moving up $l \in \Z/m\Z$ sheets on the Riemann surface.
+     Moreover, we can assume that for $x \in \vab$, applying the map $(x,\yab(x)) \mapsto (x,\zeta^l\yab(x))$ corresponds to moving up $l \in \Z/m\Z$ sheets on the Riemann surface.
  \end{prop}
 
  \subsection{Cycles and homology}\label{subsec:cycles_homo}
@@ -248,7 +247,7 @@ We sum up the properties of these local branches:
        We say $\cyab = \cyab^{(0)}$ is an \emph{elementary cycle} and call $\cyabl$ its \emph{shifts} for $l \in \Z/m\Z$.
    \end{defn}
    In $\pi_1(\cu)$
-   they are homotopic to cycles that encircle  $a$ in negative and $b$ in positive orientation, once each.
+   shifts of elementary cycles are homotopic to cycles that encircle  $a$ in negative and $b$ in positive orientation, once each.
    By definition of $\yab$ the branch cuts at the end points are outward and parallel to $[a,b]$. Thus, we have the following useful visualizations of $\cyabl$ on $\cu$:
    \begin{figure}[H]
       \begin{center}
@@ -273,10 +272,10 @@ We sum up the properties of these local branches:
 
   \begin{thm}\label{thm:gen_set}
       Let $E$ be a spanning tree for the branch points $X$.
-   The cycles $\Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l <m-1,  e \in E  \right\}$ generate $\homo$.
+   The set of cycles $\Gamma = \left\{  \gamma_{e}^{(l)}  \mid  0 \le l <m-1,  e \in E  \right\}$ generates $\homo$.
   \end{thm}
   \begin{proof}
-  Denote by $\alpha_a \in \pi(\P^1 \setminus \hat{X})$ a closed path that encircles the branch point $a \in \hat{X}$ exactly once. Then,  due to the relation $1 = \prod_{a \in \hat{X}} \alpha_a$,
+  Denote by $\alpha_a \in \pi_1(\P^1 \setminus \hat{X})$ a closed path that encircles the branch point $a \in \hat{X}$ exactly once. Then,  due to the relation $1 = \prod_{a \in \hat{X}} \alpha_a$,
   $\pi_1(\P^1 \setminus \hat{X})$ is freely generated by $\{ \alpha_a \}_{a \in X}$, i.e. in the case $\delta \ne m$ we can omit $\alpha_{\infty}$. \abstand
   Since our covering is cyclic, we have that $
   \pi_1(\cu \setminus \pr^{-1}(\hat{X})) \isom \ker(\pi_1(\P^1 \setminus \hat{X}) \overset{\Phi}{\To} \Aut(\cu \setminus \pr^{-1}(\hat{X})))$ where $\Aut(\cu \setminus \pr^{-1}(\hat{X})) \isom C_m
@@ -284,11 +283,12 @@ We sum up the properties of these local branches:
   and $\Phi(\alpha_a)$ is cyclic of order $m$ for all $a \in X$. Hence, for every word $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} \in \pi_1(\P^1 \setminus \hat{X})$ we have that
   $\alpha \in \ker(\Phi) \eq \sum_{i=1}^n s_i \equiv 0 \bmod m$. \abstand
   We now claim that $\pi_1(\cu \setminus \pr^{-1}(\hat{X})) = \langle  \alpha_a^{-s} \alpha_b^{s},  \alpha_a^m   \mid  s \in \Z, a,b \in X  \rangle$
-  and proof this by induction on $n$: for $\alpha = \alpha_1^{s_1}$, $m$ divides $s_1$ and therefore $\alpha$ is generated by $\alpha_1^m$. For $n > 1$ we write
+  and prove this by induction on $n$: for $\alpha = \alpha_1^{s_1}$, $m$ divides $s_1$ and therefore $\alpha$ is generated by $\alpha_1^m$. For $n > 1$ we write
   $\alpha = \alpha_1^{s_1}\dots \alpha_n^{s_n} = (\alpha_1^{s_1} \dots \alpha_{n-1}^{s_{n-1}+s_n})(\alpha_{n-1}^{-s_n}\alpha_n^{s_n})$. \abstand
   We obtain the fundamental group of $\cu$ as
   $\pi_1(\cu) \isom \pi_1(\cu \setminus \pr^{-1}(\hat{X})) / \langle  \alpha_a^{e_a}  \mid  a \in \hat{X}  \rangle$, which is generated by
-  $\{  \alpha_a^{-s} \alpha_b^{s}  \mid  s \in \Z/m\Z,  a,b \in X  \}$. $(*)$ \abstand
+  $\{  \alpha_a^{-s} \alpha_b^{s}  \mid  s \in \Z/m\Z,  a,b \in X  \}$. %$(*)$ 
+  \abstand
   All branch points $a,b \in X$ are connected by a path $(a,v_1,\dots,v_t,b)$ in the spanning tree, so we can write $\alpha_a^{-s} \alpha_b^{s} = (\alpha_a^{-s}\alpha_{v_1}^{s})
   (\alpha_{v_1}^{-s}\alpha_{v_2}^{s})\dots(\alpha_{v_{t-1}}^{-s}\alpha_{v_t}^{s})(\alpha_{v_t}^{-s}\alpha_b^{s})$ and hence we have that
   $\{ \alpha_a^{-s} \alpha_b^{s}  \mid  s \in \Z/m\Z,  (a,b) \in E \}$ generates $\pi_1(\cu)$ and therefore $\homo$. \abstand
@@ -300,30 +300,31 @@ We sum up the properties of these local branches:
   the shifts $\prod_{l = 0}^{s-1} \gamma_e^{(l_0+l)} = (\alpha_a^{-1}\alpha_b)^s$.
   This implies $1 = \prod_{l = 0}^{m-1} \gamma_e^{(l_0+l)} = \prod_{l = 0}^{m-1} \gamma_e^{(l)}$ and
    $$\{  \alpha_a^{-s} \alpha_b^{s}  \mid  s \in \Z/m\Z  \} \subset  \langle  \gamma_e^{(l)}
-  \mid  0 \le l < m-1 \rangle$$ and therefore $\homo = \langle  \Gamma  \rangle$.
+  \mid  0 \le l < m-1 \rangle,$$ and therefore $\homo = \langle  \Gamma  \rangle$.
   \end{proof}
 
   \begin{rmk}
   \begin{itemize}
    \item[$\bullet$] For $\delta = 1$, we have that $\# \Gamma = (m-1)(n-1) = 2g$. Therefore, $\Gamma$ is a basis for $\homo$ in that case.
-   \item[$\bullet$] In the case $\delta = m$, the point at infinity is not a branch point. Leaving out one finite branch point in the spanning tree results in only $n-2$ edges. Hence,
-   $\# \Gamma = (m-1)(n-2) = 2g$ and $\Gamma$ is a basis for $\homo$.
-   \item[$\bullet$] In step $(*)$ of the proof, filling in the points above infinity creates relations among
-  these generators:
-  $1 = (\prod_{a \in X} \alpha_a)^{k \cdot e_{\infty}}$, $k = 1,\dots,\delta$. This corresponds to the term $-\delta+1$ in the formula \eqref{m-eq:genus} for the genus of $\cu$.
+   \item[$\bullet$] In the case $\delta = m$, the point at infinity is not a branch point. Leaving out one finite branch point in the spanning tree results in only $n-2$ edges. Hence, we easily find a subset
+   $\Gamma' \subset \Gamma$ such that
+   $\# \Gamma' = (m-1)(n-2) = 2g$ and $\Gamma'$ is a basis for $\homo$.
+%    \item[$\bullet$] In step $(*)$ of the proof, filling in the points above infinity creates relations among
+%   these generators:
+%   $1 = (\prod_{a \in X} \alpha_a)^{k \cdot e_{\infty}}$, $k = 1,\dots,\delta$. This corresponds to the term $-\delta+1$ in the formula \eqref{m-eq:genus} for the genus of $\cu$.
   \end{itemize}
   \end{rmk}
 
 \subsection{Differential forms}\label{subsec:diff_forms}
 
-    The computation of the period matrix and the Abel-Jacobi map requires a basis of $\hd$ as $\C$-vector space. In this section we provide a basis that only
+    The computation of the period matrix and the Abel-Jacobi map requires a basis of $\hd$ as a $\C$-vector space. In this section we provide a basis that only
    depends on $m$ and $n$ and is suitable for numerical integration. \abstand
     Among the meromorphic differentials
     \begin{align*}
  \WM = \left\{  \omega_{i,j}   \right\}_{\substack{1 \le i \le n-1, \\ 1 \le j \le m-1}} \quad \text{with} \quad \omega_{i,j} = \frac{ \dx^i}{i y^j},
   \end{align*}
   there are exactly $g$ that are holomorphic  and they can be found by imposing a simple combinatorial condition on $i$ and $j$.
- The following Proposition is basically a more general version of
+ The following proposition is basically a more general version of
   \cite[Proposition 2]{CT1996}.
 
    \bigskip
@@ -372,15 +373,14 @@ We sum up the properties of these local branches:
     \label{fig:holom_diff}
 \end{figure}
 
-Summing verticals of the trapezoid, we find the following formula that counts the points.
+Summing over the vertical lines of the trapezoid, we find the following formula that counts the points.
      \begin{align}\label{eq:r_j}
  \#\W & = \sum_{j = 1}^{m-1} \floor*{\frac{n}{m}j - \frac{\delta}{m}} = \sum_{j = 1}^{m-1} \frac{nj-\delta-r_j}{m} =
   \frac{n}{m} \sum_{j=1}^{m-1} j - \frac{m-1}{m}\delta - \frac{1}{m} \sum_{j=1}^{m-1} r_j,
      \end{align}
       where $r_j = nj - \delta  \bmod m$.
 
-The equality  $\#\W = \frac{1}{2}((n-1)(m-1)-\delta+1) = g$ immediately follows from
-the following
+The desired equality  $\#\W = \frac{1}{2}((n-1)(m-1)-\delta+1) = g$ immediately follows from
 \begin{lemma}
       \begin{equation*}\label{eq:r_j2}
        \sum_{j=1}^{m-1} r_j = \frac{1}{2}(m^2 - (\delta+2)m + 2\delta).
@@ -388,17 +388,17 @@ the following
 \end{lemma}
 \begin{proof}\let\qed\relax
       Let $l := \frac{m}{\delta}$. First we note that $r_j = r_{j+l}$:
-      $$r_{j+l} = n(j+l) - \delta  \bmod m = nj + \frac{n}{\delta}m - \delta  \bmod m =  nj - \delta  \bmod m =  r_j$$
+      $$r_{j+l} = n(j+l) - \delta  \bmod m = nj + \frac{n}{\delta}m - \delta  \bmod m =  nj - \delta  \bmod m =  r_j,$$
       and hence
       \begin{align}\label{eq:r_j3}
        \sum_{j=1}^{m-1} r_j = \delta \cdot \sum_{j=1}^{l} r_j - r_m = \delta \cdot \sum_{j=1}^{l} r_j - (-\delta + m).
       \end{align}
-      Furthermore, $r_j$ can be written as multiple of $\delta$:
+      Furthermore, $r_j$ can be written as a multiple of $\delta$:
       $$r_j = \delta \left(\frac{n}{\delta}j - 1\right)  \bmod m.$$
       From $\gcd(\frac{n}{\delta},l) = 1$ we conclude $\left\{  \frac{n}{\delta}j - 1  \bmod l  \mid  1 \le j \le l  \right\} = \{  0,\dots,l-1  \}$.
       Therefore,
       \begin{align}\label{eq:r_j4}
-       \sum_{j = 1}^l r_j = \sum_{j = 0}^{l-1} \delta j = \delta \cdot \frac{l(l-1)}{2}
+       \sum_{j = 1}^l r_j = \sum_{j = 0}^{l-1} \delta j = \delta \cdot \frac{l(l-1)}{2},
       \end{align}
       and thus \eqref{m-eq:r_j3} and \eqref{m-eq:r_j4} imply
       $$\sum_{j=1}^{m-1} r_j = \delta \cdot \sum_{j=1}^{l} r_j + \delta - m = \delta^2 \cdot \frac{l(l-1)}{2} + \delta - m = \frac{1}{2}(m^2 - (\delta+2)m + 2\delta).$$

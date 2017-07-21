@@ -65,11 +65,19 @@ de_params_d(double * h, double * lambda, double * r, const cdouble * w, slong le
         for (k = 0; k < len; k++)
         {
             double rk = fabs(cimag(casinh(catanh(w[k])/LAMBDA)));
+            if (rk <= 0)
+            {
+                flint_printf("\nERROR: r <= 0 for w[%i] = %lf + %lf*I\n",
+                        k,creal(w[k]),cimag(w[k]));
+                        abort();
+            }
             if (rk < *r)
                 *r = rk;
         }
         *r *= .9;
-        //flint_printf("### r was not set, choose r = %lf\n",r);
+#if DEBUG
+        flint_printf("### r was not set, choose r = %lf\n", *r);
+#endif
     }
     B = de_constant_b(*r, alpha);
 

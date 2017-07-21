@@ -59,7 +59,12 @@ if [ "$method" == "oldmagma" ] || [ "$method" == "newmagma" ]; then
         bench_magma
 elif [ "$method" == "arb" ]; then
     export LD_LIBRARY_PATH=.:$HOME/install/lib:$ARB;
-    dumbbench --raw -- $ARB/build/example/periods --bench 1 --int --$pol $n -m $m --prec $prec
+    if [[ $m -gt 10 && $prec -lt 512 && $n -lt 10 || $prec -lt 512 || $prec -lt 2000 && $n -lt 10 ]]; then
+        #dumbbench --raw -- $ARB/build/example/periods --bench 1 --int --$pol $n -m $m --prec $prec
+        /usr/bin/time -f '%U' $ARB/build/example/periods --bench 20 --int --$pol $n -m $m --prec $prec |& perl -pe 'chomp; $_ /= 20.;'
+    else
+        /usr/bin/time -f '%U' $ARB/build/example/periods --bench 1 --int --$pol $n -m $m --prec $prec
+    fi
 else
     echo "$0 <method> <pol> <m> <n> <prec>"
     exit 0

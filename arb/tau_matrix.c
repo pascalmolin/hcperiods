@@ -145,6 +145,10 @@ acb_mat_solve_multi(acb_mat_t X, const acb_mat_t A, const acb_mat_t B, slong pre
             flint_printf("det(A) = ");
             acb_printd(det, 30);
             flint_printf("\n");
+            acb_mat_printd(A,20);
+            flint_printf("\n");
+            acb_mat_printd(B,20);
+            flint_printf("\n");
             abort();
         }
         flint_printf("acb matrix inversion failed\n");

@@ -80,6 +80,8 @@ _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep)
             arf_printd(im, d);
             flint_printf(" * I");
         }
+#undef re
+#undef im
     }
 }
 
@@ -97,6 +99,32 @@ acb_mat_print_gp(const acb_mat_t m, slong digits)
         _acb_vec_arf_printd(m->rows[i], nc, digits, ", ");
     }
     flint_printf("]");
+}
+
+void
+acb_mat_print_error(const acb_mat_t m, slong digits)
+{
+    long i, nr, nc, im = -1, jm = -1;
+    mag_t mag;
+    nr = acb_mat_nrows(m);
+    nc = acb_mat_ncols(m);
+    mag_init(mag);
+    for (i = 0; i < nr; i++)
+    {
+        long j;
+        for (j = 0; j < nc; j++)
+        {
+            mag_t t;
+            mag_init(t);
+            mag_max(t, arb_radref(acb_realref(acb_mat_entry(m, i, j))),
+                    arb_radref(acb_imagref(acb_mat_entry(m, i, j))));
+            if (mag_cmp(t, mag) > 0)
+                mag_set(mag, t), im = i, jm = j;
+            mag_clear(t);
+        }
+    }
+    flint_printf("\nmax error m[i=%ld,j=%ld] = ", im, jm); mag_print(mag);
+    mag_clear(mag);
 }
 
 /* adapted from acb_vec_sort_pretty */

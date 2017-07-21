@@ -35,7 +35,7 @@ typedef struct
 {
     arb_t r;
     arb_t lambda;
-    acb_srcptr u;
+    acb_ptr u;
     slong len;
     slong i;
     slong m;
@@ -87,6 +87,17 @@ max_f(arb_t m, const arb_t t, params_t * p, slong prec)
     return 1;
 }
 
+static void
+_acb_vec_abs(acb_ptr x, acb_srcptr y, slong len)
+{
+    slong k;
+    for (k = 0; k < len; k++)
+    {
+        arb_abs(acb_realref(x + k), acb_realref(y + k));
+        arb_abs(acb_imagref(x + k), acb_imagref(y + k));
+    }
+}
+
 void
 de_constant_m2(arb_t m2, const arf_t l, acb_srcptr u, slong len, double r, slong i, slong m, slong prec)
 {
@@ -94,9 +105,14 @@ de_constant_m2(arb_t m2, const arf_t l, acb_srcptr u, slong len, double r, slong
     arf_t tmin;
     arf_t tmax;
     params_t p;
+
+    if (r <= 0)
+        flint_printf("\n\nERROR: r = %lf <= 0 in de_constant_m2\n\n", r), abort();
+
     p.m = m;
     p.i = i;
-    p.u = u;
+    p.u = _acb_vec_init(len);
+    _acb_vec_abs(p.u, u, len);
     p.len = len;
     arb_init(p.r);
     arb_set_d(p.r, r);
@@ -117,11 +133,22 @@ de_constant_m2(arb_t m2, const arf_t l, acb_srcptr u, slong len, double r, slong
     arb_acosh(m2, m2, prec);
     arb_get_ubound_arf(tmax, m2, prec);
 
-    arb_bound_func_arf(m2, (arb_func_t)&max_f, &p, tmin, tmax, 30, -1, prec);
+#define MAXDEPTH 20
+#if 0
+    flint_printf("r = %lf -> tmax = ", r);
+    arb_printd(m2, 10);
+    flint_printf(" -> compute bound on ");
+    arf_printd(tmin, 10);
+    flint_printf(", ");
+    arf_printd(tmax, 10);
+    flint_printf("\n");
+#endif
+    arb_bound_func_arf(m2, (arb_func_t)&max_f, &p, tmin, tmax, 30, MAXDEPTH, prec);
 
     arb_clear(tmp);
     arb_clear(p.r);
     arb_clear(p.lambda);
+    _acb_vec_clear(p.u, len);
 }
 
 void
@@ -135,14 +162,16 @@ de_constant_m1(arb_t m1, acb_srcptr u, slong len, slong m, slong prec)
     arb_one(m1);
     arb_init(tmp);
 
-    /* [0,1] */
+    /* [-1,1] */
+    arb_neg(z1,m1);
     arb_union(z1, z1, m1, prec);
 
     for (k = 0; k < len; k++)
     {
         if (arb_overlaps(acb_realref(u + k), z1))
         {
-            arb_mul(m1, m1, acb_imagref(u + k), prec);
+            arb_abs(tmp, acb_imagref(u + k));
+            arb_mul(m1, m1, tmp, prec);
         }
         else
         {
@@ -262,6 +291,8 @@ de_error(mag_t e, const arf_t h, const arf_t l, slong n, double r, acb_srcptr u,
 
     arb_add(m1, m1, m2, prec);
     arb_get_mag(e, m1);
+    if (mag_is_inf(e))
+        flint_printf("\nERROR: infinite error bound\n"), abort();
 
     arb_clear(m1);
     arb_clear(m2);
@@ -274,11 +305,19 @@ de_params(mag_t e, arf_t h, arf_t l, acb_srcptr u, slong len, double r, slong d,
 {
     slong n, k;
     cdouble * w;
-    double hh, ll = 1.57, rr = r;
+    double hh, ll = 1.57, rr = 0.;
     const slong paramprec = 64;
     w = malloc(len * sizeof(cdouble));
     for (k = 0; k < len; k++)
+    {
         w[k] = acb_get_cdouble(u + k);
+        if (fabs(creal(w[k])) <= 1 && cimag(w[k]) == 0)
+        {
+            flint_printf("\nERROR: point on edge\n");
+            _acb_vec_printd(u, len, 10, "\n");
+            abort();
+        }
+    }
 
     n = de_params_d(&hh, &ll, &rr, w, len, d, m, prec);
     arf_set_d(h, hh);
