@@ -17,7 +17,7 @@
 
 #define VBS 0
 #define progress(...) if (VBS) flint_printf(__VA_ARGS__);
-#define DEBUG 1
+#define DEBUG 0
 
 /******************************************************************************
 
