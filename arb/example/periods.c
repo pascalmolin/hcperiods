@@ -49,6 +49,7 @@ usage()
     flint_printf("  --trim: reduce to obtained precision\n");
     flint_printf("  --big: big period matrix\n");
     flint_printf("  --gp: output for pari/gp (discard error balls)\n");
+    flint_printf("  --error: output worst error\n");
     flint_printf("  --de: force use of DE integration\n");
     flint_printf("  --desame: keep integration points\n");
     return 1;
@@ -133,6 +134,8 @@ int main(int argc, char * argv[])
             i++, flag |= AJ_NO_INT;
         else if (!strcmp(argv[i], "--gp"))
             i++, f_print = &acb_mat_print_gp;
+        else if (!strcmp(argv[i], "--error"))
+            i++, f_print = &acb_mat_print_error;
         else if (!strcmp(argv[i], "--trim"))
             i++, flag |= AJ_TRIM;
         else if (!strcmp(argv[i], "--digits"))

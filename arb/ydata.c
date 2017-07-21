@@ -145,3 +145,88 @@ tree_ydata_clear(tree_t tree)
         ydata_clear(tree->data + k);
     flint_free(tree->data);
 }
+
+/* maximum size of ((b-a)/2)^(-jn/m+i) binom(i-1,l) ((b+a)/(b-a))^(i-1-l) */
+void
+mag_constants_edge(mag_t m, acb_srcptr x, edge_t e, sec_t c)
+{
+    long prec = 64, i, j, l;
+    acb_t t;
+    arb_t mab, mba, mc, mi;
+    mag_t ml;
+
+    arb_init(mab);
+    arb_init(mba);
+    arb_init(mc);
+    arb_init(mi);
+    mag_init(ml);
+
+    mag_zero(m);
+
+    acb_init(t);
+    acb_add(t, x + e.b, x + e.a, prec);
+    acb_abs(mab, t, prec);
+    acb_sub(t, x + e.b, x + e.a, prec);
+    acb_abs(mba, t, prec);
+    arb_div(mab, mab, mba, prec);  /* (b+a)/(b-a) */
+    arb_mul_2exp_si(mba, mba, -1); /* (b-a)/2 */
+    arb_pow_ui(mc, mba, c.n, prec);
+    arb_root(mc, mc, c.m, prec);
+    arb_inv(mc, mc, prec); /* (2/b-a)^(n/m) */
+    acb_clear(t);
+
+    for (j = 0; j < c.nj; j++)
+    {
+        arb_pow_ui(mi, mc, j + c.j1, prec);
+        for (i = 1; i < 1 + c.ni[j]; i++)
+        {
+            arb_mul(mi, mi, mba, prec);
+            for (l = 0; l <= i - 1; l++)
+            {
+                arb_t bin, bil;
+                arb_init(bin);
+                arb_init(bil);
+                arb_bin_uiui(bin, i - 1, l, prec);
+                arb_pow_ui(bil, mab, i - 1 - l, prec);
+                arb_mul(bin, bin, bil, prec);
+                arb_mul(bin, bin, mi, prec);
+                arb_get_mag(ml, bin);
+                mag_max(m, m, ml);
+                arb_clear(bin);
+                arb_clear(bil);
+            }
+        }
+    }
+    arb_clear(mab);
+    arb_clear(mba);
+    arb_clear(mc);
+    arb_clear(mi);
+    mag_clear(ml);
+}
+
+void
+mag_constants_tree(mag_t mag, tree_t tree, acb_srcptr x, sec_t c)
+{
+    mag_t me;
+    slong k;
+    mag_init(me);
+    mag_zero(mag);
+    for (k = 0; k < tree->n; k++)
+    {
+        mag_constants_edge(me, x, tree->e[k], c);
+        mag_max(mag, mag, me);
+    }
+    mag_clear(me);
+}
+
+slong
+extraprec_tree(tree_t tree, acb_srcptr x, sec_t c)
+{
+    slong prec;
+    mag_t mag;
+    mag_init(mag);
+    mag_constants_tree(mag, tree, x, c);
+    prec = (long)mag_get_d_log2_approx(mag) + 1;
+    mag_clear(mag);
+    return prec;
+}

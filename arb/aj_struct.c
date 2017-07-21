@@ -71,12 +71,9 @@ abel_jacobi_clear(abel_jacobi_t aj)
 void
 abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
 {
-    slong cstprec, intprec;
+    slong baseprec = 64, cstprec, intprec, extraprec;
 
     sec_t c = aj->c;
-
-    cstprec = prec + c.n + 10;
-    intprec = prec + c.n; /* binom(n,n/2) <= 2^n */
 
     aj->type = (flag & AJ_USE_DE || (c.m > 2 && c.n > 2)) ? INT_DE : (c.m == 2) ? INT_GC : INT_D2;
 
@@ -94,7 +91,7 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     /* branch points */
     if (flag & AJ_VERBOSE)
         flint_printf("## branch points\n");
-    acb_branch_points(aj->roots, c.n, c.pol, cstprec);
+    acb_branch_points(aj->roots, c.n, c.pol, baseprec);
 
 #if DEBUG
     flint_printf("\nuse points X = ");
@@ -110,12 +107,22 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     tree_print(aj->tree);
 #endif
 
+    /* choose prec */
+    extraprec = extraprec_tree(aj->tree, aj->roots, c);
+    intprec = prec + extraprec;
+    cstprec = intprec + 10;
+
+    acb_branch_points(aj->roots, c.n, c.pol, cstprec);
     tree_ydata_init(aj->tree, aj->roots, c.n, c.m, cstprec);
 
     if (flag & AJ_VERBOSE)
         flint_printf("## symplectic basis\n");
 
     symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
+
+#if DEBUG
+    flint_printf("prec = %ld + %ld + %d\n", prec, extraprec, 10);
+#endif
 
     if (flag & AJ_NO_INT)
         return;

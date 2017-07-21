@@ -17,7 +17,7 @@
 
 #define VBS 0
 #define progress(...) if (VBS) flint_printf(__VA_ARGS__);
-#define DEBUG 0
+#define DEBUG 1
 
 /******************************************************************************
 
@@ -218,6 +218,7 @@ void ydata_init_edge(ydata_t yab, acb_srcptr x, edge_t e, slong n, slong m, slon
 void ydata_clear(ydata_t yab);
 void tree_ydata_init(tree_t tree, acb_srcptr x, slong n, slong m, slong prec);
 void tree_ydata_clear(tree_t tree);
+slong extraprec_tree(tree_t tree, acb_srcptr x, sec_t c);
 
 /* compute local intersections between tree edges */
 /* -> (d-1)*(d-1) intersection matrix */
@@ -278,3 +279,4 @@ void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, 
 void _acb_vec_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void acb_mat_print_gp(const acb_mat_t m, slong digits);
+void acb_mat_print_error(const acb_mat_t m, slong digits);
