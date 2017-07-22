@@ -20,7 +20,7 @@ superelliptic curves to arbitrary precision by numerical integration.
   Rigorous [Arb](http://arblib.org/index.html) implementation,
   currently only period matrices.
 
-- [hcperiods.pdf](hcperiods.pdf) description of the algorithm and proofs
+- [algorithm.pdf](algorithm.pdf) description of the algorithm and proofs
 
 ## How to use
 
