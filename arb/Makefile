@@ -1,11 +1,6 @@
-WHO=$(shell whoami)
-ifeq ($(WHO), molin)
-PREFIX=${HOME}/install
-else ifeq ($(WHO), neurohr)
-PREFIX=${HOME}/install
-else
+## edit this line to match your installation path
+## for gmp, mpfr, flint and arb
 PREFIX=/usr/local
-endif
 EXEC=export LD_LIBRARY_PATH=$(CURDIR):${PREFIX}/lib;
 EXEEXT=
 
