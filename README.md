@@ -1,25 +1,33 @@
 # hcperiods
 
-Numerical evaluation of periods of superelliptic curves to
-arbitrary precision by numerical integration.
+Numerical evaluation of periods matrices of hyperelliptic and
+superelliptic curves to arbitrary precision by numerical integration.
 
 ## Structure
 
 - `gp`
 
-  initial projet as gp script, period matrix + Abel-Jacobi map for hyperelliptic curves
+  Initial projet as [gp](https://pari.math.u-bordeaux.fr) script,
+  period matrix + Abel-Jacobi map for hyperelliptic curves
 
 - `magma`
 
-  generalization for superelliptic curves with Christian Neurohr,
-  complete Abel-Jacobi map.
+  Generalization for superelliptic curves with Christian Neurohr,
+  complete Abel-Jacobi map. Written in [magma](http://magma.maths.usyd.edu.au/magma/).
 
 - `arb`
 
-  Rigorous arb implementation, currently only period matrix
+  Rigorous [Arb](http://arblib.org/index.html) implementation,
+  currently only period matrices.
 
-## Example
+- [hcperiods.pdf](hcperiods.pdf) description of the algorithm and proofs
 
+## How to use
+
+See the [magma intructions](magma/README.md) to use the magma package.
+
+The arb version can be used as follows
+(needs [arb>=v2.11.0 installed](http://arblib.org/setup.html)
 ```
 cd arb && make example
 ```
