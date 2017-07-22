@@ -1,29 +1,8 @@
-# method; pol; m; n; prec; time
-bernrev; oldmagma 2; 8; 128; 0.810
-bernrev; oldmagma 2; 8; 512; 1.350
-bernrev; oldmagma 2; 8; 2000; 22.230
-bernrev; oldmagma 2; 8; 4000; 1285.180
-bernrev; newmagma 2; 8; 128; 0.110
-bernrev; newmagma 2; 8; 512; 0.370
-bernrev; newmagma 2; 8; 2000; 3.700
-bernrev; newmagma 2; 8; 4000; 20.250
-bernrev; newmagma 2; 8; 10000; 260.480
-bernrev; arb 2; 8; 128; -6.035e-04 +/- 5.7e-06
-bernrev; arb 2; 8; 512; -5.939e-04 +/- 3.3e-06
-bernrev; arb 2; 8; 2000; -5.859e-04 +/- 5.8e-06
-bernrev; arb 2; 8; 4000; -5.966e-04 +/- 3.6e-06
-bernrev; arb 2; 8; 10000; -5.700e-04 +/- 5.0e-06
-bernrev; oldmagma 2; 30; 128; 246.920
-bernrev; oldmagma 2; 30; 512; 411.760
-bernrev; oldmagma 2; 30; 2000; 1102.490
-bernrev; oldmagma 2; 30; 4000; 26578.230
-bernrev; newmagma 2; 30; 128; 1.290
-bernrev; newmagma 2; 30; 512; 3.300
-bernrev; newmagma 2; 30; 2000; 24.070
-bernrev; newmagma 2; 30; 4000; 105.980
-bernrev; newmagma 2; 30; 10000; 1138.860
-bernrev; arb 2; 30; 128; 5.3438e-02 +/- 2.2e-05
-bernrev; arb 2; 30; 512; 2.35249e-01 +/- 3.0e-05
-bernrev; arb 2; 30; 2000; 4.36302e+00 +/- 6.7e-04
-bernrev; arb 2; 30; 4000; 2.08067e+01 +/- 1.6e-03
-bernrev; arb 2; 30; 10000; 2.0486e+02 +/- 8.7e-01
+# method ; pol        ; m  ; n      ; prec   ; time
+bernrev  ; oldmagma 2 ; 8  ; 0.420  ; 0.450  ; 6.440   ; 457.040
+bernrev  ; oldmagma 2 ; 30 ; 14.840 ; 42.620 ; 370.210 ; 12099.060
+bernrev  ; newmagma 2 ; 8  ; 0.060  ; 0.110  ; 0.670   ; 3.420     ; 40.620
+bernrev  ; newmagma 2 ; 30 ; 0.510  ; 1.020  ; 5.400   ; 21.980    ; 227.710
+bernrev  ; arb 2      ; 8  ; 0.005  ; 0.012  ; 0.17    ; 0.54      ; 4.58
+bernrev  ; arb 2      ; 30 ; 0.053  ; 0.23   ; 2.11    ; 9.31      ; 87.88
+bernrev  ; arb 2      ; 80 ; 0.8985 ; 2.06   ; 19.06   ; 79.78     ; 662.87
