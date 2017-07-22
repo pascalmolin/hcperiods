@@ -45,27 +45,31 @@
               genus & curve & \hfill digits & 38 & 154 & 600 & 1200 & 3000 \\
               \midrule
               3 & $\bern_{2,8}$
-              & Arb   & 3.2e-3 & 1.5e-2 & 2.2e-1 & 1.03 & 9.94 \\
-              & & Magma (new) & 7e-2 & 1.7e-1 & 1.32 & 7.05 & 88.3 \\
-              & & Magma (old) & 0.78 & 1.66 & 22.3 & 1208 & --- \\
+              &   Arb         & 5e-3  & 0.01  & 0.16    & 0.48     & 3.99 \\
+              & & Magma (new) & 0.05  & 0.08  & 0.44   & 2.16    & 25.3 \\
+              & & Magma (old) & 0.33  & 0.44  & 6.28   & 421  & --- \\
               \cmidrule{3-8}
               & $\bernrev_{2,8}$
-              & Arb & 3.8e-3 & 1.2e-2 & 1.5e-1 & 6.9e-1 & 6.79 \\
-              & & Magma (new) & 0.11 & 0.37 & 3.7 & 20.25 & 260.5 \\
-              & & Magma (old) & 0.81 & 1.35 & 22.2 & 1285 & --- \\
+              &   Arb         & 5e-3  & 0.01  & 0.17    & 0.54      & 4.58 \\
+              & & Magma (new) & 0.06  & 0.11  & 0.67   & 3.42     & 40.6 \\
+              & & Magma (old) & 0.42  & 0.45  & 6.44   & 457   & --- \\
               \midrule
               14 & $\bern_{2,30}$
-              & Arb & 5.1e-2 & 2.4e-1 & 4.30 & 20.3 & 193 \\
-              & & Magma (new) & 0.71 & 1.98 & 15.2 & 67.3 & 740 \\
-              & & Magma (old) & 11.6 & 11.6 & 259 & 21312 & --- \\
+                & Arb         & 0.05  & 0.22   & 1.99    & 8.74     & 80.9 \\
+              & & Magma (new) & 0.55  & 0.94  & 4.64   & 18.7   & 185.1 \\
+              & & Magma (old) & 5.15  & 10.1 & 134 & 9291 & --- \\
               \cmidrule{3-8}
               & $\bernrev_{2,30}$
-              & Arb & 5.3e-2 & 2.5e-1 & 4.59 & 21.9 & 208 \\
-              & & Magma (new) & 1.29 & 3.30 & 24.1 & 106 & 1138 \\
-              & & Magma (old) & 246 & 412 & 1102 & 26578 & --- \\
+              &   Arb         & 0.05  & 0.23   & 2.11    & 9.31      & 87.8 \\
+              & & Magma (new) & 0.51  & 1.02  & 5.40   & 21.9    & 227 \\
+              & & Magma (old) & 14.8  & 42.6  & 370 & 12099 & --- \\
+              \midrule
+              39 & $\bern_{2,80}$
+              &   Arb         & 0.69 & 1.64   & 16.1   & 70.5    & 601 \\
+              & & Magma (new) & 6.29  & 9.08  & 36.4  & 122  & 1024 \\
               \bottomrule
           \end{tabular}
-          \caption{timings for hyperelliptic curves, single core Xeon E5 2.27GHz (in seconds).}
+          \caption{timings for hyperelliptic curves, single core Xeon E5 3GHz (in seconds).}
       \end{center}
   \end{table}
 
@@ -77,27 +81,35 @@
               genus & curve & \hfill digits & 38 & 154 & 600 & 1200 & 3000 \\
               \midrule
               21 & $\bern_{7,8}$
-              & Arb & 5.4e-2 & 0.5 & 9.9 & 72.2 & 1181 \\
-              & & Magma (new) & 0.38 & 2.0 & 27.6 & 152 & 2161 \\
+              &   Arb         & 0.06 & 0.27   & 4.25    & 29.5    & 455 \\
+              & & Magma (new) & 0.23  & 1.06  & 14.6  & 83.1   & 1035 \\
               \cmidrule{3-8}
               & $\bernrev_{7,8}$
-              & Arb & 5.9e-2 & 6.3e-1 & 12.7 & 92.8 & 1520 \\
-              & & Magma (new) & 0.66 & 4.0 & 56 & 312 & 4257 \\
+              &   Arb         & 0.03 & 0.19  & 7.44    & 58.8   & 1027 \\
+              & & Magma (new) & 0.30  & 1.64  & 23.9  & 132 & 1613 \\
               \midrule
               84 & $\bern_{25,8}$
-              & Arb & 0.11 & 0.79 & 17.8 & 119 & 1731 \\
-              & & Magma (new) & 1.4 & 6.8 & 100 & 596 & 8686 \\
+              &   Arb         & 0.09   & 0.45   & 8.86     & 55.6    & 727 \\
+              & & Magma (new) & 0.74   & 2.60   & 27.2   & 135  & 1529 \\
               \midrule
               87 & $\bern_{7,30}$
-              & Arb & 0.9 & 8.5 & 93 & 610 & 8734 \\
-              & & Magma (new) & 4.8 & 23.1 & 242 & 1224 & 14745 \\
+              &   Arb         & 2.05  & 6.46   & 43.9   & 249   & 3091 \\
+              & & Magma (new) & 2.29  & 10.0 & 93.8  & 461  & 4990 \\
               \midrule
               348 & $\bern_{25,30}$
-              & Arb & 1.6 & 12.7 & 202 & 1284 \\
-              & & Magma (new) & 38 & 92 & 598 & 2597 \\
+              &   Arb         & 2.82   & 9.57    & 101  & 557   & 6195 \\
+              & & Magma (new) & 19.9  & 41.4  & 234  & 1014 & 9614 \\
+              %\midrule
+              %237 & $\bern_{7,80}$
+              %&   Arb         & 45.687 & 123.13 & 369.24  & 1688.10  & 16545.16 \\
+              %& & Magma (new) & 22.500 & 69.550 & 594.520 & 2591.710 & 24666.250 \\
+              \midrule
+              946 & $\bern_{25,80}$
+              &   Arb         & 67.8  & 182  & 952   & 4330 \\
+              & & Magma (new) & 369 & 585 & 2132 & 7474 \\
               \bottomrule
           \end{tabular}
-          \caption{timings for superelliptic curves, single core Xeon E5 2.27GHz (in seconds).}
+          \caption{timings for superelliptic curves, single core Xeon E5 3GHz (in seconds).}
       \end{center}
   \end{table}
 
