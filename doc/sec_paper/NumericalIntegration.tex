@@ -73,7 +73,9 @@ variable \eqref{m-eq:de_change}.
 Since we can compute the distance of each branch point $u_i$ to
 both $[-1,1]$ and its neighborhood $Z_r$ (see \S \ref{m-subsec:de_case}), we obtain
   \begin{lemma}
-      There exist explicitly computable
+      Let $r$ such that no $u_i$ belongs to $Z_r$, then
+      $g$ is holomorphic on $\set{-r<\Im(z)<r}$ and
+      there exist explicitly computable
       constants $M_1$, $M_2$ such
       that
       \begin{itemize}
@@ -82,7 +84,7 @@ both $[-1,1]$ and its neighborhood $Z_r$ (see \S \ref{m-subsec:de_case}), we obt
       \end{itemize}
   \end{lemma}
 
-We also introduce the following quantities
+Fixing such a value $r$, we also introduce the following quantities
 \begin{equation*}
     \begin{cases}
     X_r &=\cos(r)\sqrt{\frac{π}{2λ\sin r}-1} \\[0.2cm]
@@ -134,17 +136,22 @@ we write the Poisson formula on $h\Z$ for the function $g$
 \end{equation*}
 and control both error terms $e_T$ and $e_Q$ by Lemma \ref{m-lem:de_error_trunc}
 and \ref{m-lem:de_error_quad} below. The actual parameters $h$ and $N$ follow
-by bounding each error by $e^{-D}/2$.
+by bounding each error by $e^{-D}/2$
+(the condition of Lemma \ref{lem:de_error_trunc} being automatically satisfied).
 
 \begin{lemma}[truncation error]
     \label{lem:de_error_trunc}
+    For $Nh$ such that $2αλ\cosh(Nh)>1$,
     \begin{equation*}
         \sum_{\abs{k}>N}\abs{hg(kh)}
         \leq \frac{2^{2α} M_1}{αλ}\exp(-2αλ\sinh(nh)).
     \end{equation*}
 \end{lemma}
 \begin{proof}
-    We bound the sum by the integral of a decreasing function
+% (ch/ch(l.sh)^a)' < 0 for sh.ch(l.sh) < a.l.ch^2.sh(l.sh)
+% ok for a.l.ch > 1 since th < th(l.sh)
+    We bound the sum by an integral (the condition ensures the function
+    is decreasing)
     \begin{align*}
         \sum_{\abs{k}>N}\abs{hg(kh)}
         &\leq2M_1\int_{Nh}^\infty\frac{λ\cosh(t)}{\cosh(λ\sinh(t))^{2α}}
