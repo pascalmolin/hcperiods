@@ -37,17 +37,19 @@ procedure DE_Edge_Weight( ~Edge, Points, Len )
 	end for;
 end procedure;
 procedure GC_Edge_Weight( ~Edge, Points, Len )
-	CCV, up := MakeCCVector( Edge,Points );
-	r_0 := 5.;
-	for k in [1..Len-2] do
-		r_k := (1/2) * ( Abs(CCV[k]+1) + Abs(CCV[k]-1) );
-		r_0 := Min(r_0,r_k);
+	r_0 := 20;
+	for k in [1..Len] do
+		if k notin [Edge[1],Edge[2]] then
+			//r_k := (1/2) * ( Abs(CCV[k]+1) + Abs(CCV[k]-1) );
+			r_k := (Abs(Points[k]-Points[Edge[2]]) + Abs(Points[k]-Points[Edge[1]]))/Abs(Points[Edge[2]]-Points[Edge[1]]); 
+			r_0 := Min(r_0,r_k);
+		end if;
 	end for;
 	Edge[3] := r_0;
 end procedure;
 // Weights for edges in Abel-Jacobi map
 procedure DE_AJM_Weight( ~Edge, Points, Len )
-	r := 5.;
+	r := 4.;
 	for k in [1..Len] do
 		if k ne Edge[3] then
 			r := Min(r,DE_Weight(Edge[1][1],Points[Edge[3]],Points[k]));
@@ -62,18 +64,21 @@ procedure GC_Params_Tree(STree,Points,Prec)
 	
 	// Make list of r's
 	MaxMinDiff := STree`IntPars[2]-STree`IntPars[1];
-	NSchemes := Max(Min(STree`Length,Floor(3*MaxMinDiff)),1);
 
 	// Min_r too bad?
 	assert STree`IntPars[1]-1 gt 10^-3;
 
-   	vprint SE,2 : "Number of schemes:",NSchemes;
-	if NSchemes eq 1 and Abs(STree`IntPars[2]-STree`IntPars[2]) lt 10^-10 then
-		Lr := [ STree`IntPars[1] - (1/1000) ];
+	Lr := []; r := STree`IntPars[1]; k := 1/8;
+	if r lt 1+(1/500) then
+		r := (1/2)*(r+1); 
 	else
-		Avg_r := (1/2)*(STree`IntPars[2] + STree`IntPars[1]);
-		Lr := [ (1-t/NSchemes)*STree`IntPars[1] + t/NSchemes*Avg_r - (1/1000) : t in [0..NSchemes] ];
+		r -:= (1/1000);
 	end if;
+	while r lt STree`IntPars[2] do
+		Append(~Lr,r);
+		r +:= (k/10);
+		k *:= 2;
+	end while;
 	vprint SE,2 : "Lr:",Lr;
 
 	// Compute data for worst edge
@@ -93,8 +98,7 @@ procedure GC_Params_Tree(STree,Points,Prec)
 	NPoints := [];
 	for r in Lr do
 		achr := Argcosh(r);
-		//N := Ceiling((Log(10)*Prec+Log(2*Pi20*M_r)+1)/(2*achr));
-		Append(~NPoints,Ceiling((Log(64*M_r/15)+Log(10)*Prec-Log(1-Exp(achr)^(-2)))/(2*achr)));
+		Append(~NPoints,Ceiling((Log(10)*Prec+Log(2*Pi20*M_r)+1)/(2*achr)));
 	end for;
 	STree`Params := <M_r, NPoints, Lr>;
 	vprint SE,2 : "N:",NPoints;

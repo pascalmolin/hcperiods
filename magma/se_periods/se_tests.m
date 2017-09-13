@@ -5,12 +5,12 @@
  ******************************************************************************/
 
 
-function SE_TestFamilies( m, n : Prec:=20 )
+function SE_TestFamilies( m, n : Prec := 40 )
 // Test superelliptic period matrices for different families of polynomials
 
 	Small := true;
-	AbelJacobi := true;
-	InftyPoints := true;
+	AbelJacobi := false;
+	InftyPoints := false;
 
 	Qx<x> := PolynomialRing(Rationals());
 
@@ -132,6 +132,8 @@ function SE_AJM_LongTest( m, n : Prec:=20, t:=10 )
 			V := SE_AJM_Test_2(SEC);
 			for l in [1..2*SEC`Genus] do
 				if V[l][1] gt Err then
+					print "V[l][1]:",V[l][1];
+					print "Err:",Real(Err);
 					print "SEC:",SEC;
 					error Error("Abel-Jacobi map test 2 failed.");
 				end if;

@@ -65,4 +65,32 @@ function Distance(x,Points)
 end function;
 
 
+function SE_DKPEB( f,Z,Digits )
+// Computes the roots of the complex polynomial f to D decimal digits from approximations Z
+	f := ChangeRing(f,ComplexField(2*Digits));
+	N := Degree(f);
+	RMV := [ Remove([1..N],j) : j in [1..N] ];
+	Err2 := (1/2) * 10^-(Digits+1);
+	W := [ Evaluate(f,Z[j])/ &*[ (Z[j] - Z[k]) : k in RMV[j] ] : j in [1..N] ];
+	w0 :=  Max([ Abs(W[j]) : j in [1..N] ]);
+	if w0 lt Err2 then
+		return Z;
+	end if;
+	p := Precision(Universe(Z));
+	d0 := RS_Distance(Z);
+	if 2*w0 lt d0 then
+		repeat
+			Z := [ Z[j] - W[j] : j in [1..N] ];
+			p *:= 2;
+			ChangeUniverse(~Z,ComplexField(p));
+			W := [ Evaluate(f,Z[j])/ &*[ (Z[j] - Z[k]) : k in RMV[j] ] : j in [1..N] ];
+			w0 := Max([ Abs(W[j]) : j in [1..N] ]);
+		until w0 lt Err2;
+		return Z;
+	else
+		assert false;
+		return [];
+	end if;
+end function;
+
 

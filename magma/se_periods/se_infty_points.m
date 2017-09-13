@@ -140,7 +140,8 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 			r := Exp(2*Pi(C)*I*k/delta);
 			g_t := &*[ (1 - x*(r+t)^b*(t^M)) : x in BPs ] - (r+t)^delta;
 			g_C := Coefficients(g_t);
-			g_t := &+[ g_C[j] * t^(j-1) : j in [1..Degree(g_t)+1] | Abs(g_C[j]) gt SEC`Error ];
+			//g_t := &+[ g_C[j] * t^(j-1) : j in [1..Degree(g_t)+1] | Abs(g_C[j]) gt SEC`Error ];
+			g_t := &+[ g_C[j] * t^(j-1) : j in [1..Degree(g_t)+1] ];
 			assert Degree(g_t) in [n*(M+b),(n-1)*(M+b)];
 			assert Abs(g_C[2]) gt SEC`Error;
 			Roots_gt := Roots(g_t);
