@@ -129,13 +129,13 @@
 		A := SE_AbelJacobi(D,Q_0,S);
 		
 
-		// Diviors can also include infinite points
+		// Divisors can also include infinite points
 
 		D := SE_Divisor([<[1],1>,<[2],1>,<[3],1>,<[4],1>,<[5],1>],S);
 		A := SE_AbelJacobi(D,Q_0,S);
 
 
-		// Abel-Jacobi map of degree zero divisors indepently of a basepoint
+		// Abel-Jacobi map of degree zero divisors independently of a basepoint
 
 		D := SE_Divisor([<P_1,-10>,<[4],10>],S);
 		A := SE_AbelJacobi(D,S);
