@@ -159,7 +159,7 @@ procedure SE_PeriodMatrix( SEC : Small := true )
 
 
 		if MaxSymDiff ge SEC`Error then
-			print "Warning: requested accuracy could not not be reached.";
+			print "Small period matrix: Requested accuracy could not not be reached.";
 			print "Significant digits:",Floor(-Log(10,MaxSymDiff));
 		end if;	
 		
