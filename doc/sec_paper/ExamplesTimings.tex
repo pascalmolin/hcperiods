@@ -12,19 +12,19 @@
               \bern_{m,n} : y^m = B_n(x) = \sum_{k=0}^n\binom nkb_{n-k}x^k
           \end{equation*}
   as well as their reciprocals
-          \begin{equation*}
-              \bernrev_{m,n} : y^m = x^nB_n\left(\frac1x\right).
-          \end{equation*}
+  \begin{equation*}
+  \bernrev_{m,n} : y^m = x^nB_n\left(\frac1x\right).
+  \end{equation*}
 
   The branch points of these curves present interesting patterns which can be respectively considered
   as good and bad cases from a numerical integration perspective (Figure \ref{m-fig:roots_bern}).
 
   \begin{figure}[H]
       \begin{center}
-          \subfloat[$\bern_{m,8}$]{ \includegraphics[width=.5\linewidth,page=1]{images/roots_bern.pdf} }
-          \subfloat[$\bern_{m,30}$]{ \includegraphics[width=.5\linewidth,page=2]{images/roots_bern.pdf} }\\
-          \subfloat[$\bernrev_{m,8}$]{ \includegraphics[width=.5\linewidth,page=3]{images/roots_bern.pdf} }
-          \subfloat[$\bernrev_{m,30}$]{ \includegraphics[width=.5\linewidth,page=4]{images/roots_bern.pdf} }
+          \subfloat[$\bern_{m,8}$]{ \includegraphics[width=.4\linewidth,page=1]{images/roots_bern.pdf} }
+          \subfloat[$\bern_{m,30}$]{ \includegraphics[width=.4\linewidth,page=2]{images/roots_bern.pdf} }\\
+          \subfloat[$\bernrev_{m,8}$]{ \includegraphics[width=.4\linewidth,page=3]{images/roots_bern.pdf} }
+          \subfloat[$\bernrev_{m,30}$]{ \includegraphics[width=.4\linewidth,page=4]{images/roots_bern.pdf} }
       \end{center}
       \caption{configurations of branch points.}
   \label{fig:roots_bern}
@@ -112,7 +112,6 @@
           \caption{timings for superelliptic curves, single core Xeon E5 3GHz (in seconds).}
       \end{center}
   \end{table}
-
 
   \biblio
   \end{document}
