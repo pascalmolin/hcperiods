@@ -114,7 +114,7 @@ we obtain a rigorous integration scheme as follows:
         \abs{
             I_{a,b}(i,j)
             - h\sum_{k=-N}^N
-            w_k \frac{v_k^{i-1}}{\ytab(u_k)^j}
+            w_k \frac{v_k^{i-1}}{\ytab(v_k)^j}
         } \leq e^{-D},
     \end{equation*}
     where
@@ -265,7 +265,7 @@ since their roots are explicitly given as cosine functions \cite[25.4.38]{Abramo
 Moreover, very nice estimates on the error $E(N)$ can by obtained by applying
 the residue theorem on an ellipse $ε_r$ of the form
 \begin{equation*}
-    ε_r = \set{z, \abs{z-1}+\abs{z+1} = 2\cosh(r) }.
+    ε_r = \set{z \in \C, \abs{z-1}+\abs{z+1} = 2\cosh(r) }.
 \end{equation*}
 
   \begin{figure}[H] \begin{center}
@@ -279,12 +279,11 @@ the residue theorem on an ellipse $ε_r$ of the form
     \begin{equation*}
         \abs{E(N)}\leq \frac{2πM(r)}{e^{2rN}-1}
     \end{equation*}
-    where $M(r)=\max\set{\abs{f(z)},z\in ε_r}$.
+    where $M(r)=\max\set{\abs{g(z)},z\in ε_r}$.
 \end{thm}
 
 Now we apply this theorem with a function
-$g_{i}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitly factored
-polynomial $\prod(u-u_k)$, so that the error can be
+$g_{i}(u)=\frac{u^i}{\sqrt{\prod(u-u_k)}}$, so that the error can be explicitly
 controlled a priori.
 
 \begin{lemma}
@@ -318,7 +317,7 @@ We simply compute the distance
     we have
     \begin{equation*}
         \abs{I_{a,b}(i,1)
-        - \frac{π}N\sum_{k=1}^N\frac{u_k^{i-1}}{\ytab(u_k)}}
+        - \frac{π}N\sum_{k=1}^N\frac{v_k^{i-1}}{\ytab(v_k)}}
             \leq e^{-D},
     \end{equation*}
     where $v_k=\cos\left(\frac{2k-1}{2N}π\right)$.
