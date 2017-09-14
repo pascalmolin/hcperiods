@@ -70,10 +70,10 @@ Let
 be the image of the strip of width $2r$ under the change of
 variable \eqref{m-eq:de_change}.
 
-Since we can compute the distance of each branch point $u_i$ to
-both $[-1,1]$ and its neighborhood $Z_r$ (see \S \ref{m-subsec:de_case}), we obtain
+Since we can compute the distance of each point $u_k \in U^+ \cup U^-$ (see \ref{m-eq:uab_image}) to
+both $[-1,1]$ and the neighborhood $Z_r$ (see \S \ref{m-subsec:de_case}), we obtain
   \begin{lemma}
-      Let $r$ such that no $u_i$ belongs to $Z_r$, then
+      Let $r \in ]0,\frac{\pi}{2}[$ be such that $(U^+ \cup U^-) \cap Z_r = \varnothing$, then
       $g$ is holomorphic on $\set{-r<\Im(z)<r}$ and
       there exist explicitly computable
       constants $M_1$, $M_2$ such
@@ -106,7 +106,7 @@ we obtain a rigorous integration scheme as follows:
     \label{eq:de_parameters}
         \begin{cases}
             h \le \frac{2πr}{D + \log(2M_2 B(r,α) + e^{-D})}\\[0.2cm]
-            Nh \ge \asinh\left(\frac{D+\log(\frac{2^{2α+1}M_1}{α})}{2αλ}\right),
+            Nh \ge \asinh\left(\frac{D+\log\big(\frac{2^{2α+1}M_1}{α}\big)}{2αλ}\right),
         \end{cases}
     \end{equation}
     then
@@ -114,13 +114,13 @@ we obtain a rigorous integration scheme as follows:
         \abs{
             I_{a,b}(i,j)
             - h\sum_{k=-N}^N
-            w_k \frac{u_k^{i-1}}{\ytab(u_k)^j}
+            w_k \frac{v_k^{i-1}}{\ytab(u_k)^j}
         } \leq e^{-D},
     \end{equation*}
     where
     \begin{equation*}
         \begin{cases}
-            u_k = \tanh(λ\sinh(kh)),\\[0.2cm]
+            v_k = \tanh(λ\sinh(kh)),\\[0.2cm]
             w_k = \frac{λ\cosh(kh)}{\cosh(λ\sinh(kh))^{2α}}.
         \end{cases}
     \end{equation*}
@@ -131,20 +131,20 @@ we write the Poisson formula on $h\Z$ for the function $g$
 \begin{equation*}
     \underbrace{h\sum_{\abs{k}>N}g(kh)}_{e_T}
  + h\sum_{k=-N}^N g(kh)
- = \int_\R g
+ = \int_\R g(t)\dt
  + \underbrace{\sum_{k\in\Z^\ast} \hat g\left(\frac{k}{h}\right)}_{e_Q}
 \end{equation*}
 and control both error terms $e_T$ and $e_Q$ by Lemma \ref{m-lem:de_error_trunc}
 and \ref{m-lem:de_error_quad} below. The actual parameters $h$ and $N$ follow
-by bounding each error by $e^{-D}/2$
+from bounding each error by $e^{-D}/2$
 (the condition of Lemma \ref{lem:de_error_trunc} being automatically satisfied).
 
 \begin{lemma}[truncation error]
     \label{lem:de_error_trunc}
-    For $Nh$ such that $2αλ\cosh(Nh)>1$,
+    For all $N,h$ such that $2αλ\cosh(Nh)>1$ we have
     \begin{equation*}
         \sum_{\abs{k}>N}\abs{hg(kh)}
-        \leq \frac{2^{2α} M_1}{αλ}\exp(-2αλ\sinh(nh)).
+        \leq \frac{2^{2α} M_1}{αλ}\exp(-2αλ\sinh(Nh)).
     \end{equation*}
 \end{lemma}
 \begin{proof}
@@ -254,12 +254,12 @@ since their roots are explicitly given as cosine functions \cite[25.4.38]{Abramo
     \begin{equation}
         \label{eq:gauss_chebychev}
         \int_{-1}^1\frac{g(u)}{\sqrt{1-u^2}}\du
-        - \sum_{k=1}^N w_k g(u_k)
+        - \sum_{k=1}^N w_k g(v_k)
         = \frac{π2^{2N+1}}{2^{4N}}\frac{g^{(2N)}(\xi)}{(2N)!}
      = E(N),
     \end{equation}
     with constant weights $w_k = w =\frac{π}N$
-    and nodes $u_k = \cos\left(\frac{2k-1}{2N}π\right)$.
+    and nodes $v_k = \cos\left(\frac{2k-1}{2N}π\right)$.
 \end{thm}
 
 Moreover, very nice estimates on the error $E(N)$ can by obtained by applying
@@ -282,15 +282,15 @@ the residue theorem on an ellipse $ε_r$ of the form
     where $M(r)=\max\set{\abs{f(z)},z\in ε_r}$.
 \end{thm}
 
-Now we use this theorem with a function
+Now we apply this theorem with a function
 $g_{i}(u)=\frac{u^i}{\sqrt{Q(u)}}$ for an explicitly factored
-polynomial $Q(u)=\prod(u-u_k)$, so that the error can be
-explicitly controlled.
+polynomial $\prod(u-u_k)$, so that the error can be
+controlled a priori.
 
 \begin{lemma}
     \label{lem:param_r}
     Let $r>0$ be such that $2\cosh(r)<\abs{u_k-1}+\abs{u_k+1}$ for all
-    roots $u_k$ of $Q$,
+    points $u_k \in U^+ \cup U^-$,
     then there exists an explicitly computable
     constant $M(r)$ such that for all $u\in ε_r$
     \begin{equation*}
@@ -300,7 +300,7 @@ explicitly controlled.
 \begin{proof}
 We simply compute the distance
         $d_r(u_k) = \inf_{z\in ε_r}\abs{z-u_k}$
- from a root $u_k$ to the ellipse $ε_r$, and let
+ from a point $u_k$ to the ellipse $ε_r$, and let
  $M(r) =  \frac{\cosh(r)^{i-1}}{\sqrt{\prod d_r(u_k)} }$.
  For simplicity, we can use the triangle inequality
  $d_r(u_k)\geq \cosh(r_k)-\cosh(r)$, where
@@ -321,7 +321,7 @@ We simply compute the distance
         - \frac{π}N\sum_{k=1}^N\frac{u_k^{i-1}}{\ytab(u_k)}}
             \leq e^{-D},
     \end{equation*}
-    where $u_k=\cos\left(\frac{2k-1}{2N}π\right)$.
+    where $v_k=\cos\left(\frac{2k-1}{2N}π\right)$.
 \end{thm}
 
 More details on the choice of $r$ and the computation of $M(r)$
