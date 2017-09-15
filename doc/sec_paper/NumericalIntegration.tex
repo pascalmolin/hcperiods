@@ -114,13 +114,13 @@ we obtain a rigorous integration scheme as follows:
         \abs{
             I_{a,b}(i,j)
             - h\sum_{k=-N}^N
-            w_k \frac{v_k^{i-1}}{\ytab(v_k)^j}
+            w_k \frac{u_k^{i-1}}{\ytab(u_k)^j}
         } \leq e^{-D},
     \end{equation*}
     where
     \begin{equation*}
         \begin{cases}
-            v_k = \tanh(λ\sinh(kh)),\\[0.2cm]
+            u_k = \tanh(λ\sinh(kh)),\\[0.2cm]
             w_k = \frac{λ\cosh(kh)}{\cosh(λ\sinh(kh))^{2α}}.
         \end{cases}
     \end{equation*}
@@ -254,12 +254,12 @@ since their roots are explicitly given as cosine functions \cite[25.4.38]{Abramo
     \begin{equation}
         \label{eq:gauss_chebychev}
         \int_{-1}^1\frac{g(u)}{\sqrt{1-u^2}}\du
-        - \sum_{k=1}^N w_k g(v_k)
+        - \sum_{k=1}^N w_k g(u_k)
         = \frac{π2^{2N+1}}{2^{4N}}\frac{g^{(2N)}(\xi)}{(2N)!}
      = E(N),
     \end{equation}
     with constant weights $w_k = w =\frac{π}N$
-    and nodes $v_k = \cos\left(\frac{2k-1}{2N}π\right)$.
+    and nodes $u_k = \cos\left(\frac{2k-1}{2N}π\right)$.
 \end{thm}
 
 Moreover, very nice estimates on the error $E(N)$ can by obtained by applying
@@ -317,10 +317,10 @@ We simply compute the distance
     we have
     \begin{equation*}
         \abs{I_{a,b}(i,1)
-        - \frac{π}N\sum_{k=1}^N\frac{v_k^{i-1}}{\ytab(v_k)}}
+        - \frac{π}N\sum_{k=1}^N\frac{u_k^{i-1}}{\ytab(u_k)}}
             \leq e^{-D},
     \end{equation*}
-    where $v_k=\cos\left(\frac{2k-1}{2N}π\right)$.
+    where $u_k=\cos\left(\frac{2k-1}{2N}π\right)$.
 \end{thm}
 
 More details on the choice of $r$ and the computation of $M(r)$
