@@ -39,26 +39,26 @@
    For each elementary cycle $\gamma_e\in \Gamma$, we numerically evaluate the vector of $g$
    elementary integrals from \eqref{m-eq:elem_num_int} as sums of the form
    \begin{equation*}
-       I_{a,b} \approx \sum_{k=1}^N w_k\frac{u_k^{i-1}}{y_k^j},
+       I_{a,b} \approx \sum_{k=1}^N w_k\frac{v_k^{i-1}}{y_k^j},
    \end{equation*}
-   where $N = N(D)$ is the number of integration points, $w_k,u_k$ are integration weights and points,
-   and $y_k=\ytab(u_k)$.
+   where $N = N(D)$ is the number of integration points, $w_k,v_k$ are integration weights and points,
+   and $y_k=\ytab(v_k)$.
 
    We proceed as follows:
    \begin{itemize}
-   \item for each $k$, we evaluate the absissa and weight $u_k,w_k$ using
+   \item for each $k$, we evaluate the absissa and weight $v_k,w_k$ using
        a few \footnote{this can be reduced to evaluating
            a few multiplications and at most one exponential.} trigonometric or hyperbolic functions,
-   \item we compute $y_k=\ytab(u_k)$ using $n-2$ multiplications and one $m$-th root,
+   \item we compute $y_k=\ytab(v_k)$ using $n-2$ multiplications and one $m$-th root,
        as shown in \S \ref{m-subsec:computing_roots} below;
-   \item starting from $\frac{w_k}{y_k}$, we evaluate all $g$ terms $w_k\frac{u_k^{i-1}}{y_k^j}$
-       each time either multiplying by $u_k$ or by $\frac{1}{y_k}$, and add each to the corresponding
+   \item starting from $\frac{w_k}{y_k}$, we evaluate all $g$ terms $w_k\frac{v_k^{i-1}}{y_k^j}$
+       each time either multiplying by $v_k$ or by $\frac{1}{y_k}$, and add each to the corresponding
        integral.
    \end{itemize}
 
    Altogether, the computation of one vector of elementary integrals takes
    \begin{equation}\label{eq:elem_int_complexity}
-    \ctot(D) = N(D)\ctrig(D)+N(D)(n-1)\cmul(D)+N(D)g\cmul(D)
+    \ctot(D) = N(D)\ctrig(D)+N(D)(n-2+\log m)\cmul(D)+N(D)g\cmul(D)
    \end{equation}
     operations,
    so that depending on the integration scheme we obtain:
@@ -108,7 +108,7 @@
    so that we state the far from optimal result
    \begin{thm}
        Given the $(n-1)\times g$ elementary integrals to precision $D$,
-       we compute the big period matrix using $O(g^3(D+g)\log(D+g))$ operations.
+       we compute the big period matrix using $O(g^3(D+g)\log^{1+\varepsilon}(D+g))$ operations.
    \end{thm}
 
    \subsubsection{Small period matrix}
@@ -200,7 +200,7 @@
    \]
    to have $\abs{E(N)}\leq e^{-D}$.
 
-   The distance $d_k=\dist(u_k,ε_r)$ from a branch point $u_k$
+   The distance $d_k=\dist(u_k,ε_r)$ from a point $u_k \in U^+ \cup U^-$
    to the ellipse $ε_r$ can be computed
    applying Newton's method to the scalar product function
    $s(t) = \Re(\overline{z'}(u_k-z))$, where $z = \cos(t-ir)$ and
@@ -219,12 +219,13 @@
    For all $k$ such that $r_k > r_0$, we compute
    explicitly the distance $d_k=\dist(u_k,ε_{r_0})<\dist(u_k,ε_r)$.
    \item
-   For $k$ such that $r_k=r_0$, we use first order approximation
+   For all $k$ such that $r_k=r_0$, we use first order approximation
    $\dist(u_k,Z_{r-η}) = η D_k + O(η^2)$,
    where $D_k = \abs{\frac{\partial u_k}{\partial r_k}} = \abs{\sin(t_k-ir_k)}$.
    \end{itemize}
 
-   Let $K$ be the number of branch points $u_k$ such that $r_k=r_0$ and
+   Let $K$ be the number of points $u_k 
+   \in U^+ \cup U^-$ such that $r_k=r_0$ and
    \[ M_0 = \sqrt{\prod_{r_k = r_0} D_k\prod_{r_k>r_0}d_k}^{-1}, \]
    then the integrand is bounded on $ε_{r_0-η}$ by
    \[ M(r_0-η) = M_0 \sqrt{η}^{-K} (1+O(η)). \]
@@ -246,7 +247,7 @@
    For the double-exponential integration (\S \ref{m-subsec:de_int})
    we use the parametrization
    $$\partial Z_r = \set{ z = \tanh(λ\sinh(t+ir)), t\in\R }$$ to compute
-   the distance from a branch point $u_k$ to $Z_r$ by Newton's method
+   the distance from a point $u_k \in U^+ \cup U^-$ to $Z_r$ by Newton's method
    as before.
    %$f(t) = \Re(\overline{z'}(u_k-z))$, where $z = \tanh(λ\sinh(t+ir))$
    %and starting point $t=\Re(z^{-1}(p))$.
@@ -281,8 +282,8 @@
 
    In practice, 80 to 90\% of the running time is spent on numerical integration
    of integrals \eqref{m-eq:periods}. According to \S\ref{m-sec:comp_elem},
-   for each integration point $u_k\in]-1,1[$ one first evaluates the $y$-value
-   $y_k=\ytab(u_k)$, then adds the contributions $w_k\frac{u_k^i}{y_k^j}$ to
+   for each integration point $v_k\in]-1,1[$ one first evaluates the $y$-value
+   $y_k=\ytab(v_k)$, then adds the contributions $w_k\frac{v_k^i}{y_k^j}$ to
    the integral of each of the $g$ differential forms.
 
    We shall improve on these two aspects, the former being prominent for hyperelliptic curves,
@@ -290,7 +291,7 @@
 
     \subsubsection{Computing products of complex roots}\label{subsec:computing_roots}
 
-    Following our definition \eqref{m-eq:def_yab}, computing $\ytab(u_k)$ involves
+    Following our definition \eqref{m-eq:def_yab}, computing $\ytab(v_k)$ involves
     $(n-2)$ $m$-th roots for each integration point.
 
     Instead, we fall back to one single (usual) $m$-th root
@@ -324,13 +325,13 @@
    \subsubsection{Doing real multiplications}\label{subsec:real_mult}
 
    Another possible bottleneck comes from the multiplication by the numerator
-   $u_k$, which is usually done $g-m-1$ times for each of
+   $v_k$, which is usually done $g-m-1$ times for each of
    the $N$ integration points (more precisely, as we saw in the proof of Proposition \ref{m-prop:holom_diff}, for each exponent $j$
    we use the exponents $0\leq i\leq n_i = \floor{\frac{nj-δ}m}$, with $\sum n_i = g$).
 
-   Without polynomial shift \eqref{eq:polshift}, this numerator should be
-   $x_k=u_k+\frac{b+a}{b-a}$. However, $x_k$ is a complex number while $u_k$
-   is real, so computing with $u_k$ saves a factor almost $2$ on this aspect.
+   Without polynomial shift \eqref{eq:polshift}, this numerator would be
+   $\tilde{v}_k=v_k+\frac{b+a}{b-a}$. However, $\tilde{v}_k$ is a complex number while $v_k$
+   is real, so computing with $v_k$ saves a factor almost $2$ on this aspect.
 
    \subsection{Further ideas}
 
@@ -355,7 +356,7 @@
             \end{cases}
     \end{equation*}
     Although this can be done in low precision, computing $r_e$ for all $(n-1)(n-2)/2$ edges of the complete graph
-    requires $O(n^3)$ evaluation of elementary costs (involving transcendantal functions if $m>2$).
+    requires $O(n^3)$ evaluations of elementary costs (involving transcendental functions if $m>2$).
 
     For large values of $n$ (comparable to the precision), the computation of
     these capacities has a noticable impact on the running time. This can be
