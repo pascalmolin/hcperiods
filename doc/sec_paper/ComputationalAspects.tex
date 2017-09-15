@@ -39,20 +39,20 @@
    For each elementary cycle $\gamma_e\in \Gamma$, we numerically evaluate the vector of $g$
    elementary integrals from \eqref{m-eq:elem_num_int} as sums of the form
    \begin{equation*}
-       I_{a,b} \approx \sum_{k=1}^N w_k\frac{u_k^{i-1}}{y_k^j},
+       I_{a,b} \approx \sum_{\ell=1}^N w_\ell\frac{u_\ell^{i-1}}{y_\ell^j},
    \end{equation*}
-   where $N = N(D)$ is the number of integration points, $w_k,u_k$ are integration weights and points,
-   and $y_k=\ytab(u_k)$.
+   where $N = N(D)$ is the number of integration points, $w_\ell,u_\ell$ are integration weights and points,
+   and $y_\ell=\ytab(u_\ell)$.
 
    We proceed as follows:
    \begin{itemize}
-   \item for each $k$, we evaluate the absissa and weight $u_k,w_k$ using
+   \item for each $\ell$, we evaluate the absissa and weight $u_\ell,w_\ell$ using
        a few \footnote{this can be reduced to evaluating
            a few multiplications and at most one exponential.} trigonometric or hyperbolic functions,
-   \item we compute $y_k=\ytab(u_k)$ using $n-2$ multiplications and one $m$-th root,
+   \item we compute $y_\ell=\ytab(u_\ell)$ using $n-2$ multiplications and one $m$-th root,
        as shown in \S \ref{m-subsec:computing_roots} below;
-   \item starting from $\frac{w_k}{y_k}$, we evaluate all $g$ terms $w_k\frac{u_k^{i-1}}{y_k^j}$
-       each time either multiplying by $u_k$ or by $\frac{1}{y_k}$, and add each to the corresponding
+   \item starting from $\frac{w_\ell}{y_\ell}$, we evaluate all $g$ terms $w_\ell\frac{u_\ell^{i-1}}{y_\ell^j}$
+       each time either multiplying by $u_\ell$ or by $\frac{1}{y_\ell}$, and add each to the corresponding
        integral.
    \end{itemize}
 
@@ -281,8 +281,8 @@
 
    In practice, 80 to 90\% of the running time is spent on numerical integration
    of integrals \eqref{m-eq:periods}. According to \S\ref{m-sec:comp_elem},
-   for each integration point $u_k\in]-1,1[$ one first evaluates the $y$-value
-   $y_k=\ytab(u_k)$, then adds the contributions $w_k\frac{u_k^i}{y_k^j}$ to
+   for each integration point $u_\ell\in]-1,1[$ one first evaluates the $y$-value
+   $y_\ell=\ytab(u_\ell)$, then adds the contributions $w_\ell\frac{u_\ell^i}{y_\ell^j}$ to
    the integral of each of the $g$ differential forms.
 
    We shall improve on these two aspects, the former being prominent for hyperelliptic curves,
@@ -290,7 +290,7 @@
 
     \subsubsection{Computing products of complex roots}\label{subsec:computing_roots}
 
-    Following our definition \eqref{m-eq:def_yab}, computing $\ytab(u_k)$ involves
+    Following our definition \eqref{m-eq:def_yab}, computing $\ytab(u_\ell)$ involves
     $(n-2)$ $m$-th roots for each integration point.
 
     Instead, we fall back to one single (usual) $m$-th root
@@ -324,13 +324,13 @@
    \subsubsection{Doing real multiplications}\label{subsec:real_mult}
 
    Another possible bottleneck comes from the multiplication by the numerator
-   $u_k$, which is usually done $g-m-1$ times for each of
+   $u_\ell$, which is usually done $g-m-1$ times for each of
    the $N$ integration points (more precisely, as we saw in the proof of Proposition \ref{m-prop:holom_diff}, for each exponent $j$
    we use the exponents $0\leq i\leq n_i = \floor{\frac{nj-δ}m}$, with $\sum n_i = g$).
 
    Without polynomial shift \eqref{eq:polshift}, this numerator would be
-   $x_k=u_k+\frac{b+a}{b-a}$. However, $x_k$ is a complex number while $u_k$
-   is real, so computing with $u_k$ saves a factor almost $2$ on this aspect.
+   $x_\ell=u_\ell+\frac{b+a}{b-a}$. However, $x_\ell$ is a complex number while $u_\ell$
+   is real, so computing with $u_\ell$ saves a factor almost $2$ on this aspect.
 
    \subsection{Further ideas}
 
