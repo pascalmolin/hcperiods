@@ -8,7 +8,7 @@
 // Import global settings
 import "se_period_matrix.m": SE_PeriodMatrix;
 import "se_de_int.m": DE_Integrals_Edge_AJM, DE_Int_Params;
-import "se_help_funcs.m": MakeCCVector, Distance;
+import "se_help_funcs.m": MakeCCVector, Distance, SE_DKPEB;
 import "se_anal_cont.m": AC_mthRoot;
 import "se_spanning_tree.m": DE_Params_AJM;
 
@@ -24,7 +24,7 @@ function PeriodLatticeReduction(V,SEC)
 end function;
 
 
-procedure SE_ReductionMatrix(SEC)
+/*procedure SE_ReductionMatrix(SEC)
 // Computes a matrix for reduction modulo the period lattice given by the big period matrix (A,B)
 	if not assigned SEC`ReductionMatrix then
 		BPM := SEC`BigPeriodMatrix;
@@ -42,7 +42,7 @@ procedure SE_ReductionMatrix(SEC)
 		// Matrix inversion
 		SEC`ReductionMatrix := M^(-1);
 	end if;
-end procedure;
+end procedure;*/
 
 
 procedure SE_TreeMatrix(SEC)
@@ -155,7 +155,7 @@ intrinsic SE_AbelJacobi( D::SEDivisor, SEC::SECurve ) -> Mtrx
 	C<I> :=  SEC`ComplexField;
 	R := SEC`RealField; 
 	Q := RationalField();          
-	
+
 	// Split up computation
 	RationalIntegral := Matrix(Q,2*SEC`Genus,1,[]);
 	RealIntegral := Matrix(R,2*SEC`Genus,1,[]);
@@ -190,30 +190,26 @@ intrinsic SE_AbelJacobi( D::SEDivisor, SEC::SECurve ) -> Mtrx
 
 	// Integration parameters
 	Params, ComplexEdges := DE_Params_AJM(ComplexEdges,SEC);
-	vprint SE,2 : "Parameter(AJM):",Params;
-	ExtraPrec := 2*Ceiling(Log(10,Params[1]/SEC`SpanningTree`Params[1]));
+
+	// Maximal M_1
+	MaxM1 := Max( [ P[1] : P in Params ]);
+
+	// More precision?
+	ExtraPrec := 2*Max(5,Ceiling(Log(10,Binomial(SEC`Degree[2],Floor(SEC`Degree[2]/4))*MaxM1)));
 	if ExtraPrec gt 0 then
 		vprint SE,2 :"Extra precision (AJM):",ExtraPrec;
-		C<I> := ComplexField(Precision(C)+ExtraPrec);
+		C<I> := ComplexField(Precision(SEC`ComplexField)+ExtraPrec);
 		SEC`ComplexField := C;
 		// Update curve data
-		f_x := ChangeRing(SEC`DefiningPolynomial,C);
-		SEC`ComplexPolynomial := f_x;
-		// Roots of f_x
-		Roots_fx := Roots(f_x);
-		SEC`BranchPoints := [ R[1] : R in Roots_fx ];
-		//SEC`DifferentialChangeMatrix := ChangeRing(SEC`DifferentialChangeMatrix,C);
+		SEC`ComplexPolynomial := ChangeRing(SEC`DefiningPolynomial,C);
+		SEC`BranchPoints := SE_DKPEB(SEC`DefiningPolynomial,SEC`BranchPoints,Precision(C));
 	end if;
 	DEInts := DE_Integration(Params,SEC:AJM); NInts := #DEInts;
 
 	// Actual integrations from P_k to P
 	ComplexIntegral := Matrix(C,SEC`Genus,1,[]);
 	for CE in ComplexEdges do
-		l := NInts;
-		while CE[4] lt DEInts[l]`r do
-			l -:= 1;
-		end while;
-		ComplexIntegral +:= CE[2] * Matrix(C,SEC`Genus,1,DE_Integrals_Edge_AJM(CE,SEC,DEInts[l]));
+		ComplexIntegral +:= CE[2] * Matrix(C,SEC`Genus,1,DE_Integrals_Edge_AJM(CE,SEC,DEInts[Round(CE[4])]));
 	end for;
 
 	// Differential change matrix

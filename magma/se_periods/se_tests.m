@@ -5,14 +5,15 @@
  ******************************************************************************/
 
 
-function SE_TestFamilies( m, n : Prec := 40 )
+function SE_TestFamilies( m, n : Prec := 40, Exact := true, Small := true, AbelJacobi := true, InftyPoints := false )
 // Test superelliptic period matrices for different families of polynomials
 
-	Small := true;
-	AbelJacobi := false;
-	InftyPoints := false;
-
-	Qx<x> := PolynomialRing(Rationals());
+	if Exact then
+		Kx<x> := PolynomialRing(Rationals());
+	else
+		C<I> := ComplexField(Prec);
+		Kx<x> := PolynomialRing(C);
+	end if;		
 
 	// Cyclotomic polynomials
 	print "Testing cyclotomic polynomials...";
@@ -21,11 +22,10 @@ function SE_TestFamilies( m, n : Prec := 40 )
 	time S := SE_Curve(C_n,m:Prec:=Prec,Small:=Small,AbelJacobi:=AbelJacobi,InftyPoints:=InftyPoints);
 	print "Check.";
 
-
 	// Exponential series
 	print "Testing exponential series...";
 	E_n := &+[ x^k/Factorial(k) : k in [0..n] ];
-	E_n_R := Qx!Reverse(Coefficients(E_n));
+	E_n_R := Kx!Reverse(Coefficients(E_n));
 	print "E_n:",E_n;
 	time S := SE_Curve(E_n,m:Prec:=Prec,Small:=Small,AbelJacobi:=AbelJacobi,InftyPoints:=InftyPoints);
 	print "E_n_R:",E_n_R;
@@ -34,8 +34,8 @@ function SE_TestFamilies( m, n : Prec := 40 )
 
 	// Bernoulli polynomial
 	print "Testing Bernoulli polynomials...";
-	B_n := BernoulliPolynomial(n);
-	B_n_R := Qx!Reverse(Coefficients(B_n));
+	B_n := Kx!BernoulliPolynomial(n);
+	B_n_R := Kx!Reverse(Coefficients(B_n));
 	print "B_n:",B_n;
 	time S := SE_Curve(B_n,m:Prec:=Prec,Small:=Small,AbelJacobi:=AbelJacobi,InftyPoints:=InftyPoints);
 	if Degree(B_n_R) ge 3 then
@@ -47,7 +47,7 @@ function SE_TestFamilies( m, n : Prec := 40 )
 	//  Legendre polynomials
 	print "Testing Legendre polynomials...";
 	P_n := (1/2^n) * &+[ Binomial(n,k)^2 * (x-1)^(n-k) * (x+1)^k : k in [0..n] ];
-	P_n_R := Qx!Reverse(Coefficients(P_n));
+	P_n_R := Kx!Reverse(Coefficients(P_n));
 	print "P_n:",P_n;
 	time S := SE_Curve(P_n,m:Prec:=Prec,Small:=Small,AbelJacobi:=AbelJacobi,InftyPoints:=InftyPoints);
 	if Degree(P_n_R) ge 3 then
@@ -59,7 +59,7 @@ function SE_TestFamilies( m, n : Prec := 40 )
 	// Laguerre polynomials
 	print "Testing Laguerre polynomials...";
 	L_n := &+[ Binomial(n,k) * (-1)^k / Factorial(k) * x^k : k in [0..n] ];
-	L_n_R := Qx!Reverse(Coefficients(L_n));
+	L_n_R := Kx!Reverse(Coefficients(L_n));
 	print "L_n:",L_n;
 	time S := SE_Curve(L_n,m:Prec:=Prec,Small:=Small,AbelJacobi:=AbelJacobi,InftyPoints:=InftyPoints);
 	print "L_n_R:",L_n_R;
@@ -69,7 +69,7 @@ function SE_TestFamilies( m, n : Prec := 40 )
 	// Chebyshev polynomials
 	print "Testing Chebyshev polynomials...";
 	T_n := &+[ Binomial(n,2*k) * (x^2-1)^k * x^(n-2*k) : k in [0..Floor(n/2)] ];
-	T_n_R := Qx!Reverse(Coefficients(T_n));
+	T_n_R := Kx!Reverse(Coefficients(T_n));
 	print "T_n:",T_n;
 	time S := SE_Curve(T_n,m:Prec:=Prec,Small:=Small,AbelJacobi:=AbelJacobi,InftyPoints:=InftyPoints);
 	if Degree(T_n_R) ge 3 then
@@ -122,7 +122,7 @@ function SE_AJM_Test_2( SEC : Ht := 10^2 )
 end function;
 
 
-function SE_AJM_LongTest( m, n : Prec:=20, t:=10 )
+function SE_AJM_LongTest( m, n : Prec:=40, t:=10 )
 // Long time test for Abel-Jacobi map
 	//Err := SEC`Error;
 	Err := 10^-Floor(Prec/2);
@@ -144,7 +144,7 @@ function SE_AJM_LongTest( m, n : Prec:=20, t:=10 )
 end function;
 
 
-function SE_AJM_LongTest_Random( m, n : Prec:=20, t:=10 )
+function SE_AJM_LongTest_Random( m, n : Prec:=40, t:=10 )
 // Test Abel-Jacobi map for random divisors
 	for j in [1..t] do
 		SEC := SE_RandomCurve(m,n:Prec:=Prec);

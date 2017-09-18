@@ -63,10 +63,38 @@ end procedure;
 function Distance(x,Points)
 	return Min([ Abs(x-P) : P in Points ]);
 end function;
+function DistanceII(Points)
+	Distances := [];
+	L := #Points;
+	for k in [1..L] do
+		for l in [k+1..L] do
+			Append(~Distances,Abs(Points[k]-Points[l]));
+		end for;
+	end for;
+	return Min(Distances);
+end function;
+
+function SE_OrdFldComElt(x,y)
+// Used to fix an ordering of the sheets
+	if Re(x) lt Re(y) then 
+		return -1;
+	elif Re(x) gt Re(y) then 
+		return 1; 
+	else 
+		if Im(x) lt Im(y) then 
+			return -1;
+		elif Im(x) gt Im(y) then 
+			return 1; 
+		else
+			return 0;
+		end if; 
+	end if;
+end function;
 
 
 function SE_DKPEB( f,Z,Digits )
 // Computes the roots of the complex polynomial f to D decimal digits from approximations Z
+	f *:= (1/LeadingCoefficient(f));
 	f := ChangeRing(f,ComplexField(2*Digits));
 	N := Degree(f);
 	RMV := [ Remove([1..N],j) : j in [1..N] ];
@@ -77,7 +105,7 @@ function SE_DKPEB( f,Z,Digits )
 		return Z;
 	end if;
 	p := Precision(Universe(Z));
-	d0 := RS_Distance(Z);
+	d0 := DistanceII(Z);
 	if 2*w0 lt d0 then
 		repeat
 			Z := [ Z[j] - W[j] : j in [1..N] ];
@@ -86,11 +114,14 @@ function SE_DKPEB( f,Z,Digits )
 			W := [ Evaluate(f,Z[j])/ &*[ (Z[j] - Z[k]) : k in RMV[j] ] : j in [1..N] ];
 			w0 := Max([ Abs(W[j]) : j in [1..N] ]);
 		until w0 lt Err2;
-		return Z;
+		return Sort(Z,SE_OrdFldComElt);
 	else
 		assert false;
 		return [];
 	end if;
 end function;
+
+
+
 
 

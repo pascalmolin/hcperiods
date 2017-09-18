@@ -11,7 +11,7 @@
 import "se_spanning_tree.m": SpanningTree, TreeData;
 import "se_period_matrix.m": SE_PeriodMatrix;
 import "se_abel_jacobi.m": SE_TreeMatrix, SE_ReductionMatrix, SE_RamificationPoints_AJM;
-import "se_help_funcs.m": SE_DKPEB;
+import "se_help_funcs.m": SE_DKPEB, SE_OrdFldComElt;
 
 // Verbose
 declare verbose SE,3;
@@ -21,6 +21,7 @@ declare type SECurve;
 
 declare attributes SECurve: 
 	DefiningPolynomial, 
+	ComplexPolynomial,
 	Genus, 
 	Degree, 
 	BranchPoints, 
@@ -46,7 +47,6 @@ declare attributes SECurve:
 	LeadingCoeff, 
 	LeadingCoeff_T, 
 	LC2, 
-	ComplexPolynomial,
 	DifferentialChangeMatrix, 
 	SpanningTree;
 
@@ -64,12 +64,6 @@ end intrinsic;
 intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, AbelJacobi := true, IntegrationType := "Opt", InftyPoints := false ) -> SECurve
 { Creates an superelliptic curve object with defining equation y^m = f(x) }
 
-	// Minimum precision
-	if Prec lt 40 then
-		Prec := 40;
-		print "Precision set to 40 decimal digits.";
-	end if;
-
 	// Create object
 	SEC := New(SECurve);	
 
@@ -83,6 +77,12 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, Abe
 	if not IsExact(K) then
 		require Precision(K) ge 40 : "Please enter polynomial with at least 40 digits precision or as exact polynomial.";
 		Prec := Min(Prec,Precision(K));
+	else
+		require K eq Rationals() : "Please enter a polynomial defined over \Q,\R or \C.";
+		if Prec lt 40 then
+			Prec := 40;
+			print "Precision has been increased to 40 decimal digits.";
+		end if;
 	end if;
 	vprint SE,1 : "Precision:",Prec; 
 
@@ -112,39 +112,42 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, Abe
 
 	// Estimate lower bound for precision
 	fmonic := f/LeadingCoefficient(f);
-	if K eq Rationals() then
-		//MaxCoeffHeight := Ceiling(Max(0,Log(10,Max([Abs(Numerator(c)):c in Coefficients(fmonic)] cat [Abs(Denominator(c)):c in Coefficients(fmonic)]))));
-		Fac := Factorization(f);
+	if IsExact(K) then
+		Fac := Factorization(fmonic);
 		Points := []; QPoints := []; MinPrec := 0;
 		for k in [1..#Fac] do
 			F := Fac[k][1];
 			if Degree(F) gt 1 then
 				QQ<a> := NumberField(F);
-				Cons := Conjugates(a); //print "Cons:",Cons;
+				Cons := Conjugates(a);
+				NewPrec := Precision(Universe(Cons));
 				if MinPrec eq 0 then
-					MinPrec := Precision(Universe(Cons));
+					MinPrec := NewPrec;
 				else
-					MinPrec := Min(MinPrec,Precision(Universe(Cons)));
+					MinPrec := Min(MinPrec,NewPrec);
 				end if;
-				Points cat:= ChangeUniverse(Cons,ComplexField(Precision(Universe(Cons))));
+				Points cat:= ChangeUniverse(Cons,ComplexField(NewPrec));
 			else
 				Append(~QPoints,-Coefficient(F,0));
 			end if;
 		end for;
-		MinPrec := Precision(Universe(Points));
+		if #Points ne 0 then
+			MinPrec := Precision(Universe(Points));
+		else
+			MinPrec := Prec;
+		end if;
 		C<I> := ComplexField(MinPrec);
 		Points cat:= ChangeUniverse(QPoints,C); 
 	else
-		MaxCoeffHeight := Ceiling(Max(0,Ceiling(Log(10,Max([Abs(c):c in Coefficients(fmonic)])))));
+		CoeffAbs := [Abs(c):c in Coefficients(fmonic) | c ne 0]; 
+		MinCH := Floor(Log(10,Min(CoeffAbs)));
+		require -MinCH le Prec : "Polynomial coefficients are too small. Please input polynomial to higher precision.";
+		MaxCH := Ceiling(Max(0,Ceiling(Log(10,Max(CoeffAbs)))));
+		MinPrec := Prec + 2*MaxCH;
+		Points := Roots(ChangeRing(fmonic,ComplexField(MinPrec)));
+		Points := [ P[1] : P in Points ];
 	end if;
-	//vprint SE,1 : "Logarithmic size of coefficients:",MaxCoeffHeight;
-	//MinimalPrecision := Max(30,MaxCoeffHeight+20);
-	//vprint SE,1 : "Minimal precision:",MinimalPrecision;
-
-	// Compute roots using MAGMA's root (can be very bad)
-	//Cmin<I> := ComplexField(MinimalPrecision);
-	//fmin := ChangeRing(f,Cmin);	
-	//Roots_min := Roots(fmin);
+	Sort(~Points,SE_OrdFldComElt);
 	require #Points eq n : "Defining polynomial has to be squarefree.";
 
 	// Low precision branch points
@@ -154,9 +157,7 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, Abe
 	//Prec := Max(Prec,MinimalPrecision);
 
 	// Increase precision for precomputations
-	//CompPrec := Prec+Round(g)+2;
-	//CompPrec := Max(Prec+Floor(m/5)+2,Round(MinPrec/8));
-	CompPrec := Prec+Floor(m/5)+2;
+	CompPrec := Prec+3;
 	SEC`Prec := CompPrec;
 	SEC`RealField := RealField(CompPrec);
 	vprint SE,1 : "Computational precision:",CompPrec;
@@ -164,14 +165,18 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, Abe
 	// Compute spanning tree
 	SpanningTree(SEC);
 
+	// Maximal M_1
+	MaxM1 := Max( [ P[1] : P in SEC`SpanningTree`Params ]);
+
 	// Extra precision
-	ExtraPrec := Max(0,Ceiling( Log(10,Binomial(n,Floor(n/4))*SEC`SpanningTree`Params[1])));
+	ExtraPrec := Max(5,Ceiling(Log(10,Binomial(n,Floor(n/4))*MaxM1)));
 	vprint SE,1 : "Extra precision:",ExtraPrec; 	
 
 	// Complex field of maximal precision
-	if CompPrec + ExtraPrec gt MinPrec then
-		C<I> := ComplexField(CompPrec+ExtraPrec);
-		Points := ChangeUniverse(SE_DKPEB(fmonic,Points,Precision(C)),C);
+	MaxPrec := Max(Round(MinPrec/2),CompPrec+ExtraPrec);
+	C<I> := ComplexField(MaxPrec);
+	if MaxPrec gt MinPrec then
+		Points := SE_DKPEB(f,Points,MaxPrec);
 	end if;
 	SEC`ComplexField := C; 
 	vprint SE,1 : "SEC`ComplexField:",SEC`ComplexField;	
@@ -179,14 +184,6 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, Abe
 	// Embed univariate Polynomial
 	f_x := ChangeRing(f,C);
 	SEC`ComplexPolynomial := f_x;
-
-	// Iterate roots of f_x
-	/*Points := ChangeUniverse(SE_DKPEB(fmonic,ChangeUniverse([ R[1] : R in Roots_min ],C),Precision(C)),C);
-	if #Points eq 0 then
-		PPoints := Roots(f_x);
-		Points := [ P[1] : P in PPoints ];
-	end if;
-	require #Points eq n : "Defining polynomial has to be squarefree.";*/
 
 	// Leading coefficient
 	SEC`LeadingCoeff := LeadingCoefficient(f_x);
@@ -211,7 +208,7 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, Abe
 	DFF := <jm,#DF,DF,jPows>;
 	SEC`HolomorphicDifferentials := DFF;
 
-	// Transformation, if m = delta (not working properly)
+	// Transformation, if m = delta (not working properly) // Maybe implemented later
 	if false then
 	//if n mod m eq 0 then
 		CC<I> := ComplexField(2*Precision(SEC`ComplexField));
@@ -268,7 +265,7 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, Abe
 	TreeData(~SEC`SpanningTree,SEC`BranchPoints);
 
 	// Compute big (and small) period matrix
-	SE_PeriodMatrix(SEC:Small:=Small);
+	SE_PeriodMatrix(SEC:Small:=Small,ReductionMatrix:=AbelJacobi);
 
 	// Initiate Abel-Jacobi
 	if AbelJacobi then
@@ -277,9 +274,6 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, Abe
 
 		// Compute 'map' of the spanning tree
 		SE_TreeMatrix(SEC);
-
-		// Compute reduction matrix
-		SE_ReductionMatrix(SEC);
 
 		// Compute Abel-Jacobi map between P_0 and other ramification points and sum of infinite points
 		SE_RamificationPoints_AJM(SEC);
@@ -303,7 +297,7 @@ end intrinsic;
 
 
 // Constructor via branch points and degree
-intrinsic SE_Curve( Points::SeqEnum[FldComElt], m::RngIntElt : LeadingCoeff := 1, Prec := 20, Small := true, AbelJacobi := true, IntegrationType := "Opt", InftyPoints := false) -> SECurve
+intrinsic SE_Curve( Points::SeqEnum[FldComElt], m::RngIntElt : LeadingCoeff := 1, Prec := 40, Small := true, AbelJacobi := true, IntegrationType := "Opt", InftyPoints := false) -> SECurve
 { Creates an superelliptic curve object via y^m = LeadingCoeff * \prod[(x-p) : p in Points] }
 	Cx<x> := PolynomialRing(Universe(Points));
 	f := LeadingCoeff * &*[ (x - p) : p in Points ];
@@ -351,9 +345,9 @@ function IsPoint(Point,SEC,Err)
 end function;
 
 
-intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 20, Ht := 10^2, Monic:=false ) -> RngMPolElt
+intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 40, Ht := 10^2, Monic:=false ) -> RngMPolElt
 { Returns a random superelliptic curve object defined over the rationals }
-	Qx<x> := PolynomialRing(Rationals());
+	Qxy<x,y> := PolynomialRing(Rationals(),2);
 	while true do
 		if Monic then
 			f := x^n;
@@ -364,11 +358,13 @@ intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 20, Ht := 10^2, M
 			c := Random([-1,0,1]);
 			f +:= c*Random([1..Ht])*x^j;
 		end for;
-		if Gcd(f,Derivative(f)) eq One(Qx) then
+		g := y^m - f;
+		C := Curve(AffineSpace(BaseRing(Parent(g)),2),g);
+		if IsAbsolutelyIrreducible(C) and IsSquarefree(UnivariatePolynomial(f)) then
 			break;
 		end if;
 	end while;
-	return SE_Curve(f,m:Prec:=Prec);
+	return SE_Curve(g:Prec:=Prec,InftyPoints);
 end intrinsic;
 
 
