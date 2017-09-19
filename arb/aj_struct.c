@@ -77,19 +77,15 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
 
     aj->type = (flag & AJ_USE_DE || (c.m > 2 && c.n > 2)) ? INT_DE : (c.m == 2) ? INT_GC : INT_D2;
 
-    if (flag & AJ_VERBOSE)
+    if (flag >= AJ_VERBOSE)
     {
-        flint_printf("## polynomial\n");
-        if (flag / AJ_VERBOSE > 1)
-            fmpz_poly_print(c.pol);
+        flint_printf("## polynomial ");
+        fmpz_poly_print_pretty(c.pol, "x");
+        flint_printf("\n");
     }
-#if DEBUG
-    flint_printf("\npolynomial ");
-    fmpz_poly_print_pretty(c.pol, "x");
-#endif
 
     /* branch points */
-    if (flag & AJ_VERBOSE)
+    if (flag >= AJ_VERBOSE)
         flint_printf("## branch points\n");
     acb_branch_points(aj->roots, c.n, c.pol, baseprec);
 
@@ -99,7 +95,7 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
 #endif
 
     /* homology */
-    if (flag & AJ_VERBOSE)
+    if (flag >= AJ_VERBOSE)
         flint_printf("## spanning tree\n");
     spanning_tree(aj->tree, aj->roots, c.n, aj->type);
 
@@ -115,7 +111,7 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     acb_branch_points(aj->roots, c.n, c.pol, cstprec);
     tree_ydata_init(aj->tree, aj->roots, c.n, c.m, cstprec);
 
-    if (flag & AJ_VERBOSE)
+    if (flag >= AJ_VERBOSE)
         flint_printf("## symplectic basis\n");
 
     symplectic_basis(aj->loop_a, aj->loop_b, aj->tree, c);
@@ -128,7 +124,7 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
         return;
 
     /* integration */
-    if (flag & AJ_VERBOSE)
+    if (flag >= AJ_VERBOSE)
         flint_printf("## integrals %s\n", (aj->type == INT_GC) ? "gc" : "de");
 
     acb_mat_init(aj->integrals, aj->tree->n, c.g);
@@ -149,17 +145,17 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
         return;
 
     /* period matrices */
-    if (flag & AJ_VERBOSE)
+    if (flag >= AJ_VERBOSE)
         flint_printf("## periods\n");
 
     period_matrix(aj->omega0, aj->loop_a, aj->integrals, c, intprec);
     period_matrix(aj->omega1, aj->loop_b, aj->integrals, c, intprec);
 
 #if DEBUG > 2
-    if (flag & AJ_VERBOSE)
+    if (flag >= AJ_VERBOSE)
         flint_printf("\n\nperiods A\n");
     acb_mat_printd(aj->omega0, 20);
-    if (flag & AJ_VERBOSE)
+    if (flag >= AJ_VERBOSE)
         flint_printf("\n\nperiods B\n");
     acb_mat_printd(aj->omega1, 20);
 #endif
@@ -174,7 +170,7 @@ abel_jacobi_compute(abel_jacobi_t aj, int flag, slong prec)
     if (flag & AJ_NO_TAU)
         return;
 
-    if (flag & AJ_VERBOSE)
+    if (flag >= AJ_VERBOSE)
         flint_printf("## tau\n");
 
     tau_matrix(aj->tau, aj->omega0, aj->omega1, intprec);
