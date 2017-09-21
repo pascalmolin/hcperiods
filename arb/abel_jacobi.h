@@ -274,6 +274,7 @@ void _acb_vec_sort_lex(acb_ptr vec, slong len);
 #define acb_mat_trim(m) _acb_vec_trim(m->entries, m->entries, m->r * m->c)
 
 /* tests/bench only */
+void arb_vec_set_random_nonzero(arb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);
 void acb_vec_set_random(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);
 void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits, double eps);
 void _acb_vec_printd(acb_srcptr u, slong len, slong d, const char * sep);
