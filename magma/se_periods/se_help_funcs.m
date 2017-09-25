@@ -102,14 +102,14 @@ function SE_DKPEB( f,Z,Digits )
 	W := [ Evaluate(f,Z[j])/ &*[ (Z[j] - Z[k]) : k in RMV[j] ] : j in [1..N] ];
 	w0 :=  Max([ Abs(W[j]) : j in [1..N] ]);
 	if w0 lt Err2 then
-		return Z;
+		return ChangeUniverse(Z,ComplexField(Digits));
 	end if;
 	p := Precision(Universe(Z));
 	d0 := DistanceII(Z);
 	if 2*w0 lt d0 then
 		repeat
 			Z := [ Z[j] - W[j] : j in [1..N] ];
-			p *:= 2;
+			p := Max(2*p,Digits);
 			ChangeUniverse(~Z,ComplexField(p));
 			W := [ Evaluate(f,Z[j])/ &*[ (Z[j] - Z[k]) : k in RMV[j] ] : j in [1..N] ];
 			w0 := Max([ Abs(W[j]) : j in [1..N] ]);

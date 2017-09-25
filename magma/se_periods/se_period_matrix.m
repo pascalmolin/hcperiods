@@ -9,7 +9,7 @@
 // Import functions;
 import "se_spanning_tree.m": SpanningTree;
 import "se_de_int.m": DE_Int_Params, DE_Integrals_Tree;
-import "se_gc_int.m": GC_Integrals_Tree;
+import "se_gc_int.m": GJ_Integrals_Tree, GC_Integrals_Tree;
 import "se_anal_cont.m:": AC_mthRoot;
 import "se_intersection.m": SE_IntersectionMatrix, SE_IntersectionNumber;
 import "se_symplectic_basis.m":SymplecticBasis;
@@ -83,6 +83,10 @@ procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 	elif SEC`IntegrationType eq "GC" then
 		vprint SE,1 : "using Gauss-Chebychev integration...";
 		Periods, ElemInts := GC_Integrals_Tree(SEC);
+	elif SEC`IntegrationType eq "GJ" then
+		GJInts := GJ_Integration(STree`Params,SEC);
+		vprint SE,1 : "using Gauss-Jacobi integration...";
+		Periods, ElemInts := GJ_Integrals_Tree(SEC,GJInts);
 	else
 		error Error("Invalid integration type.");
 	end if;
