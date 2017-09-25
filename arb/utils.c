@@ -9,6 +9,22 @@ _acb_vec_add_error_mag(acb_ptr res, slong len, const mag_t e)
 }
 
 void
+arb_vec_set_random_nonzero(arb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits)
+{
+    slong k, allzero;
+    do
+    {
+        allzero = 1;
+        for (k = 0; k < len; k++)
+        {
+            arb_randtest_precise(u + k, state, prec, mag_bits);
+            if (!arb_contains_zero(u + k))
+                allzero = 0;
+        }
+    } while (allzero);
+}
+
+void
 acb_randtest_exclude(acb_t z, acb_t b, flint_rand_t state, slong prec, slong mag_bits)
 {
     do
