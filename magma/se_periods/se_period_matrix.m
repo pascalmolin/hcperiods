@@ -15,39 +15,39 @@ import "se_intersection.m": SE_IntersectionMatrix, SE_IntersectionNumber;
 import "se_symplectic_basis.m":SymplecticBasis;
 
 
-intrinsic SE_BigPeriodMatrix( f::RngMPolElt : Prec := 20 ) -> Mtrx
+intrinsic SE_BigPeriodMatrix( f::RngMPolElt : Prec := 40 ) -> Mtrx
 { Computes a big period matrix associated to f(x,y) = y^m - g(x) to precision Prec }
 	S := SE_Curve(f:Prec:=Prec,Small:=false,AbelJacobi:=false);
 	return S`BigPeriodMatrix;
 end intrinsic;
-intrinsic SE_BigPeriodMatrix( f::RngUPolElt,m::RngIntElt : Prec := 20 ) -> Mtrx
+intrinsic SE_BigPeriodMatrix( f::RngUPolElt,m::RngIntElt : Prec := 40 ) -> Mtrx
 { Computes a big period matrix associated to y^m = f(x) to precision Prec }
 	S := SE_Curve(f,m:Prec:=Prec,Small:=false,AbelJacobi:=false);
 	return S`BigPeriodMatrix;
 end intrinsic;
-intrinsic SE_BigPeriodMatrix( Points::SeqEnum[FldComElt],m::RngIntElt : LeadingCoeff := 1, Prec := 20 ) -> Mtrx
+intrinsic SE_BigPeriodMatrix( Points::SeqEnum[FldComElt],m::RngIntElt : LeadingCoeff := 1, Prec := 40 ) -> Mtrx
 { Computes a big period matrix associated to y^m = LeadingCoeff * \prod[(x-p) : p in Points] to precision Prec }
 	S := SE_Curve(Points,m:Prec:=Prec,Small:=false,AbelJacobi:=false);
 	return S`BigPeriodMatrix;
 end intrinsic;
-intrinsic SE_SmallPeriodMatrix( f::RngMPolElt : Prec := 20 ) -> Mtrx
+intrinsic SE_SmallPeriodMatrix( f::RngMPolElt : Prec := 40 ) -> Mtrx
 { Computes a small period matrix associated to f(x,y) = y^m - g(x) to precision Prec }
 	S := SE_Curve(f:Prec:=Prec,Small:=true,AbelJacobi:=false);
 	return S`SmallPeriodMatrix;
 end intrinsic;
-intrinsic SE_SmallPeriodMatrix( f::RngUPolElt,m::RngIntElt : Prec := 20 ) -> Mtrx
+intrinsic SE_SmallPeriodMatrix( f::RngUPolElt,m::RngIntElt : Prec := 40 ) -> Mtrx
 { Computes a small period matrix associated to y^m = f(x) to precision Prec }
 	S := SE_Curve(f,m:Prec:=Prec,Small:=true,AbelJacobi:=false);
 	return S`SmallPeriodMatrix;
 end intrinsic;
-intrinsic SE_SmallPeriodMatrix( Points::SeqEnum[FldComElt],m::RngIntElt : LeadingCoeff := 1, Prec := 20 ) -> Mtrx
+intrinsic SE_SmallPeriodMatrix( Points::SeqEnum[FldComElt],m::RngIntElt : LeadingCoeff := 1, Prec := 40 ) -> Mtrx
 { Computes a small period matrix associated to y^m = LeadingCoeff * \prod[(x-p) : p in Points] to precision Prec }
 	S := SE_Curve(Points,m:Prec:=Prec,Small:=true,AbelJacobi:=false);
 	return S`SmallPeriodMatrix;
 end intrinsic;
 
 
-procedure SE_PeriodMatrix( SEC : Small := true )
+procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 // Computes period matrices associated to the SE_Curve object SEC }
 
 	if &and[Small,not assigned SEC`SmallPeriodMatrix] or &and[not Small, not assigned SEC`BigPeriodMatrix] then 
@@ -76,10 +76,9 @@ procedure SE_PeriodMatrix( SEC : Small := true )
 	if SEC`IntegrationType eq "DE" then
 		// Integration parameters
 		vprint SE,1 : "Computing integration parameters...";
-		//DEInt := DE_Int_Params(STree`Params,SEC);
 		DEInts := DE_Integration(STree`Params,SEC);
 		vprint SE,1 : "using double-exponential integration...";
-		vprint SE,2 : DEInts;	
+		vprint SE,2 : [ <D`NPoints,D`r> : D in DEInts ];	
 		Periods, ElemInts := DE_Integrals_Tree(SEC,DEInts);
 	elif SEC`IntegrationType eq "GC" then
 		vprint SE,1 : "using Gauss-Chebychev integration...";
@@ -117,7 +116,6 @@ procedure SE_PeriodMatrix( SEC : Small := true )
 		end for;
 	end for;
 	vprint SE,3: "spsm_Matrix:",spsm_Matrix;
-	
 
 	vprint SE,1 : "Computing intersection matrix...";
 	SEC`IntersectionMatrix := SE_IntersectionMatrix(spsm_Matrix,m,n);
@@ -137,15 +135,32 @@ procedure SE_PeriodMatrix( SEC : Small := true )
 	vprint SE,3 : "Dependent columns:",ColumnSubmatrixRange(PMAPMB,2*g+1,Nrows(ST));
 
 	// Compute big period matrix
-	BigPM := SEC`DifferentialChangeMatrix * PM_AB;
-	SEC`BigPeriodMatrix := ChangeRing(BigPM,CS);
+	BPM := SEC`DifferentialChangeMatrix * PM_AB;
+	// Compute reduction matrix
+	if ReductionMatrix then
+		// Embed big period matrix in \R^{2g \times 2g}
+		M := Matrix(Parent(Re(BPM[1][1])),2*g,2*g,[]);
+		for j in [1..g] do
+			for k in [1..g] do
+				M[j,k] := Re(BPM[j,k]);
+				M[j+g,k] := Im(BPM[j,k]);
+				M[j,k+g] := Re(BPM[j,k+g]);	
+				M[j+g,k+g] := Im(BPM[j,k+g]);
+			end for;
+		end for;
+		// Matrix inversion
+		SEC`ReductionMatrix := ChangeRing(M^(-1),SEC`RealField);
+	end if;
 
 	if Small then
 		vprint SE,1 : "Matrix inversion...";
-		PM_AInv := ColumnSubmatrixRange(BigPM,1,g)^(-1);
+		PM_AInv := ColumnSubmatrixRange(BPM,1,g)^(-1);
 		vprint SE,1 : "Matrix multiplication 2...";
-		Tau := PM_AInv * ColumnSubmatrixRange(BigPM,g+1,2*g);
+		Tau := PM_AInv * ColumnSubmatrixRange(BPM,g+1,2*g);
 		Tau := ChangeRing(Tau,CS);
+
+		// Assign small period matrix
+		SEC`SmallPeriodMatrix :=  Tau;
 
 		// Testing for symmetry of the period matrix
 		vprint SE,1 : "Testing symmetry...";
@@ -156,8 +171,6 @@ procedure SE_PeriodMatrix( SEC : Small := true )
 			end for;
 		end for;
 		vprint SE,2 : "Maximal symmetry deviation:",MaxSymDiff;
-
-
 		if MaxSymDiff ge SEC`Error then
 			print "Small period matrix: Requested accuracy could not not be reached.";
 			print "Significant digits:",Floor(-Log(10,MaxSymDiff));
@@ -175,8 +188,11 @@ procedure SE_PeriodMatrix( SEC : Small := true )
 			end for;
 			assert IsPositiveDefinite(Tau_Im);
 		end if;
-		SEC`SmallPeriodMatrix := Tau;
+		
 	end if;
+	
+	// Assign big period matrix
+	SEC`BigPeriodMatrix := ChangeRing(BPM,CS);
 
 	end if;
 end procedure;

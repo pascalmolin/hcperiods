@@ -16,22 +16,24 @@ import "se_spanning_tree.m": DE_AJM_Weight;
 ///////////////////////////////////////////////////////////////
 
 
-C30<I> := ComplexField(30);
-RPi30 := Real(Pi(C30));
+C<I> := ComplexField(20);
+RPI := Real(Pi(C));
 
 function Distance_1(P)
 	xP := Abs(Re(P));
-	i := Parent(P).1;
 	if xP gt 1 then
-		return Abs(xP-1+i*Im(P));
+		return Abs(xP-1+Parent(P).1*Im(P));
 	else
 		return Abs(Im(P));
 	end if;
 end function;
 
-function Bound_M1(CCV,len,m)
-// Compute the bound M1
-	M1 := Exp( -(1/m) * &+[ Log(Distance_1(CCV[k])) : k in [1..len] ] );
+function Bound_M1(CCV,len,m : AJM := false)
+// Compute M1
+	M1 := (1/&*[ Distance_1(CCV[k]) : k in [1..len] ])^(1/m);
+	if AJM then
+		M1 *:= 2^(1/m);
+	end if;
 	if M1 gt 1 then
 		return M1^(m-1);
 	else
@@ -39,42 +41,53 @@ function Bound_M1(CCV,len,m)
 	end if;
 end function;
 
-function Distance_thsh( P, r : Lambda := RPi30/2 )
-	P := Abs(Re(P)) + I*Abs(Im(P));
-	x0 := 0; x1 := Argcosh(RPi30/(2*Lambda*Sin(r))); // s.t. \Lambda Cosh(x)Sin(r)= Pi/2;
-	Phi := function(x)
-		return Tanh(Lambda*Sinh(x+I*r));
+
+function Bound_M2(CCV,len,m,n,r : Lambda := RPI/2, AJM := false )
+// Compute the bound M2 (approximation)
+
+	// Search on interval [0,t_max]
+	tmax := Argcosh(RPI/(2*Lambda*Sin(r)));
+	//print "tmax:",tmax;
+
+	Phi := function(t)
+		return Tanh(Lambda*Sinh(t+I*r));
 	end function;
-	ArgPhiP := function(x)
-		return Arg(Cosh(x+I*r))-2*Arg(Cosh(Lambda*Sinh(x+I*r)));
+	Dist := function(z,P)
+		P := Abs(Re(P)) + I*Abs(Im(P));
+		return Abs(z-P);
 	end function;
-	ArgPhi := function(x)
-		return Arg(P - Phi(x));
-	end function;
-	// x := Solve(x := x0, x1, ArgPhi(x)-ArgPhiP(x)-C_Pi/2);
-	x := x0;
-	Val := ArgPhi(x)-ArgPhiP(x)-RPi30/2;
-	n := 25;
-	for t in [0..n] do
-		x_new := (t/n)*x1 + (1-(t/n))*x0;
-		Val_new := ArgPhi(x_new)-ArgPhiP(x_new)-RPi30/2;
-		if Abs(Val_new) lt Abs(Val) then
-			x := x_new;
-			Val := Val_new;
+
+	// Stepsize
+	ss := Ceiling(100*tmax);
+
+	// Abs(1-tanh(sinh(I*r)))
+	MDTO := Abs(1-Phi(0));
+
+	M2 := 1;
+	for k in [0..ss] do
+		t := k/ss*tmax;
+		z := Phi(t);
+		za := Abs(z);
+		if za gt 1 then
+			km := za^(n-2);
+		else
+			km := za;
 		end if;
+		if AJM then
+			u := (MDTO/&*[ Dist(z,CCV[k]):k in [1..len] ])^(1/m);
+		else
+			u := (1/&*[ Dist(z,CCV[k]):k in [1..len] ])^(1/m);
+		end if;
+		if u gt 1 then
+			u := u^(m-1);
+		end if;
+		km *:= u;
+		if km gt M2 then
+			xm := t;
+		end if;
+		M2 := Max(km,M2);
 	end for;
-	return Abs(P-Phi(x));
-end function;
-
-
-function Bound_M2(CCV,len,m,r)
-// Compute the bound M2
-	M2 := Exp( -(1/m) * &+[ Log(Distance_thsh(CCV[k],r)) : k in [1..len] ] );
-	if M2 gt 1 then
-		return M2^(m-1);
-	else
-		return M2;
-	end if;
+	return M2;
 end function;
 
 
@@ -96,6 +109,7 @@ procedure DE_IntegrationPoints( DEInt )
 	h := DEInt`Steplength;
 	R := Parent(h);
 	mi := 1/DEInt`Degree;
+	oh := R!(1/2);
 	DEInt`Abscissas := [Zero(R)];
 	DEInt`Weights := [<One(R),One(R)>];
 	
@@ -107,12 +121,12 @@ procedure DE_IntegrationPoints( DEInt )
 	for k in [1..DEInt`NPoints] do
 		ekh *:= eh; // e^(kh)
 		ekh_inv *:= eh_inv; // e^(-kh)
-     		sh := (ekh-ekh_inv)/2; // sinh(kh) = (1/2) * (e^(kh) - e^(-kh))
-		ch := (ekh+ekh_inv)/2 ; // cosh(kh) = (e^(kh) + e^(-kh))
+     		sh := oh*(ekh-ekh_inv); // sinh(kh) = (1/2) * (e^(kh) - e^(-kh))
+		ch := sh+ekh_inv; ; // cosh(kh) = (e^(kh) + e^(-kh))
       		esh := Exp(DEInt`Lambda*sh); // e^(Lambda*sinh(kh))
       		esh_inv := 1/esh; // e^-(Lambda*sinh(kh))
-		chsh := (esh+esh_inv)/2; // cosh(Lambda*sinh(kh)))
-		shsh := (esh-esh_inv)/2; // sinh(Lambda*sinh(kh))
+		chsh := oh*(esh+esh_inv); // cosh(Lambda*sinh(kh)))
+		shsh := chsh-esh_inv; // sinh(Lambda*sinh(kh))
 		Append(~DEInt`Abscissas,shsh/chsh); // tanh(Lambda*sinh(kh)) =  sinh(Lambda*sinh(kh)) / cosh(Lambda*sinh(kh))
 		chsh *:= chsh; // cosh(Lambda*sinh(kh))^2
 		// <cosh(kh)/cosh(Lambda*sinh(kh))^2,cosh(Lambda*sinh(kh))^(2/m)>
@@ -127,6 +141,7 @@ procedure DE_IntegrationPoints_AJM( DEInt )
 	h := DEInt`Steplength;
 	R := Parent(h);
 	mi := 1/DEInt`Degree;
+	oh := R!(1/2);
 	DEInt`Abscissas := [Zero(R)];
 	DEInt`Weights := [<One(R),One(R)>];
 	DEInt`ExtraFactors := [<One(R),One(R)>];
@@ -139,12 +154,12 @@ procedure DE_IntegrationPoints_AJM( DEInt )
 	for k in [1..DEInt`NPoints] do
 		ekh *:= eh; // e^(kh)
 		ekh_inv *:= eh_inv; // e^(-kh)
-     		sh := (ekh-ekh_inv)/2; // sinh(kh) = (1/2) * (e^(kh) - e^(-kh))
-		ch := (ekh+ekh_inv)/2 ; // cosh(kh) = (e^(kh) + e^(-kh))
+     		sh := oh*(ekh-ekh_inv); // sinh(kh) = (1/2) * (e^(kh) - e^(-kh))
+		ch := sh+ekh_inv; ; // cosh(kh) = (e^(kh) + e^(-kh))
       		esh := Exp(DEInt`Lambda*sh); // e^(Lambda*sinh(kh))
       		esh_inv := 1/esh; // e^-(Lambda*sinh(kh))
-		chsh := (esh+esh_inv)/2; // cosh(Lambda*sinh(kh)))
-		shsh := (esh-esh_inv)/2; // sinh(Lambda*sinh(kh))
+		chsh := oh*(esh+esh_inv); // cosh(Lambda*sinh(kh)))
+		shsh := chsh-esh_inv; // sinh(Lambda*sinh(kh))
 		thsh := shsh/chsh;
 		Append(~DEInt`Abscissas,thsh); // tanh(Lambda*sinh(kh)) =  sinh(Lambda*sinh(kh)) / cosh(Lambda*sinh(kh))
 		chsh *:= chsh; // cosh(Lambda*sinh(kh))^2
@@ -167,12 +182,9 @@ intrinsic DE_Integration( Params, SEC : AJM := false ) -> SeqEnum[DE_Int]
 	RPi2 := Pi(R)/2;
 	Lambda := RPi2;
 	m := SEC`Degree[1];
-	Alpha := 1/m;
 
-	// Get parameters
-	M1 := Params[1];
-	M2 := Params[2];
-	Lr := [ R!r : r in Params[3]];
+	// Alpha that provides the biggest 
+	Alpha := 1/m;
 
 	// Compute D
 	D := SEC`Prec * Log(R!10);
@@ -180,9 +192,14 @@ intrinsic DE_Integration( Params, SEC : AJM := false ) -> SeqEnum[DE_Int]
 	// List of integration schemes
 	DE_Integrations := [];
 
-	for r in Lr do
+	for P in Params do
 		// New scheme
 		DEInt := New(DE_Int);
+		
+		// Get parameters;
+		M1 := P[1];
+		M2 := P[2];
+		r := R!P[3];
 
 		// Compute N,h
 		X_r := Cos(r) * Sqrt( ( Pi(R) / (2*Lambda*Sin(r))) - 1 );
@@ -191,7 +208,7 @@ intrinsic DE_Integration( Params, SEC : AJM := false ) -> SeqEnum[DE_Int]
 		N := Ceiling(Argsinh((D+ Log((2^(2*Alpha+1)*M1)/Alpha )) / ( 2*Alpha*Lambda ))/h);
 
 		// Assign attributes
-		DEInt`r := r;
+		DEInt`r := ChangePrecision(r,10);
 		DEInt`Steplength := h;
 		DEInt`NPoints := N;
 		DEInt`Lambda := Lambda;
@@ -216,12 +233,12 @@ end intrinsic;
 // Printing
 intrinsic Print(DEInt::DE_Int)
 { print }
-	print "r:",C30!DEInt`r;
-	print "Steplength:",C30!DEInt`Steplength;
+	print "r:",ChangePrecision(DEInt`r,10);
+	print "Steplength:",ChangePrecision(DEInt`Steplength,10);
 	print "Number of abscissas:",DEInt`NPoints;
-	print "Lambda:",C30!DEInt`Lambda;
+	print "Lambda:",ChangePrecision(DEInt`Lambda,10);
 	print "Degree:",DEInt`Degree;
-	print "Factor:",C30!DEInt`Factor;
+	print "Factor:",ChangePrecision(DEInt`Factor,10);
 end intrinsic;
 
 
@@ -353,14 +370,9 @@ end function;
 
 function DE_Integrals_Tree( SEC, DEInts )
 // Compute integrals for spanning tree
-	Periods := []; ElementaryIntegrals := []; NInts := #DEInts;
+	Periods := []; ElementaryIntegrals := [];
 	for k in [1..SEC`Degree[2]-1] do
-		// Find best integration scheme
-		l := NInts;
-		while SEC`SpanningTree`Edges[k][3] lt DEInts[l]`r do
-			l -:= 1;
-		end while;
-		P, EI := DE_Integrals_Edge(SEC`SpanningTree`Data[k],SEC,DEInts[l]);
+		P, EI := DE_Integrals_Edge(SEC`SpanningTree`Data[k],SEC,DEInts[Round(SEC`SpanningTree`Edges[k][3])]);
 		Append(~Periods,P);
 		Append(~ElementaryIntegrals,EI);
 	end for;
