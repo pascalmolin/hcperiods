@@ -41,7 +41,7 @@ procedure DE_Edge_Weight( ~Edge, Points, Len : Lambda := RPI/2 )
 	end for;
 	Append(~Edge,CCV);
 end procedure;
-procedure GC_Edge_Weight( ~Edge, Points, Len )
+procedure GJ_Edge_Weight( ~Edge, Points, Len )
 	V_r := [];
 	for k in [1..Len] do
 		if k notin [Edge[1],Edge[2]] then
@@ -67,18 +67,23 @@ procedure DE_AJM_Weight( ~Edge, Points, Len : Lambda := RPI/2 )
 end procedure;
 
 
-procedure GC_Params_Tree(STree,Points,Prec)
+procedure GJ_Params_Tree(STree,Points,m)
 // Compute parameters for Gauss-Chebychev integration
 	
 	// Min_r too bad?
 	assert STree`IntPars[1]-1 ge 3*10^-3;
 
-	OT := 1/1000;
-	Lr := []; r := STree`IntPars[1]; k := 1/8;
-	if r lt 1+(1/500) then
+	OT := 1/500;
+	Lr := []; r := STree`IntPars[1];
+	if r lt 1+(1/250) then
 		r := (1/2)*(r+1); 
 	else
 		r -:= OT;
+	end if;
+	if m eq 2 then
+		k := 1/8;
+	else
+		k := 10;
 	end if;
 	while r lt STree`IntPars[2] do
 		Append(~Lr,r);
@@ -97,7 +102,7 @@ procedure GC_Params_Tree(STree,Points,Prec)
 			l -:= 1;
 		end while;
 		STree`Edges[k][3] := l;
-		M := Ceiling(Lr[l]^gm1/Sqrt(&*[ STree`Edges[k][4][j] - Lr[l] : j in [1..STree`Length-1]]));
+		M := Ceiling(Lr[l]^gm1 * Exp( (1/m) * Log( &*[ STree`Edges[k][4][j] - Lr[l] : j in [1..STree`Length-1]])));
 		LrM[l][1] := Max(M,LrM[l][1]);
 	end for;
 
@@ -106,15 +111,17 @@ procedure GC_Params_Tree(STree,Points,Prec)
 	for k in [1..NSchemes] do
 		P := LrM[k];
 		achr := Argcosh(P[2]);
-		Append(~LrMN,Append(P,Ceiling((Log(10)*Prec+Log(2*RPI*P[1])+1)/(2*achr))));
+		//Append(~LrMN,Append(P,Ceiling((Log(10)*Prec+Log(2*RPI*P[1])+1)/(2*achr))));
+		//Append(~LrMN,Append(P,Ceiling((Log(32*P[1]/15)+Log(10)*Prec-Log(1-Exp(achr)^(-2)))/(2*achr))));
 	end for;
 	vprint SE,2 : "Parameters(tree):",LrMN;
 	// Save parameters
-	STree`Params := LrMN;
+	//STree`Params := LrMN;
+	STree`Params := LrM;
 end procedure;
 
 
-procedure DE_Params_Tree(STree,Points,m,Prec)
+procedure DE_Params_Tree(STree,Points,m)
 // Computes double-exponential integration integration parameters for a spanning tree
 	
 	// Make list of r's
@@ -238,7 +245,7 @@ declare attributes SpTree :
 procedure SpanningTree(SEC)
 // Computes a spanning tree between Points
 
-	assert SEC`IntegrationType in ["DE","GC"];
+	assert SEC`IntegrationType in ["DE","GC","GJ"];
 	Points := SEC`LowPrecBranchPoints;	
 	Len := SEC`Degree[2];
 	Edges := [];
@@ -267,8 +274,8 @@ procedure SpanningTree(SEC)
 				Edge := <k,l,20.>;
 				if SEC`IntegrationType eq "DE" then
 					DE_Edge_Weight(~Edge,Points,Len);
-				elif SEC`IntegrationType eq "GC" then
-					GC_Edge_Weight(~Edge,Points,Len);
+				elif SEC`IntegrationType in ["GC","GJ"] then
+					GJ_Edge_Weight(~Edge,Points,Len);
 				else
 					error Error("Unsupported integration type.");
 				end if;
@@ -293,8 +300,8 @@ procedure SpanningTree(SEC)
 			NewEdge := <Edges[l][1],Edges[l][2],20.>;
 			if SEC`IntegrationType eq "DE" then
 				DE_Edge_Weight(~NewEdge,Points,Len);
-			elif SEC`IntegrationType eq "GC" then
-				GC_Edge_Weight(~NewEdge,Points,Len);
+			elif SEC`IntegrationType in ["GC","GJ"] then
+				GJ_Edge_Weight(~NewEdge,Points,Len);
 			else
 				error Error("Unsupported integration type.");
 			end if;
@@ -322,18 +329,18 @@ procedure SpanningTree(SEC)
 	end while;
 	T`IntPars := [Min_r,Max_r];
 
-	if SEC`IntegrationType eq "GC" then
+	if SEC`IntegrationType in ["GC","GJ"] then
 		if T`IntPars[1]-1 lt 3*10^-3 then
 			SEC`IntegrationType := "DE";
 			vprint SE,1 : "Changed integration type to",SEC`IntegrationType,"due to bad integration parameter:",T`IntPars[1];
 			SpanningTree(SEC);
 		else
 			SEC`SpanningTree := T;
-			GC_Params_Tree(SEC`SpanningTree,Points,SEC`Prec);
+			GJ_Params_Tree(SEC`SpanningTree,Points,SEC`Degree[1]);
 		end if;
 	else
 		SEC`SpanningTree := T;
-		DE_Params_Tree(SEC`SpanningTree,Points,SEC`Degree[1],SEC`Prec);		
+		DE_Params_Tree(SEC`SpanningTree,Points,SEC`Degree[1]);		
 	end if;
 
 end procedure;

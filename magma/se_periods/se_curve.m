@@ -98,17 +98,27 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, Abe
 	SEC`Genus := g;
 
 	// Integration method
-	require IntegrationType in ["Opt","DE","GC"] : "Invalid integration type.";
-	if m gt 2 or IntegrationType eq "DE" then
-		// Double-exponential
-		SEC`IntegrationType := "DE";
+	require IntegrationType in ["Opt","DE","GC","GJ"] : "Invalid integration type.";
+	if m gt 2 then
+		if IntegrationType in ["DE","Opt"]  then
+			// Double-exponential
+			SEC`IntegrationType := "DE";
+		else
+			// Gauss-Jacobi
+			SEC`IntegrationType := "GJ";
+		end if;
 	else
-		// Gauss-Chebychev
-		SEC`IntegrationType := "GC";
+		if IntegrationType in ["GC","GJ","Opt"] then
+			// Gauss-Chebychev
+			SEC`IntegrationType := "GC";
+		else
+			// Double-exponential
+			SEC`IntegrationType := "DE";
+		end if;
 	end if;
 
 	// Error
-	SEC`Error := 10^-Prec;
+	SEC`Error := 10^-(Prec+1);
 
 	// Estimate lower bound for precision
 	fmonic := f/LeadingCoefficient(f);
@@ -152,9 +162,6 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, Abe
 
 	// Low precision branch points
 	SEC`LowPrecBranchPoints := ChangeUniverse(Points,ComplexField(40));
-	
-	// Increase precision if necessary
-	//Prec := Max(Prec,MinimalPrecision);
 
 	// Increase precision for precomputations
 	CompPrec := Prec+3;
@@ -174,6 +181,7 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 40, Small := true, Abe
 
 	// Complex field of maximal precision
 	MaxPrec := Max(Round(MinPrec/2),CompPrec+ExtraPrec);
+	vprint SE,1 : "Maximal precision:",MaxPrec;
 	C<I> := ComplexField(MaxPrec);
 	if MaxPrec gt MinPrec then
 		Points := SE_DKPEB(f,Points,MaxPrec);
@@ -345,7 +353,7 @@ function IsPoint(Point,SEC,Err)
 end function;
 
 
-intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 40, Ht := 10^2, Monic:=false ) -> RngMPolElt
+intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 40, Ht := 10^2, Monic:=false ) -> SECurve
 { Returns a random superelliptic curve object defined over the rationals }
 	Qxy<x,y> := PolynomialRing(Rationals(),2);
 	while true do
