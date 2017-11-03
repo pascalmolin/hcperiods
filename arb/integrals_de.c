@@ -23,7 +23,7 @@ de_integrals_precomp(acb_ptr res, acb_srcptr u, slong d1, slong d, sec_t c,
     acb_init(wyx);
 
     z = _acb_vec_init(c.m);
-    _acb_vec_unit_roots(z, c.m, prec);
+    _acb_vec_unit_roots(z, c.m, c.m, prec);
 
 #if DEBUG
     flint_printf("\nde integral, d1=%ld, d=%ld, prec=%ld\n", d1, d, prec);

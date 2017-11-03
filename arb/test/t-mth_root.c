@@ -23,7 +23,7 @@ int main() {
             m = 2 + n_randint(state, 12);
             u = _acb_vec_init(d);
             z = _acb_vec_init(m);
-            _acb_vec_unit_roots(z, m, prec);
+            _acb_vec_unit_roots(z, m, m, prec);
             arb_init(x);
             acb_init(y1);
             acb_init(y2);

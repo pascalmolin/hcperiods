@@ -50,7 +50,7 @@ period_matrix(acb_mat_t omega, const homol_t basis, const acb_mat_t integrals, s
     slong k;
     acb_ptr z;
     z = _acb_vec_init(c.m);
-    _acb_vec_unit_roots(z, c.m, prec);
+    _acb_vec_unit_roots(z, c.m, c.m, prec);
 
     for (k = 0; k < c.g; k++)
         periods_loop(omega->rows[k], basis[k], integrals, z, c, prec);

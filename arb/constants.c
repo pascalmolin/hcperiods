@@ -128,7 +128,7 @@ integrals_edge_factors(acb_ptr res, const acb_t ba2, const acb_t ab, const acb_t
     acb_init(zj);
     acb_init(cj);
     z = _acb_vec_init(c.m);
-    _acb_vec_unit_roots(z, c.m, prec);
+    _acb_vec_unit_roots(z, c.m, c.m, prec);
 #if DEBUG > 1
         flint_printf("\nuse zeta = ");
         _acb_vec_printd(z, c.m, 30, ", ");
