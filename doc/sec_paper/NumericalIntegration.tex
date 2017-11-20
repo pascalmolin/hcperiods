@@ -73,7 +73,9 @@ variable \eqref{m-eq:de_change}.
 Since we can compute the distance of each point $u_k \in U^+ \cup U^-$ (see \ref{m-eq:uab_image}) to
 both $[-1,1]$ and the neighborhood $Z_r$ (see \S \ref{m-subsec:de_case}), we obtain
   \begin{lemma}
-      Let $r \in ]0,\frac{\pi}{2}[$ be such that $(U^+ \cup U^-) \cap Z_r = \varnothing$, then
+      Let $r \in ]0,\frac{\pi}{2}[$ be such that
+          $\lambda\sin(r)<\frac{\pi}2$ and
+          $(U^+ \cup U^-) \cap Z_r = \varnothing$, then
       $g$ is holomorphic on $\set{-r<\Im(z)<r}$ and
       there exist explicitly computable
       constants $M_1$, $M_2$ such
@@ -144,7 +146,7 @@ from bounding each error by $e^{-D}/2$
     For all $N,h$ such that $2αλ\cosh(Nh)>1$ we have
     \begin{equation*}
         \sum_{\abs{k}>N}\abs{hg(kh)}
-        \leq \frac{2^{2α} M_1}{αλ}\exp(-2αλ\sinh(Nh)).
+        \leq \frac{2^{2α} M_1}{α}\exp(-2αλ\sinh(Nh)).
     \end{equation*}
 \end{lemma}
 \begin{proof}
@@ -273,7 +275,7 @@ the residue theorem on an ellipse $ε_r$ of the form
   \end{center} \caption{ellipse parameters.}
   \label{fig:ellipse1} \end{figure}
 
-\begin{thm}[\cite{ChawlaJain68},Theorem 5]
+  \begin{thm}[{\cite[Theorem 5]{ChawlaJain68}}]
     Let $r>0$ such that $g$ is holomorphic on $ε_r$. Then
     the error in \eqref{m-eq:gauss_chebychev} satisfies
     \begin{equation*}
