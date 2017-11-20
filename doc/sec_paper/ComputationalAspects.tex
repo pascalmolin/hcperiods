@@ -46,7 +46,7 @@
 
    We proceed as follows:
    \begin{itemize}
-   \item for each $\ell$, we evaluate the absissa and weight $u_\ell,w_\ell$ using
+   \item for each $\ell$, we evaluate the abscissa and weight $u_\ell,w_\ell$ using
        a few \footnote{this can be reduced to evaluating
            a few multiplications and at most one exponential.} trigonometric or hyperbolic functions,
    \item we compute $y_\ell=\ytab(u_\ell)$ using $n-2$ multiplications and one $m$-th root,
@@ -79,7 +79,7 @@
    \subsubsection{Big period matrix}
 
    One of the nice aspects of the method is that we never compute
-   the dense matrix $\OC\in\C^{g\times 2g}$ from \eqref{m-eq:OC}, but
+   the dense matrix $\OC\in\C^{g\times 2g}$ from Section \ref{sec:strat_pm}, but
    keep the decomposition of periods in terms of the elementary integrals
    $\int_{\gamma_e}\omega_{i,j}$ in $\C^{g\times (n-1)}$.
 
@@ -91,7 +91,7 @@
        \alpha_i = \sum_{\substack{e \in E \\ l\in\Z/m\Z}} s_{e,l}\gamma_e^{(l)}
    \end{equation}
    where $\gamma_e^{(l)} \in \Gamma$ is a generating cycle
-   and $s_{e,l}\in\Z$ is the corresponding entries of $S$.
+   and $s_{e,l}\in\Z$ is the corresponding entry of $S$.
 
    We use \eqref{m-eq:periods} to compute the coefficients of the big period
    matrix $(\OA,\OB)$, so that each term of \eqref{m-eq:base_change_cycles}
@@ -272,7 +272,7 @@
    \[ M_2 = M_0 η^{-\frac{jK}m} (1+O(η)). \]
    Then
    \[ h = \frac{2π(r_0-η)}{D+\log(2B(r_0,α)M_0)-jK/m\log(η)}+O(η) \]
-   and the maximum is obtained for $η$ solution of $η(A-\log η)=r_0$
+   and the maximum is obtained for the solution $η$ of $η(A-\log η)=r_0$
    where $A=1+\frac{m}{jK}(D+\log(2B(r_0,α)M_0))$.
 
    \subsection{Implementation tricks}

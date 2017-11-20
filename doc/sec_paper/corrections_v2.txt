@@ -171,8 +171,17 @@ The space has been removed.
 > 
 > Page 28:
 > "absissa": "abscissa"
+
+Corrected.
+
 > "from (4)": "from Section 4"
+
+Corrected.
+
 > "is the corresponding entries": "is the corresponding entry"
+
+Corrected.
+
 > 
 > Page 29:
 > "state the far from optimal result": "state the following far from optimal
@@ -183,7 +192,9 @@ The space has been removed.
 > 
 > Page 31:
 > "for eta solution of": "for the solution eta of"
-> 
+
+Corrected.
+
 > Page 32:
 > "In this case however, we can perform a change of coordinate by a Moebius
 > transform": can you give some details on what exactly works here? Same question
@@ -192,12 +203,19 @@ The space has been removed.
 > 
 > Page 34:
 > "too high precision": "to high precision"
-> 
+
+This was corrected.
+
 > Page 35:
 > "than other methods": which other methods?
 > 
 > Page 36:
 > Reference [13]: A capital is lacking on the "q"; it can be added with {Q}.
 > Reference [16]: A capital is lacking on the "l"; it can be added with {L}.
+
+The capital has been added on L and the field Q is now typeset in mathbb.
+
 > Van Wamelen sometimes gets a second initial, sometimes not, and when without,
 > it should probably be "Paul van Wamelen", so without the upper case letter.
+
+All occurrences have been typeset "van Wamelen".
