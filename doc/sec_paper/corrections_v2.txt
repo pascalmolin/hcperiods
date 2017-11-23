@@ -141,34 +141,65 @@ The space has been removed.
 > y) = ( 1 /(r^nu t^M), r^mu / t^N ), where mu is negative. It is correct but I
 > had to wrap my head around the fact that the second component is "really" a
 > quotient 1 / (r^i t^N) with i positive.
+
+Replaced mu by -mu everywhere in the section to reduce confusion.
+
 > Personally I also think that it would not hurt to spend a few more lines on,
 > say, the pole and zero loci of the new coordinates r and t, as well as how the
 > points at infinity of the models C and Ctilde are related. But that is only a
 > suggestion.
-> 
+
+We liked the suggestion and added some details.
+
 > Page 25:
+
+Other changes: Fixed some typos (Phi^-1 instead of Phi), changed the size of some brackets to improve readability
+
 > The line before the definition of E_1 needs some more grammar at the end; a
 > sentence containing a displayed equation also need to be readable when the
-> display is removed and the equality is given inline. Also, what is d in the
+> display is removed and the equality is given inline. 
+
+Corrected.
+
+> Also, what is d in the
 > equality defining E_1? Same question on later pages; only in Theorem 7.9 is it
 > defined to be deg (h), which I think is what is meant throughout.
+
+Corrected. We mean d=deg(h) throughout, except for Theorem 7.7. when d is really equal to n
+
 > "where the t_i^(s) are the zeros of": up to multiplicity? Or can you prove that
-> they are single? Also, you need the points P_inf^(s) to be non-singular after
+> they are single? 
+
+They seem to be simple zeros, but we cannot prove that right now, so we added (up to multiplicity).
+
+> Also, you need the points P_inf^(s) to be non-singular after
 > transformationg by Phi (they are, but it needs mentioning).
+
+Corrected.
+
 > Penultimate displayed equation: We can remove the contribution m int_P0^Pk at
 > the beginning if we calculate modulo Lambda throughout. If your claim is that
 > this holds without taking the quotient, then please formulate a corresponding
 > precise statement and prove it.
+
+We calculate modulo Lambda (corrected), but I still would like to keep the contribution of m int_P0^Pk since it makes clear that
+we split up the integration path: being able to take out the powers of zeta is really a consequence of Theorem 7.3. (I added that in a sentence)
+
 > 
 > Page 26:
 > "Let s in { 1, ... , delta }": While the argumentation here is correct, the way
 > of writing it down is not quite. You mean to say that given i, we can choose
 > the t_i^(s) and t_i^(delta) compatibly in such a way that the equality on
 > Ctilde_aff holds.
+
+Corrected.
+
 > "The Q^(s) having identical x-coordinates implies that": same remark as the
 > final one for the previous page. The subsequent equality certainly holds modulo
 > the period lattice, that is, when neglecting the path taken.
-> 
+
+Corrected.
+
 > Page 28:
 > "absissa": "abscissa"
 
