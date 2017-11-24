@@ -56,7 +56,7 @@
   \subsubsection{The complex $m$-th root}
 
   Working over the complex numbers we encounter several multi-valued functions
-  which we will briefly discuss here.  Closely related to superelliptic
+  which we will briefly discuss here. Closely related to superelliptic
   curves over $\C$ is the complex $m$-th root.
   Before specifying a branch it is a multi-valued function $y^m = x$
   that defines an $m$-sheeted Riemann surface, whose only branch points
@@ -198,7 +198,7 @@
   The function $\yab(x)$ has $n$ branch cuts all parallel to $[a,b]$ in outward direction and
   is holomorphic inside $]a,b[$ (see Figure \ref{fig:mth_root_signed}).
 
-  More precisely, $\vab = \uab(ε_{a,b}\cap \overline U_{a,b})$,
+  More precisely, $\vab = \xab(ε_{a,b}\cap \overline U)$,
   is an ellipse-shaped neighborhood of $]a,b[$ with two segments removed
   (see Figure \ref{m-fig:set_vab})
   on which the local branch $\yab$ is well defined and holomorphic.
@@ -240,21 +240,27 @@ We sum up the properties of these local branches:
    \begin{equation*}\label{eq:def_path_ab}
       \gamma^{(l)}_{[a,b]} = \{  (x,\zeta^l \yab(x))  \mid  x \in [a,b]  \}, \quad l \in \Z/m\Z.
    \end{equation*}
+   Similarly, we obtain lifts of $[b,a]$ by reversing the orientation of $\gamma^{(l)}_{[a,b]}$. We denote
+   \begin{equation*}\label{eq:def_path_ba}
+      -\gamma^{(l)}_{[a,b]} = \{  (x,\zeta^l \yab(x))  \mid  x \in [b,a]  \}, \quad l \in \Z/m\Z.
+   \end{equation*}
    These are smooth oriented paths that connect $P_a = (a,0)$ and $P_b = (b,0)$ on $\cu$. We obtain cycles by concatenating these lifts in the following way:
     \begin{equation}\label{eq:def_cyabl}
-      \cyabl = \gamma^{(l)}_{[a,b]} \cup \gamma^{(l+1)}_{[b,a]} \in \pi_1(\cu).
+      \cyabl = \gamma^{(l)}_{[a,b]} \cup -\gamma^{(l+1)}_{[a,b]} \in \pi_1(\cu).
    \end{equation}
    \begin{defn}[Elementary cycles]\label{def:elem_cycles}
        We say $\cyab = \cyab^{(0)}$ is an \emph{elementary cycle} and call $\cyabl$ its \emph{shifts} for $l \in \Z/m\Z$.
    \end{defn}
    In $\pi_1(\cu)$
-   shifts of elementary cycles are homotopic to cycles that encircle  $a$ in negative and $b$ in positive orientation, once each.
+   shifts of elementary cycles are homotopic to cycles that encircle $a$ in negative and $b$ in positive orientation, once each and do not encircle any other branch point. 
+   This is possible because we can always find
+   an open neighborhood $V$ of $[a,b]$ such that $V \cap X = \{a,b\}$ and thus the homotopy class of a cycle is not changed by deformations within $V$.
    By definition of $\yab$ the branch cuts at the end points are outward and parallel to $[a,b]$. Thus, we have the following useful visualizations of $\cyabl$ on $\cu$:
    \begin{figure}[H]
       \begin{center}
    \input{images/cycle_rep.tex}
       \end{center}
-    \caption{Representations of a cycle $\cyabl$.}
+    \caption{Homotopic representations of a cycle $\cyabl$.}
     \label{fig:elem_cycle}
 \end{figure}
 
@@ -322,7 +328,7 @@ We sum up the properties of these local branches:
    depends on $m$ and $n$ and is suitable for numerical integration. \abstand
     Among the meromorphic differentials
     \begin{align*}
- \WM = \left\{  \omega_{i,j}   \right\}_{\substack{1 \le i \le n-1, \\ 1 \le j \le m-1}} \quad \text{with} \quad \omega_{i,j} = \frac{ \dx^i}{i y^j},
+ \WM = \left\{  \omega_{i,j}   \right\}_{\substack{1 \le i \le n-1, \\ 1 \le j \le m-1}} \quad \text{with} \quad \omega_{i,j} = \frac{x^{i-1}\dx}{y^j},
   \end{align*}
   there are exactly $g$ that are holomorphic  and they can be found by imposing a simple combinatorial condition on $i$ and $j$.
  The following proposition is basically a more general version of
@@ -346,11 +352,11 @@ We sum up the properties of these local branches:
       \end{align*}
      Putting together the information, for $P \in \cu$ lying over $x_0 \in \P^1_{\C}$, we obtain
      \begin{align}\label{eq:diff_cases}
-      v_P(\omega_{i,j}) & = (i-1) v_P(x) + v_P(\dx)  - j v_P(y)
+      v_P(\omega_{i,j}) & = (i-1) v_P(x) + v_P(\dx)  - j v_P(y) = 
  \begin{cases}
   \ge 0 \hfill \text{if} \; x_0 \ne x_k,\infty, \\
-  = m-1-j \ge 0 \quad \text{if} \; x_0 = x_k, \\
-  = \frac{(-mi-\delta+jn)}{\delta} \hfill \text{if}\;  x_0 = \infty.
+  m-1-j \ge 0 \quad \text{if} \; x_0 = x_k, \\
+  \frac{(-mi-\delta+jn)}{\delta} \hfill \text{if}\;  x_0 = \infty.
  \end{cases}
      \end{align}
      We conclude: $\omega_{i,j} \in \WM$ is holomorphic if and only if $\omega_{i,j} \in \W$. \abstand
@@ -406,8 +412,12 @@ The desired equality  $\#\W = \frac{1}{2}((n-1)(m-1)-\delta+1) = g$ immediately 
 \end{proof}
 \end{proof}
 
-\begin{rmk}
-    Note that from \eqref{m-eq:diff_cases} it follows that the meromorphic differentials in $\WM$ are homolorphic at all finite points.
+\begin{rmk}\
+    \begin{itemize}
+     \item[$\bullet$] Note that from \eqref{m-eq:diff_cases} it follows that the meromorphic differentials in $\WM$ are homolorphic at all finite points.
+     \item[$\bullet$] In practice we order the differentials in $\W$ lexicographically by $j,i$:
+     $$\w_{i,j} < \w_{\tilde{i},\tilde{j}} \quad \text{iff.} \quad j < \tilde{j}  \text{ or } (j = \tilde{j} \text{ and } i < \tilde{i}).$$ 
+    \end{itemize}
 \end{rmk}
 
 \biblio

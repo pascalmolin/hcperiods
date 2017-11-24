@@ -80,43 +80,76 @@ The space has been removed.
 > 
 > Page 6:
 > Equation (7): I take it that K^(n/m) = (K^(1/m))^n for any constant K?
+
+Yes.
+
 > Why is V_{a,b} as indicated? It is defined as an image under u_{a,b}, but since
 > it is a neighborhood of [a, b], should it not be an image under x_{a,b}
 > instead? And what is U_{a,b}?
-> 
+
+It should indeed be x_{a,b} instead of u_{a,b} and \overline{U} instead of \overline(U)_{a,b}. Then V_{a,b} is as indicated.
+
 > Page 8:
 > Why is there an i in the denominator of the definition of omega_{i,j}? (This is
 > not very relevant, I am just curious if there is an arithmetic reason.)
+
+This has been changed.
+
 > The equality (9) is missing an equality sign before the brace.
-> 
+
+Corrected.
+
+Other changes (page 10): Added a second item to Remark 3.10 that explains how we actually order the differentials in practice.
+
 > Page 12:
 > "The resulting intersection matrix": there is an odd-looking linebreak here
 > before the "(n - 1)(m - 1)".
 > Theorem 5.1: rho is used, but in the proof the notation phi is used.
+
+All rho's have been changed to phi's.
+
 > Is there a nice conceptual explanation why (iii) and (iv) differ in the way
 > that they do? I can follow the proof, but certainly there is something
 > conceptual behind this, and that I cannot see for now. Again, just curious.
-> 
+
+We are not aware any conceptual explanation. We just examined all the cases and noticed the symmetry.
+
 > Page 13:
 > "recall from 3.2 their definition": A priori one has to use y_{b,a} and y_{d,c}
 > in the second parts. So some kind of symmetry seems to be needed.
+
+The problem was with Definition 3.5. which has been updated. This should be clear now.
+
 > The Proof in the middle of the page concerns part (v), but it appears and
 > vanishes very unexpectedly.
+
+This has been removed.
+
 > I do not see why the set V is always disconnected. What happens what a = c and
 > b = d, for example? And how many components does this set usually have if not?
 > (Probably 2.)
+
+The case a=c,b=d can be discarded by construction of the spanning tree (we added one sentence just before Thm. 5.1.). In all remaining cases the set V is disconnected and has 2 connected components.
+However, we really want that s(x) is constant on the connected components, regardless of how many components V has, so we removed "disconnected".
+
 > "We deform the cycles homotopically so that": Please show that this is
 > possible, I do not see why this should be so.
-> 
+
+We added some explanation on why this is possible, plus a reference to Figure 3. We also added some details in the text preceeding Figure 3.
+
 > Page 16:
 > What are x_{b,d} and x_{a,b}?
-> 
+
+Added references.
+
 > Page 17:
 > In the first display I do not see why in the end only one subscript b gets
 > replaced in the numerator, while the one in ytilde_{b,d} sticks around. This
 > happens just before the end of the proof as well, but then with a. This is a
 > nitpicky comment.
-> 
+
+This has been corrected. We also replaced c by a or b in the definition of phi in the corresponding cases of the proof of Lemma 5.3.
+
 > Page 18:
 > Lemma 6.2: We can only take r in (0, pi / 2) if we choose to fix lambda = pi /
 > 2. This was not quite made explicit before, it was only said that this lambda
