@@ -200,6 +200,10 @@ Corrected.
 
 Corrected.
 
+Other changes (page 27): In Remark 7.10 the number of integrals was not quite correct. In the case 0 \in X the degree of h drops down to n-1 in the case of Thm. 7.7.
+and (n-1)(\nu+M) in the case of Thm. 7.9. So the computation is even easier in that case.
+
+
 > Page 28:
 > "absissa": "abscissa"
 
