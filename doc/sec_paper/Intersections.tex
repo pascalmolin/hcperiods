@@ -10,7 +10,7 @@
 
   Note that by construction of the spanning tree,
   we can restrict the analysis to intersections $\left(\cyab^{(k)} \circ \cycd^{(l)}\right)$
-  such that $c$ is either $a$ or $b$.
+  such that $c$ is either $a$ or $b$. Moreover, we may discard the case $a=c$ and $c=d$.
 
    \begin{thm}[Intersection numbers]\label{thm:intsec_numb}
       Let $(a,b),(c,d) \in E$. The intersections of the corresponding cycles $\cyabk, \cycdl \in \Gamma$ are given by
@@ -32,20 +32,20 @@
           \midrule
          (i) & $a=c$ and $b=d$ & $1$ & $-1$ \\
          (ii) & $b=c$ & $-s_b$ & $1-s_b$ \\
-         (iii) & $a=c$ and $\rho>0$ & $1-s_a$ & $-s_a$ \\
-         (iv) & $a=c$ and $\rho<0$ & $-s_a$ & $-1-s_a$\\
+         (iii) & $a=c$ and $\varphi>0$ & $1-s_a$ & $-s_a$ \\
+         (iv) & $a=c$ and $\varphi<0$ & $-s_a$ & $-1-s_a$\\
          (v) & $\set{a,b}\cap\set{c,d}=\varnothing$ & \multicolumn{2}{c}{no intersection} \\
           \bottomrule
       \end{tabular}
       \end{center}
       and where $s_x \in \Z$ for $x\in\set{a,b}$ is given by
       \begin{equation*}\label{eq:s_x}
-	    s_x := \frac{1}{2\pi}\left( \rho + m \cdot \arg \left( \frac{C_{c,d} \ytcd(x)}{C_{a,b}\ytab(x)} \right)
+	    s_x := \frac{1}{2\pi}\left( \varphi + m \cdot \arg \left( \frac{C_{c,d} \ytcd(x)}{C_{a,b}\ytab(x)} \right)
 	    \right)
       \end{equation*}
      and
       \begin{equation*}
-          \rho = \arg \left( \frac{b-a}{d-c} \right) + \delta_{b=c}\pi.
+          \varphi = \arg \left( \frac{b-a}{d-c} \right) + \delta_{b=c}\pi.
       \end{equation*}
  \end{thm}
 
@@ -70,7 +70,7 @@
 
   Consider
   two cycles $\cyab^{(k)},\cycd^{(l)} \in \Gamma$ and
-  recall from \S \ref{m-subsec:roots_branches} their definition
+  recall from Definition \ref{m-def:elem_cycles} that
    \begin{align*}
       \cyabk & = \{  (x,\zeta^k \yab(x))  \mid  x \in [a,b]  \} \cup \{  (x,\zeta^{k+1} \yab(x))  \mid  x \in [b,a]  \}, \\
       \cycdl & = \{  (x,\zeta^l \ycd(x))  \mid  x \in [c,d]  \} \cup \{  (x,\zeta^{l+1} \ycd(x))  \mid  x \in [c,d]  \},
@@ -78,11 +78,9 @@
   where $\zeta^k\yab(x),\zeta^l\ycd(x)$ are branches of $\cu$ that are analytic on open sets $\vab$ and $\vcd$
   (see Figure \ref{m-fig:set_vab}) respectively.
 
-  \begin{proof}
   From the definition we see that $\cyabk \cap \cycdl = \varnothing$, whenever $[a,b] \cap [c,d] = \varnothing$. For edges in a spanning tree
   this is equivalent to $\{a,b\} \cap \{c,d\} = \varnothing$, thus
   proving (v).
-  \end{proof}
 
    Henceforth, we can assume $\{a,b\} \cap \{c,d\} \ne \varnothing$. In order to prove (i)-(iv) we have to introduce some machinery. Since the $\yab(x),\ycd(x)$ are branches of $\cu$,
    on the set $\C \setminus X$
@@ -95,7 +93,7 @@
   \begin{equation*}
    \zeta^{s(x)+l-k} = \frac{\zeta^l\ycd(x)}{\zeta^k\yab(x)}.
    \end{equation*}
-   We can now define the non-empty, open, disconnected set
+   We can now define the non-empty, open set
    \begin{equation*}
     V := \vab \cap \vcd \subset \C \setminus X.
    \end{equation*}
@@ -108,7 +106,9 @@
   We can interpret the value of the shifting function geometrically as
   $\cycdl$ running $s(\xt)+l-k$ sheets above $\cyabk$ at a point $\xt \in V$.
 
- This can be used to determine the intersection number in the following way. We deform the cycles homotopically
+ This can be used to determine the intersection number in the following way. The homotopy class of a cycle on $\cu$ is not changed by deformations that avoid
+ encircling additional branch points. Since $V \cap X = \varnothing$
+ we can deform the cycles homotopically (as shown in Figure \ref{m-fig:elem_cycle})
  such that
  \begin{equation*}
    \pr\left(\cyabk\right) \cap \pr\left(\cycdl\right) = \{ \xt \}  \text{ for some $\xt \in V$.}
@@ -183,7 +183,7 @@
  In these cases we have $a = c$. We choose $\xt$ on the inner bisectrix (as shown in Figure \ref{m-fig:set_v_both})
    and compute $s(\xt)$ with \eqref{m-eq:sxt}.
 
- For $\varphi = \arg\left(\frac{b-a}{d-c}\right) > 0$, the non trivial cases, i.e. $s(\xt) + l - k \in \{-1,0,1\}$, are shown in Figure \ref{m-fig:int_a=c}
+ For $\varphi = \arg\left(\frac{b-a}{d-a}\right) > 0$, the non trivial cases, i.e. $s(\xt) + l - k \in \{-1,0,1\}$, are shown in Figure \ref{m-fig:int_a=c}
   We illustrate the cycles $\cyab^{(k)}$ (black), $\cyad^{(k-s(\xt))}$ (gray), $\cyad^{(k-s(\xt) + 1)}$ (green) and
     $\cyad^{k-s(\xt)-1}$ (red).
   \begin{figure}[H]
@@ -217,14 +217,14 @@
    & \equiv \frac{1}{2\pi} \left( \arg(1+\ucd(x)) + \arg(1-\ucd(x)) - \arg(1+\uab(x)) - \arg(1-\uab(x)) \right) \\
    & +  \frac{m}{2\pi} \left( \arg \left( \frac{ \ccd \ytcd(x)}{\cab\ytab(x)} \right)\right) \mod m.
   \end{align*}
- In case (ii) we have $b = c$ and denote $\varphi_0 = \arg \left( \frac{b-a}{d-c} \right)$. Then, we can parametrize all points $\xt \ne b$ on
+ In case (ii) we have $b = c$ and denote $\varphi_0 = \arg \left( \frac{b-a}{d-b} \right)$. Then, we can parametrize all points $\xt \ne b$ on
  the upper bisectrix of $[a,b]$ and
  $[a,d]$ (see Figure \ref{m-fig:set_v_both}) via
  \begin{align*}
   \xt & = \xbd(-1+t \exp(i(\pi+\varphi_0)/2)) \text{  as well as} \\
   \xt & = \xab(1-t \exp(-i (\pi+\varphi_0)/2))
  \end{align*}
- for some $t > 0$. Therefore,
+ for some $t > 0$, where $\xbd$ and $\xab$ are defined as in \eqref{m-def:xab}. Therefore,
  \begin{align*}
    & \arg (1+\ubd(\xt)) = \frac{\pi+\varphi_0}{2} \text{ and} \\
    & \arg (1-\uab(\xt)) = -\frac{\pi+\varphi_0}{2}.
@@ -232,19 +232,19 @@
  For $\xt$ chosen close enough to $b$ we have that $[\xt,b[ \subset V$ and the shifting function $s(\xt)$ is constant as $\xt$ tends towards $b$. Hence,
  we can compute its value at $\xt$ as
  \begin{align*}
-  s(\xt) & \equiv \frac{1}{2\pi} \left( \pi + \varphi_0 + \arg(1-\ubd(\xt)) - \arg(1+\uab(\xt)) +  m \arg \left( \frac{ \cbd \ytcd(\xt)}{\cab\ytab(\xt)} \right)\right) \\
+  s(\xt) & \equiv \frac{1}{2\pi} \left( \pi + \varphi_0 + \arg(1-\ubd(\xt)) - \arg(1+\uab(\xt)) +  m \arg \left( \frac{ \cbd \ytbd(\xt)}{\cab\ytab(\xt)} \right)\right) \\
 	 & \equiv \frac{1}{2\pi} \left ( \varphi +\arg(1-\ubd(b)) - \arg(1+\uab(b)) +  m \arg \left( \frac{ \cbd \ytbd(b)}{\cab\ytab(b)} \right)\right) \\
-	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \ccd \ytbd(b)}{\cab\ytab(b)} \right)\right) \equiv s_b \mod m,
+	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \cbd \ytbd(b)}{\cab\ytab(b)} \right)\right) \equiv s_b \mod m,
  \end{align*}
 thus proving (1).
 
-  In the cases (iii) and (iv) we have $a = c$ and denote $\varphi =  \arg \left( \frac{b-a}{d-c} \right)$. For $\varphi > 0$ we can parametrize all points $\xt \ne a$ on the inner
+  In the cases (iii) and (iv) we have $a = c$ and denote $\varphi =  \arg \left( \frac{b-a}{d-a} \right)$. For $\varphi > 0$ we can parametrize all points $\xt \ne a$ on the inner
   bisectrix of $[a,b]$ and $[a,d]$ (see Figure \ref{m-fig:set_v_both}) via
  \begin{align*}
   \xt & = \xad(-1+t \exp(i \varphi /2)) \text{  as well as} \\
   \xt & = \xab(-1+t \exp(-i \varphi/2))
  \end{align*}
- for some $t > 0$. Therefore,
+ for some $t > 0$, where $\xad$ and $\xab$ are defined as in \eqref{m-def:xab}. Therefore,
  \begin{align*}
    & \arg (1+\uad(\xt)) = \frac{\varphi}{2} \text{ and} \\
    & \arg (1+\uab(\xt)) = -\frac{\varphi}{2}.
@@ -253,7 +253,7 @@ thus proving (1).
  \begin{align*}
   s(\xt) & \equiv \frac{1}{2\pi} \left( \varphi + \arg(1-\uad(\xt)) - \arg(1+\uab(\xt)) +  m \arg \left( \frac{ \cad \ytad(\xt)}{\cab\ytab(\xt)} \right)\right) \\
 	 & \equiv \frac{1}{2\pi} \left ( \varphi +\arg(1-\uad(a)) - \arg(1-\uab(a)) +  m \arg \left( \frac{ \cad \ytad(a)}{\cab\ytab(a)} \right)\right) \\
-	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \ccd \ytad(a)}{\cab\ytab(a)} \right)\right) \equiv s_a \mod m.
+	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \cad \ytad(a)}{\cab\ytab(a)} \right)\right) \equiv s_a \mod m.
  \end{align*}
  The case $\varphi < 0$ is proved analogously.
 \end{proof}
