@@ -7,7 +7,7 @@
 *******************************************************************************/
 
 // Import functions
-import "se_help_funcs.m": MakeCCVector;
+import "se_help_funcs.m": MakeCCVector, SortByRealPart;
 import "se_de_int.m": Bound_M1, Bound_M2;
 import "se_gc_int.m": DistanceEllipse;
 
@@ -18,7 +18,7 @@ RPI := Real(Pi(C));
 
 // Compare 3rd entry of edges
 function RS_CompareEdge( E1,E2 )
-	if E1[3] le E2[3] then
+	if E1`r le E2`r then
 		return 1;
 	else
 		return -1;
@@ -33,25 +33,25 @@ end function;
 procedure DE_Edge_Weight( ~Edge, Points, Len : Lambda := RPI/2 )
 	CCV := [];
 	for k in [1..Len] do
-		if k notin [Edge[1],Edge[2]] then
-			uk := (2*Points[k] - Points[Edge[2]] - Points[Edge[1]]) / (Points[Edge[2]] - Points[Edge[1]]);
+		if k notin Edge`EP then
+			uk := (2*Points[k] - Points[Edge`EP[2]] - Points[Edge`EP[1]]) / (Points[Edge`EP[2]] - Points[Edge`EP[1]]);
 			Append(~CCV,uk);
-			Edge[3] := Min(Edge[3],Abs(Im(Argsinh(Argtanh(uk)/Lambda))));
+			Edge`r := Min(Edge`r,Abs(Im(Argsinh(Argtanh(uk)/Lambda))));
 		end if;
 	end for;
-	Append(~Edge,CCV);
+	Edge`Data := CCV;
 end procedure;
 procedure GJ_Edge_Weight( ~Edge, Points, Len )
 	V_r := [];
 	for k in [1..Len] do
-		if k notin [Edge[1],Edge[2]] then
-			uk := (2*Points[k] - Points[Edge[2]] - Points[Edge[1]]) / (Points[Edge[2]] - Points[Edge[1]]);
+		if k notin Edge`EP then
+			uk := (2*Points[k] - Points[Edge`EP[2]] - Points[Edge`EP[1]]) / (Points[Edge`EP[2]] - Points[Edge`EP[1]]);
 			rk := (Abs(uk+1) + Abs(uk-1))/2;
 			Append(~V_r,rk);
 		end if;
 	end for;
-	Append(~Edge,V_r);
-	Edge[3] := Min(V_r);
+	Edge`Data := V_r;
+	Edge`r := Min(Append(V_r,5.0));
 end procedure;
 // Weights for edges in Abel-Jacobi map
 procedure DE_AJM_Weight( ~Edge, Points, Len : Lambda := RPI/2 )
@@ -65,7 +65,18 @@ procedure DE_AJM_Weight( ~Edge, Points, Len : Lambda := RPI/2 )
 	end for;
 	Append(~Edge,CCV);
 end procedure;
-
+procedure GJ_AJM_Weight( ~Edge, Points, Len )
+	V_r := []; Append(~Edge,5.);
+	for k in [1..Len] do
+		if k ne Edge[3] then
+			uk := (2*Points[k] - Edge[1][1] - Points[Edge[3]]) / (Edge[1][1] - Points[Edge[3]]);
+			rk := (Abs(uk+1) + Abs(uk-1))/2;
+			Append(~V_r,rk);
+			Edge[4] := Min(Edge[4],rk);
+		end if;
+	end for;
+	Append(~Edge,V_r);
+end procedure;
 
 procedure GJ_Params_Tree(STree,Points,m)
 // Compute parameters for Gauss-Chebychev integration
@@ -73,15 +84,17 @@ procedure GJ_Params_Tree(STree,Points,m)
 	// Min_r too bad?
 	assert STree`IntPars[1]-1 ge 3*10^-3;
 
-	OT := 1/500;
+	eps := 1/100;
 	Lr := []; r := STree`IntPars[1];
-	if r lt 1+(1/250) then
+	//if true then
+	if r lt 1+(1/50) then
 		r := (1/2)*(r+1); 
 	else
-		r -:= OT;
+		r -:= eps;
 	end if;
+	vprint SE,2 : "MinMax_IntPars:",STree`IntPars;
 	if m eq 2 then
-		k := 1/8;
+		k := 5;
 	else
 		k := 10;
 	end if;
@@ -92,41 +105,83 @@ procedure GJ_Params_Tree(STree,Points,m)
 	end while;
 
 	// Find best integration scheme for each edge and compute bound M
-	gm1 := Floor((STree`Length)/2);
 	NSchemes := #Lr;
 	LrM := [ <1,Lr[l]> : l in [1..NSchemes] ];
 	for k in [1..STree`Length] do
 		M := 1;
 		l := NSchemes;
-		while STree`Edges[k][3]-OT lt Lr[l] do
+		while STree`Edges[k]`r-eps lt Lr[l] do
 			l -:= 1;
 		end while;
-		STree`Edges[k][3] := l;
-		M := Ceiling(Lr[l]^gm1 * Exp( (1/m) * Log( &*[ STree`Edges[k][4][j] - Lr[l] : j in [1..STree`Length-1]])));
+		STree`Edges[k]`IntSch := l;
+		M := Ceiling(Lr[l]^(STree`Length-1) * Exp( (1/m) * Log( &*[ STree`Edges[k]`Data[j] - Lr[l] : j in [1..STree`Length-1]])));
 		LrM[l][1] := Max(M,LrM[l][1]);
 	end for;
 
-	// Number of integration points N
-	LrMN := [];
-	for k in [1..NSchemes] do
-		P := LrM[k];
-		achr := Argcosh(P[2]);
-		//Append(~LrMN,Append(P,Ceiling((Log(10)*Prec+Log(2*RPI*P[1])+1)/(2*achr))));
-		//Append(~LrMN,Append(P,Ceiling((Log(32*P[1]/15)+Log(10)*Prec-Log(1-Exp(achr)^(-2)))/(2*achr))));
-	end for;
-	vprint SE,2 : "Parameters(tree):",LrMN;
+	vprint SE,2 : "Parameters(tree):",LrM;
 	// Save parameters
-	//STree`Params := LrMN;
 	STree`Params := LrM;
 end procedure;
 
+function GJ_Params_AJM(ComplexEdges,SEC)
+// Compute parameters for Gauss-Chebychev integration
+	
+	// Edges = <[P],v_P,k,r_E>
+	m := SEC`Degree[1]; n := SEC`Degree[2];
+	NEdges := #ComplexEdges; NewEdges := [];
+	
+	Min_r := 5.;
+	Max_r := 0.;	
+
+	for j in [1..NEdges] do
+		Edge := ComplexEdges[j];
+		GJ_AJM_Weight(~Edge,SEC`LowPrecBranchPoints,n);
+		Min_r := Min(Min_r,Edge[4]);
+		Max_r := Max(Max_r,Edge[4]);
+		Append(~NewEdges,Edge);
+	end for;
+	// NewEdges = <[P],v_P,k,r_E,V_r>
+
+	eps := 1/100;
+	Lr := []; r := Min_r;
+	if r lt 1+(1/50) then
+		r := (1/2)*(r+1); 
+	else
+		r -:= eps;
+	end if;
+	k := 1;
+	while r lt Max_r do
+		Append(~Lr,r);
+		r +:= k;
+		k *:= 2;
+	end while;
+
+	// Find best integration scheme for each edge and compute bound M
+	NSchemes := #Lr;
+	LrM := [ <1,Lr[l]> : l in [1..NSchemes] ];
+	for k in [1..#ComplexEdges] do
+		M := 1;
+		l := NSchemes;
+		while NewEdges[k][4]-eps lt Lr[l] do
+			l -:= 1;
+		end while;
+		NewEdges[k][4] := l;
+		M := Ceiling(Lr[l]^(SEC`Degree[2]-2)  * Exp( (1/m) * Log( &*[ NewEdges[k][5][j] - Lr[l] : j in [1..SEC`Degree[2]-1]])));
+		LrM[l][1] := Max(M,LrM[l][1]);
+	end for;
+
+	vprint SE,2 : "Parameters(AJM):",LrM;
+
+	// Return parameters
+	return LrM, NewEdges;
+end function;
 
 procedure DE_Params_Tree(STree,Points,m)
 // Computes double-exponential integration integration parameters for a spanning tree
 	
 	// Make list of r's
 	MaxMinDiff := STree`IntPars[2]-STree`IntPars[1];
-	NSchemes := Max(Min(STree`Length,Floor(20*MaxMinDiff)),1);
+	NSchemes := Max(Min(Floor(STree`Length/2),Floor(10*MaxMinDiff)),1);
 
 	vprint SE,2 : "Number of schemes:",NSchemes;
 	r_min := (19/20) * STree`IntPars[1];
@@ -145,12 +200,12 @@ procedure DE_Params_Tree(STree,Points,m)
 	LrM := [ <1,1,Lr[l]> : l in [1..NSchemes] ];
 	for k in [1..STree`Length] do
 		l := NSchemes;
-		while (19/20)*STree`Edges[k][3] lt Lr[l] do
+		while (19/20)*STree`Edges[k]`r lt Lr[l] do
 			l -:= 1;
 		end while;
-		STree`Edges[k][3] := l;
-		M1 := Ceiling(Bound_M1(STree`Edges[k][4],STree`Length-1,m));
-		M2 := Ceiling(Bound_M2(STree`Edges[k][4],STree`Length-1,m,STree`Length-1,Lr[l]));
+		STree`Edges[k]`IntSch := l;
+		M1 := Ceiling(Bound_M1(STree`Edges[k]`Data,STree`Length-1,m));
+		M2 := Ceiling(Bound_M2(STree`Edges[k]`Data,STree`Length-1,m,STree`Length-1,Lr[l]));
 		assert M2 ge M1;
 		LrM[l][1] := Max(M1,LrM[l][1]);
 		LrM[l][2] := Max(M2,LrM[l][2]);
@@ -174,10 +229,7 @@ function DE_Params_AJM(ComplexEdges,SEC)
 	for j in [1..NEdges] do
 		Edge := ComplexEdges[j];
 		DE_AJM_Weight(~Edge,SEC`LowPrecBranchPoints,n);
-		if Edge[4] lt Min_r then
-			Min_r := Edge[4];
-			MinEdge := Edge;
-		end if;
+		Min_r := Min(Min_r,Edge[4]);
 		Max_r := Max(Max_r,Edge[4]);
 		Append(~NewEdges,Edge);
 	end for;
@@ -187,7 +239,7 @@ function DE_Params_AJM(ComplexEdges,SEC)
 	Min_r *:= (19/20);
 	Max_r *:= (19/20);
 	
-	NSchemes := Max(Min(NEdges,Floor(20*(Max_r-Min_r))),1);
+	NSchemes := Max(Min(Floor(NEdges/2),Floor(10*(Max_r-Min_r))),1);
 
 	vprint SE,2 : "Number of schemes(AJM):",NSchemes;
 	if NSchemes eq 1 and Abs(Min_r-Max_r) lt 10^-5 then
@@ -208,7 +260,6 @@ function DE_Params_AJM(ComplexEdges,SEC)
 		NewEdges[k][4] := l;
 		M1 := Ceiling(Bound_M1(NewEdges[k][5],n-1,m:AJM));
 		M2 := Ceiling(Bound_M2(NewEdges[k][5],n-1,m,n-2,Lr[l]:AJM));
-		assert M2 ge M1;
 		LrM[l][1] := Max(M1,LrM[l][1]);
 		LrM[l][2] := Max(M2,LrM[l][2]);
 	end for;
@@ -220,17 +271,66 @@ function DE_Params_AJM(ComplexEdges,SEC)
 end function;
 
 
-function EdgeData( E,Points )
-	// Data = [ u_1, ... , u_{n-2},(b-a)/2,(b+a)/(b-a),up ]
-	Data, up :=  MakeCCVector( E,Points );
-	return Append(Data,up);
+// Edges
+declare type SEEdge;
+
+declare attributes SEEdge :
+	EP, // End points = [E1,E2]
+	Data, // Data = [ u_1, ... , u_{n-2},(b-a)/2,(b+a)/(b-a),C_ab ]
+	up,
+	r,
+	IntSch;
+
+intrinsic Print( E::SEEdge )
+{ Printing }
+	print "Endpoints:",E`EP;
+	/*print "Data:",E`Data;
+	print "up:",E`up;
+	print "r:",E`r;
+	print "IntSch:",E`IntSch;*/
+end intrinsic;
+
+
+function SE_Edge(k,l:r:=0)
+	E := New(SEEdge);
+	E`EP := [k,l];
+	if r ne 0 then
+		E`r := r;
+	end if;
+	return E;
 end function;
 
-procedure TreeData( ~SpTree, Points )
-	SpTree`Data := [ EdgeData(E,Points) : E in SpTree`Edges ];
+procedure EdgeData( E,Points,Zetas,m,n )
+	a := Points[E`EP[1]];
+	b := Points[E`EP[2]];
+	if E`EP[1] lt E`EP[2] then
+		Pts := Remove(Remove(Points,E`EP[1]),E`EP[2]-1);
+	else
+		Pts := Remove(Remove(Points,E`EP[2]),E`EP[1]-1);
+	end if;
+	CCV, up := SortByRealPart([ (2*x-b-a)/(b-a) : x in Pts ]);
+	bma := b-a;
+	Append(~CCV,bma/2);
+	Append(~CCV,(b+a)/bma);
+	C_ab := Exp( (n/m) * Log(b-a)) * Zetas[(up+1) mod 2 + 1]; 
+	Append(~CCV,C_ab);
+	E`up := up;
+	E`Data := CCV;
 end procedure;
 
-// Spanning tree
+procedure FlipEdge( E )
+	E`EP := Reverse(E`EP);
+end procedure;
+
+
+procedure TreeData( ~SpTree, Points, Zetas, m )
+	//SpTree`Data := [ EdgeData(E,Points) : E in SpTree`Edges ];
+	for E in SpTree`Edges do
+		EdgeData(E,Points,Zetas,m,SpTree`Length+1);
+	end for;
+end procedure;
+
+// Spanning tree type 
 declare type SpTree;
 
 declare attributes SpTree :
@@ -238,14 +338,12 @@ declare attributes SpTree :
 	Edges,
 	IntPars,
 	ExtEdges,
-	Params,
-	Data;
-
+	Params;
 
 procedure SpanningTree(SEC)
 // Computes a spanning tree between Points
 
-	assert SEC`IntegrationType in ["DE","GC","GJ"];
+	assert SEC`IntegrationType in ["DE","GJ"];
 	Points := SEC`LowPrecBranchPoints;	
 	Len := SEC`Degree[2];
 	Edges := [];
@@ -255,7 +353,7 @@ procedure SpanningTree(SEC)
 	T`Edges := [];
 	T`ExtEdges := [];
 
-	Min_r := 20.;
+	Min_r := 5.;
 	Max_r := 0.;	
 
 	// Use minimal euclidean distance tree?
@@ -269,12 +367,14 @@ procedure SpanningTree(SEC)
 	for k in [1..Len] do
 		for l in [k+1..Len] do
 			if EuclideanDistance then
-				Edge := <k,l,-Abs(Points[k]-Points[l])>;
+				//Edge := <k,l,-Abs(Points[k]-Points[l])>;
+				Edge := SE_Edge(k,l:r:=-Abs(Points[k]-Points[l]));
 			else
-				Edge := <k,l,20.>;
+				//Edge := <k,l,20.>;
+				Edge := SE_Edge(k,l:r:=5.);
 				if SEC`IntegrationType eq "DE" then
 					DE_Edge_Weight(~Edge,Points,Len);
-				elif SEC`IntegrationType in ["GC","GJ"] then
+				elif SEC`IntegrationType eq "GJ" then
 					GJ_Edge_Weight(~Edge,Points,Len);
 				else
 					error Error("Unsupported integration type.");
@@ -292,15 +392,15 @@ procedure SpanningTree(SEC)
 	while k lt T`Length do
 		l := 1;
 		if k ne 0 then
-			while Taken[Edges[l][1]] eq Taken[Edges[l][2]] do
+			while Taken[Edges[l]`EP[1]] eq Taken[Edges[l]`EP[2]] do
 				l +:= 1;
 			end while;
 		end if;
 		if EuclideanDistance then
-			NewEdge := <Edges[l][1],Edges[l][2],20.>;
+			NewEdge := SE_Edge(Edges[l]`EP[1],Edges[l]`EP[2]:r:=5.);
 			if SEC`IntegrationType eq "DE" then
 				DE_Edge_Weight(~NewEdge,Points,Len);
-			elif SEC`IntegrationType in ["GC","GJ"] then
+			elif SEC`IntegrationType eq "GJ" then
 				GJ_Edge_Weight(~NewEdge,Points,Len);
 			else
 				error Error("Unsupported integration type.");
@@ -308,28 +408,27 @@ procedure SpanningTree(SEC)
 		else
 			NewEdge := Edges[l];
 		end if;
-		if Taken[NewEdge[2]] eq 1 then
+		if Taken[NewEdge`EP[2]] eq 1 then
 			// Flip edge
-			Append(~T`Edges,<NewEdge[2],NewEdge[1],NewEdge[3],NewEdge[4]>);
-		else
-			Append(~T`Edges,NewEdge);	
+			FlipEdge(NewEdge);
 		end if;
+		Append(~T`Edges,NewEdge);
 		k +:= 1;
-		Taken[NewEdge[1]] := 1;
-		Taken[NewEdge[2]] := 1;
+		Taken[NewEdge`EP[1]] := 1;
+		Taken[NewEdge`EP[2]] := 1;
 		
-		if Min_r gt NewEdge[3] then
-			Min_r := NewEdge[3];
+		if Min_r gt NewEdge`r then
+			Min_r := NewEdge`r;
 			T`ExtEdges[1] := k;
 		end if;	
-		if Max_r lt NewEdge[3] then
-			Max_r := NewEdge[3];
+		if Max_r lt NewEdge`r then
+			Max_r := NewEdge`r;
 			T`ExtEdges[2] := k;
 		end if;
 	end while;
 	T`IntPars := [Min_r,Max_r];
 
-	if SEC`IntegrationType in ["GC","GJ"] then
+	if SEC`IntegrationType eq "GJ" then
 		if T`IntPars[1]-1 lt 3*10^-3 then
 			SEC`IntegrationType := "DE";
 			vprint SE,1 : "Changed integration type to",SEC`IntegrationType,"due to bad integration parameter:",T`IntPars[1];
@@ -350,7 +449,7 @@ intrinsic Print( STree::SpTree : Edges := false )
 	print "Spanning tree between",STree`Length+1,"points";
 	print "Integration parameter:",STree`IntPars;
 	print "Worst/Best edge:",STree`ExtEdges;
-	print "Params:",STree`Params;
+	//print "Params:",STree`Params;
 	if Edges then
 		print "Edges:",STree`Edges;
 	end if;
