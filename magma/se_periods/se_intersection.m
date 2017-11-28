@@ -9,8 +9,7 @@
 import "se_anal_cont.m": AC_mthRoot;
 import "se_help_funcs.m": MakeCCVector;
 
-
-Pi30 := Pi(RealField(30));
+PI30 := Pi(RealField(30));
 
 function SE_IntersectionMatrix( spsm_Matrix, m,n )
 	// Building block matrices
@@ -54,46 +53,35 @@ end function;
 
 
 function SE_IntersectionNumber( Edge1,Edge2,Points,m,n,Zetas ) 
-	NrOfEndPts := #Set([Edge1[1],Edge1[2],Edge2[1],Edge2[2]]);
+	NrOfEndPts := #Set(Edge1`EP cat Edge2`EP);
 	if NrOfEndPts eq 4 then
 		return <0,0>;
 	end if;
 
-	// Trivial cases
-	if Edge1[1] eq Edge1[2] or Edge2[1] eq Edge2[2] then
-		// a = b or c = d
-		error Error("Bad edge in spanning tree.");
-	end if;
-	if ( Edge1[1] eq Edge2[1] and Edge1[2] eq Edge2[2] ) or ( Edge1[1] eq Edge2[2] and Edge1[2] eq Edge2[1] ) then
-		// ( a = c and b = d ) or ( a = d and b = c )
-		error Error("Bad edge in spanning tree.");
-		return <0,0,0>;
-	end if;
-
 	// End points
-	a := Points[Edge1[1]]; b := Points[Edge1[2]];
-	c := Points[Edge2[1]]; d := Points[Edge2[2]];	
+	a := Points[Edge1`EP[1]]; b := Points[Edge1`EP[2]];
+	c := Points[Edge2`EP[1]]; d := Points[Edge2`EP[2]];	
+
+	// Trivial cases
+	if a eq b or c eq d then
+		error Error("Bad edge in spanning tree.");
+	end if;
+	if ( a eq c and b eq d ) or ( a eq d and d eq c ) then
+		error Error("Bad edge in spanning tree.");
+	end if;
 
 	// Arg of factor corresponding to end points
-	phi := Arg((b-a)/(d-c));	
-
-	// Making vectors of centers of circumcircles
-	CCV1, up1 := MakeCCVector(Edge1,Points);
-	CCV2, up2 := MakeCCVector(Edge2,Points);
-
-	// Constants
-	C_ab := Exp( (n/m) * Log(b-a)) * Zetas[(up1+1) mod 2 + 1]; 
-	C_cd := Exp( (n/m) * Log(d-c)) * Zetas[(up2+1) mod 2 + 1];
+	phi := Arg(Edge1`Data[n-1]/Edge2`Data[n-1]);
 
 	// Cases
-	if Edge1[1] eq Edge2[1] then
+	if a eq c then
 		//"################################ Case1: a = c ################################";
-		AR1 := AC_mthRoot(-1,CCV1,Zetas,up1,m,n-2);
-		AR2 := AC_mthRoot(-1,CCV2,Zetas,up2,m,n-2);
-		Val_ab := C_ab * AR1;
-		Val_cd := C_cd * AR2;		
+		AR1 := AC_mthRoot(-1,Edge1`Data,Zetas,Edge1`up,m,n-2);
+		AR2 := AC_mthRoot(-1,Edge2`Data,Zetas,Edge2`up,m,n-2);
+		Val_ab := Edge1`Data[n+1] * AR1;
+		Val_cd := Edge2`Data[n+1] * AR2;		
 		Val := Val_cd/Val_ab;
-		k := Round(((1/(2*Pi30)) * ( phi + m * Arg(Val) )));
+		k := Round(((1/(2*PI30)) * ( phi + m * Arg(Val) )));
 		/*k := Round(k_);
 		assert Abs(k-k_) lt 10^-10;*/
 		if phi gt 0 then
@@ -101,14 +89,14 @@ function SE_IntersectionNumber( Edge1,Edge2,Points,m,n,Zetas )
 		else
 			return <-k,-1-k>;
 		end if;
-	elif Edge1[2] eq Edge2[1] then
+	elif b eq c then
 		//"################################ Case2: b = c ################################";
-		AR1 := AC_mthRoot(1,CCV1,Zetas,up1,m,n-2);
-		AR2 := AC_mthRoot(-1,CCV2,Zetas,up2,m,n-2);
-		Val_ab := C_ab * AR1;
-		Val_cd := C_cd * AR2;		
+		AR1 := AC_mthRoot(1,Edge1`Data,Zetas,Edge1`up,m,n-2);
+		AR2 := AC_mthRoot(-1,Edge2`Data,Zetas,Edge2`up,m,n-2);
+		Val_ab := Edge1`Data[n+1] * AR1;
+		Val_cd := Edge2`Data[n+1] * AR2;		
 		Val := Val_cd/Val_ab;
-		k := Round((1/(2*Pi30)) * ( phi + m * Arg(Val) ) + (1/2));
+		k := Round((1/(2*PI30)) * ( phi + m * Arg(Val) ) + (1/2));
 		/*k := Round(k_);
 		assert Abs(k-k_) lt 10^-10;*/
 		return <-k,1-k>;

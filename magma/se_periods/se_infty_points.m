@@ -6,9 +6,10 @@
 
 // Import functions
 import "se_de_int.m": DE_Integrals_Edge_AJM, DE_Int_Params;
+import "se_gj_int.m": GJ_Integrals_Edge_AJM;
 import "se_abel_jacobi.m": PeriodLatticeReduction;
 import "se_help_funcs.m": IsPoint, Distance, SE_DKPEB;
-import "se_spanning_tree.m": DE_Params_AJM;
+import "se_spanning_tree.m": DE_Params_AJM, GJ_Params_AJM;
 
 
 intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
@@ -22,9 +23,9 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 	if not IsDefined(SEC`AJM_InftyPoints,k) then 
 		if delta eq 1 then
 			Append(~SEC`AJM_InftyPoints,SEC`AJM_SumOfInftyPoints);
-		elif &and[IsDefined(SEC`AJM_InftyPoints,j) : j in Remove([1..delta],k) ] then
-			LastInftyPoint := SEC`AJM_SumOfInftyPoints - &+[ SEC`AJM_InftyPoints[j] : j in Remove([1..delta],k) ];
-			SEC`AJM_InftyPoints[k] := Matrix(R,2*SEC`Genus,1,[ v-Round(v) : v in Eltseq(LastInftyPoint) ]);
+		//elif &and[IsDefined(SEC`AJM_InftyPoints,j) : j in Remove([1..delta],k) ] then
+			//LastInftyPoint := SEC`AJM_SumOfInftyPoints - &+[ SEC`AJM_InftyPoints[j] : j in Remove([1..delta],k) ];
+			//SEC`AJM_InftyPoints[k] := Matrix(R,2*SEC`Genus,1,[ v-Round(v) : v in Eltseq(LastInftyPoint) ]);
 		else
 		while a ge 0 do
 			a -:= n;
@@ -40,6 +41,7 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 
 		// Iterate branch points
 		SEC`BranchPoints := SE_DKPEB(SEC`DefiningPolynomial,SEC`BranchPoints,Precision(C));
+
 		f_x := ChangeRing(SEC`DefiningPolynomial,C);
 		SEC`ComplexPolynomial := f_x;
 
@@ -96,7 +98,13 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 				end for;
 
 				// Integration parameters
-				Params, ComplexEdges := DE_Params_AJM(ComplexEdges,SEC);
+				if SEC`IntegrationType eq "DE" then
+					Params, ComplexEdges := DE_Params_AJM(ComplexEdges,SEC);
+				elif SEC`IntegrationType eq "GJ" then
+					Params, ComplexEdges := GJ_Params_AJM(ComplexEdges,SEC);
+				else
+					error Error("Unsupported integration type.");
+				end if;
 
 				// Maximal M_1
 				MaxM1 := Max( [ P[1] : P in Params ]);
@@ -111,20 +119,38 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 					SEC`ComplexPolynomial := ChangeRing(SEC`DefiningPolynomial,C);
 					SEC`BranchPoints := SE_DKPEB(SEC`DefiningPolynomial,SEC`BranchPoints,Precision(C));
 				end if;
-				DEInts := DE_Integration(Params,SEC:AJM); NInts := #DEInts;
 
 				// Actual integrations from P_k to P
 				ComplexIntegrals := [ Matrix(SEC`ComplexField,SEC`Genus,1,[]) : j in [1..delta] ];
-				for CE in ComplexEdges do
-					l := NInts;
-					ComplexIntegral0 :=  DE_Integrals_Edge_AJM(CE,SEC,DEInts[Round(CE[4])]);
-					ComplexIntegrals[1] +:= CE[2] * Matrix(SEC`ComplexField,SEC`Genus,1,ComplexIntegral0);
-					for k in [2..delta] do
-						CI0seq := Eltseq(ComplexIntegral0);
-						ComplexIntegral0 := Matrix(SEC`ComplexField,SEC`Genus,1,[ SEC`Zetas[ZetaPows[j]] * CI0seq[j] : j in [1..SEC`Genus]]);
-						ComplexIntegrals[k] +:= CE[2] * ComplexIntegral0;
+				if SEC`IntegrationType eq "DE" then
+					DEInts := DE_Integration(Params,SEC:AJM); NInts := #DEInts;
+					vprint SE,1 : "(AJM) using double-exponential integration...";
+					vprint SE,2 : "(AJM) Params:",Params;
+					for CE in ComplexEdges do
+						ComplexIntegral0 := DE_Integrals_Edge_AJM(CE,SEC,DEInts[Round(CE[4])]);
+						ComplexIntegrals[1] +:= CE[2] * Matrix(SEC`ComplexField,SEC`Genus,1,ComplexIntegral0);
+						for k in [2..delta] do
+							CI0seq := Eltseq(ComplexIntegral0);
+							ComplexIntegral0 := Matrix(SEC`ComplexField,SEC`Genus,1,[ SEC`Zetas[ZetaPows[j]] * CI0seq[j] : j in [1..SEC`Genus]]);
+							ComplexIntegrals[k] +:= CE[2] * ComplexIntegral0;
+						end for;
 					end for;
-				end for;
+				elif SEC`IntegrationType eq "GJ" then
+					GJInts := GJ_Integration(Params,SEC:AJM); NInt := #GJInts;
+					vprint SE,1 : "(AJM) using Gauss-Jacobi integration...";
+					vprint SE,2 : "(AJM) Params:",Params;
+					for CE in ComplexEdges do
+						ComplexIntegral0 :=  GJ_Integrals_Edge_AJM(CE,SEC,GJInts[Round(CE[4])]);
+						ComplexIntegrals[1] +:= CE[2] * Matrix(SEC`ComplexField,SEC`Genus,1,ComplexIntegral0);
+						for k in [2..delta] do
+							CI0seq := Eltseq(ComplexIntegral0);
+							ComplexIntegral0 := Matrix(SEC`ComplexField,SEC`Genus,1,[ SEC`Zetas[ZetaPows[j]] * CI0seq[j] : j in [1..SEC`Genus]]);
+							ComplexIntegrals[k] +:= CE[2] * ComplexIntegral0;
+						end for;
+					end for;
+				else
+					error Error("Unsupported integration type.");
+				end if;
 
 				// Reduce complex vector modulo (A,B)
 				RealIntegrals := [ Matrix(R,2*SEC`Genus,1,PeriodLatticeReduction(Eltseq(CI),SEC)) : CI in ComplexIntegrals ];
@@ -147,6 +173,7 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 
 			// Compute roots // This is veeeery slow...
 			Roots_gt := Roots(g_t);
+
 			Rts_g_t := [ R[1] : R in Roots_gt ];
 			assert #Rts_g_t eq Degree(g_t);
 			Points := [ ];

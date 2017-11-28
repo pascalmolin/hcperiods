@@ -9,41 +9,41 @@
 // Import functions;
 import "se_spanning_tree.m": SpanningTree;
 import "se_de_int.m": DE_Int_Params, DE_Integrals_Tree;
-import "se_gc_int.m": GJ_Integrals_Tree, GC_Integrals_Tree;
+import "se_gj_int.m": GJ_Integrals_Tree, GC_Integrals_Tree;
 import "se_anal_cont.m:": AC_mthRoot;
 import "se_intersection.m": SE_IntersectionMatrix, SE_IntersectionNumber;
 import "se_symplectic_basis.m":SymplecticBasis;
 
 
-intrinsic SE_BigPeriodMatrix( f::RngMPolElt : Prec := 40 ) -> Mtrx
+intrinsic SE_BigPeriodMatrix( f::RngMPolElt : Prec := 30, IntegrationType := "Opt" ) -> Mtrx
 { Computes a big period matrix associated to f(x,y) = y^m - g(x) to precision Prec }
-	S := SE_Curve(f:Prec:=Prec,Small:=false,AbelJacobi:=false);
-	return S`BigPeriodMatrix;
+	S := SE_Curve(f:Prec:=Prec,Small:=false,AbelJacobi:=false,IntegrationType:=IntegrationType);
+	return ChangeRing(S`BigPeriodMatrix,ComplexField(Prec));
 end intrinsic;
-intrinsic SE_BigPeriodMatrix( f::RngUPolElt,m::RngIntElt : Prec := 40 ) -> Mtrx
+intrinsic SE_BigPeriodMatrix( f::RngUPolElt,m::RngIntElt : Prec := 30, IntegrationType := "Opt" ) -> Mtrx
 { Computes a big period matrix associated to y^m = f(x) to precision Prec }
-	S := SE_Curve(f,m:Prec:=Prec,Small:=false,AbelJacobi:=false);
-	return S`BigPeriodMatrix;
+	S := SE_Curve(f,m:Prec:=Prec,Small:=false,AbelJacobi:=false,IntegrationType:=IntegrationType);
+	return ChangeRing(S`BigPeriodMatrix,ComplexField(Prec));
 end intrinsic;
-intrinsic SE_BigPeriodMatrix( Points::SeqEnum[FldComElt],m::RngIntElt : LeadingCoeff := 1, Prec := 40 ) -> Mtrx
+intrinsic SE_BigPeriodMatrix( Points::SeqEnum[FldComElt],m::RngIntElt : LeadingCoeff := 1, Prec := 30, IntegrationType := "Opt" ) -> Mtrx
 { Computes a big period matrix associated to y^m = LeadingCoeff * \prod[(x-p) : p in Points] to precision Prec }
 	S := SE_Curve(Points,m:Prec:=Prec,Small:=false,AbelJacobi:=false);
-	return S`BigPeriodMatrix;
+	return ChangeRing(S`BigPeriodMatrix,ComplexField(Prec));
 end intrinsic;
-intrinsic SE_SmallPeriodMatrix( f::RngMPolElt : Prec := 40 ) -> Mtrx
+intrinsic SE_SmallPeriodMatrix( f::RngMPolElt : Prec := 30, IntegrationType := "Opt" ) -> Mtrx
 { Computes a small period matrix associated to f(x,y) = y^m - g(x) to precision Prec }
-	S := SE_Curve(f:Prec:=Prec,Small:=true,AbelJacobi:=false);
-	return S`SmallPeriodMatrix;
+	S := SE_Curve(f:Prec:=Prec,Small:=true,AbelJacobi:=false,IntegrationType:=IntegrationType);
+	return ChangeRing(S`SmallPeriodMatrix,ComplexField(Prec));
 end intrinsic;
-intrinsic SE_SmallPeriodMatrix( f::RngUPolElt,m::RngIntElt : Prec := 40 ) -> Mtrx
+intrinsic SE_SmallPeriodMatrix( f::RngUPolElt,m::RngIntElt : Prec := 30, IntegrationType := "Opt" ) -> Mtrx
 { Computes a small period matrix associated to y^m = f(x) to precision Prec }
-	S := SE_Curve(f,m:Prec:=Prec,Small:=true,AbelJacobi:=false);
-	return S`SmallPeriodMatrix;
+	S := SE_Curve(f,m:Prec:=Prec,Small:=true,AbelJacobi:=false,IntegrationType:=IntegrationType);
+	return ChangeRing(S`SmallPeriodMatrix,ComplexField(Prec));
 end intrinsic;
-intrinsic SE_SmallPeriodMatrix( Points::SeqEnum[FldComElt],m::RngIntElt : LeadingCoeff := 1, Prec := 40 ) -> Mtrx
+intrinsic SE_SmallPeriodMatrix( Points::SeqEnum[FldComElt],m::RngIntElt : LeadingCoeff := 1, Prec := 30, IntegrationType := "Opt" ) -> Mtrx
 { Computes a small period matrix associated to y^m = LeadingCoeff * \prod[(x-p) : p in Points] to precision Prec }
-	S := SE_Curve(Points,m:Prec:=Prec,Small:=true,AbelJacobi:=false);
-	return S`SmallPeriodMatrix;
+	S := SE_Curve(Points,m:Prec:=Prec,Small:=true,AbelJacobi:=false,IntegrationType:=IntegrationType);
+	return ChangeRing(S`SmallPeriodMatrix,ComplexField(Prec));
 end intrinsic;
 
 
@@ -56,8 +56,8 @@ procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 	m := SEC`Degree[1]; n := SEC`Degree[2];
 
 	// Complex fields
-	C<i> := SEC`ComplexField;
-	CS<i> := ComplexField(SEC`Prec);
+	C<I> := SEC`ComplexField;
+	CS<I> := ComplexField(SEC`Prec);
 	
 	// Spanning tree
 	STree := SEC`SpanningTree;
@@ -80,12 +80,11 @@ procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 		vprint SE,1 : "using double-exponential integration...";
 		vprint SE,2 : [ <D`NPoints,D`r> : D in DEInts ];	
 		Periods, ElemInts := DE_Integrals_Tree(SEC,DEInts);
-	elif SEC`IntegrationType eq "GC" then
-		vprint SE,1 : "using Gauss-Chebychev integration...";
-		Periods, ElemInts := GC_Integrals_Tree(SEC);
 	elif SEC`IntegrationType eq "GJ" then
+		vprint SE,1 : "Computing integration parameters...";
 		GJInts := GJ_Integration(STree`Params,SEC);
 		vprint SE,1 : "using Gauss-Jacobi integration...";
+		vprint SE,2 : "GJ_Integrations:",GJInts;
 		Periods, ElemInts := GJ_Integrals_Tree(SEC,GJInts);
 	else
 		error Error("Invalid integration type.");
@@ -178,6 +177,7 @@ procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 		if MaxSymDiff ge SEC`Error then
 			print "Small period matrix: Requested accuracy could not not be reached.";
 			print "Significant digits:",Floor(-Log(10,MaxSymDiff));
+			assert false;
 		end if;	
 		
 		// Testing positive definiteness of the imaginary part of the period matrix

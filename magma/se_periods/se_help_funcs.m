@@ -23,7 +23,7 @@ function MakeCCVector( E, Points )
 	// E = < a, b > or E = < i , b >
 	assert Type(E[1]) eq RngIntElt;
 	a := Points[E[1]];
-	if Type(E[2]) eq RngIntElt then
+	if Type(E) eq SEEdge then
 		b := Points[E[2]];
 		if E[1] lt E[2] then
 			Pts := Remove(Remove(Points,E[1]),E[2]-1);
@@ -35,6 +35,7 @@ function MakeCCVector( E, Points )
 		Append(~CCV,bma/2);
 		Append(~CCV,(b+a)/bma);
 	elif Type(E[2]) eq FldComElt then
+		a := Points[E[1]];
 		p := E[2];
 		Pts := Remove(Points,E[1]);
 		CCV, up := SortByRealPart([ (2*x-p-a)/(p-a) : x in Pts ]);
@@ -93,34 +94,20 @@ end function;
 
 
 function SE_DKPEB( f,Z,Digits )
-// Computes the roots of the complex polynomial f to D decimal digits from approximations Z
-	f *:= (1/LeadingCoefficient(f));
-	f := ChangeRing(f,ComplexField(2*Digits));
+	f := ChangeRing(f/LeadingCoefficient(f),ComplexField(2*Digits));
+	Z := ChangeUniverse(Z,ComplexField(2*Digits));
 	N := Degree(f);
 	RMV := [ Remove([1..N],j) : j in [1..N] ];
 	Err2 := (1/2) * 10^-(Digits+1);
+	// Start root approximation
 	W := [ Evaluate(f,Z[j])/ &*[ (Z[j] - Z[k]) : k in RMV[j] ] : j in [1..N] ];
-	w0 :=  Max([ Abs(W[j]) : j in [1..N] ]);
-	if w0 lt Err2 then
-		return ChangeUniverse(Z,ComplexField(Digits));
-	end if;
-	p := Precision(Universe(Z));
-	d0 := DistanceII(Z);
-	if 2*w0 lt d0 then
-		repeat
-			Z := [ Z[j] - W[j] : j in [1..N] ];
-			p := Max(2*p,Digits);
-			ChangeUniverse(~Z,ComplexField(p));
-			W := [ Evaluate(f,Z[j])/ &*[ (Z[j] - Z[k]) : k in RMV[j] ] : j in [1..N] ];
-			w0 := Max([ Abs(W[j]) : j in [1..N] ]);
-		until w0 lt Err2;
-		return Sort(Z,SE_OrdFldComElt);
-	else
-		assert false;
-		return [];
-	end if;
+	repeat
+		Z := [ Z[j] - W[j] : j in [1..N] ];
+		W := [ Evaluate(f,Z[j])/ &*[ (Z[j] - Z[k]) : k in RMV[j] ] : j in [1..N] ];
+		w0 := Max([ Abs(W[j]) : j in [1..N] ]);
+	until w0 lt Err2;
+	return Z;
 end function;
-
 
 
 

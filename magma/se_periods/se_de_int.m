@@ -202,6 +202,7 @@ intrinsic DE_Integration( Params, SEC : AJM := false ) -> SeqEnum[DE_Int]
 		r := R!P[3];
 
 		// Compute N,h
+		Alpha := 1/m;
 		X_r := Cos(r) * Sqrt( ( Pi(R) / (2*Lambda*Sin(r))) - 1 );
 		B_ra := (2/Cos(r)) * ( (X_r/2) * (1/(Cos(Lambda*Sin(r))^(2*Alpha)) + (1/X_r^(2*Alpha))) ) + (1/(2*Alpha*Sinh(X_r)^(2*Alpha)));
 		h := Real( 4 * RPi2 * r /  ( D+Log(2*M2 * B_ra + 1)));
@@ -247,7 +248,7 @@ end intrinsic;
 //////////////////////////////////////////////////////////
 
 
-function DE_Integrals_Factor( VectorIntegral, EdgeData, SEC )
+function DE_Integrals_Factor( VectorIntegral, Edge, SEC )
 // EdgeData = [ u_1,...,u_{n-2}, (b-a)/2, (b+a)/(b-a), up ]
 	C<I> := SEC`ComplexField; 
 	C0 := Zero(C);
@@ -259,12 +260,12 @@ function DE_Integrals_Factor( VectorIntegral, EdgeData, SEC )
 	Integrals := []; // g x (m-1) array of integrals
 
 	// ((b-a)/2)^i, i = 1,..,n
-	Fact1 := [ EdgeData[n-1] ];
+	Fact1 := [ Edge`Data[n-1] ];
 	for j in [2..DFF[3][DFF[2]]+1] do
-		Append(~Fact1,EdgeData[n-1] * Fact1[j-1]);
+		Append(~Fact1,Edge`Data[n-1] * Fact1[j-1]);
 	end for;
 	// (2/(b-a))^(nj/m), j = 1,..,m-1
-	z := Exp( (n/m) * -Log(EdgeData[n-1]) ); Fact2 := [z];
+	z := Exp( (n/m) * -Log(Edge`Data[n-1]) ); Fact2 := [z];
 	for j in [2..DFF[2]+DFF[1]-1] do
 		Append(~Fact2,z*Fact2[j-1]);
 	end for;
@@ -272,16 +273,15 @@ function DE_Integrals_Factor( VectorIntegral, EdgeData, SEC )
 	// Shift integral back by powers of (p+a)/(p-a)
 	ct := 0;
 	for j in [1..DFF[2]] do
-		PolynomialShiftVector(~VectorIntegral,EdgeData[n],DFF[3][j],ct);
+		PolynomialShiftVector(~VectorIntegral,Edge`Data[n],DFF[3][j],ct);
 		ct +:= DFF[3][j];
 	end for;
 
 	// Multiply by correct power of zeta, (1-zeta) and ((p-a)/2)^(i+1-jn/m)
 	ct := 1; 
-	up := Floor(EdgeData[n+1]);
 	for j in [1..DFF[2]] do
 		for ij in [0..DFF[3][j]-1] do
-			Pow := -((up + 1) mod 2)*DFF[4][ct] mod (2*m) + 1;
+			Pow := -((Edge`up + 1) mod 2)*DFF[4][ct] mod (2*m) + 1;
 			VectorIntegral[ct] *:= SEC`Zetas[Pow] * Fact1[ij+1] * Fact2[DFF[4][ct]];
 			Append(~ElementaryIntegrals, VectorIntegral[ct]);
 			Pow := -2*DFF[4][ct] mod (2*m) + 1;
@@ -300,17 +300,16 @@ function DE_Integrals_Factor( VectorIntegral, EdgeData, SEC )
 end function;
 
 
-function DE_Integrals(EdgeData,SEC,DEInt)
+function DE_Integrals(Edge,SEC,DEInt)
 	C<I> := SEC`ComplexField;
 	C_0 := Zero(C); g := SEC`Genus; m := SEC`Degree[1]; n := SEC`Degree[2];
 	DFF := SEC`HolomorphicDifferentials;
 	VectorIntegral := [ C_0 : j in [1..g] ];
-	up := Floor(EdgeData[n+1]);
 
 	// Evaluate differentials at abisccsas
 	for t in [1..DEInt`NPoints] do
 		x := DEInt`Abscissas[t];
-		y := DEInt`Weights[t][2]/AC_mthRoot(x,EdgeData,SEC`Zetas,up,m,n-2); // 1/y(x)
+		y := DEInt`Weights[t][2]/AC_mthRoot(x,Edge`Data,SEC`Zetas,Edge`up,m,n-2); // 1/y(x)
 		wy := y^DFF[1] * DEInt`Weights[t][1];
 		ct := 1;
 		for j in [1..DFF[2]] do
@@ -330,7 +329,7 @@ function DE_Integrals(EdgeData,SEC,DEInt)
 			continue;
 		end if;
 		x := -x;
-		y := DEInt`Weights[t][2]/AC_mthRoot(x,EdgeData,SEC`Zetas,up,m,n-2); // 1/y(x)
+		y := DEInt`Weights[t][2]/AC_mthRoot(x,Edge`Data,SEC`Zetas,Edge`up,m,n-2); // 1/y(x)
 		wy := y^DFF[1] * DEInt`Weights[t][1];
 		ct := 1;
 		for j in [1..DFF[2]] do
@@ -372,7 +371,8 @@ function DE_Integrals_Tree( SEC, DEInts )
 // Compute integrals for spanning tree
 	Periods := []; ElementaryIntegrals := [];
 	for k in [1..SEC`Degree[2]-1] do
-		P, EI := DE_Integrals_Edge(SEC`SpanningTree`Data[k],SEC,DEInts[Round(SEC`SpanningTree`Edges[k][3])]);
+		vprint SE,2 : "Integrating edge #:",k;
+		P, EI := DE_Integrals_Edge(SEC`SpanningTree`Edges[k],SEC,DEInts[SEC`SpanningTree`Edges[k]`IntSch]);
 		Append(~Periods,P);
 		Append(~ElementaryIntegrals,EI);
 	end for;

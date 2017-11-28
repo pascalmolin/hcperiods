@@ -8,9 +8,10 @@
 // Import global settings
 import "se_period_matrix.m": SE_PeriodMatrix;
 import "se_de_int.m": DE_Integrals_Edge_AJM, DE_Int_Params;
+import "se_gj_int.m": GJ_Integrals_Edge_AJM;
 import "se_help_funcs.m": MakeCCVector, Distance, SE_DKPEB;
 import "se_anal_cont.m": AC_mthRoot;
-import "se_spanning_tree.m": DE_Params_AJM;
+import "se_spanning_tree.m": DE_Params_AJM, GJ_Params_AJM;
 
 
 function PeriodLatticeReduction(V,SEC)
@@ -52,17 +53,17 @@ procedure SE_TreeMatrix(SEC)
 	TM := ZeroMatrix(Integers(),n,n-1);
 	Taken := [ 0 : j in [1..n] ];
 	Tree := SEC`SpanningTree`Edges;
-	P_0 := Tree[1][1];
+	P_0 := Tree[1]`EP[1];
 	Taken[P_0] := 1;
 	for j in [1..n-1] do
-		if Taken[Tree[j][1]] eq 1 then
-			PStart := Tree[j][1];
-			PEnd := Tree[j][2];
-			Taken[Tree[j][2]] := 1;
+		if Taken[Tree[j]`EP[1]] eq 1 then
+			PStart := Tree[j]`EP[1];
+			PEnd := Tree[j]`EP[2];
+			Taken[Tree[j]`EP[2]] := 1;
 		else
-			PStart := Tree[j][2];
-			PEnd := Tree[j][1];
-			Taken[Tree[j][1]] := 1;
+			PStart := Tree[j]`EP[2];
+			PEnd := Tree[j]`EP[1];
+			Taken[Tree[j]`EP[1]] := 1;
 		end if;
 		TM[PEnd] := TM[PStart];
       		TM[PEnd,j] := 1;
@@ -189,7 +190,13 @@ intrinsic SE_AbelJacobi( D::SEDivisor, SEC::SECurve ) -> Mtrx
 	end if;
 
 	// Integration parameters
-	Params, ComplexEdges := DE_Params_AJM(ComplexEdges,SEC);
+	if SEC`IntegrationType eq "DE" then
+		Params, ComplexEdges := DE_Params_AJM(ComplexEdges,SEC);
+	elif SEC`IntegrationType eq "GJ" then
+		Params, ComplexEdges := GJ_Params_AJM(ComplexEdges,SEC);
+	else
+		error Error("Unsupported integration type.");
+	end if;
 
 	// Maximal M_1
 	MaxM1 := Max( [ P[1] : P in Params ]);
@@ -204,13 +211,26 @@ intrinsic SE_AbelJacobi( D::SEDivisor, SEC::SECurve ) -> Mtrx
 		SEC`ComplexPolynomial := ChangeRing(SEC`DefiningPolynomial,C);
 		SEC`BranchPoints := SE_DKPEB(SEC`DefiningPolynomial,SEC`BranchPoints,Precision(C));
 	end if;
-	DEInts := DE_Integration(Params,SEC:AJM); NInts := #DEInts;
-
+	
 	// Actual integrations from P_k to P
 	ComplexIntegral := Matrix(C,SEC`Genus,1,[]);
-	for CE in ComplexEdges do
-		ComplexIntegral +:= CE[2] * Matrix(C,SEC`Genus,1,DE_Integrals_Edge_AJM(CE,SEC,DEInts[Round(CE[4])]));
-	end for;
+	if SEC`IntegrationType eq "DE" then
+		DEInts := DE_Integration(Params,SEC:AJM); NInts := #DEInts;
+		vprint SE,1 : "(AJM) using double-exponential integration...";
+		vprint SE,2 : "(AJM) Params:",Params;
+		for CE in ComplexEdges do
+			ComplexIntegral +:= CE[2] * Matrix(C,SEC`Genus,1,DE_Integrals_Edge_AJM(CE,SEC,DEInts[Round(CE[4])]));
+		end for;
+	elif SEC`IntegrationType eq "GJ" then
+		GJInts := GJ_Integration(Params,SEC:AJM); NInt := #GJInts;
+		vprint SE,1 : "(AJM) using Gauss-Jacobi integration...";
+		vprint SE,2 : "(AJM) Params:",Params;
+		for CE in ComplexEdges do
+			ComplexIntegral +:= CE[2] * Matrix(C,SEC`Genus,1,GJ_Integrals_Edge_AJM(CE,SEC,GJInts[Round(CE[4])]));
+		end for;
+	else
+		error Error("Unsupported integration type.");
+	end if;
 
 	// Differential change matrix
 	ComplexIntegral := ChangeRing(SEC`DifferentialChangeMatrix,C) * ComplexIntegral;
