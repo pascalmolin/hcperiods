@@ -105,7 +105,7 @@
 
    However, we have no proof of this fact and in general the symplectic reduction
    could produce dense base change with coefficients of size $O(g)$,
-   so that we state the far from optimal result
+   so that we state the following far from optimal result.
    \begin{thm}
        Given the $(n-1)\times g$ elementary integrals to precision $D$,
        we compute the big period matrix using $O(g^3(D+g)\log^{1+\varepsilon}(D+g))$ operations.
@@ -176,7 +176,13 @@
 
    \begin{rmk}
    In case the end result is imprecise by $d$ bits, the user simply needs to
-   run another instance to precision $D+d$.
+   run another instance to precision $D+d$ to reach the desired accuracy.
+
+   In fact, the mathematical quantities and the sequence of arithmetic
+   operations performed in the algorithm remain the same. Now
+   if the absolute error is reduced by $d$ bits on input of an elementary
+   operation this remains true on output; by induction this is true for
+   the final result.
    \end{rmk}
 
    \subsection{Integration parameters}

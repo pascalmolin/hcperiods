@@ -112,7 +112,14 @@ All rho's have been changed to phi's.
 > that they do? I can follow the proof, but certainly there is something
 > conceptual behind this, and that I cannot see for now. Again, just curious.
 
-We are not aware any conceptual explanation. We just examined all the cases and noticed the symmetry.
+Yes, the symmetry is the following: when phi > 0 we can fallback to case
+(iii) by taking the opposite of the intersection of the swapped cycles
+s_b,c and s_a,b. Using a ' for the new quantities
+- phi' = -phi > 0
+- s_a' = -s_a
+- s'+ = s- and s'- = s+ (intersection is antisymmetric)
+This explaination may be longer than just looking at the picture
+but it is mathematically more satisfactory.
 
 > Page 13:
 > "recall from 3.2 their definition": A priori one has to use y_{b,a} and y_{d,c}
@@ -254,10 +261,14 @@ Corrected.
 > Page 29:
 > "state the far from optimal result": "state the following far from optimal
 > result." (Same as above; the sentence has to work without the newline.)
-> 
+
+Corrected.
+
 > Page 30:
 > Can a short proof of Remark 8.4 be included?
-> 
+
+We have added such a proof.
+ 
 > Page 31:
 > "for eta solution of": "for the solution eta of"
 
@@ -265,7 +276,8 @@ Corrected.
 
 > Page 32:
 > "In this case however, we can perform a change of coordinate by a Moebius
-> transform": can you give some details on what exactly works here? Same question
+> transform": can you give some details on what exactly works here?
+> Same question
 > for "In this case, one can always split the bad integrals to improve the
 > relative distances of the singularities" on the next page.
 > 
