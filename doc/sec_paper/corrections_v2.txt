@@ -99,11 +99,12 @@ This has been changed.
 
 Corrected.
 
-Other changes (page 10): Added a second item to Remark 3.10 that explains how we actually order the differentials in practice.
-
 > Page 12:
 > "The resulting intersection matrix": there is an odd-looking linebreak here
 > before the "(n - 1)(m - 1)".
+
+It has been removed.
+
 > Theorem 5.1: rho is used, but in the proof the notation phi is used.
 
 All rho's have been changed to phi's.
@@ -193,8 +194,6 @@ We liked the suggestion and added some details.
 
 > Page 25:
 
-Other changes: Fixed some typos (Phi^-1 instead of Phi), changed the size of some brackets to improve readability
-
 > The line before the definition of E_1 needs some more grammar at the end; a
 > sentence containing a displayed equation also need to be readable when the
 > display is removed and the equality is given inline. 
@@ -239,9 +238,6 @@ Corrected.
 > the period lattice, that is, when neglecting the path taken.
 
 Corrected.
-
-Other changes (page 27): In Remark 7.10 the number of integrals was not quite correct. In the case 0 \in X the degree of h drops down to n-1 in the case of Thm. 7.7.
-and (n-1)(\nu+M) in the case of Thm. 7.9. So the computation is even easier in that case.
 
 
 > Page 28:
@@ -299,3 +295,16 @@ The capital has been added on L and the field Q is now typeset in mathbb.
 > it should probably be "Paul van Wamelen", so without the upper case letter.
 
 All occurrences have been typeset "van Wamelen".
+
+
+Other changes:
+
+p10: Added a second item to Remark 3.10 that explains how we actually order the differentials in practice.
+
+p19: A factor 2 was missing in the statement of Lemma 6.5.
+
+p25: Fixed some typos (Phi^-1 instead of Phi), changed the size of some brackets to improve readability
+
+p27: In Remark 7.10 the number of integrals was not quite correct. In the case 0 \in X the degree of h drops down to n-1 in the case of Thm. 7.7.
+and (n-1)(\nu+M) in the case of Thm. 7.9. So the computation is even easier in that case.
+
