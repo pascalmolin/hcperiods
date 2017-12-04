@@ -68,16 +68,23 @@ The space has been removed.
 > has been specified (which is sort of inherent in using the word "continue")
 > there is only one way to continue a function along a path? Of course I know
 > what you mean, but the statement is ambiguous.
-> 
+
+This has been rewritten.
+
 > Page 5:
 > You define a branch. What about a branch cut, and a sheet? The paper uses these
 > old-fashioned concepts quite a lot but they are conceptually rather shady.
 > (Still, the conclusions are correct, and I will not insist on big changes
 > here.)
+
+We rewrote parts of 3.2.1 and 3.2.2 to make these concepts less shady. 
+
 > "Consequently, the local monodromy": things are even slightly stronger than
 > mentioned there, basically because all canonical local monodromy generators at
 > the finite points are identical (as you note in the preceding paragraph).
-> 
+
+This has been worded differently.
+ 
 > Page 6:
 > Equation (7): I take it that K^(n/m) = (K^(1/m))^n for any constant K?
 
