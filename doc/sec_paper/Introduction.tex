@@ -43,7 +43,7 @@
   We found that this package is not suitable for high precision purposes.
 
   We also mention the Matlab implementations due to Frauendiener and Klein for hyperelliptic curves \cite{FrauendienerKlein2015}
-    and for general algebraic curves \cite{FrauendienerKlein2011}.
+  and for general algebraic curves \cite{FrauendienerKlein2011, FrauendienerKlein2016}.
   
   Moreover, there is an implementation available in Sage (since version 8.0) due to Nils Bruin and Alexandre Zotine that generalizes
   van Wamelen's approach for hyperelliptic curves to general algebraic curves.
@@ -69,6 +69,9 @@
       the multiplication of precision $D$ numbers has complexity
       $O(D\log^{1+\epsilon}D)$.
   \end{thm}
+
+  In this paper, we rely on the fact that $f$ is separable in several places.
+  This restriction could be removed, this is discussed in section \ref{subsec:nonseparable}.
 
   \subsection{Rigorous implementation}
   \label{subsec:arb}

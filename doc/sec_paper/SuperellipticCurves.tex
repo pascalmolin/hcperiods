@@ -103,9 +103,10 @@
 
   \bigskip
 
-  Similar to the complex $m$-th root, we can assume that crossing the branch cut at $x_k \in X$ in positive direction corresponds to multiplication by $\zeta$ on the Riemann surface. We
-  obtain an ordering of the sheets relative to the analytic branches of $\cu$ by imposing that multiplication by $\zeta$, i.e. applying the map
-  $(x,y(x)) \mapsto (x,\zeta y(x))$, corresponds to moving one sheet up on the Riemann surface.
+  We obtain an ordering of the sheets relative
+  to the analytic branches of $\cu$ by imposing that multiplication by $\zeta$,
+  i.e. applying the map $(x,y(x)) \mapsto (x,\zeta y(x))$, corresponds to
+  moving one sheet up on the Riemann surface.
 
    \bigskip
 
@@ -124,8 +125,18 @@
   \begin{equation*}
       y(x) = \sqrt[m]{f(x)},
   \end{equation*}
-  but this is not a good model to compute with: it has branch cuts
-  wandering around the $x$-plane (see Figure \ref{fig:mth_root_principal}).
+  but this is not a good model to compute with: it has
+  discontinuities along the curves $f^{-1}(]-\infty,0]$, all
+  wandering around the $x$-plane in an unpredictable way (see Figure \ref{fig:mth_root_principal}).
+  These are the branch cuts of $y(x)$, crossing them in positive direction
+  requires multiplying by $\zeta$ in order to follow an analytic continuation.
+
+  %, and one must multiply by $\zeta$
+  %to crossing them in positive direction
+  %corresponds to moving one sheet up on the Riemann surface. With
+  %Similar to the complex $m$-th root, we can assume that crossing the branch
+  %cut at $x_k \in X$ in positive direction corresponds to multiplication by
+  %$\zeta$ on the Riemann surface.
 
   A better option is to split the product as follows:
   assume that $(a,b) = (-1,1)$. Then the function

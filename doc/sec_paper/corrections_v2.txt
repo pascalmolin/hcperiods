@@ -38,6 +38,10 @@
 > move infinity to a multiple finite root, in the case of Picard curves to name
 > one. It seems that things should work, with some modification when considering
 > monodromy.
+
+This is true. We have clarified this fact from the introduction and pointed
+to section 10.2 where more details have been added.
+
 > [This question apparently has a positive answer, but this is only mentioned in
 > Section 10.2. I feel that this has a natural place in the introduction instead.
 > Also, can you give a reference to show that this case, where the defining
@@ -276,7 +280,9 @@ Corrected.
 > Same question
 > for "In this case, one can always split the bad integrals to improve the
 > relative distances of the singularities" on the next page.
-> 
+
+We added an example to illustrate the idea.
+ 
 > Page 34:
 > "too high precision": "to high precision"
 
@@ -299,6 +305,8 @@ All occurrences have been typeset "van Wamelen".
 
 Other changes:
 
+p1: Added reference Frauendiener&Klein 2016 for general curves
+
 p10: Added a second item to Remark 3.10 that explains how we actually order the differentials in practice.
 
 p19: A factor 2 was missing in the statement of Lemma 6.5.
@@ -307,4 +315,3 @@ p25: Fixed some typos (Phi^-1 instead of Phi), changed the size of some brackets
 
 p27: In Remark 7.10 the number of integrals was not quite correct. In the case 0 \in X the degree of h drops down to n-1 in the case of Thm. 7.7.
 and (n-1)(\nu+M) in the case of Thm. 7.9. So the computation is even easier in that case.
-
