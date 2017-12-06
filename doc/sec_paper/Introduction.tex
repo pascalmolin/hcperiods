@@ -56,13 +56,13 @@
   y^m = f(x), \quad m > 1, f \in \C[x] \text{ separable of degree} \deg(f) = n \ge 3.
   \end{equation*}
   They generalize
-  hyperelliptic curves and are usually called \textit{superelliptic curves}.
+  hyperelliptic curves and we refer to them as \textit{superelliptic curves}. 
 
   We take advantage of their specific geometry to obtain the following
   (see Theorem \ref{m-thm:complexity_integrals})
   \begin{thm}
       Let $\cu$ be a superelliptic curve of genus $g$ defined by an equation $y^m=f(x)$
-      where $f$ has degree $n$.
+      where $f$ is separable of degree $n$.
       We can compute a basis of the period lattice to
       precision $D$ using $$O(n(g+\log D)(g+D)^2\log^{2+\varepsilon} (g+D)) \text{ binary operations,}$$
       where $\epsilon>0$ is chosen so that
@@ -70,9 +70,12 @@
       $O(D\log^{1+\epsilon}D)$.
   \end{thm}
 
-  In this paper, we rely on the fact that $f$ is separable in several places.
-  This restriction could be removed, this is discussed in section \ref{subsec:nonseparable}.
-
+  There is no clear defintion 
+  of superelliptic curves in the
+  literature and some authors will allow $f$ to be non-separable in their definition. 
+  In this paper, we rely on the fact that $f$ has no multiple roots in several places.
+  This restriction could be removed though, this is discussed in section \ref{subsec:nonseparable}.
+  
   \subsection{Rigorous implementation}
   \label{subsec:arb}
 

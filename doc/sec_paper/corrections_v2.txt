@@ -56,7 +56,6 @@ to section 10.2 where more details have been added.
 
 This has been corrected.
 
-> 
 > Page 3:
 > It could be useful to state (in one short sentence) what Prin^0 (C) is.
 
@@ -81,7 +80,7 @@ This has been rewritten.
 > (Still, the conclusions are correct, and I will not insist on big changes
 > here.)
 
-We rewrote parts of 3.2.2 and 3.2.3 to make these concepts less shady. 
+We rewrote parts of 3.2.2 and the added details about the branch cuts after the first equation of of 3.2.3.
 
 > "Consequently, the local monodromy": things are even slightly stronger than
 > mentioned there, basically because all canonical local monodromy generators at
@@ -90,7 +89,7 @@ We rewrote parts of 3.2.2 and 3.2.3 to make these concepts less shady.
 This has been worded differently.
  
 > Page 6:
-> Equation (7): I take it that K^(n/m) = (K^(1/m))^n for any constant K?
+	> Equation (7): I take it that K^(n/m) = (K^(1/m))^n for any constant K?
 
 Yes.
 
@@ -300,7 +299,9 @@ This was corrected.
 
 > Page 35:
 > "than other methods": which other methods?
-> 
+
+Changed to: methods that avoid branch points. 
+
 > Page 36:
 > Reference [13]: A capital is lacking on the "q"; it can be added with {Q}.
 > Reference [16]: A capital is lacking on the "l"; it can be added with {L}.
@@ -325,3 +326,5 @@ p25: Fixed some typos (Phi^-1 instead of Phi), changed the size of some brackets
 
 p27: In Remark 7.10 the number of integrals was not quite correct. In the case 0 \in X the degree of h drops down to n-1 in the case of Thm. 7.7.
 and (n-1)(\nu+M) in the case of Thm. 7.9. So the computation is even easier in that case.
+
+p.28: Changed log m to log D since we use log,exp for evaluation of m-th roots, added comment in paragraph above 8.1.1. 
