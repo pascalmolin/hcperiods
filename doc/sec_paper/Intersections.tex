@@ -164,8 +164,8 @@
    and computing $s(\xt)$ with \eqref{m-eq:sxt} makes it possible to determine the intersection numbers geometrically.
 
    Figure \ref{m-fig:int_b=c} shows the non-trivial cases $s(\xt) + l - k \in \{-1,0,1\}$.
-   There the cycles $\cyab^k$ (black), $\cybd^{k-s(\xt)}$ (gray), $\cybd^{k-s(\xt) + 1 }$ (green) and
-    $\cybd^{k-s(\xt)-1}$ (red) are illustrated.
+   There the cycles $\cyab^{(k)}$ (black), $\cybd^{(k-s(\xt))}$ (gray), $\cybd^{(k-s(\xt) + 1)}$ (green) and
+    $\cybd^{(k-s(\xt)-1)}$ (red) are illustrated.
     \begin{figure}[H]
       \begin{center}
    \scalebox{0.8}{\input{images/intsec_b=c.tex}}
@@ -179,13 +179,13 @@
     & s_- \equiv k-s(\xt)+1-k \equiv 1-s_b \mod m.
     \end{align*}
 
- Cases (iii) and  (iv): \\
+ Case (iii): \\
  In these cases we have $a = c$. We choose $\xt$ on the inner bisectrix (as shown in Figure \ref{m-fig:set_v_both})
    and compute $s(\xt)$ with \eqref{m-eq:sxt}.
 
  For $\varphi = \arg\left(\frac{b-a}{d-a}\right) > 0$, the non trivial cases, i.e. $s(\xt) + l - k \in \{-1,0,1\}$, are shown in Figure \ref{m-fig:int_a=c}
   We illustrate the cycles $\cyab^{(k)}$ (black), $\cyad^{(k-s(\xt))}$ (gray), $\cyad^{(k-s(\xt) + 1)}$ (green) and
-    $\cyad^{k-s(\xt)-1}$ (red).
+    $\cyad^{(k-s(\xt)-1)}$ (red).
   \begin{figure}[H]
       \begin{center}
    \scalebox{0.8}{\input{images/intsec_a=c.tex}}
@@ -198,14 +198,22 @@
     & s_+ = k-s(\xt)+1-k \equiv 1-s_a \mod m, \\
     & s_- = k-s(\xt)-k \equiv -s_a \mod m.
     \end{align*}
-  The case $\varphi < 0$ is easily derived by symmetry: if we mirror Figure \ref{m-fig:int_a=c} at the horizontal line through $a$ we are in case (iv).
+    
+  Case (iv): \\
+  When $\varphi < 0$ we can use the antisymmetry of the intersection pairing to
+  fall back to case (iii) by looking the intersection of the swapped cycles
+  $$\left( \cyab^{(k)} \circ \cyad^{(l)} \right) = - \left( \cyad^{(l)} \circ \cyab^{(k)} \right).$$
+  The intersection on the right is then determined by case (iii) with the quantities
+  $\varphi' = -\varphi > 0$, $s_a' = -s_a$ and $s'_{\pm} = s_{\mp}$. 
+  
+  Alternatively, we can see this directly from the picture: if we mirror Figure \ref{m-fig:int_a=c} at the horizontal line through $a$ we are in case (iv).
   There, the intersection is positive if $\cyabk$ and $\cyadl$ start on the same sheet and negative if $\cyadl$ starts one sheet below $\cyabk$.
 
 \begin{lemma}\label{lemma:sxt=sx}
   With the choices made in the proof of Theorem \ref{m-thm:intsec_numb} the following statements hold
   \begin{itemize}
    \item[(1)] $s(\xt) \equiv s_b \bmod m$ in case {\upshape{(ii)}},
-    \item[(2)]  $s(\xt) \equiv s_a \bmod m$ in the cases {\upshape{(iii)}} and {\upshape{(iv)}}.
+    \item[(2)]  $s(\xt) \equiv s_a \bmod m$ in the case {\upshape{(iii)}}.
   \end{itemize}
 \end{lemma}
  \begin{proof}
@@ -255,7 +263,6 @@ thus proving (1).
 	 & \equiv \frac{1}{2\pi} \left ( \varphi +\arg(1-\uad(a)) - \arg(1-\uab(a)) +  m \arg \left( \frac{ \cad \ytad(a)}{\cab\ytab(a)} \right)\right) \\
 	 & \equiv \frac{1}{2\pi} \left( \varphi +\arg(2) - \arg(2) +  m \arg \left( \frac{ \cad \ytad(a)}{\cab\ytab(a)} \right)\right) \equiv s_a \mod m.
  \end{align*}
- The case $\varphi < 0$ is proved analogously.
 \end{proof}
 
 \begin{rmk}

@@ -341,16 +341,17 @@
    \subsection{Further ideas}
 
    \subsubsection{Improving branch points}
+   \label{subsec:improving}
 
    As we saw in Section \ref{m-sec:numerical_integration}, the number of integration points
    closely depends on the configuration of branch points.
 
    In practice, when using double-exponential integration, the constant $r$ is usually bigger than $0.5$
-   for random points, but we can exhibit bad configurations with $τ\approx 0.1$.
+   for random points, but we can exhibit bad configurations with $r\approx 0.1$.
    In this case however, we can perform a change of coordinate by a Moebius transform
    $x\mapsto \frac{ax+b}{cx+d}$ as explained in Remark \ref{m-rmk:moebius} to redistribute the points more evenly.
 
-   Improving $τ$ from $0.1$ to say $0.6$ immediately saves a factor $6$ on the running time.
+   Improving $r$ from $0.1$ to say $0.6$ immediately saves a factor $6$ on the running time.
 
    \subsubsection{Near-optimal tree}
     As explained in \S \ref{m-subsec:cycles_homo} we integrate along the edges of a maximal-flow spanning tree $T = (X,E)$, where the capacity $r_e$ of an edge $e = (a,b) \in E$ is computed as
@@ -392,12 +393,23 @@
 
     \subsubsection{Splitting bad integrals or moving integration path}
 
-    Numerical integration becomes very bad when there are other branch points
+    Numerical integration becomes quite inefficient when there are other branch points
     relatively close to an edge. The spanning tree optimization does not help
-    if some branch points tend to cluster while other are far away.
+    if some branch points tend to cluster while other are far away. A simple
+    example is given by the curve $y^2=x(x-i)(x-1000)$: the
+    branch point $i$ is too close to the integration path $[0,1000]$
+    and imposes a value $r=0.04$ for Gauss-Chebychev integration and
+    a better but still small $r=0.2$ with double-exponential integration.
+
     In this case, one can always split the bad integrals to improve the
-    relative distances of the singularities. Another option with
-    double exponential integration is to shift the integration path.
+    relative distances of the singularities: in the case of double-exponential
+    integration, writing
+    $\int_0^{1000}=\int_{0}^{6}+\int_6^{1000}$ gives two integrals with
+    $r=0.48$ each. Splitting further at $2$ and $33$ gives $r=0.63$.
+
+    Another option with double exponential integration is to shift
+    the integration path in the change of variable
+    as explained in \cite{Molin2010}.
 
 \biblio
 \end{document}

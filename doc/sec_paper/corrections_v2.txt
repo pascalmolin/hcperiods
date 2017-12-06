@@ -38,6 +38,10 @@
 > move infinity to a multiple finite root, in the case of Picard curves to name
 > one. It seems that things should work, with some modification when considering
 > monodromy.
+
+This is true. We have clarified this fact from the introduction and pointed
+to section 10.2 where more details have been added.
+
 > [This question apparently has a positive answer, but this is only mentioned in
 > Section 10.2. I feel that this has a natural place in the introduction instead.
 > Also, can you give a reference to show that this case, where the defining
@@ -120,14 +124,17 @@ All rho's have been changed to phi's.
 > that they do? I can follow the proof, but certainly there is something
 > conceptual behind this, and that I cannot see for now. Again, just curious.
 
-Yes, the symmetry is the following: when phi > 0 we can fallback to case
-(iii) by taking the opposite of the intersection of the swapped cycles
-s_b,c and s_a,b. Using a ' for the new quantities
+Yes, the symmetry is the following: when phi < 0 we can fall back to case
+(iii) by taking the negative of the intersection of the swapped cycles
+s_b,c and s_a,b. Using a ' for the new quantities, we have
 - phi' = -phi > 0
 - s_a' = -s_a
-- s'+ = s- and s'- = s+ (intersection is antisymmetric)
-This explaination may be longer than just looking at the picture
+- s'+ = s- and s'- = s+ (since the intersection pairing is antisymmetric)
+We added this explaination to the paper. It may be longer than just looking at the picture,
 but it is mathematically more satisfactory.
+Moreover: we removed the case (iv) from Lemma 5.3 since it is not needed (and the statement before was wrong) and
+added some missing brackets in the exponents of the cycles in this section.
+
 
 > Page 13:
 > "recall from 3.2 their definition": A priori one has to use y_{b,a} and y_{d,c}
@@ -283,7 +290,9 @@ Corrected.
 > Same question
 > for "In this case, one can always split the bad integrals to improve the
 > relative distances of the singularities" on the next page.
-> 
+
+We added an example to illustrate the idea.
+ 
 > Page 34:
 > "too high precision": "to high precision"
 
@@ -306,6 +315,8 @@ All occurrences have been typeset "van Wamelen".
 
 Other changes:
 
+p1: Added reference Frauendiener&Klein 2016 for general curves
+
 p10: Added a second item to Remark 3.10 that explains how we actually order the differentials in practice.
 
 p19: A factor 2 was missing in the statement of Lemma 6.5.
@@ -314,4 +325,3 @@ p25: Fixed some typos (Phi^-1 instead of Phi), changed the size of some brackets
 
 p27: In Remark 7.10 the number of integrals was not quite correct. In the case 0 \in X the degree of h drops down to n-1 in the case of Thm. 7.7.
 and (n-1)(\nu+M) in the case of Thm. 7.9. So the computation is even easier in that case.
-
