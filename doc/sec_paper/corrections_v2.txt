@@ -81,7 +81,7 @@ This has been rewritten.
 > (Still, the conclusions are correct, and I will not insist on big changes
 > here.)
 
-We rewrote parts of 3.2.1 and 3.2.2 to make these concepts less shady. 
+We rewrote parts of 3.2.2 and 3.2.3 to make these concepts less shady. 
 
 > "Consequently, the local monodromy": things are even slightly stronger than
 > mentioned there, basically because all canonical local monodromy generators at
