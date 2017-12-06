@@ -73,28 +73,29 @@
   the primitive $m$-th root of unity
   \begin{equation*}
       %\label{eq:zeta}
-  \zeta := \zeta_m := e^{\frac{2\pi i }{m}}
+  \zeta := \zeta_m := e^{\frac{2\pi i }{m}}.
   \end{equation*}
-  on the surface. In
+  We obtain a Riemann surface from the $m$-th root by glueing together $m$ copies of the complex plane (the \emph{sheets})
+  along the branch cut $]\!-\infty,0]$. The branch points of this surface
+  are at $x = 0,\infty$, and these are totally ramified. In
   particular, the monodromy at $x=0$ is cyclic of order $m$.
 
   \subsubsection{The Riemann surface}\label{subsec:riemann_surface}
 
   For an introduction to the theory of Riemann surfaces, algebraic curves and holomorphic covering maps we recommend \cite{Miranda1995}.
 
-
-
    Over $\C$ we can identify the curve $\cu$ with the compact Riemann surface $\cu(\C)$. Since our defining equation
    has the nice form
-   $y^m = \prod_{k = 1}^n (x - x_k)$ we view $\cu$ as a Riemann surface with $m$ sheets and
-   all computations will be done in the $x$-plane.
-
-   We denote by $\pr : \cu \rightarrow \P^1_{\C}$ the corresponding smooth cyclic branched covering of the projective line
+   $y^m = \prod_{k = 1}^n (x - x_k)$ it is compelling to do all computations in the $x$-plane.
+   We denote by $\pr : \cu \rightarrow \P^1_{\C}$ the corresponding smooth cyclic branched covering of degree $m$ 
+   of the projective line that is
    defined by the $x$-coordinate.
 
   There
-  are $m$ possibilities to continue $y$ as an analytic function following a path in the $x$-plane. This is crucial for the integration
-  of differentials on $\cu$. Due to the cyclic structure of $\cu$, they are related in a convenient way:
+  are $m$ possibilities to lift a path in $x$-plane to $\cu(\C)$ using analytic continuation, which
+  %to continue $y$ as an analytic function following a path in the $x$-plane. This 
+  is crucial for the integration
+  of differentials on $\cu$. Due to the cyclic structure of $\cu$, these lifts are related in a convenient way:
 
   We call a \emph{branch of $\cu$} a function $y(x)$ such that
   $y(x)^m = f(x)$ for all $x \in \C$. At every $x$, the branches of $\cu$ only
@@ -108,10 +109,7 @@
   i.e. applying the map $(x,y(x)) \mapsto (x,\zeta y(x))$, corresponds to
   moving one sheet up on the Riemann surface.
 
-   \bigskip
-
-
-  Consequently, the local monodromy of the cyclic covering $\pr$  is equal and cyclic of order $m$ at every $x_k \in X$
+  The local monodromy of the covering $\pr$ is cyclic of order $m$ and equal for all $x_k \in X$
  and the monodromy group is, up to conjugation, the cyclic group $C_m$. This makes it possible to find explicit generators for the
   homology group $\homo$ without specifying a base point, as shown in \S \ref{m-subsec:cycles_homo}.
 
