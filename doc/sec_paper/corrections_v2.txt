@@ -1,37 +1,10 @@
-> This article fits Mathematics of Computation perfectly, and I highly recommend
-> it for publication. What follows is a summary of my reasons for this opinion, a
-> short synopsis, and some detailed comments.
-> 
-> The article is written in a very clear and self-contained fashion. Its subject,
-> computing period matrices, is one of those questions that are usually brushed
-> aside as being "well-known" but that turn out to be quite involved when one
-> actually has to sit down, implement them, and get efficient results. Then one
-> discovers that quite a lot of ingenuity is needed to actually get a general
-> approach that works in practice. Finding a decent symplectic homology basis
-> already requires quite some effort, for example.
-> 
-> The authors give a very effective approach for superelliptic curves in this
-> paper. Their implementation is not only conceptually explained, but the authors
-> have also put in the considerable effort towards actually implementing their
-> approach. I can confirm that there is indeed an enormous gain in both speed and
-> stability over the current version in Magma. In fact, I know of no example
-> where the implementation fails, despite having used it on quite a lot of
-> curves.
-> 
-> Sections 1 and 2 being preparatory, the authors explain their strategy in
-> Section 4, after determining a homology basis and a basis of differentials in
-> Section 3. The issues of calculating intersection numbers and numerical
-> integration are treated in Sections 5 and 6, respectively. Section 7 shows how
-> the methods can be generalized to compute the Abel--Jacobi map explicitly, and
-> the final Section contains various annotations and bits of wisdom on the
-> fine-tuning of the algorithms. This final Section, incidentally, is where I was
-> occasionally out of my depth.
-> 
-> Occasionally the exposition is a little too concise, for my taste at least, and
-> the upcoming page-by-page comments contain some remaining questions and
-> remarks; the corresponding issues can hopefully be cleared in a minor revision.
-> 
-> 
+We want to thank the anonymous referee for his careful reading of our work
+and helpful suggestions.
+
+We followed his/her advice for every comment. The details of the changes
+are recorded below. At the end, we also detail the other minor modifications
+that we made for this revised version.
+
 > Page 1:
 > Do the algorithms generalize to curves defined by possibly non-separable
 > polynomials? For example, in Remark 3.3 the transformation used will very often
@@ -46,11 +19,11 @@ to section 10.2 where more details have been added.
 > Section 10.2. I feel that this has a natural place in the introduction instead.
 > Also, can you give a reference to show that this case, where the defining
 > polynomial is assumed to be separable, is all that is usually called a
-> superelliptic curve? Terminology is important and I am not sure whether
-> superelliptic curves are only this narrow class of cyclic covers of the
-> projective line. Wikipedia disagrees, for example, as do a number of articles
-> on the subject, and I do not quite know what is standard usage.]
-> 
+> superelliptic curve?
+
+To our knowledge there is no consensus with the definition of superelliptic curve.
+We added a comment that this is our definition.
+
 > Page 2:
 > "Sijsling et al.": "Costa et al."
 
@@ -59,7 +32,7 @@ This has been corrected.
 > Page 3:
 > It could be useful to state (in one short sentence) what Prin^0 (C) is.
 
-The notation has been introduce in the sentence above.
+The notation has been introduced in the sentence above.
 
 > Page 4:
 > There is a superfluous tab at the start of the page.
@@ -69,16 +42,13 @@ The space has been removed.
 > "There are m possibilities to continue y as an analytic function following a
 > path in the x-plane": Not quite clear to me. Certainly once the initial valued
 > has been specified (which is sort of inherent in using the word "continue")
-> there is only one way to continue a function along a path? Of course I know
-> what you mean, but the statement is ambiguous.
+> there is only one way to continue a function along a path?
 
 This has been rewritten.
 
 > Page 5:
 > You define a branch. What about a branch cut, and a sheet? The paper uses these
 > old-fashioned concepts quite a lot but they are conceptually rather shady.
-> (Still, the conclusions are correct, and I will not insist on big changes
-> here.)
 
 We rewrote parts of 3.2.2 and the added details about the branch cuts after the first equation of of 3.2.3.
 
@@ -89,9 +59,9 @@ We rewrote parts of 3.2.2 and the added details about the branch cuts after the 
 This has been worded differently.
  
 > Page 6:
-	> Equation (7): I take it that K^(n/m) = (K^(1/m))^n for any constant K?
+> Equation (7): I take it that K^(n/m) = (K^(1/m))^n for any constant K?
 
-Yes.
+Yes, in fact any choice works here.
 
 > Why is V_{a,b} as indicated? It is defined as an image under u_{a,b}, but since
 > it is a neighborhood of [a, b], should it not be an image under x_{a,b}
@@ -133,7 +103,6 @@ We added this explaination to the paper. It may be longer than just looking at t
 but it is mathematically more satisfactory.
 Moreover: we removed the case (iv) from Lemma 5.3 since it is not needed (and the statement before was wrong) and
 added some missing brackets in the exponents of the cycles in this section.
-
 
 > Page 13:
 > "recall from 3.2 their definition": A priori one has to use y_{b,a} and y_{d,c}
@@ -206,7 +175,6 @@ Replaced mu by -mu everywhere in the section to reduce confusion.
 We liked the suggestion and added some details.
 
 > Page 25:
-
 > The line before the definition of E_1 needs some more grammar at the end; a
 > sentence containing a displayed equation also need to be readable when the
 > display is removed and the equality is given inline. 
@@ -313,18 +281,24 @@ The capital has been added on L and the field Q is now typeset in mathbb.
 
 All occurrences have been typeset "van Wamelen".
 
+--------------
 
-Other changes:
+We have also made the following modifications to the paper:
 
-p1: Added reference Frauendiener&Klein 2016 for general curves
+p1: We replaced reference FrauendienerKlein2011 by the more recent
+    FrauendienerKlein2016 for general curves
 
-p10: Added a second item to Remark 3.10 that explains how we actually order the differentials in practice.
+p10: We added a second item to Remark 3.10 that explains how we actually order the
+     differentials in practice.
 
 p19: A factor 2 was missing in the statement of Lemma 6.5.
+
+p20: We removed the comment that theorem 6.7 followed from the residue theorem
+     which was misleading (reference [6] uses other nice ideas).
 
 p25: Fixed some typos (Phi^-1 instead of Phi), changed the size of some brackets to improve readability
 
 p27: In Remark 7.10 the number of integrals was not quite correct. In the case 0 \in X the degree of h drops down to n-1 in the case of Thm. 7.7.
-and (n-1)(\nu+M) in the case of Thm. 7.9. So the computation is even easier in that case.
+     and (n-1)(\nu+M) in the case of Thm. 7.9. So the computation is even easier in that case.
 
 p.28: Changed log m to log D since we use log,exp for evaluation of m-th roots, added comment in paragraph above 8.1.1. 
