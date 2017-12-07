@@ -61,7 +61,8 @@ This has been worded differently.
 > Page 6:
 > Equation (7): I take it that K^(n/m) = (K^(1/m))^n for any constant K?
 
-Yes, in fact any choice works here.
+In fact any choice works here as soon as it defines a valid branch yab,
+we added a footnote to emphasize that.
 
 > Why is V_{a,b} as indicated? It is defined as an image under u_{a,b}, but since
 > it is a neighborhood of [a, b], should it not be an image under x_{a,b}
@@ -135,8 +136,7 @@ Added references.
 > Page 17:
 > In the first display I do not see why in the end only one subscript b gets
 > replaced in the numerator, while the one in ytilde_{b,d} sticks around. This
-> happens just before the end of the proof as well, but then with a. This is a
-> nitpicky comment.
+> happens just before the end of the proof as well, but then with a.
 
 This has been corrected. We also replaced c by a or b in the definition of phi in the corresponding cases of the proof of Lemma 5.3.
 
