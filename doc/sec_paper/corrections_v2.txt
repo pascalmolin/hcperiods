@@ -74,7 +74,7 @@ It should indeed be x_{a,b} instead of u_{a,b} and \overline{U} instead of \over
 > Why is there an i in the denominator of the definition of omega_{i,j}? (This is
 > not very relevant, I am just curious if there is an arithmetic reason.)
 
-This has been changed.
+This has been changed to the usual expression.
 
 > The equality (9) is missing an equality sign before the brace.
 
@@ -202,8 +202,10 @@ Corrected.
 > this holds without taking the quotient, then please formulate a corresponding
 > precise statement and prove it.
 
-We calculate modulo Lambda (corrected), but I still would like to keep the contribution of m int_P0^Pk since it makes clear that
-we split up the integration path: being able to take out the powers of zeta is really a consequence of Theorem 7.3. (I added that in a sentence)
+We calculate modulo Lambda (corrected), but we still would like to keep the
+contribution of m int_P0^Pk since it makes clear that we split up the integration
+path: being able to take out the powers of zeta is really a consequence of
+Theorem 7.3. (we added that in a sentence).
 
 > 
 > Page 26:

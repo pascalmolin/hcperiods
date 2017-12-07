@@ -27,13 +27,13 @@ superelliptic curves to arbitrary precision by numerical integration.
 See the [magma intructions](magma/README.md) to use the magma package.
 
 The arb version can be used as follows
-(needs [arb>=v2.11.0 installed](http://arblib.org/setup.html)
+(needs [arb>=v2.12.0 installed](http://arblib.org/setup.html))
 ```
 cd arb && make example
 ```
 then
 ```
-build/examples/periods --pol 4 1 0 -2 3 0
+build/examples/periods -m 2 --pol 4 1 0 -2 3 0
 ```
 outputs a period matrix for the curve `y^2 = x^4 -2x^2 + 3x`.
 
