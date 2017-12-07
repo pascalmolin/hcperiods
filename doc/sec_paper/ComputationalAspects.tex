@@ -29,7 +29,8 @@
    For multiprecision numbers, we consider (see \cite{BrentZimmermann}) that the multiplication has
    complexity $\cmul(D)=O(D \log^{1+\varepsilon}D)$,
    while simple transcendental functions (log, exp, tanh, sinh,\dots) can be evaluated
-   in complexity $\ctrig(D)=O(D\log^{2+\varepsilon} D$).
+   in complexity $\ctrig(D)=O(D\log^{2+\varepsilon} D$). For complex $m$-th roots we also consider the complexity $\ctrig(D)$ using
+   $\exp(\frac{1}{m}\log(\cdot))$.
     Moreover, we assume that multiplication of a $g \times g$ matrix can
     be done using $O(g^{2.8})$ multiplications.
 
@@ -58,7 +59,7 @@
 
    Altogether, the computation of one vector of elementary integrals takes
    \begin{equation}\label{eq:elem_int_complexity}
-    \ctot(D) = N(D)\ctrig(D)+N(D)(n-2+\log m)\cmul(D)+N(D)g\cmul(D)
+    \ctot(D) = N(D)\ctrig(D)+N(D)(n-2+\log D)\cmul(D)+N(D)g\cmul(D)
    \end{equation}
     operations,
    so that depending on the integration scheme we obtain:
@@ -325,7 +326,7 @@
   \begin{proof}
    Follows from the choices for $\sqrt[m]{\cdot}$ and $\zeta$ that were made in \S \ref{m-subsec:roots_branches}.
   \end{proof}
-  Lemma \ref{lemma:wind_numb} can easily be turned into an algorithm that computes $q(u)$.
+  Lemma \ref{m-lemma:wind_numb} can easily be turned into an algorithm that computes $q(u)$.
 
    \subsubsection{Doing real multiplications}\label{subsec:real_mult}
 
@@ -334,7 +335,7 @@
    the $N$ integration points (more precisely, as we saw in the proof of Proposition \ref{m-prop:holom_diff}, for each exponent $j$
    we use the exponents $0\leq i\leq n_i = \floor{\frac{nj-δ}m}$, with $\sum n_i = g$).
 
-   Without polynomial shift \eqref{eq:polshift}, this numerator would be
+   Without polynomial shift \eqref{m-eq:polshift}, this numerator would be
    $x_\ell=u_\ell+\frac{b+a}{b-a}$. However, $x_\ell$ is a complex number while $u_\ell$
    is real, so computing with $u_\ell$ saves a factor almost $2$ on this aspect.
 
@@ -349,7 +350,7 @@
    In practice, when using double-exponential integration, the constant $r$ is usually bigger than $0.5$
    for random points, but we can exhibit bad configurations with $r\approx 0.1$.
    In this case however, we can perform a change of coordinate by a Moebius transform
-   $x\mapsto \frac{ax+b}{cx+d}$ as explained in Remark \ref{m-rmk:moebius} to redistribute the points more evenly.
+   $x\mapsto \frac{ax+b}{cx+d}$, as explained in Remark \ref{m-rmk:moebius}, to redistribute the points more evenly.
 
    Improving $r$ from $0.1$ to say $0.6$ immediately saves a factor $6$ on the running time.
 
@@ -380,9 +381,9 @@
 
     \subsubsection{Taking advantage of rational equation}
 
-    In case the equation \eqref{eq:aff_model} is given by a polynomial $f(x)$
+    In case the equation \eqref{m-eq:aff_model} is given by a polynomial $f(x)$
     with small rational coefficients, one can still improve the computation
-    of $\ytab(u)$ in \eqref{eq:ytab_comp} by going back to
+    of $\ytab(u)$ in \eqref{m-eq:ytab_comp} by going back to
     the computation of $y(\xab(u))=f(x)^{\frac1m}$.
     The advantage is that baby-step giant-step splitting can be used for
     the evaluation of $f(x)$, reducing the number of multiplications to
@@ -395,21 +396,20 @@
 
     Numerical integration becomes quite inefficient when there are other branch points
     relatively close to an edge. The spanning tree optimization does not help
-    if some branch points tend to cluster while other are far away. A simple
+    if some branch points tend to cluster while others are far away. A simple
     example is given by the curve $y^2=x(x-i)(x-1000)$: the
     branch point $i$ is too close to the integration path $[0,1000]$
     and imposes a value $r=0.04$ for Gauss-Chebychev integration and
     a better but still small $r=0.2$ with double-exponential integration.
 
-    In this case, one can always split the bad integrals to improve the
-    relative distances of the singularities: in the case of double-exponential
+    In a case like this, one can always split the bad integrals to improve the
+    relative distances to the singularities: in the case of double-exponential
     integration, writing
     $\int_0^{1000}=\int_{0}^{6}+\int_6^{1000}$ gives two integrals with
     $r=0.48$ each. Splitting further at $2$ and $33$ gives $r=0.63$.
 
-    Another option with double exponential integration is to shift
-    the integration path in the change of variable
-    as explained in \cite{Molin2010}.
+    Another option with double exponential integration,  as explained in \cite{Molin2010}, is to shift
+    the integration path that is used for the change of variable.
 
 \biblio
 \end{document}
