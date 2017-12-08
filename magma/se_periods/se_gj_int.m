@@ -42,7 +42,24 @@ function GJ_Parameters(P,AB,Prec)
 	return N;
 end function;
 
-
+function DistanceToEllipse(x,r)
+	C<I> := Parent(x);
+	assert r gt 1;
+	b := Sqrt(r^2-1);
+	function s(t)
+		return Cos(t)*Sin(t)-r*Re(x)*Sin(t)+b*Im(x)*Cos(t);
+	end function;
+	function sp(t)
+		return (Cos(t)^2 - Sin(t)^2) - r*Re(x)*Cos(t) - b*Im(x)*Sin(t);
+	end function;
+	t := Re(Arccos(x));
+	repeat
+		nt := t;
+		t -:= s(t)/sp(t);
+	until Abs(t-nt) lt 10^-4;
+	xr := r*Cos(t)+I*b*Sin(t);
+	return xr,Abs(x-xr);
+end function;
 /*function UpperBound_M(M_0,r,V_r,Len)
 	M_r := 1;
 	K := 0;

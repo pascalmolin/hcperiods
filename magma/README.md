@@ -12,9 +12,9 @@
 		Qx<x> := PolynomialRing(Rationals());
 		f := x^5 + x^3 + x + 1;
 		m := 3;
-		Prec := 200;
-		M_1 := SE_BigPeriodMatrix(f,m:Prec:=Prec);
-		M_2 := SE_SmallPeriodMatrix(f,m:Prec:=Prec);
+		Prec := 100;
+		time M_1 := SE_BigPeriodMatrix(f,m:Prec:=Prec);
+		time M_2 := SE_SmallPeriodMatrix(f,m:Prec:=Prec);
 		
 		
 		// Compute the period matrices of y^m = f(x) to precision Prec digits (defined over complex field)
@@ -23,17 +23,17 @@
 		Cx<x> := PolynomialRing(C);
 		f := x^6 + (6+28*I)*x^5 - 1;
 		m := 10;
-		Prec := 200;
+		Prec := 100;
 		M_3 := SE_BigPeriodMatrix(f,m:Prec:=Prec);
 		M_4 := SE_SmallPeriodMatrix(f,m:Prec:=Prec);
 		
 
 		// Compute the period matrices of y^m = f(x) to precision Prec digits defined via branch points
 
-		Prec := 200;
 		C<I> := ComplexField(Prec);
 		Points := [ 5+3*I, 77, 1001, 2*I, -1-I ]; c := (1+I)^2;
 		m := 4;
+		Prec := 100;
 		M_5 := SE_BigPeriodMatrix(Points,m:Prec:=Prec,LeadingCoeff:=c);
 		M_6 := SE_SmallPeriodMatrix(Points,m:Prec:=Prec,LeadingCoeff:=c);
 
@@ -41,10 +41,10 @@
 		// Create a superelliptic curve object via univariate polynomial
 		S := SE_Curve(f,m:Prec:=Prec);
 
-		Optional parameters for intrinsic SE_Curve()
+		/*Optional parameters for intrinsic SE_Curve()
 			Prec: 
 				Prescribed precision for the complex superelliptic curve;
-				Default: 20
+				Default: 30
 			Small: 
 				Compute small period matrix? (not needed for Abel-Jacobi);
 				Default: true
@@ -52,21 +52,38 @@
 				Do precomputations for AbelJacobi map?;
 				Default: true
 			InftyPoints: 
-				Compute S`AJM_InftyPoints (may take some time,see below); 
+				Computes the Abel-Jacobi map for all infinite points (may take some time,see below); 
 				Default: false
 			IntegrationType: 
-				Force use of double-exponential integration for m = 2; 
+				Choose between double-exponential or Gauss-Jacobi integration. The value "Opt" will use
+				double-exponential if m > 2 and Gauss-Jacobi if m = 2 for period matrices, and double-exponential
+				integration for the Abel-Jacobi map for any m.
 				Default: "Opt";
-				Other: "DE","GC"
-			
+				Other: "DE","GJ"*/
+
+		// Create a superelliptic curve object that uses double-exponential/Gauss-Jacobi integration and computes the points
+		// Abel-Jacobi to the infinite points	
+
+		Prec := 50;
+		Qx<x> := PolynomialRing(Rationals());
+		f := x^8 + x^6 + x^4 + 3*x^2 - 3*x + 1;
+
+		// for m = 2 (hyperelliptic case) // Genus 3
+		time S1 := SE_Curve(f,2:Prec:=Prec,IntegrationType:="DE",InftyPoints:=true);
+		time S2 := SE_Curve(f,2:Prec:=Prec,IntegrationType:="GJ",InftyPoints:=true);
+
+		// for m = 4 (superelliptic case) // Genus 9
+		time S1 := SE_Curve(f,4:Prec:=Prec,IntegrationType:="DE",InftyPoints:=true);
+		time S2 := SE_Curve(f,4:Prec:=Prec,IntegrationType:="GJ",InftyPoints:=true);
+
 
 		// Create a superelliptic curve object via branch points and leading coefficient
 
 		Points := [ 5+3*I, 77, 1001, 2*I, -1-I ]; c := (1+I)^2;
-		S := SE_Curve(Points,m:Prec:=Prec,LeadingCoeff:=c);
+		S := SE_Curve(Points,m:Prec:=100,LeadingCoeff:=c);
 
 		// Try some random superelliptic curve
-		S := SE_RandomCurve(4,6:Prec:=100);
+		S := SE_RandomCurve(4,6:Prec:=100,IntegrationType:="DE");
 
 		// Extended printing
 		Print(S:Extended);
@@ -129,7 +146,7 @@
 		A := SE_AbelJacobi(D,Q_0,S);
 		
 
-		// Divisors can also include infinite points
+		// Divisors can also include infinite points given as <[k],v_k>, k = 1,..,gcd(m,n), v_k \in \Z
 
 		D := SE_Divisor([<[1],1>,<[2],1>,<[3],1>,<[4],1>,<[5],1>],S);
 		A := SE_AbelJacobi(D,Q_0,S);

@@ -7,9 +7,9 @@
 *******************************************************************************/
 
 // Import functions
-import "se_help_funcs.m": MakeCCVector, SortByRealPart;
+import "se_help_funcs.m": MakeCCVector, SortByRealPart, IntGroups;
 import "se_de_int.m": Bound_M1, Bound_M2;
-import "se_gc_int.m": DistanceEllipse;
+import "se_gj_int.m": DistanceEllipse;
 
 
 // Complex field
@@ -84,37 +84,30 @@ procedure GJ_Params_Tree(STree,Points,m)
 	// Min_r too bad?
 	assert STree`IntPars[1]-1 ge 3*10^-3;
 
-	eps := 1/100;
-	Lr := []; r := STree`IntPars[1];
-	//if true then
-	if r lt 1+(1/50) then
-		r := (1/2)*(r+1); 
+	eps := 1/500;
+	IntPars := [ STree`Edges[k]`r : k in [1..STree`Length ] ];
+	rm := STree`IntPars[1];
+	Groups := IntGroups(IntPars,rm,m);
+	vprint SE,2 : "Groups:",Groups;
+	if rm lt 1+(1/250) then
+		Lr := [(1/2)*(rm+1)]; 
 	else
-		r -:= eps;
+		Lr := [ rm - eps];
 	end if;
-	vprint SE,2 : "MinMax_IntPars:",STree`IntPars;
-	if m eq 2 then
-		k := 5;
-	else
-		k := 10;
-	end if;
-	while r lt STree`IntPars[2] do
-		Append(~Lr,r);
-		r +:= (k/10);
-		k *:= 2;
-	end while;
+	Lr cat:= [ Min(g) - eps : g in Remove(Groups,1) | #g gt 1 ];	
 
 	// Find best integration scheme for each edge and compute bound M
 	NSchemes := #Lr;
 	LrM := [ <1,Lr[l]> : l in [1..NSchemes] ];
 	for k in [1..STree`Length] do
 		M := 1;
-		l := NSchemes;
-		while STree`Edges[k]`r-eps lt Lr[l] do
-			l -:= 1;
-		end while;
+		l := Max([ l : l in [1..NSchemes] | STree`Edges[k]`r gt Lr[l] ]);
 		STree`Edges[k]`IntSch := l;
-		M := Ceiling(Lr[l]^(STree`Length-1) * Exp( (1/m) * Log( &*[ STree`Edges[k]`Data[j] - Lr[l] : j in [1..STree`Length-1]])));
+		M := Exp( -(1/m) * Log( &*[ STree`Edges[k]`Data[j] - Lr[l] : j in [1..STree`Length-1]]));
+		if M ge 1 then
+			M := M^(m-1);
+		end if;
+		M := Ceiling(Lr[l]^(STree`Length-1) * M);
 		LrM[l][1] := Max(M,LrM[l][1]);
 	end for;
 
@@ -130,43 +123,38 @@ function GJ_Params_AJM(ComplexEdges,SEC)
 	m := SEC`Degree[1]; n := SEC`Degree[2];
 	NEdges := #ComplexEdges; NewEdges := [];
 	
-	Min_r := 5.;
-	Max_r := 0.;	
-
+	rm := 5.;
+	// NewEdges = <[P],v_P,k,r_E,V_r>
 	for j in [1..NEdges] do
 		Edge := ComplexEdges[j];
 		GJ_AJM_Weight(~Edge,SEC`LowPrecBranchPoints,n);
-		Min_r := Min(Min_r,Edge[4]);
-		Max_r := Max(Max_r,Edge[4]);
+		rm := Min(rm,Edge[4]);
 		Append(~NewEdges,Edge);
 	end for;
-	// NewEdges = <[P],v_P,k,r_E,V_r>
 
-	eps := 1/100;
-	Lr := []; r := Min_r;
-	if r lt 1+(1/50) then
-		r := (1/2)*(r+1); 
+	eps := 1/500;
+	IntPars := [ NewEdges[k][4] : k in [1..NEdges] ];
+	Groups := IntGroups(IntPars,rm,m);
+	vprint SE,2 : "Groups:",Groups;
+	if rm lt 1+(1/250) then
+		Lr := [(1/2)*(rm+1)]; 
 	else
-		r -:= eps;
+		Lr := [ rm - eps];
 	end if;
-	k := 1;
-	while r lt Max_r do
-		Append(~Lr,r);
-		r +:= k;
-		k *:= 2;
-	end while;
+	Lr cat:= [ Min(g) - eps : g in Remove(Groups,1) | #g gt 1 ];
 
 	// Find best integration scheme for each edge and compute bound M
 	NSchemes := #Lr;
 	LrM := [ <1,Lr[l]> : l in [1..NSchemes] ];
 	for k in [1..#ComplexEdges] do
 		M := 1;
-		l := NSchemes;
-		while NewEdges[k][4]-eps lt Lr[l] do
-			l -:= 1;
-		end while;
+		l := Max([ l : l in [1..NSchemes] | NewEdges[k][4] gt Lr[l] ]);
 		NewEdges[k][4] := l;
-		M := Ceiling(Lr[l]^(SEC`Degree[2]-2)  * Exp( (1/m) * Log( &*[ NewEdges[k][5][j] - Lr[l] : j in [1..SEC`Degree[2]-1]])));
+		M := Exp( -(1/m) * Log( &*[ NewEdges[k][5][j] - Lr[l] : j in [1..SEC`Degree[2]-1]]));
+		if M ge 1 then
+			M := M^(m-1);
+		end if;
+		M := Ceiling(Lr[l]^(SEC`Degree[2]-2) * M);
 		LrM[l][1] := Max(M,LrM[l][1]);
 	end for;
 
@@ -220,8 +208,10 @@ function DE_Params_AJM(ComplexEdges,SEC)
 // Computes double-exponential integration integration parameters for a spanning tree
 
 	// Edges = <[P],v_P,k,r_E>
-	m := SEC`Degree[1]; n := SEC`Degree[2];
-	NEdges := #ComplexEdges; NewEdges := [];
+	m := SEC`Degree[1]; 
+	n := SEC`Degree[2];
+	NEdges := #ComplexEdges;
+	NewEdges := [];
 	
 	Min_r := 5.;
 	Max_r := 0.;	
@@ -236,8 +226,8 @@ function DE_Params_AJM(ComplexEdges,SEC)
 	// NewEdges = <[P],v_P,k,r_E,CCV>
 
 	// Make list of r's
-	Min_r *:= (19/20);
-	Max_r *:= (19/20);
+	Min_r *:= (9/10);
+	Max_r *:= (9/10);
 	
 	NSchemes := Max(Min(Floor(NEdges/2),Floor(10*(Max_r-Min_r))),1);
 
