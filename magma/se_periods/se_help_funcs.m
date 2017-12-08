@@ -6,6 +6,25 @@
 
 *******************************************************************************/
 
+function IntGroups(IntParPaths,rm,m)
+	if m gt 2 then
+		Groups := [ [],[],[],[] ];
+		for r in IntParPaths do
+			if r lt rm+0.4 then Append(~Groups[1],r);
+			else Append(~Groups[4],r); end if;
+		end for;
+	else
+		Groups := [ [],[],[],[],[],[] ];
+		for r in IntParPaths do if r lt rm+0.1 then Append(~Groups[1],r); elif r lt rm+0.2 then Append(~Groups[2],r);
+			elif r lt rm+0.4 then Append(~Groups[3],r);
+			elif r lt rm+0.8 then Append(~Groups[4],r);
+			elif r lt rm+1.6 then Append(~Groups[5],r);
+			else Append(~Groups[6],r); end if;
+		end for;
+	end if;
+	return Groups;
+end function;
+
 function SortByRealPart(V)
 	oV := []; up := 0;
 	for z in V do

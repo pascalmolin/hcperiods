@@ -58,7 +58,7 @@ function Bound_M2(CCV,len,m,n,r : Lambda := RPI/2, AJM := false )
 	end function;
 
 	// Stepsize
-	ss := Ceiling(100*tmax);
+	ss := 20;
 
 	// Abs(1-tanh(sinh(I*r)))
 	MDTO := Abs(1-Phi(0));
@@ -74,9 +74,9 @@ function Bound_M2(CCV,len,m,n,r : Lambda := RPI/2, AJM := false )
 			km := za;
 		end if;
 		if AJM then
-			u := (MDTO/&*[ Dist(z,CCV[k]):k in [1..len] ])^(1/m);
+			u := (MDTO/&*[ Dist(z,CCV[l]): l in [1..len] ])^(1/m);
 		else
-			u := (1/&*[ Dist(z,CCV[k]):k in [1..len] ])^(1/m);
+			u := (1/&*[ Dist(z,CCV[l]): l in [1..len] ])^(1/m);
 		end if;
 		if u gt 1 then
 			u := u^(m-1);

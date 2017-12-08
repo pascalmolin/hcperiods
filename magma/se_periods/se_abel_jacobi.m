@@ -81,10 +81,10 @@ end procedure;
 
 intrinsic SE_Branches( x0::FldComElt, SEC::SECurve : Principal := false ) -> SeqEnum[FldComElt]
 { Computes the solutions of y^m = f(x0) }
+	m := SEC`Degree[1];
 	if Distance(x0,SEC`BranchPoints) lt SEC`Error then
 		y := 0;
 	else
-		m := SEC`Degree[1];
 		fx0 := SEC`LeadingCoeff * &*[ (x0-P) : P in SEC`BranchPoints ];
 		if m eq 2 then
 			y := Sqrt(fx0);
