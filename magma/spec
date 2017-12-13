@@ -4,13 +4,12 @@ se_periods
 	se_anal_cont.m
 	se_curve.m
 	se_de_int.m
-	se_gc_int.m
+	se_gj_int.m
 	se_help_funcs.m
 	se_infty_points.m
 	se_intersection.m
 	se_period_matrix.m
 	se_symplectic_basis.m
 	se_spanning_tree.m
-	se_tests.m
 }
 

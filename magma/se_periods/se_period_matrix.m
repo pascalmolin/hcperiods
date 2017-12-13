@@ -122,23 +122,24 @@ procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 
 	vprint SE,1 : "Computing intersection matrix...";
 	SEC`IntersectionMatrix := SE_IntersectionMatrix(spsm_Matrix,m,n);
-	assert Rank(SEC`IntersectionMatrix) eq 2*g;
+	//assert Rank(SEC`IntersectionMatrix) eq 2*g;
 
 	// Symplectic reduction of intersection matrix
 	vprint SE,1 : "Performing symplectic reduction...";
 	CF, ST := SymplecticBasis(SEC`IntersectionMatrix);
-	ST_C := ChangeRing(Transpose(ST),C);
+	ST_C := ChangeRing(Transpose(RowSubmatrixRange(ST,1,2*g)),C);
 	vprint SE,3: "ST:",ST;
 	vprint SE,3: "CF:",CF;
 
 	vprint SE,1 : "Matrix multiplication 1...";
 	PMAPMB := PM * ST_C;
 
-	PM_AB := ColumnSubmatrixRange(PMAPMB,1,2*g);
-	vprint SE,3 : "Dependent columns:",ColumnSubmatrixRange(PMAPMB,2*g+1,Nrows(ST));
+	//PM_AB := ColumnSubmatrixRange(PMAPMB,1,2*g);
+	//vprint SE,3 : "Dependent columns:",ColumnSubmatrixRange(PMAPMB,2*g+1,Nrows(ST));
 
 	// Compute big period matrix
-	BPM := SEC`DifferentialChangeMatrix * PM_AB;
+	BPM := SEC`DifferentialChangeMatrix * PMAPMB;
+
 	// Compute reduction matrix
 	if ReductionMatrix then
 		// Embed big period matrix in \R^{2g \times 2g}
@@ -177,7 +178,7 @@ procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 		if MaxSymDiff ge SEC`Error then
 			print "Small period matrix: Requested accuracy could not not be reached.";
 			print "Significant digits:",Floor(-Log(10,MaxSymDiff));
-			assert false;
+			//assert false;
 		end if;	
 		
 		// Testing positive definiteness of the imaginary part of the period matrix

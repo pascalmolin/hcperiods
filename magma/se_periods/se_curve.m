@@ -158,7 +158,11 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 30, Small := true, Abe
 	//SEC`LowPrecBranchPoints := [ ChangePrecision(P,30) : P in Points ];
 
 	// Increase precision for precomputations
-	CompPrec := Prec+3;
+	if AbelJacobi then
+		CompPrec := Prec+3+Round(g/2);
+	else
+		CompPrec := Prec+3;
+	end if;
 	SEC`Prec := CompPrec;
 	SEC`RealField := RealField(CompPrec);
 	vprint SE,1 : "Computational precision:",CompPrec;
@@ -170,8 +174,8 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 30, Small := true, Abe
 	MaxM1 := Max( [ P[1] : P in SEC`SpanningTree`Params ]);
 
 	// Extra precision
-	//ExtraPrec := Max(5,Ceiling(Log(10,Binomial(n,Floor(n/4))*MaxM1)));
-	ExtraPrec := Max(10,Ceiling(Log(10,Binomial(n,Floor(n/4)))));
+	ExtraPrec := Max(5,Ceiling(Log(10,Binomial(n,Floor(n/4))*MaxM1)));
+	//ExtraPrec := Max(10,Ceiling(Log(10,Binomial(n,Floor(n/4)))));
 	vprint SE,1 : "Extra precision:",ExtraPrec; 	
 
 	// Complex field of maximal precision
@@ -296,7 +300,11 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 30, Small := true, Abe
 			end for;
 			// Test results
 			V := (m/delta) * &+[ v : v in SEC`AJM_InftyPoints ];
-			assert &and[ Abs(V[j][1]-Round(V[j][1])) lt SEC`Error : j in [1..2*SEC`Genus] ];
+			MaxDiff := Max( [ Abs(V[j][1]-Round(V[j][1])) : j in [1..2*g] ]);
+			if MaxDiff gt SEC`Error then
+				print "Abel-Jacobi map: Requested accuracy could not not be reached for infinite points.";
+				print "Significant digits:",Floor(-Log(10,MaxDiff));
+			end if;
 		end if;
 	end if;
 	// Reset to original precision
@@ -355,7 +363,7 @@ function IsPoint(Point,SEC,Err)
 end function;
 
 
-intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 40, Ht := 10^2, Monic:=false ) -> SECurve
+intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 40, Ht := 10^2, Monic:=false, IntegrationType:="Opt" ) -> SECurve
 { Returns a random superelliptic curve object defined over the rationals }
 	Qxy<x,y> := PolynomialRing(Rationals(),2);
 	while true do
@@ -374,7 +382,7 @@ intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 40, Ht := 10^2, M
 			break;
 		end if;
 	end while;
-	return SE_Curve(g:Prec:=Prec,InftyPoints);
+	return SE_Curve(g:Prec:=Prec,IntegrationType:=IntegrationType);
 end intrinsic;
 
 
