@@ -23,9 +23,9 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 	if not IsDefined(SEC`AJM_InftyPoints,k) then 
 		if delta eq 1 then
 			Append(~SEC`AJM_InftyPoints,SEC`AJM_SumOfInftyPoints);
-		//elif &and[IsDefined(SEC`AJM_InftyPoints,j) : j in Remove([1..delta],k) ] then
-			//LastInftyPoint := SEC`AJM_SumOfInftyPoints - &+[ SEC`AJM_InftyPoints[j] : j in Remove([1..delta],k) ];
-			//SEC`AJM_InftyPoints[k] := Matrix(R,2*SEC`Genus,1,[ v-Round(v) : v in Eltseq(LastInftyPoint) ]);
+		elif &and[IsDefined(SEC`AJM_InftyPoints,j) : j in Remove([1..delta],k) ] then
+			LastInftyPoint := SEC`AJM_SumOfInftyPoints - &+[ SEC`AJM_InftyPoints[j] : j in Remove([1..delta],k) ];
+			SEC`AJM_InftyPoints[k] := Matrix(R,2*SEC`Genus,1,[ v-Round(v) : v in Eltseq(LastInftyPoint) ]);
 		else
 		while a ge 0 do
 			a -:= n;
@@ -64,20 +64,20 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 				// Define g(1,t)/t^ord
 				g_t := &+[ g_C[j+1] * t^(j-Inf_Ord) : j in [Inf_Ord..Degree(g)] | Abs(g_C[j+1]) gt SEC`Error ];
 
-				// Compute roots // This is veeeery slow...
-				Rts_g_t := Roots(g_t);
+				// Compute roots
+				Rts_g_t := RootsNonExact(g_t);
 
 				// Get points and coefficients
 				Points := < >; 
 				Coeffs := [];
 				for j in [1..#Rts_g_t] do
-					t_j := Rts_g_t[j][1];
+					t_j := Rts_g_t[j];
 					ltj := Log(t_j);
 					x_j := Exp(-M*ltj);
 					y_j := Exp(-N*ltj)*LC_mi;
-					Append(~Points,<[x_j,y_j],Rts_g_t[j][2]>);
+					Append(~Points,<[x_j,y_j],1>);
 				end for;
-				vprint SE,1 : "Good case: have to compute:",#Points,"Integrals!";
+				vprint SE,1 : "Good case: have to compute",#Points,"integrals!";
 				// Rational part
 				RationalIntegral := Matrix(Q,2*SEC`Genus,1,[]);
 				// Is zero a branch point?
@@ -91,7 +91,6 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 				for P in Points	do
 					Dist, Ind := Distance(P[1][1],SEC`BranchPoints);
 					RationalIntegral +:= P[2] * SEC`AJM_RamificationPoints[Ind];
-					//if Dist gt SEC`Error then
 					if Dist gt SEC`Error then
 						Append(~ComplexEdges,Append(P,Ind));
 					end if;
@@ -111,7 +110,7 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 
 				// More precision?
 				ExtraPrec := 2*Max(5,Ceiling(Log(10,Binomial(SEC`Degree[2],Floor(SEC`Degree[2]/4))*MaxM1)));
-				if ExtraPrec gt 0 then
+				if ExtraPrec+SEC`Prec gt Precision(SEC`ComplexField) then
 					vprint SE,2 :"Extra precision (AJM):",ExtraPrec;
 					C<I> := ComplexField(Precision(SEC`ComplexField)+ExtraPrec);
 					SEC`ComplexField := C;
@@ -123,29 +122,29 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 				// Actual integrations from P_k to P
 				ComplexIntegrals := [ Matrix(SEC`ComplexField,SEC`Genus,1,[]) : j in [1..delta] ];
 				if SEC`IntegrationType eq "DE" then
-					DEInts := DE_Integration(Params,SEC:AJM); NInts := #DEInts;
+					DE_Integration(Params,SEC:AJM);
 					vprint SE,1 : "(AJM) using double-exponential integration...";
 					vprint SE,2 : "(AJM) Params:",Params;
 					for CE in ComplexEdges do
-						ComplexIntegral0 := DE_Integrals_Edge_AJM(CE,SEC,DEInts[Round(CE[4])]);
-						ComplexIntegrals[1] +:= CE[2] * Matrix(SEC`ComplexField,SEC`Genus,1,ComplexIntegral0);
+						ComplexIntegral0 := DE_Integrals_Edge_AJM(CE,SEC);
+						ComplexIntegrals[1] +:= CE`vp * Matrix(SEC`ComplexField,SEC`Genus,1,ComplexIntegral0);
 						for k in [2..delta] do
 							CI0seq := Eltseq(ComplexIntegral0);
 							ComplexIntegral0 := Matrix(SEC`ComplexField,SEC`Genus,1,[ SEC`Zetas[ZetaPows[j]] * CI0seq[j] : j in [1..SEC`Genus]]);
-							ComplexIntegrals[k] +:= CE[2] * ComplexIntegral0;
+							ComplexIntegrals[k] +:= CE`vp * ComplexIntegral0;
 						end for;
 					end for;
 				elif SEC`IntegrationType eq "GJ" then
-					GJInts := GJ_Integration(Params,SEC:AJM); NInt := #GJInts;
+					GJ_Integration(Params,SEC:AJM);
 					vprint SE,1 : "(AJM) using Gauss-Jacobi integration...";
 					vprint SE,2 : "(AJM) Params:",Params;
 					for CE in ComplexEdges do
-						ComplexIntegral0 :=  GJ_Integrals_Edge_AJM(CE,SEC,GJInts[Round(CE[4])]);
-						ComplexIntegrals[1] +:= CE[2] * Matrix(SEC`ComplexField,SEC`Genus,1,ComplexIntegral0);
+						ComplexIntegral0 :=  GJ_Integrals_Edge_AJM(CE,SEC);
+						ComplexIntegrals[1] +:= CE`vp * Matrix(SEC`ComplexField,SEC`Genus,1,ComplexIntegral0);
 						for k in [2..delta] do
 							CI0seq := Eltseq(ComplexIntegral0);
 							ComplexIntegral0 := Matrix(SEC`ComplexField,SEC`Genus,1,[ SEC`Zetas[ZetaPows[j]] * CI0seq[j] : j in [1..SEC`Genus]]);
-							ComplexIntegrals[k] +:= CE[2] * ComplexIntegral0;
+							ComplexIntegrals[k] +:= CE`vp * ComplexIntegral0;
 						end for;
 					end for;
 				else
@@ -167,14 +166,11 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 			g_t := &*[ (1 - x*(r+t)^b*(t^M)) : x in SEC`BranchPoints ] - (r+t)^delta;
 			g_C := Coefficients(g_t);
 			g_t := &+[ g_C[j] * t^(j-1) : j in [1..Degree(g_t)+1] | Abs(g_C[j]) gt SEC`Error ];
-			//g_t := &+[ g_C[j] * t^(j-1) : j in [1..Degree(g_t)+1] ];
 			assert Degree(g_t) in [n*(M+b),(n-1)*(M+b)];
 			assert Abs(g_C[2]) gt SEC`Error;
 
-			// Compute roots // This is veeeery slow...
-			Roots_gt := Roots(g_t);
-
-			Rts_g_t := [ R[1] : R in Roots_gt ];
+			// Compute roots
+			Rts_g_t := RootsNonExact(g_t);
 			assert #Rts_g_t eq Degree(g_t);
 			Points := [ ];
 			for j in [1..Degree(g_t)] do
@@ -188,7 +184,7 @@ intrinsic SE_AJM_InftyPoints( k::RngIntElt, SEC::SECurve )
 				end if;
 			end for;
 			assert #Points in [n*b+n*M-1,n*b+n*M-b-M-1];
-			vprint SE,1 : "Bad case: have to compute:",#Points,"Integrals!";
+			vprint SE,1 : "Bad case: have to compute",#Points,"integrals!";
 			if Degree(g_t) eq (n-1)*(M+b) then
 				Append(~Points,<[0,0],N*m+M+b>);
 			end if;

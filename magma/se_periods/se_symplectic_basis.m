@@ -6,8 +6,13 @@
 
  ******************************************************************************/
 
+// Symplectic reduction routines
+
 procedure RS_InplaceMoveToPositivePivot( Column, Row, Pivot, ~G, ~B )
-	i := Column; j := Row; v := G[i][j]; IsPivot := false;
+	i := Column;
+	j := Row;
+    	v := G[i][j];
+	IsPivot := false;
 	if [i,j] eq [Pivot+1,Pivot] and G[Pivot+1][Pivot] ne v then
 		IsPivot := true;
         	SwapRows(~B,Pivot,Pivot+1);
@@ -41,16 +46,19 @@ procedure RS_InplaceMoveToPositivePivot( Column, Row, Pivot, ~G, ~B )
       		SwapRows(~G,Pivot,j);
         	SwapColumns(~G,Pivot,j);
 	end if;
+
     	// Fix possible change of sign in a row
     	if G[Pivot+1][Pivot] ne v and not IsPivot then
         	SwapRows(~B,Pivot,Pivot+1);
         	SwapRows(~G,Pivot,Pivot+1);
         	SwapColumns(~G,Pivot,Pivot+1);
 	end if;
+
 end procedure;
 
 
 function RS_FindSmallestElementPosition( K, Pivot )
+// Find the smallest positive entry of K above the pivot
 	n := NumberOfRows(K);
 	for i in [Pivot..n] do
 		for j in [Pivot..n] do
@@ -62,19 +70,26 @@ function RS_FindSmallestElementPosition( K, Pivot )
 	return [0,0];
 end function;
 
-
 function SymplecticBasis(K)
+	// Checking for K to be skew-symmetric
+	assert K + Transpose(K) eq Zero(Parent(K));
+
+	// Checking for K to be a square matrix
+	n := NumberOfRows(K);
+	assert n eq NumberOfColumns(K);
+
 	E := K;
 	B := One(Parent(E));
     	Zeros := [];
     	PS := [];
     	Pivot := 1;
-	n := NumberOfColumns(K);
+
     	while Pivot le n do
+		//print "Pivot:",Pivot;
         	SmallestEltPos := RS_FindSmallestElementPosition( E, Pivot );
         	if SmallestEltPos eq [0,0] then
             		Append(~Zeros,Pivot);
-           		Pivot := Pivot + 1;
+           		Pivot +:= 1;
             		continue;
 		end if;
        		RS_InplaceMoveToPositivePivot(SmallestEltPos[2], SmallestEltPos[1], Pivot, ~E, ~B);
@@ -83,19 +98,21 @@ function SymplecticBasis(K)
 		// Use non-zero element to clean row Pivot
        	       	u := E[Pivot][Pivot+1];
        		for j in [Pivot+2..n] do
-        		v, r := Quotrem(-E[Pivot][j],u);
-            		if v ne 0 then
+        		//v, r := Quotrem(-E[Pivot][j],u);
+			v := -E[Pivot][j];
+			if v ne 0 then
                 		AllZero := false;
                 		AddRow(~E,v,Pivot+1,j);
                 		AddColumn(~E,v,Pivot+1,j);
                			AddRow(~B,v,Pivot+1,j);
 			end if;
 		end for;
-		
+
         	// Use non-zero element to clean row Pivot+1
         	u := E[Pivot+1][Pivot];	
 	     	for j in [Pivot+2..n] do
-        		v, r := Quotrem(-E[Pivot+1][j],u);
+        		//v, r := Quotrem(-E[Pivot+1][j],u);
+			v := E[Pivot+1][j];
             		if v ne 0 then
                			AllZero := false;
 				AddRow(~E,v,Pivot,j);
@@ -103,25 +120,18 @@ function SymplecticBasis(K)
 				AddRow(~B,v,Pivot,j);
 			end if;
 		end for;
-		
+
 		// Record for basis reconstruction
            	if AllZero then
             		Append(~PS,[E[Pivot+1][Pivot], Pivot]);
-            		Pivot := Pivot +  2;
+            		Pivot +:= 2;
 		end if;
 	end while;
-	
     	Sort(~PS);
 	Reverse(~PS);
-	
   	ES := [ p[2] : p in PS ];
     	FS := [ p[2]+1 : p in PS ];
-	
 	NewRowsIndices := ES cat FS cat Zeros;
-	
-	NewRows := [ RowSubmatrix(B,i,1) : i in NewRowsIndices ];
-    	ST := Matrix(NewRows); 		// Base change matrix
-  	CF := ST * K * Transpose(ST);   // Symplectic basis
-
-    	return CF, ST;
+    	ST := Matrix([ RowSubmatrix(B,i,1) : i in NewRowsIndices ]); // Symplectic transformation
+    	return ST;
 end function;

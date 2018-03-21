@@ -47,7 +47,7 @@ intrinsic SE_SmallPeriodMatrix( Points::SeqEnum[FldComElt],m::RngIntElt : Leadin
 end intrinsic;
 
 
-procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
+procedure SE_PeriodMatrix( SEC : Small := true, AJM := false )
 // Computes period matrices associated to the SE_Curve object SEC }
 
 	if &and[Small,not assigned SEC`SmallPeriodMatrix] or &and[not Small, not assigned SEC`BigPeriodMatrix] then 
@@ -76,16 +76,16 @@ procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 	if SEC`IntegrationType eq "DE" then
 		// Integration parameters
 		vprint SE,1 : "Computing integration parameters...";
-		DEInts := DE_Integration(STree`Params,SEC);
+		DE_Integration(STree`Params,SEC : AJM := AJM );
 		vprint SE,1 : "using double-exponential integration...";
-		vprint SE,2 : [ <D`NPoints,D`r> : D in DEInts ];	
-		Periods, ElemInts := DE_Integrals_Tree(SEC,DEInts);
+		vprint SE,2 : [ <D`NPoints,D`r> : D in SEC`IntegrationSchemes ];	
+		Periods, ElemInts := DE_Integrals_Tree(SEC);
 	elif SEC`IntegrationType eq "GJ" then
 		vprint SE,1 : "Computing integration parameters...";
-		GJInts := GJ_Integration(STree`Params,SEC);
+		GJ_Integration(STree`Params,SEC);
 		vprint SE,1 : "using Gauss-Jacobi integration...";
-		vprint SE,2 : "GJ_Integrations:",GJInts;
-		Periods, ElemInts := GJ_Integrals_Tree(SEC,GJInts);
+		vprint SE,2 : "GJ_Integrations:",SEC`IntegrationSchemes;
+		Periods, ElemInts := GJ_Integrals_Tree(SEC);
 	else
 		error Error("Invalid integration type.");
 	end if;
@@ -122,14 +122,13 @@ procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 
 	vprint SE,1 : "Computing intersection matrix...";
 	SEC`IntersectionMatrix := SE_IntersectionMatrix(spsm_Matrix,m,n);
-	//assert Rank(SEC`IntersectionMatrix) eq 2*g;
+	assert Rank(SEC`IntersectionMatrix) eq 2*g;
 
 	// Symplectic reduction of intersection matrix
 	vprint SE,1 : "Performing symplectic reduction...";
-	CF, ST := SymplecticBasis(SEC`IntersectionMatrix);
+	ST := SymplecticBasis(SEC`IntersectionMatrix);
 	ST_C := ChangeRing(Transpose(RowSubmatrixRange(ST,1,2*g)),C);
 	vprint SE,3: "ST:",ST;
-	vprint SE,3: "CF:",CF;
 
 	vprint SE,1 : "Matrix multiplication 1...";
 	PMAPMB := PM * ST_C;
@@ -141,7 +140,7 @@ procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 	BPM := SEC`DifferentialChangeMatrix * PMAPMB;
 
 	// Compute reduction matrix
-	if ReductionMatrix then
+	if AJM then
 		// Embed big period matrix in \R^{2g \times 2g}
 		M := Matrix(Parent(Re(BPM[1][1])),2*g,2*g,[]);
 		for j in [1..g] do
@@ -157,14 +156,11 @@ procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 	end if;
 
 	if Small then
-		vprint SE,1 : "Matrix inversion...";
-		PM_AInv := ColumnSubmatrixRange(BPM,1,g)^(-1);
-		vprint SE,1 : "Matrix multiplication 2...";
-		Tau := PM_AInv * ColumnSubmatrixRange(BPM,g+1,2*g);
-		Tau := ChangeRing(Tau,CS);
+		// Small period matrix		
+		Tau := ChangeRing(ColumnSubmatrixRange(BPM,1,g)^(-1) * ColumnSubmatrixRange(BPM,g+1,2*g),CS);
 
 		// Assign small period matrix
-		SEC`SmallPeriodMatrix :=  Tau;
+		SEC`SmallPeriodMatrix := Tau;
 
 		// Testing for symmetry of the period matrix
 		vprint SE,1 : "Testing symmetry...";
@@ -178,7 +174,7 @@ procedure SE_PeriodMatrix( SEC : Small := true, ReductionMatrix := false )
 		if MaxSymDiff ge SEC`Error then
 			print "Small period matrix: Requested accuracy could not not be reached.";
 			print "Significant digits:",Floor(-Log(10,MaxSymDiff));
-			//assert false;
+			assert false;
 		end if;	
 		
 		// Testing positive definiteness of the imaginary part of the period matrix
