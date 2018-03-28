@@ -35,7 +35,8 @@ declare attributes SECurve:
 	ReductionMatrix, 
 	AJM_RamificationPoints, 
 	AJM_InftyPoints, 
-	AJM_SumOfInftyPoints, 
+	AJM_SumOfInftyPoints,
+	IntegrationSchemes,
 	TreeMatrix, 
 	Error, 
 	IntegrationType, 
@@ -74,6 +75,7 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 30, Small := true, Abe
 
 	// Precision
 	K := BaseRing(Parent(f));
+	vprint SE,1 : "Field of definition:",K; 	
 	if not IsExact(K) then
 		require Precision(K) ge 30 : "Please enter polynomial with at least 40 digits precision or as exact polynomial.";
 		Prec := Min(Prec,Precision(K));
@@ -99,6 +101,7 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 30, Small := true, Abe
 
 	// Integration method
 	require IntegrationType in ["Opt","DE","GJ"] : "Invalid integration type.";
+	SEC`IntegrationSchemes := [];
 	if m gt 2 then
 		if IntegrationType in ["DE","Opt"]  then
 			// Double-exponential
@@ -122,12 +125,13 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 30, Small := true, Abe
 
 	// Estimate lower bound for precision
 	fmonic := f/LeadingCoefficient(f);
-	CoeffAbs := [ Abs(c):c in Coefficients(fmonic) | c ne 0 ]; 
+	CoeffAbs := [ Abs(c):c in Prune(Coefficients(fmonic)) | c ne 0 ]; 
+	// Upper bound for roots
+	MaxCH := Ceiling(Max([Log(10,1+c) : c in CoeffAbs ]));
+	vprint SE,2 : "MaxCH:",MaxCH;
 	MinCH := Abs(Floor(Log(10,Min(CoeffAbs))));
 	vprint SE,2 : "MinCH:",MinCH;
 	//require -MinCH le Prec : "Polynomial coefficients are too small. Please input polynomial to higher precision.";
-	MaxCH := Ceiling(Max(0,Ceiling(Log(10,Max(CoeffAbs)))));
-	vprint SE,2 : "MaxCH:",MaxCH;
 	MinPrec := Prec + Max(MaxCH,MinCH);
 	vprint SE,1 : "Minimal precision:",MinPrec;
 	C<I> := ComplexField(MinPrec);
@@ -147,19 +151,20 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 30, Small := true, Abe
 		end for;
 		Points cat:= ChangeUniverse(QPoints,C);
 	else	
+		// How good does roots really work?
 		Points := Roots(ChangeRing(f,ComplexField(MinPrec)));
 		Points := [ P[1] : P in Points ];
+		//Points := RootsNonExact(ChangeRing(f,ComplexField(MinPrec)));
 	end if;
 	Sort(~Points,SE_OrdFldComElt);
 	require #Points eq n : "Defining polynomial has to be squarefree.";
-
+	
 	// Low precision branch points
 	SEC`LowPrecBranchPoints := ChangeUniverse(Points,ComplexField(30));
-	//SEC`LowPrecBranchPoints := [ ChangePrecision(P,30) : P in Points ];
 
 	// Increase precision for precomputations
 	if AbelJacobi then
-		CompPrec := Prec+3+Round(g/2);
+		CompPrec := Prec+3+m;
 	else
 		CompPrec := Prec+3;
 	end if;
@@ -175,21 +180,32 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 30, Small := true, Abe
 
 	// Extra precision
 	ExtraPrec := Max(5,Ceiling(Log(10,Binomial(n,Floor(n/4))*MaxM1)));
-	//ExtraPrec := Max(10,Ceiling(Log(10,Binomial(n,Floor(n/4)))));
 	vprint SE,1 : "Extra precision:",ExtraPrec; 	
 
 	// Complex field of maximal precision
 	MaxPrec := Max(MinPrec,CompPrec+ExtraPrec);
-	//MaxPrec := MinPrec + ExtraPrec;
 	vprint SE,1 : "Maximal precision:",MaxPrec;
 	C<I> := ComplexField(MaxPrec);
-	if MaxPrec gt MinPrec then
-		//assert false;
-		Points := SE_DKPEB(f,Points,MaxPrec);
-	end if;
 	SEC`ComplexField := C; 
 	vprint SE,1 : "SEC`ComplexField:",SEC`ComplexField;	
 
+	// Branch point to maximal precision
+	if MaxPrec gt MinPrec then
+		Points := SE_DKPEB(f,Points,MaxPrec);
+	end if;
+	// Clean up // useful?
+	CPoints := [];
+	for k in [1..n] do
+		xk := Points[k];
+		if Abs(Re(xk)) lt SEC`Error then
+			xk := I*Im(xk); 
+		end if;
+		if Abs(Im(xk)) lt SEC`Error then
+			xk := C!Re(xk);
+		end if;
+		Append(~CPoints,xk);
+	end for;
+	
 	// Embed univariate Polynomial
 	f_x := ChangeRing(f,C);
 	SEC`ComplexPolynomial := f_x;
@@ -265,7 +281,7 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 30, Small := true, Abe
 	SEC`DifferentialChangeMatrix := D;
 
 	// Branch points
-	SEC`BranchPoints := Points;
+	SEC`BranchPoints := CPoints;
 
 	// Root of unity powers
 	SEC`Zetas := [ Exp(k*Pi(C)*I/m) : k in [0..2*m-1] ];
@@ -274,10 +290,16 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 30, Small := true, Abe
 	TreeData(~SEC`SpanningTree,SEC`BranchPoints,SEC`Zetas,m);
 
 	// Compute big (and small) period matrix
-	SE_PeriodMatrix(SEC:Small:=Small,ReductionMatrix:=AbelJacobi);
+	SE_PeriodMatrix(SEC:Small:=Small,AJM:=AbelJacobi);
 
 	// Initiate Abel-Jacobi
 	if AbelJacobi then
+	
+		// Delete integration Gauss-Jacobi integration schemes from period matrix computation
+		if IntegrationType ne "DE" then
+			SEC`IntegrationSchemes := [];
+		end if;
+
 		// Switch back to DE
 		if IntegrationType eq "Opt" then
 			SEC`IntegrationType := "DE";
@@ -304,6 +326,7 @@ intrinsic SE_Curve( f::RngUPolElt, m::RngIntElt : Prec := 30, Small := true, Abe
 			if MaxDiff gt SEC`Error then
 				print "Abel-Jacobi map: Requested accuracy could not not be reached for infinite points.";
 				print "Significant digits:",Floor(-Log(10,MaxDiff));
+				assert false;
 			end if;
 		end if;
 	end if;
@@ -363,7 +386,7 @@ function IsPoint(Point,SEC,Err)
 end function;
 
 
-intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 40, Ht := 10^2, Monic:=false, IntegrationType:="Opt" ) -> SECurve
+intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 40, Ht := 10^2, Monic:=false, IntegrationType:="Opt", InftyPoints:=false ) -> SECurve
 { Returns a random superelliptic curve object defined over the rationals }
 	Qxy<x,y> := PolynomialRing(Rationals(),2);
 	while true do
@@ -382,7 +405,7 @@ intrinsic SE_RandomCurve( m::RngIntElt, n::RngIntElt : Prec := 40, Ht := 10^2, M
 			break;
 		end if;
 	end while;
-	return SE_Curve(g:Prec:=Prec,IntegrationType:=IntegrationType);
+	return SE_Curve(g:Prec:=Prec,IntegrationType:=IntegrationType,InftyPoints:=InftyPoints);
 end intrinsic;
 
 

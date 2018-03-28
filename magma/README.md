@@ -154,13 +154,13 @@
 
 		// Abel-Jacobi map of degree zero divisors independently of a basepoint
 
-		D := SE_Divisor([<P_1,-10>,<[4],10>],S);
+		D := SE_Divisor([<P_1,-5>,<P_2,3>,<[4],2>],S);
 		A := SE_AbelJacobi(D,S);
 
 
 		// Or pick a random zero divisor on k points
 
-		k := 5;
+		k := Random([1..10]);
 		D := SE_RandomDivisor(k,S:Zero:=true);
 		A := SE_AbelJacobi(D,S);
 

@@ -9,22 +9,17 @@
 import "se_anal_cont.m": AC_mthRoot;
 import "se_help_funcs.m": MakeCCVector;
 
-PI30 := Pi(RealField(30));
+PI302INV := 1/(2*Pi(RealField(30)));
 
 function SE_IntersectionMatrix( spsm_Matrix, m,n )
 	// Building block matrices
 	Blocks := [];
 	// Block matrix for self-shifts build the diagonal of intersection matrix
 	SelfShiftBlock := ZeroMatrix(Integers(),m-1,m-1);
-	for Ind1 in [1..m-1] do
-		for Ind2 in [Ind1+1..m-1] do
-			if Ind1 + 1 - Ind2 mod m eq 0 then
-				SelfShiftBlock[Ind1][Ind2] := 1;
-				SelfShiftBlock[Ind2][Ind1] := -1;
-			end if;
-		end for;
+	for Ind1 in [1..m-2] do
+		SelfShiftBlock[Ind1][Ind1+1] := 1;
+		SelfShiftBlock[Ind1+1][Ind1] := -1;
 	end for;
-
 	// Build blocks for intersection matrix
 	for j in [1..n-1] do
 		Blocks[(j-1)*n+1] := SelfShiftBlock;
@@ -76,12 +71,12 @@ function SE_IntersectionNumber( Edge1,Edge2,Points,m,n,Zetas )
 	// Cases
 	if a eq c then
 		//"################################ Case1: a = c ################################";
-		AR1 := AC_mthRoot(-1,Edge1`Data,Zetas,Edge1`up,m,n-2);
-		AR2 := AC_mthRoot(-1,Edge2`Data,Zetas,Edge2`up,m,n-2);
+		AR1 := AC_mthRoot(-1,Edge1,Zetas,m,n-2);
+		AR2 := AC_mthRoot(-1,Edge2,Zetas,m,n-2);
 		Val_ab := Edge1`Data[n+1] * AR1;
 		Val_cd := Edge2`Data[n+1] * AR2;		
 		Val := Val_cd/Val_ab;
-		k := Round(((1/(2*PI30)) * ( phi + m * Arg(Val) )));
+		k := Round( PI302INV * ( phi + m * Arg(Val) ));
 		/*k := Round(k_);
 		assert Abs(k-k_) lt 10^-10;*/
 		if phi gt 0 then
@@ -91,12 +86,12 @@ function SE_IntersectionNumber( Edge1,Edge2,Points,m,n,Zetas )
 		end if;
 	elif b eq c then
 		//"################################ Case2: b = c ################################";
-		AR1 := AC_mthRoot(1,Edge1`Data,Zetas,Edge1`up,m,n-2);
-		AR2 := AC_mthRoot(-1,Edge2`Data,Zetas,Edge2`up,m,n-2);
+		AR1 := AC_mthRoot(1,Edge1,Zetas,m,n-2);
+		AR2 := AC_mthRoot(-1,Edge2,Zetas,m,n-2);
 		Val_ab := Edge1`Data[n+1] * AR1;
 		Val_cd := Edge2`Data[n+1] * AR2;		
 		Val := Val_cd/Val_ab;
-		k := Round((1/(2*PI30)) * ( phi + m * Arg(Val) ) + (1/2));
+		k := Round( PI302INV * ( phi + m * Arg(Val) ) + (1/2));
 		/*k := Round(k_);
 		assert Abs(k-k_) lt 10^-10;*/
 		return <-k,1-k>;
