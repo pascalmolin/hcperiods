@@ -191,7 +191,7 @@
    \subsubsection{Gauss-Chebychev case}
 
    Recall from \S \ref{m-subsec:gauss_chebychev_integration} that we can parametrize the ellipse $ε_r$ via
-   $$ε_r = \set{ \cosh(r+it) = \cos(t-ir), t\in]-π,π] }.$$
+   $ε_r = \set{ \cosh(r+it) = \cos(t-ir), t\in]-π,π] }$.
 
    \begin{figure}[H]
        \begin{center}
@@ -211,7 +211,7 @@
    to the ellipse $ε_r$ can be computed
    applying Newton's method to the scalar product function
    $s(t) = \Re(\overline{z'}(u_k-z))$, where $z = \cos(t-ir)$ and
-   we take $t=\Re(\arccos(u_k))$ as a starting point.
+   we take $t=\Re(\arccos(u_k))$ as a starting point (see Figure \ref{fig:ellipse2}).
    By convexity of the ellipse,
    the solution is unique on the quadrant containing $u_k$.
 
@@ -366,7 +366,7 @@
     requires $O(n^3)$ evaluations of elementary costs (involving transcendental functions if $m>2$).
 
     For large values of $n$ (comparable to the precision), the computation of
-    these capacities has a noticable impact on the running time. This can be
+    these capacities has a noticeable impact on the running time. This can be
     avoided by computing a \emph{minimal spanning tree} that uses the euclidean
     distance between the end points of an edge as capacity, i.e.
     $r_e = \abs{b-a}$, which reduces the complexity to $O(n^2)$

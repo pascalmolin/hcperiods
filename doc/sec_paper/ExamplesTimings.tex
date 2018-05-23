@@ -31,7 +31,8 @@
   \end{figure}
 
   In the case of hyperelliptic curves, we compare our timings with the existing
-  Magma code \cite{vanWamelen06}. We obtain a huge speedup which is mostly due
+  Magma code \cite{vanWamelen06} (see Tables \ref{tab:time_hyp} and \ref{tab:time_sup}).
+  We obtain a huge speedup which is mostly due
   to the better integration scheme, but more interesting is the fact that the
   running time of our algorithm mainly depends on the genus and the precision,
   while that of Magma depends a lot on the branch points and behaves very badly
@@ -70,6 +71,7 @@
               \bottomrule
           \end{tabular}
           \caption{timings for hyperelliptic curves, single core Xeon E5 3GHz (in seconds).}
+          \label{tab:time_hyp}
       \end{center}
   \end{table}
 
@@ -110,6 +112,7 @@
               \bottomrule
           \end{tabular}
           \caption{timings for superelliptic curves, single core Xeon E5 3GHz (in seconds).}
+          \label{tab:time_sup}
       \end{center}
   \end{table}
 
