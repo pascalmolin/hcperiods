@@ -203,7 +203,7 @@ intrinsic SE_AbelJacobi( D::SEDivisor, SEC::SECurve ) -> Mtrx
 
 	// More precision?
 	ExtraPrec := 2*Max(5,Ceiling(Log(10,Binomial(SEC`Degree[2],Floor(SEC`Degree[2]/4))*MaxM1)));
-	if ExtraPrec gt 0 then
+	if ExtraPrec+SEC`Prec gt Precision(SEC`ComplexField) then
 		vprint SE,2 :"Extra precision (AJM):",ExtraPrec;
 		C<I> := ComplexField(Precision(SEC`ComplexField)+ExtraPrec);
 		SEC`ComplexField := C;
@@ -215,18 +215,18 @@ intrinsic SE_AbelJacobi( D::SEDivisor, SEC::SECurve ) -> Mtrx
 	// Actual integrations from P_k to P
 	ComplexIntegral := Matrix(C,SEC`Genus,1,[]);
 	if SEC`IntegrationType eq "DE" then
-		DEInts := DE_Integration(Params,SEC:AJM); NInts := #DEInts;
+		DE_Integration(Params,SEC:AJM);
 		vprint SE,1 : "(AJM) using double-exponential integration...";
 		vprint SE,2 : "(AJM) Params:",Params;
 		for CE in ComplexEdges do
-			ComplexIntegral +:= CE[2] * Matrix(C,SEC`Genus,1,DE_Integrals_Edge_AJM(CE,SEC,DEInts[Round(CE[4])]));
+			ComplexIntegral +:= CE`vp * Matrix(C,SEC`Genus,1,DE_Integrals_Edge_AJM(CE,SEC));
 		end for;
 	elif SEC`IntegrationType eq "GJ" then
-		GJInts := GJ_Integration(Params,SEC:AJM); NInt := #GJInts;
+		GJ_Integration(Params,SEC:AJM);
 		vprint SE,1 : "(AJM) using Gauss-Jacobi integration...";
 		vprint SE,2 : "(AJM) Params:",Params;
 		for CE in ComplexEdges do
-			ComplexIntegral +:= CE[2] * Matrix(C,SEC`Genus,1,GJ_Integrals_Edge_AJM(CE,SEC,GJInts[Round(CE[4])]));
+			ComplexIntegral +:= CE`vp * Matrix(C,SEC`Genus,1,GJ_Integrals_Edge_AJM(CE,SEC));
 		end for;
 	else
 		error Error("Unsupported integration type.");

@@ -3,3 +3,13 @@
 *.aux
 *.log
 *.out
+*.bbl
+*.blg
+*.tex.backup
+*.m~
+*.sig
+*.c~
+*.h~
+*.bib~
+*.toc
+*.gitignore~

@@ -7,13 +7,13 @@
 *******************************************************************************/
 
 // Import functions
-import "se_anal_cont.m": AC_mthRoot;
+import "se_anal_cont.m": AC_mthRoot, AC_mthRoot2, AC_mthRoot3;
 import "se_help_funcs.m": MakeCCVector, PolynomialShiftVector;
 import "se_spanning_tree.m": GC_AJM_Weight;
 import "se_de_int.m": DE_Integrals_Factor, DE_Integrals_Factor_AJM;
 
 // Low precision complex field
-C<I> := ComplexField(40);
+C<I> := ComplexField(20);
 RPI := Real(Pi(C));
 
 ////////////////////////////////////////////////////////////
@@ -130,13 +130,12 @@ end function;*/
 
 function GC_Intergrals_Factor( VectorIntegral, Edge, SEC )
 // Multiply vector integral by constants
-	
 	C<I> := SEC`ComplexField;
-	g := SEC`Genus;
+	oh := C!1/2;
 	n := SEC`Degree[2];
 
 	// Polynomial shift by (b+a)/(b-a)
-	PolynomialShiftVector( ~VectorIntegral, Edge`Data[n], g, 0 );
+	PolynomialShiftVector(~VectorIntegral,Edge`Data[n],SEC`Genus,0);
 	
 	// c1 = 2 / ((b+a)/2)^(n/2)
 	n2 := Floor(n/2);
@@ -154,29 +153,27 @@ function GC_Intergrals_Factor( VectorIntegral, Edge, SEC )
 	VectorIntegral := [ c1 * v : v in VectorIntegral ];
 	// c2 = ((b+a)/2)^(i+1)
 	c2 := 1;
-	for k in [1..g] do
+	for k in [1..SEC`Genus] do
 		c2 *:= Edge`Data[n-1];
 		VectorIntegral[k] *:= c2;
 	end for;
-	ElemInts := [ (1/2) * v : v in VectorIntegral ];
+	ElemInts := [ oh * v : v in VectorIntegral ];
 	return VectorIntegral, ElemInts;
 end function;
 
 
-// EdgeData = [ u_1, ... , u_{n-2}, (b-a)/2, (b+a)/(b-a), up ]
-function GC_Integrals( Edge, SEC, GJInt )
+function GC_Integrals(Edge,SEC)
 // Gauss-Chebychev integration
-	C<I> := SEC`ComplexField;
-	g := SEC`Genus;
-	n := SEC`Degree[2];
-	VectorIntegral := [ Zero(C) : j in [1..g] ]; 
-	//up := Floor(EdgeData[n+1]);
+	C_0 := Zero(SEC`ComplexField); 
+	GJInt := SEC`IntegrationSchemes[Edge`IntSch];
 	N := GJInt[1]`NPoints;
+	VectorIntegral := [ C_0 : j in [1..SEC`Genus] ];
+	
 	if N mod 2 eq 1 then
 		// Treat zero first
 		N2 := Floor((N-1)/2);
 		// Compute 1/y(0)
-		y := 1/AC_mthRoot(0,Edge`Data,SEC`Zetas,Edge`up,2,n-2);
+		y := 1/AC_mthRoot(0,Edge,SEC`Zetas,2,SEC`Degree[2]-2);
 		VectorIntegral[1] +:= y;
 	else
 		N2 := Floor(N/2);
@@ -184,33 +181,33 @@ function GC_Integrals( Edge, SEC, GJInt )
 	for k in [1..N2] do
 		// Compute 1/y(x),1/y(-x)
 		x := GJInt[1]`Abscissas[k];
-		y1 := 1/AC_mthRoot(x,Edge`Data,SEC`Zetas,Edge`up,2,n-2);
-		y2 := 1/AC_mthRoot(-x,Edge`Data,SEC`Zetas,Edge`up,2,n-2);
-
+		mx := -x;
+		y1 := 1/AC_mthRoot(x,Edge,SEC`Zetas,2,SEC`Degree[2]-2);
+		y2 := 1/AC_mthRoot(mx,Edge,SEC`Zetas,2,SEC`Degree[2]-2);
 		// Compute all differentials
 		y1xi := y1;
 		y2xi := y2;
 		VectorIntegral[1] +:= y1xi + y2xi;
-		for j in [2..g] do
+		for j in [2..SEC`Genus] do
 			y1xi *:= x;
-			y2xi *:= -x;
+			y2xi *:= mx;
 			VectorIntegral[j] +:= y1xi + y2xi;
 		end for;
 	end for;
 
 	// Multiply by weight Pi/n
-	for j in [1..g] do
+	for j in [1..SEC`Genus] do
 		VectorIntegral[j] *:= GJInt[1]`Weights[1];
 	end for;
 	return VectorIntegral;
 end function;
 
 
-function GC_Integrals_Edge( Edge, SEC, GJInt)
+function GC_Integrals_Edge(Edge,SEC)
 // Integrate an edge of the spanning tree with Gauss-Chebychev integration
 
 	// Compute integral on [-1,1]
-	VectorIntegral := GC_Integrals(Edge,SEC,GJInt);
+	VectorIntegral := GC_Integrals(Edge,SEC);
 
 	// Multiplication with constants
 	PeriodsEdge, ElemIntegralEdge := GC_Intergrals_Factor(VectorIntegral,Edge,SEC);
@@ -248,16 +245,23 @@ end function;
 function GJ_IntegrationPoints( AB, N, MaxPrec )
 // Computes Gauss-Jacobi quadrature on N points of weight function AB[1],AB[2] to precision MaxPrec-5
 
+	assert &and[ AB[1] gt -1, AB[2] gt -1];
+
 	// Careful: AB[1] corresponds to (1-u) and AB[2] to (1+u)
 	Reverse(~AB);
-	Abscissas := []; Weights := [];
+	Abscissas := []; 
+	Weights := [];
 	R := RealField(MaxPrec);
+
+	if AB[1] eq AB[2] then
+		n := Floor((N+1)/2);
+	else
+		n := N;
+	end if;
 
 	// Gauss-Chebyshev
 	if AB eq [-1/2,-1/2] then
-		PiR := Pi(R);
-		const := 1/(2*N)*PiR;
-		n := Floor((N+1)/2);
+		const := 1/(2*N)*Pi(R);
 		for k in [1..n] do
 			Append(~Abscissas,Cos((2*k-1)*const));
 		end for;
@@ -265,49 +269,62 @@ function GJ_IntegrationPoints( AB, N, MaxPrec )
 		return Abscissas,Weights;
 	end if;
 
-	// Gauss-Jacobi
-	RN := R!N; N2 := N^2;	
+	// From here on: Gauss-Jacobi
+
+	// Error
 	Eps := Real(10^-(MaxPrec-4));
-	alpha := AB[1];
-	beta := AB[2];
-	APB := AB[1]+AB[2];
-	Const := R!2^APB*Gamma(alpha+RN)*Gamma(beta+RN)/(Gamma(RN+1)*Gamma(RN+alpha+beta+1));
-	assert &and[ alpha gt -1, beta gt -1];
+	
+	// Precomputations
+	RN := R!N; N2 := N^2;	
+	B := []; C := [];
+	APB := R!(AB[1]+AB[2]);
+	AMB := R!(AB[1]-AB[2]);
+	NAB := R!(2*(N+AB[1])*(N+AB[2]));
+	ASQMBSQ := AB[1]^2 - AB[2]^2;
+	for j in [1..N] do
+		tmp := 2*j + APB;
+		tmp2 := 1/(2*j*(j+APB)*(tmp-2));
+		Append(~B,[tmp*(tmp-1)*(tmp-2)*tmp2,(tmp-1)*ASQMBSQ*tmp2]);
+		Append(~C,2*(j-1+AB[1])*(j-1+AB[2])*tmp*tmp2);
+	end for;
+	//ChangeUniverse(~A,R);
+	OH := R!(1/2);
+	AMBOT := AMB * OH;
+	APBP2OT := (APB+2) * OH;
+	NAMB := N*AMB;
+	Ntmp := N*tmp;
+	Const := tmp*2^APB*Gamma(AB[1]+RN)*Gamma(AB[2]+RN)/(Gamma(RN+1)*Gamma(RN+APB+1));
+
+	// Start with low precision
 	sp := 16;
 	RL := RealField(sp);
 	
-	if alpha eq beta then
-		n := Floor((N+1)/2);
-	else
-		n := N;
-	end if;
-
 	for k in [1..n] do
 		if k eq 1 then
-			an := alpha/N;
-			bn := beta/N;
-			r1 := (1+alpha)*((139/50)/(4+N2) + (98/125)*an/N);
+			an := AB[1]/N;
+			bn := AB[2]/N;
+			r1 := (1+AB[1])*((139/50)/(4+N2) + (98/125)*an/N);
 			r2 := 1+(37/25)*an+(24/25)*bn+(113/250)*an^2+(83/100)*an*bn;
 			z := 1-r1/r2;
 		elif k eq 2 then
-			r1 := (41/10+alpha)/((1+alpha)*(1+(39/250)*alpha));
-			r2 := 1+3/50*(N-8)*(1+3/25*alpha)/N;
-			r3 := 1+3/250*beta*(1+(1/4)*Abs(alpha))/N;
+			r1 := (41/10+AB[1])/((1+AB[1])*(1+(39/250)*AB[1]));
+			r2 := 1+3/50*(N-8)*(1+3/25*AB[1])/N;
+			r3 := 1+3/250*AB[2]*(1+(1/4)*Abs(AB[1]))/N;
 			z -:= (1-z)*r1*r2*r3;
 		elif k eq 3 then
-			r1 := (1.67+7/25*alpha)/(1+37/100*alpha);
+			r1 := (1.67+7/25*AB[1])/(1+37/100*AB[1]);
 			r2 := 1+11/50*(N-8)/N;
-			r3 := 1+8*beta/((157/25+beta)*N2);
+			r3 := 1+8*AB[2]/((157/25+AB[2])*N2);
 			z -:= (Abscissas[1]-z)*r1*r2*r3;
 		elif k eq N-1 then
-			r1 := (1+47/200*beta)/(383/500+119/1000*beta);
+			r1 := (1+47/200*AB[2])/(383/500+119/1000*AB[2]);
 			r2 := 1/(1+639/1000*(N-4)/(1+71/100*(N-4)));
-			r3 := 1/(1+20*alpha/((15/2+alpha)*N2));
+			r3 := 1/(1+20*AB[1]/((15/2+AB[1])*N2));
 			z +:= (z-Abscissas[N-3])*r1*r2*r3;
 		elif k eq N then
-			r1 := (1+37/100*beta)/(167/100+7/25*beta);
+			r1 := (1+37/100*AB[2])/(167/100+7/25*AB[2]);
 			r2 := 1/(1+11/50*(N-8)/N);
-			r3 := 1/(1+8*alpha/((157/25+alpha)*N2));
+			r3 := 1/(1+8*AB[1]/((157/25+AB[1])*N2));
 			z +:= (z-Abscissas[N-2])*r1*r2*r3;
 		else
 			z := 3*Abscissas[k-1]-3*Abscissas[k-2]+Abscissas[k-3];
@@ -318,35 +335,40 @@ function GJ_IntegrationPoints( AB, N, MaxPrec )
 			p := Min(2*p,MaxPrec);
 			z := ChangePrecision(z,p);
 	     		//p1,ppinv := RS_JacobiPolyEval(z,AB,N);
-			tmp := 2+APB;
-			p1 := (AB[1]-AB[2]+tmp*z)/2;
+			//tmp := 2+APB;
+			p1 := AMBOT+APBP2OT*z;
 			p2 := 1;
 			for j in [2..N] do
 				p3 := p2;
 				p2 := p1;
-				tmp := 2*j + APB;
-				a := 2*j*(j+APB)*(tmp-2);
-				b := (tmp-1)*(AB[1]^2-AB[2]^2+tmp*(tmp-2)*z);
-				c := 2*(j-1+AB[1])*(j-1+AB[2])*tmp;
-				p1 := (b*p2-c*p3)/a;
+				//tmp := 2*j + APB;
+				//a := 2*j*(j+APB)*(tmp-2);
+				//b := (tmp-1)*(AB[1]^2-AB[2]^2+tmp*(tmp-2)*z);
+				//b := B[j][1]*z + B[j][2];
+				//c := 2*(j-1+AB[1])*(j-1+AB[2])*tmp;
+				//p1 := (b*p2-c*p3)/a;
+				//p1 := ((B[j][1]*z + B[j][2])*p2-C[j]*p3)*A[j];
+				p1 := (B[j][1]*z + B[j][2])*p2-C[j]*p3;
 			end for;
-			ppinv := (tmp*(1-z^2))/(N*(AB[1]-AB[2]-tmp*z)*p1+2*(N+AB[1])*(N+AB[2])*p2);
-      			nz := z;
-			z -:= p1*ppinv;
-		until Abs(z-nz) lt Eps;
+			ppinv := tmp*(1-z*z)/((NAMB-Ntmp*z)*p1+NAB*p2);
+      			fxk := p1*ppinv; 
+			z -:= fxk;
+		until Abs(fxk) lt Eps;
 		Abscissas[k] := z;
-		Weights[k] := Const*tmp*ppinv/p2;
+		//Weights[k] := Const*tmp*ppinv/p2;
+		Weights[k] := Const*ppinv/p2;
     	end for;
 	return Abscissas,Weights;
 end function;
 
+
 // Define type GJ_Int
 declare type GJ_Int;
-declare attributes GJ_Int: Abscissas, Weights, AlphaBeta, NPoints, Degree, Params;
+declare attributes GJ_Int: Abscissas, Weights, AlphaBeta, NPoints, Degree, Params, Prec;
 
 
 // Constructor
-intrinsic GJ_Integration( Params, SEC : AJM := false ) -> SeqEnum[SeqEnum[GJ_Int]]
+intrinsic GJ_Integration( Params, SEC : AJM := false )
 { Construct the double exponential integration scheme }
 
 	// Parameters = < M_i, r_i >
@@ -355,33 +377,74 @@ intrinsic GJ_Integration( Params, SEC : AJM := false ) -> SeqEnum[SeqEnum[GJ_Int
 	DFF := SEC`HolomorphicDifferentials;
 	ALLGJ_Integrations := [];
 	// For each N
-	for P in Params do
-		// m-1 Schemes
-		GJ_Integrations := [];
-		if AJM then
-			N := GJ_Parameters(P,[-(m-1)/m,0/1],SEC`Prec);
+	if AJM then
+		NSchemes := #SEC`IntegrationSchemes; 
+		if NSchemes eq 0 or SEC`IntegrationSchemes[1][1]`Prec lt Precision(SEC`ComplexField) then 
+			for P in Params do
+				// Compute m-1 Schemes
+				GJ_Integrations := [];
+				N := GJ_Parameters(P,[-(m-1)/m,0/1],SEC`Prec);
+				for j in [DFF[1]..m-1] do
+					GJInt := New(GJ_Int);
+					GJInt`Degree := m;
+					GJInt`AlphaBeta := [-j/m,0/1];
+					GJInt`NPoints := N;
+					GJInt`Params := P;
+					GJInt`Abscissas, GJInt`Weights := GJ_IntegrationPoints(GJInt`AlphaBeta,GJInt`NPoints,Precision(SEC`ComplexField));
+					GJInt`Prec := Precision(SEC`ComplexField);
+					Append(~GJ_Integrations,GJInt);
+				end for;
+				Append(~ALLGJ_Integrations,GJ_Integrations);
+			end for;
+			SEC`IntegrationSchemes := ALLGJ_Integrations;
 		else
-			N := GJ_Parameters(P,[-(m-1)/m,-(m-1)/m],SEC`Prec);
+			Ns := [ IntSch[1]`NPoints : IntSch in SEC`IntegrationSchemes ];
+			for k in [1..#Params] do
+				// Compute m-1 Schemes
+				GJ_Integrations := [];
+				N := GJ_Parameters(Params[k],[-(m-1)/m,0/1],SEC`Prec);
+				if N gt Ns[1] then
+					for j in [DFF[1]..m-1] do
+						GJInt := New(GJ_Int);
+						GJInt`Degree := m;
+						GJInt`AlphaBeta := [-j/m,0/1];
+						GJInt`NPoints := N;
+						GJInt`Params := Params[k];
+						GJInt`Abscissas, GJInt`Weights := GJ_IntegrationPoints(GJInt`AlphaBeta,GJInt`NPoints,Precision(SEC`ComplexField));
+						GJInt`Prec := Precision(SEC`ComplexField);
+						Append(~GJ_Integrations,GJInt);
+					end for;
+					Append(~ALLGJ_Integrations,GJ_Integrations);
+					Ns[1] := N;
+				else
+					l := Max( [ j : j in [1..NSchemes] | Ns[j] ge N ] );
+					Append(~ALLGJ_Integrations,SEC`IntegrationSchemes[l]);
+				end if;
+			end for;
 		end if;
-		for j in [DFF[1]..m-1] do
-			GJInt := New(GJ_Int);
-			GJInt`Degree := m;
-			if AJM then
-				GJInt`AlphaBeta := [-j/m,0/1];
-			else
+	else
+		for P in Params do
+			// m-1 Schemes
+			GJ_Integrations := [];
+			N := GJ_Parameters(P,[-(m-1)/m,-(m-1)/m],SEC`Prec);
+			for j in [DFF[1]..m-1] do
+				GJInt := New(GJ_Int);
+				GJInt`Degree := m;
 				GJInt`AlphaBeta := [-j/m,-j/m];
-			end if;
-			GJInt`NPoints := N;
-			GJInt`Params := P;
-			GJInt`Abscissas, GJInt`Weights := GJ_IntegrationPoints(GJInt`AlphaBeta,GJInt`NPoints,Precision(SEC`ComplexField));
-			if GJInt`AlphaBeta eq [-1/2,-1/2] and m gt 2 then
-				GJInt`Weights := [ GJInt`Weights[1] : k in [1..Floor(N/2)+1] ];
-			end if; 
-			Append(~GJ_Integrations,GJInt);
+				GJInt`NPoints := N;
+				GJInt`Params := P;
+				GJInt`Abscissas, GJInt`Weights := GJ_IntegrationPoints(GJInt`AlphaBeta,GJInt`NPoints,Precision(SEC`ComplexField));
+				if GJInt`AlphaBeta eq [-1/2,-1/2] and m gt 2 then
+					GJInt`Weights := [ GJInt`Weights[1] : k in [1..Floor(N/2)+1] ];
+				end if; 
+				GJInt`Prec := Precision(SEC`ComplexField);
+				Append(~GJ_Integrations,GJInt);
+			end for;
+			Append(~ALLGJ_Integrations,GJ_Integrations);
 		end for;
-		Append(~ALLGJ_Integrations,GJ_Integrations);
-	end for;
-	return ALLGJ_Integrations;
+		SEC`IntegrationSchemes := ALLGJ_Integrations;
+	end if;
+	
 end intrinsic;
 
 
@@ -392,22 +455,23 @@ intrinsic Print(GJInt::GJ_Int)
 	print "NPoints:",GJInt`NPoints;
 	print "[Alpha,Beta]:",GJInt`AlphaBeta;
 	print "Degree:",GJInt`Degree;
+	print "Precision:",GJInt`Prec;
 end intrinsic;
 
 
 // Gauss-Jacobi integration
 
-function GJ_Integrals(Edge,SEC,GJInts)
-	C<I> := SEC`ComplexField;
-	C_0 := Zero(C); g := SEC`Genus; m := SEC`Degree[1]; n := SEC`Degree[2]; 
+function GJ_Integrals(Edge,SEC)
+	C_0 := Zero(SEC`ComplexField); 
+	GJInts := SEC`IntegrationSchemes[Edge`IntSch];
 	N := GJInts[1]`NPoints;
 	DFF := SEC`HolomorphicDifferentials;
-	VectorIntegral := [ C_0 : j in [1..g] ];
+	VectorIntegral := [ C_0 : j in [1..SEC`Genus] ];
 	N2 := Floor(N/2);
 	
 	if N mod 2 eq 1 then
 		ct := 1;
-		y := 1/AC_mthRoot(0,Edge`Data,SEC`Zetas,Edge`up,m,n-2); // 1/y(0)
+		y := 1/AC_mthRoot(0,Edge,SEC`Zetas,SEC`Degree[1],SEC`Degree[2]-2); // 1/y(0)
 		for j in [1..DFF[2]] do
 			wy := GJInts[j]`Weights[N2+1] * y^(DFF[4][ct]);
 			VectorIntegral[ct] +:= wy;
@@ -420,15 +484,16 @@ function GJ_Integrals(Edge,SEC,GJInts)
 		ct := 1;
 		for j in [1..DFF[2]] do
 			x := GJInts[j]`Abscissas[t];
-			y1 := 1/AC_mthRoot(x,Edge`Data,SEC`Zetas,Edge`up,m,n-2); // 1/y(x)
-			y2 := 1/AC_mthRoot(-x,Edge`Data,SEC`Zetas,Edge`up,m,n-2); // 1/y(-x)
+			mx := -x;
+			y1 := 1/AC_mthRoot(x,Edge,SEC`Zetas,SEC`Degree[1],SEC`Degree[2]-2); // 1/y(x)
+			y2 := 1/AC_mthRoot(mx,Edge,SEC`Zetas,SEC`Degree[1],SEC`Degree[2]-2); // 1/y(-x)
 			wy1 := GJInts[j]`Weights[t] * y1^(DFF[4][ct]);
 			wy2 := GJInts[j]`Weights[t] * y2^(DFF[4][ct]);
 			VectorIntegral[ct] +:= wy1 + wy2;
 			ct +:= 1;
 			for k in [1..DFF[3][j]-1] do
 				wy1 *:= x;
-				wy2 *:= -x;
+				wy2 *:= mx;
 				VectorIntegral[ct] +:= wy1 + wy2;
 				ct +:= 1;
 			end for;
@@ -438,12 +503,11 @@ function GJ_Integrals(Edge,SEC,GJInts)
 end function;
 
 
-
-function GJ_Integrals_Edge( EdgeData, SEC, GJInts)
+function GJ_Integrals_Edge(EdgeData,SEC)
 // Integrate an edge of the spanning tree with Gauss-Chebychev integration
 
 	// Compute integral on [-1,1]
-	VectorIntegral := GJ_Integrals(EdgeData,SEC,GJInts);
+	VectorIntegral := GJ_Integrals(EdgeData,SEC);
 
 	// Multiplication with constants
 	PeriodsEdge, ElemIntegralEdge := DE_Integrals_Factor(VectorIntegral,EdgeData,SEC);
@@ -452,17 +516,17 @@ function GJ_Integrals_Edge( EdgeData, SEC, GJInts)
 end function;
 
 
-function GJ_Integrals_Tree(SEC,GCInts)
-// Compute integrals for tree
-	// Compute integration parameters for spanning tree
-	Periods := []; ElementaryIntegrals := [];
+function GJ_Integrals_Tree(SEC)
+// Compute integrals for spanning tree
+	Periods := []; 
+	ElementaryIntegrals := [];
 	for k in [1..SEC`SpanningTree`Length] do
 		vprint SE,2 : "Integrating edge #:",k;
 		if SEC`Degree[1] eq 2 then
-			Period, EI := GC_Integrals_Edge(SEC`SpanningTree`Edges[k],SEC,GCInts[SEC`SpanningTree`Edges[k]`IntSch]);
+			Period, EI := GC_Integrals_Edge(SEC`SpanningTree`Edges[k],SEC);
 			Append(~Periods,[ [ P ] : P in Period ]);
 		else
-			Period, EI := GJ_Integrals_Edge(SEC`SpanningTree`Edges[k],SEC,GCInts[SEC`SpanningTree`Edges[k]`IntSch]);
+			Period, EI := GJ_Integrals_Edge(SEC`SpanningTree`Edges[k],SEC);
 			Append(~Periods,[ P : P in Period ]);
 		end if;
 		Append(~ElementaryIntegrals,EI);
@@ -475,20 +539,18 @@ end function;
 // ***** Numerical Integration of Abel-Jacobi map ***** //
 //////////////////////////////////////////////////////////
 
-function GJ_Integrals_AJM(EdgeData,SEC,GJInts)
-	C<I> := SEC`ComplexField;
-	C_0 := Zero(C); g := SEC`Genus; m := SEC`Degree[1]; n := SEC`Degree[2]; 
-	N := GJInts[1]`NPoints;
+function GJ_Integrals_AJM(Edge,SEC)
+	C_0 := Zero(SEC`ComplexField); 
+	GJInts := SEC`IntegrationSchemes[Edge`IntSch];
 	DFF := SEC`HolomorphicDifferentials;
-	VectorIntegral := [ C_0 : j in [1..g] ];
-	up := Floor(EdgeData[n+2]);
+	VectorIntegral := [ C_0 : j in [1..SEC`Genus] ];
 
 	// Evaluate differentials at abisccsas
-	for t in [1..N] do
+	for t in [1..GJInts[1]`NPoints] do
 		ct := 1;
 		for j in [1..DFF[2]] do
 			x := GJInts[j]`Abscissas[t];
-			y := 1/AC_mthRoot(x,EdgeData,SEC`Zetas,up,m,n-1); // 1/y(x)
+			y := 1/AC_mthRoot(x,Edge,SEC`Zetas,SEC`Degree[1],SEC`Degree[2]-1); // 1/y(x)
 			wy := GJInts[j]`Weights[t] * y^(DFF[4][ct]);
 			VectorIntegral[ct] +:= wy;
 			ct +:= 1;
@@ -502,20 +564,14 @@ function GJ_Integrals_AJM(EdgeData,SEC,GJInts)
 	return VectorIntegral;
 end function;
 
-function GJ_Integrals_Edge_AJM(ComplexEdge,SEC,GJInts)
+function GJ_Integrals_Edge_AJM(Edge,SEC)
 // Integrate an "complex edge" for the Abel-Jacobi map
-// ComplexEdge = <P=[x,y],v_P,k> , such that P_k is the closest ramification points
-
-	// Compute data for integration
-	EdgeData, up := MakeCCVector(<ComplexEdge[3],ComplexEdge[1][1]>,SEC`BranchPoints);
-	Append(~EdgeData,up);
-	Append(~EdgeData,ComplexEdge[1][2]);
 
 	// Numerical integration on [-1,1]
-	VectorIntegral := GJ_Integrals_AJM(EdgeData,SEC,GJInts);
+	VectorIntegral := GJ_Integrals_AJM(Edge,SEC);
 
-	// Multiplication with constants
-	Integral_Edge_AJM := DE_Integrals_Factor_AJM(VectorIntegral,EdgeData,SEC);
+	// Multiplication with constants (same as for DE)
+	Integral_Edge_AJM := DE_Integrals_Factor_AJM(VectorIntegral,Edge,SEC);
 
 	return Integral_Edge_AJM;
 end function;
