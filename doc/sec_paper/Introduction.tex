@@ -68,7 +68,10 @@
       where $\varepsilon>0$ is chosen so that
       the multiplication of precision $D$ numbers has complexity
       $O(D\log^{1+\varepsilon}D)$ and the implied constant depends on the
-      configuration of complex roots of $f$ in the plane.
+      configuration of complex roots of $f$\footnote{
+      In this work it involves a factor $1/r\leq \max\abs{\frac{x-y}{x-z}}$
+      for $x,y,z$ roots of $f$ (see Lemma \ref{lem:param_r_de}).
+      Note that this dependency can be removed as discussed in Section \ref{subsubsec:splitting}.}.
   \end{thm}
 
   There is no clear definition 
