@@ -1,7 +1,7 @@
 #include <string.h>
 
 #include "flint/arith.h"
-#include "fmpz_poly.h"
+#include "flint/fmpz_poly.h"
 #include "abel_jacobi.h"
 #include "parse.h"
 

@@ -4,7 +4,7 @@
 
  ******************************************************************************/
 
-#include <fmpz_mat.h>
+#include <flint/fmpz_mat.h>
 
 void row_swap(fmpz_mat_t m, long i1, long i2);
 void col_swap(fmpz_mat_t m, long j1, long j2);
