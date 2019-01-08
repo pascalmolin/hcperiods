@@ -1,0 +1,18 @@
+Function: hyperellperiods
+Section: elliptic_curves
+C-Name: hyperellperiods
+Prototype: G
+Help: hyperellperiods(X,{flag=0}): X being a non-singular hyperelliptic curve defined
+ over C, return a period matrix. If flag=0, return an element tau in the Siegel
+ half-space, if flag=1, return a big period matrix of the differentials
+ dx^k/y over a symplectic basis of H_1(X).
+Doc:
+ $X$ being a non-singular hyperelliptic curve defined over $C$,
+ return a period matrix of $X$.
+ $X$ can be given either by a squarefree polynomial $P$ such that
+ $X: y^2 = P(x)$ or by a vector $[P,Q]$ such that
+ $X: y^2 + Q(x)\*y = P(x)$ and $Q^2+4\*P$ is squarefree.
+ If flag=1, return a $g\times 2g$ big period matrix
+ of differentials $dx^k/y$ over a symplectic basis $(a_i,b_i)$ of $H_1(X)$.
+ If flag=0, return the reduced matrix $tau=A^{-1}B$ in the Siegel space of
+ $g\times g$ matrices with positive definite imaginary part.
