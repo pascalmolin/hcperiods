@@ -385,11 +385,9 @@ swap_step(GEN p, GEN m, long i1, long i2)
 {
     if (i1==i2)
         return;
-    //pari_printf("SWAP [%ld,%ld]\n",i1,i2);
     col_swap(p, i1, i2);
     row_swap(m, i1, i2);
     col_swap(m, i1, i2);
-    //outmat(m);
 }
 /* ci1 <- u ci1 + v ci2, ci2 <- u1 ci1 + v1 ci2, in place */
 static void
@@ -418,22 +416,18 @@ bezout_step(GEN p, GEN m, long i, long k, GEN a, GEN b)
     d = gbezout(a,b,&u,&v);
     u1 = gneg(gdiv(b,d));
     v1 = gdiv(a,d);
-    //pari_printf("BEZOUT [%ld,%ld] <- (%Ps,%Ps;%Ps,%Ps)*[%ld,%ld]\n",i,k,u,u1,v,v1,i,k);
     col_bezout(p,i,k,u,v,u1,v1);
     row_bezout(m,i,k,u,v,u1,v1);
     col_bezout(m,i,k,u,v,u1,v1);
-    //outmat(m);
 }
 /* i <- i + q * k */
 static void
 transvect_step(GEN p, GEN m, long i, long k, GEN q)
 {
     GEN u = gen_1, v = q, u1 = gen_0, v1 = gen_1;
-    //pari_printf("TRANS [%ld] <- [%ld] - %Ps.[%ld]\n",i,i,q,k);
     col_bezout(p,i,k,u,v,u1,v1);
     row_bezout(m,i,k,u,v,u1,v1);
     col_bezout(m,i,k,u,v,u1,v1);
-    //outmat(m);
 }
 /* choose +/-1 or smallest element */
 static long
@@ -472,14 +466,11 @@ symplectic_reduction(GEN m, long g, GEN * d)
     p = matid(len);
     diag = zerovec(g);
     m = shallowcopy(m);
-    //pari_printf("ENTER SYMPLECTIC REDUCTION, g=%ld, m=%Ps\n",g,m);
     /* main loop on symplectic 2-subspace */
     for (dim = 0; dim < g; dim++)
     {
         int cleared = 0;
         i = 2 * dim + 1;
-        //pari_printf("NOW dim=%ld,len=%ld,g=%ld\n",dim,len,g);
-        //outmat(m);
         /* lines 0..2d-1 already cleared */
         while ((j = pivot_line(m, i, len)) == 0)
         {
@@ -488,15 +479,11 @@ symplectic_reduction(GEN m, long g, GEN * d)
             len--;
             if (len == 2*dim)
             {
-                //pari_printf("len=%ld, dim=%ld, early abort",dim,len);
-                //outmat(m);
-                //outmat(p);
                 gerepileall(av, 2, &p, &diag);
                 if (d) *d = diag;
                 return p;
             }
         }
-        //pari_printf("choose pivot i,j=%ld,%ld\n",i,j);
 
         /* move j to i + 1 */
         if (j != i+1)
@@ -506,8 +493,6 @@ symplectic_reduction(GEN m, long g, GEN * d)
         /* make sure m(i, j) > 0 */
         if (signe(m(i, j)) < 0)
             swap_step(p, m, i, j);
-            // instead of neg i or j...
-            //neg_step(p, m, j);
 
         while(!cleared)
         {
@@ -547,8 +532,6 @@ symplectic_reduction(GEN m, long g, GEN * d)
         }
         gel(diag, dim + 1) = m(i,j);
     }
-    //pari_printf("reduction finished\n");
-    //outmat(m);
     gerepileall(av, 2, &p, &diag);
     if (d) *d = diag;
     return p;
