@@ -102,7 +102,7 @@ ydata_init(GEN roots, GEN e, long prec)
     cab = gpowgs(gsqrt(ba,prec),d-2);
     fa = gmul(cab, sqrt_pol_def(u,gen_m1,prec));
     fb = gmul(cab, sqrt_pol_def(u,gen_1,prec));
-    cab = gdiv(gen_I(),cab);
+    cab = gdivsg(2,cab);
     
     return gerepilecopy(av, mkvecn(6, u, ba, gdiv(ab,ba), cab, fa, fb));
 }
@@ -200,13 +200,13 @@ integral_edge(GEN ydata, long g, GEN gc, long prec)
         yinv = ginv(sqrt_pol_def(u, gneg(xl), prec));
         res = gadd(res, gpowers0(gneg(xl),g-1,yinv));
     }
-    /* multiply by Pi / (2n) * Cab * 2 */
-    res = gmul(res,gdivgs(gmul(mppi(prec),cab),n));
+    /* multiply by Pi / (2n) * Cab */
+    res = gmul(res,gdivgs(gmul(mppi(prec),cab),2*n));
     output(res);
-    /* mul by ba2^k and shift by abba */
+    /* mul by (-I*ba2)^k and shift by abba */
     res = binomial_transform(res,abba);
     output(res);
-    res = geom_shift(res, ba2);
+    res = geom_shift(res, gdiv(ba2,gen_I()));
     output(res);
     settyp(res, t_COL);
     return gerepilecopy(av, res);
