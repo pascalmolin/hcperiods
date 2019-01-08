@@ -1,6 +1,7 @@
 install("gc_init","Lp","gc_init","./hyperellperiods.so");
 install("hcinit","Gp","hcinit","./hyperellperiods.so");
 install("symplectic_reduction","GLD&","symplectic_reduction","./hyperellperiods.so");
+install("hyperellperiods","GD0,L,p","hyperellperiods","./hyperellperiods.so");
 {
 /* chebychev nodes */
 for(n=2,30,
@@ -23,5 +24,13 @@ for(g=1,20,
     my(p=symplectic_reduction(m,g,&d));
     jg=matconcat(matdiagonal(vector(g,k,d[k]*[0,1;-1,0])));
     if(p~*m*p != jg, error(m));
+    ));
+}
+{
+/* periods */
+for(d=2,30,
+  for(i=1,10,
+    my(pol = random(1.*x^d));
+    hyperellperiods(pol)
     ));
 }

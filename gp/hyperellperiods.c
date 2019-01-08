@@ -99,10 +99,10 @@ ydata_init(GEN roots, GEN e, long prec)
     //       swap(gel(u, k--),gel(u, --l));
     u = lexsort(u);
 
-    cab = gpowgs(gsqrt(ba,prec),d);
+    cab = gpowgs(gsqrt(ba,prec),d-2);
     fa = gmul(cab, sqrt_pol_def(u,gen_m1,prec));
     fb = gmul(cab, sqrt_pol_def(u,gen_1,prec));
-    cab = ginv(cab);
+    cab = gdiv(gen_I(),cab);
     
     return gerepilecopy(av, mkvecn(6, u, ba, gdiv(ab,ba), cab, fa, fb));
 }
@@ -147,12 +147,41 @@ gc_cost(GEN r, long bitprec)
     dr = rtodbl(r);
     return ceil((bitprec*M_LN2+log(2*M_PI/dr)+1) / (4*dr));
 }
-
+/* y[k] = sum C_k^i c^(k-i) x[i] */
+static GEN
+binomial_transform(GEN x, GEN c)
+{
+    long k,l,n = lg(x)-1;
+    pari_sp av = avma;
+    GEN y;
+    y = leafcopy(x);
+    for (k = 2; k <= n; k++)
+        for (l = n; l >= k; l--)
+            gel(y, l) = gadd(gel(y,l),gmul(c,gel(y,l-1)));
+    return gerepilecopy(av,y);
+}
+/* x[0],c.[x1],c^2x[2]... */
+static GEN
+geom_shift(GEN x, GEN c)
+{
+    long k;
+    GEN d = gen_1, y = cgetg(lg(x),t_VEC);
+    for (k = 1; k < lg(x); k++)
+    {
+        gel(y, k) = gmul(d, gel(x, k));
+        d = gmul(d,c);
+    }
+    return y;
+}
+/* 2*int_a^b d(x^k)/y
+ = 2/ba2^(d/2)*ba2^k * int_-1^1 d((u+cab)^k)/y
+ */
 GEN
 integral_edge(GEN ydata, long g, GEN gc, long prec)
 {
     long l, n;
-    GEN res, u = gel(ydata, 1), cab = gel(ydata,4);
+    GEN res, u = gel(ydata, 1), ba2 = gel(ydata,2);
+    GEN abba = gel(ydata,3), cab = gel(ydata,4);
     pari_sp av = avma;
 
     /* 2*n points (0 is not an integration point) */
@@ -171,9 +200,14 @@ integral_edge(GEN ydata, long g, GEN gc, long prec)
         yinv = ginv(sqrt_pol_def(u, gneg(xl), prec));
         res = gadd(res, gpowers0(gneg(xl),g-1,yinv));
     }
-    /* multiply by weight = Pi / (2n) * Cab */
-    res = gmul(res,gdivgs(gmul(mppi(prec),cab),2*n));
-    /* FIXME: constants x->u */
+    /* multiply by Pi / (2n) * Cab * 2 */
+    res = gmul(res,gdivgs(gmul(mppi(prec),cab),n));
+    output(res);
+    /* mul by ba2^k and shift by abba */
+    res = binomial_transform(res,abba);
+    output(res);
+    res = geom_shift(res, ba2);
+    output(res);
     settyp(res, t_COL);
     return gerepilecopy(av, res);
 }
@@ -192,7 +226,7 @@ integrals_tree(GEN ydata, long g, long prec)
     {
         long nk = gc_cost(gmael3(ydata,s[k],1,1), bitprec);
         pari_printf("%ld->%ld points\n",k,nk);
-        if (nk > n || (nk - n) * g > nk)
+        if (nk > n || n > 1.3 * nk)
         {
             pari_warn(warner,"compute %ld integration points", nk);
             gc = gc_init(nk, prec);
@@ -273,9 +307,8 @@ GEN hc_spanning_tree(GEN X, long prec) {
         t[a] = t[b] = 1;
         gel(tree, k) = gel(G,i);
     }
-    /* FIXME: do not order by difficulty yet */
+    /* important: do not order by complexity yet */
     return gerepilecopy(av, tree);
-    return gerepilecopy(av, lexsort(tree));
 }
 
 /*********************************************************************/
@@ -332,13 +365,13 @@ intersections_tree(GEN ydata)
             /* FIXME */
             //if (ek[1] != el[1] && ek[2] != el[1])
             //    continue; /* no intersection */
-            pari_printf("intersection %Ps . %Ps\n",ek,el);
+            //pari_printf("intersection %Ps . %Ps\n",ek,el);
             ycd = gmael(ydata,l,2);
             if(el[1] == ek[1])
             {
                 /* case ab.ad */
                 GEN fc = gel(ycd,5);
-                pari_printf("[ab.ad], ratio %Ps\n", gdiv(fa,fc));
+                //pari_printf("[ab.ad], ratio %Ps\n", gdiv(fa,fc));
                 gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fa,fc))));
                 gcoeff(mat,l,k) = gneg(gcoeff(mat,k,l));
             }
@@ -346,7 +379,7 @@ intersections_tree(GEN ydata)
             {
                 /* case ab.bd */
                 GEN fc = gel(ycd,5);
-                pari_printf("[ab.bd], ratio %Ps\n", gdiv(fb,fc));
+                //pari_printf("[ab.bd], ratio %Ps\n", gdiv(fb,fc));
                 gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fb,fc))));
                 gcoeff(mat,l,k) = gneg(gcoeff(mat,k,l));
             }
@@ -361,7 +394,6 @@ intersections_tree(GEN ydata)
             }
         }
     }
-    output(mat);
     return gerepilecopy(av, mat);
 }
 
@@ -537,7 +569,19 @@ symplectic_reduction(GEN m, long g, GEN * d)
     return p;
 }
 
-GEN hc_homology_basis(GEN hc) { return NULL; }
+GEN symplectic_homology_basis(GEN mat, long g) {
+    long k;
+    GEN p, p1;
+    pari_sp av = avma;
+    p1 = symplectic_reduction(mat,g,NULL);
+    p = cgetg(2*g+1,t_MAT);
+    for (k=1;k<=g;k++)
+    {
+        gel(p,k) = gel(p1,2*k-1);
+        gel(p,g+k) = gel(p1,2*k);
+    }
+    return gerepilecopy(av,p);
+}
 
 /*********************************************************************/
 /*                                                                   */
@@ -545,11 +589,21 @@ GEN hc_homology_basis(GEN hc) { return NULL; }
 /*                                                                   */
 /*********************************************************************/
 
-/* compute big period matrix */
-GEN hc_big_periods(GEN hc) { return NULL; }
-
-/* compute small period matrix */
-GEN hc_small_periods(GEN hc) { return NULL; }
+/* big period matrix */
+GEN
+hc_big_periods(GEN hc) {
+    return hc_get_periods(hc);
+}
+/* small period matrix */
+GEN
+hc_small_periods(GEN hc) {
+    long g;
+    GEN ab = hc_get_periods(hc);
+    pari_sp av = avma;
+    if (lg(ab) < 3) return cgetg(1,t_MAT);
+    g = nbrows(ab);
+    return gerepilecopy(av,gauss(vecslice(ab,g+1,2*g),vecslice(ab,1,g)));
+}
 
 /*********************************************************************/
 /*                                                                   */
@@ -560,9 +614,15 @@ GEN hc_small_periods(GEN hc) { return NULL; }
 GEN
 hcinit(GEN pol, long prec)
 {
-    GEN hc, X, tree, ydata, integrals, mat, p, jg, periods;
+    GEN hc, X, tree, ydata, integrals, mat, ab, periods;
     pari_sp av = avma;
     long g = (poldegree(pol,-1) - 1) / 2;
+    if (g<1)
+    {
+        pari_warn(warner,"genus 0 curve, no period.");
+        hc = mkvec4(pol,roots(pol,prec),cgetg(1,t_MAT),zerovec(3));
+        return gerepilecopy(av,hc);
+    }
     X = roots(pol, prec);
     //pari_printf("roots: %Ps\n",X);
     tree = hc_spanning_tree(X, prec);
@@ -571,34 +631,26 @@ hcinit(GEN pol, long prec)
     //pari_printf("ydata: %Ps\n",ydata);
     integrals = integrals_tree(ydata, g, prec);
     mat = intersections_tree(ydata);
-    pari_printf("intersections: %Ps\n",mat);
-    p = symplectic_reduction(mat, g, NULL);
-    pari_printf("intersections\n");
-    outmat(mat);
-    jg = gmul(gmul(gtrans(p),mat),p);
-    outmat(jg);
-    pari_printf("change of basis\n");
-    outmat(p);
-    periods = gmul(integrals,p);
-    pari_printf("periods\n");
-    outmat(periods);
-    hc = mkvec4(pol, X, periods, mkvec3(tree,integrals,p));
+    ab = symplectic_homology_basis(mat, g);
+    periods = gmul(integrals,ab);
+    //pari_printf("periods\n");
+    //outmat(periods);
+    hc = mkvec4(pol, X, periods, mkvec3(tree,integrals,ab));
     return gerepilecopy(av, hc);
 }
 
 GEN
-hcperiods(GEN hc, long prec)
+hyperellperiods(GEN hc, long flag, long prec)
 {
-    if (typ(hc) == t_VEC && lg(hc) == 5 && lg(gel(hc,4)) == 3)
+    if (typ(hc) == t_VEC && lg(hc) == 5 && lg(gel(hc,4)) == 4)
     {
-        /* hc */
-        return gel(hc,3);
+        return flag ? hc_big_periods(hc) : hc_small_periods(hc);
     }
     else if (typ(hc) == t_POL)
     {
         pari_sp av = avma;
         hc = hcinit(hc, prec);
-        return gerepilecopy(av, hcperiods(hc,prec));
+        return gerepilecopy(av, hyperellperiods(hc,flag,prec));
     }
     pari_err_TYPE("hcperiods",hc);
     return NULL;
