@@ -15,30 +15,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 
 /*********************************************************************/
 /**                                                                 **/
-/**                    PERIODS OF HYPERELLIPTIC CURVES              **/
-/**                   contributed by Pascal Molin (2019)            **/
+/**                PERIODS OF HYPERELLIPTIC CURVES                  **/
+/**               contributed by Pascal Molin (2019)                **/
 /**                                                                 **/
 /*********************************************************************/
 
 /*
- The periods are the integrals
- int_{c_i} w_j
-
- where
+ The periods are the integrals int_{c_i} w_j where
  - w_j = x^j/y dx is a basis of holomorphic differentials
  - c_i = (a_i,b_i) is a symplectic basis of loops
 
  the basis is expressed on tree integrals
-
 */
 
 
 #define hc_get_pol(c)        gel(c,1)
 #define hc_get_roots(c)      gel(c,2)
-#define hc_get_tree(c)       gel(c,3)
-#define hc_get_basis(c)      gel(c,4)
+#define hc_get_periods(c)    gel(c,3)
+#define hc_get_tree(c)       gmael(c,4,1)
+#define hc_get_integrals(c)  gmael(c,4,2)
+#define hc_get_hombasis(c)   gmael(c,4,3)
 #define hc_get_n(c) poldegree(hc_get_pol(c))
-#define hc_get_g(c) gel(c,2)
 
 /** everything is dynamic **/
 
@@ -354,7 +351,9 @@ intersections_tree(GEN ydata)
                 gcoeff(mat,l,k) = gneg(gcoeff(mat,k,l));
             }
             else if (ek[1] != el[1] && ek[2] != el[1] && ek[1] != el[2] && ek[2] != el[2])
+            {
                 continue; /* no intersection */
+            }
             else
             {
                 pari_err_BUG("hyperellperiods, intersection case should not occur");
@@ -367,6 +366,8 @@ intersections_tree(GEN ydata)
 }
 
 /* compute symplectic homology basis */
+
+/* exchange rows and columns i,j, in place */
 static void
 row_swap(GEN m, long i1, long i2)
 {
@@ -379,18 +380,18 @@ col_swap(GEN m, long j1, long j2)
 {
     swap(gel(m,j1),gel(m,j2));
 }
-
-/* exchange rows and columns i,j */
 static void
 swap_step(GEN p, GEN m, long i1, long i2)
 {
     if (i1==i2)
         return;
-    row_swap(p, i1, i2);
+    //pari_printf("SWAP [%ld,%ld]\n",i1,i2);
+    col_swap(p, i1, i2);
     row_swap(m, i1, i2);
     col_swap(m, i1, i2);
+    //outmat(m);
 }
-/* ci1 <- u ci1 + v ci2, ci2 <- u1 ci1 + v1 ci2 */
+/* ci1 <- u ci1 + v ci2, ci2 <- u1 ci1 + v1 ci2, in place */
 static void
 row_bezout(GEN m, long i1, long i2, GEN u, GEN v, GEN u1, GEN v1)
 {
@@ -417,30 +418,24 @@ bezout_step(GEN p, GEN m, long i, long k, GEN a, GEN b)
     d = gbezout(a,b,&u,&v);
     u1 = gneg(gdiv(b,d));
     v1 = gdiv(a,d);
-    //pari_printf("[%ld,%ld] <- (%Ps,%Ps;%Ps,%Ps)*[%ld,%ld]\n",i,k,u,u1,v,v1,i,k);
-    row_bezout(p,i,k,u,v,u1,v1);
+    //pari_printf("BEZOUT [%ld,%ld] <- (%Ps,%Ps;%Ps,%Ps)*[%ld,%ld]\n",i,k,u,u1,v,v1,i,k);
+    col_bezout(p,i,k,u,v,u1,v1);
     row_bezout(m,i,k,u,v,u1,v1);
     col_bezout(m,i,k,u,v,u1,v1);
+    //outmat(m);
 }
 /* i <- i + q * k */
 static void
 transvect_step(GEN p, GEN m, long i, long k, GEN q)
 {
     GEN u = gen_1, v = q, u1 = gen_0, v1 = gen_1;
-    //pari_printf("[%ld] <- [%ld] - %Ps.[%ld]\n",i,i,q,k);
-    row_bezout(p,i,k,u,v,u1,v1);
+    //pari_printf("TRANS [%ld] <- [%ld] - %Ps.[%ld]\n",i,i,q,k);
+    col_bezout(p,i,k,u,v,u1,v1);
     row_bezout(m,i,k,u,v,u1,v1);
     col_bezout(m,i,k,u,v,u1,v1);
+    //outmat(m);
 }
-/*
-static void
-neg_step(GEN p, fmpz_mat_t m, slong i)
-{
-    row_neg(p, i);
-    row_neg(m, i);
-    col_neg(m, i);
-}
-*/
+/* choose +/-1 or smallest element */
 static long
 pivot_line(GEN m, long i, long len)
 {
@@ -458,13 +453,12 @@ pivot_line(GEN m, long i, long len)
     }
     return jx;
 }
-
-/* p s.t. p*m*p~ = J_g */
+/* returns p s.t. p~ *m*p = J_g(d), d vector of diagonal coefficients */
 GEN
-symplectic_reduction(GEN m, long g)
+symplectic_reduction(GEN m, long g, GEN * d)
 {
-    long d, i, j, k, len;
-    GEN p;
+    long dim, i, j, k, len;
+    GEN p, diag;
     pari_sp av = avma;
 
     len = lg(m)-1;
@@ -476,32 +470,38 @@ symplectic_reduction(GEN m, long g)
 #define m(i,j) gcoeff(m,i,j)
 
     p = matid(len);
-    m = gcopy(m);
+    diag = zerovec(g);
+    m = shallowcopy(m);
+    //pari_printf("ENTER SYMPLECTIC REDUCTION, g=%ld, m=%Ps\n",g,m);
     /* main loop on symplectic 2-subspace */
-    for (d = 0; d < g; d++)
+    for (dim = 0; dim < g; dim++)
     {
         int cleared = 0;
-        i = 2 * d + 1;
-        pari_printf("d=%ld,len=%ld,g=%ld\n",d,len,g);
-        outmat(m);
+        i = 2 * dim + 1;
+        //pari_printf("NOW dim=%ld,len=%ld,g=%ld\n",dim,len,g);
+        //outmat(m);
         /* lines 0..2d-1 already cleared */
         while ((j = pivot_line(m, i, len)) == 0)
         {
             /* no intersection -> move ci to end */
             swap_step(p, m, i, len);
             len--;
-            if (len == 2*d)
-                return gerepilecopy(av, p);
+            if (len == 2*dim)
+            {
+                //pari_printf("len=%ld, dim=%ld, early abort",dim,len);
+                //outmat(m);
+                //outmat(p);
+                gerepileall(av, 2, &p, &diag);
+                if (d) *d = diag;
+                return p;
+            }
         }
-        pari_printf("choose pivot i,j=%ld,%ld\n",i,j);
+        //pari_printf("choose pivot i,j=%ld,%ld\n",i,j);
 
         /* move j to i + 1 */
         if (j != i+1)
             swap_step(p, m, j, i + 1);
         j = i + 1;
-
-        pari_printf("i,j=%ld,%ld\n",i,j);
-        outmat(m);
 
         /* make sure m(i, j) > 0 */
         if (signe(m(i, j)) < 0)
@@ -516,7 +516,7 @@ symplectic_reduction(GEN m, long g)
             {
                 if (m(i, k) != gen_0)
                 {
-                    if (gequal0(grem(m(i, k), m(i, j))))
+                    if (gequal0(remii(m(i, k), m(i, j))))
                     {
                         GEN q = gneg(gdiv(m(i, k), m(i, j)));
                         transvect_step(p, m, k, j, q);
@@ -531,7 +531,7 @@ symplectic_reduction(GEN m, long g)
             {
                 if (m(j, k) != gen_0)
                 {
-                    if (gequal0(grem(m(j, k), m(i, j))))
+                    if (gequal0(remii(m(j, k), m(i, j))))
                     {
                         GEN q = gdiv(m(j, k), m(i, j));
                         transvect_step(p, m, k, i, q);
@@ -545,10 +545,13 @@ symplectic_reduction(GEN m, long g)
                 }
             }
         }
+        gel(diag, dim + 1) = m(i,j);
     }
-        pari_printf("reduction finished\n");
-        outmat(m);
-    return gerepilecopy(av, p);
+    //pari_printf("reduction finished\n");
+    //outmat(m);
+    gerepileall(av, 2, &p, &diag);
+    if (d) *d = diag;
+    return p;
 }
 
 GEN hc_homology_basis(GEN hc) { return NULL; }
@@ -574,7 +577,7 @@ GEN hc_small_periods(GEN hc) { return NULL; }
 GEN
 hcinit(GEN pol, long prec)
 {
-    GEN hc, X, tree, ydata, integrals, mat, p;
+    GEN hc, X, tree, ydata, integrals, mat, p, jg, periods;
     pari_sp av = avma;
     long g = (poldegree(pol,-1) - 1) / 2;
     X = roots(pol, prec);
@@ -586,19 +589,34 @@ hcinit(GEN pol, long prec)
     integrals = integrals_tree(ydata, g, prec);
     mat = intersections_tree(ydata);
     pari_printf("intersections: %Ps\n",mat);
-    p = symplectic_reduction(mat, g);
+    p = symplectic_reduction(mat, g, NULL);
     pari_printf("intersections\n");
     outmat(mat);
-    outmat(gmul(gmul(p,mat),gtrans(p)));
+    jg = gmul(gmul(gtrans(p),mat),p);
+    outmat(jg);
     pari_printf("change of basis\n");
     outmat(p);
-    hc = mkvec4(pol, X, tree, gen_0);
+    periods = gmul(integrals,p);
+    pari_printf("periods\n");
+    outmat(periods);
+    hc = mkvec4(pol, X, periods, mkvec3(tree,integrals,p));
     return gerepilecopy(av, hc);
 }
 
-//GEN
-//hcperiods(GEN hc, long prec)
-//{
-//    GEN
-//
-//}
+GEN
+hcperiods(GEN hc, long prec)
+{
+    if (typ(hc) == t_VEC && lg(hc) == 5 && lg(gel(hc,4)) == 3)
+    {
+        /* hc */
+        return gel(hc,3);
+    }
+    else if (typ(hc) == t_POL)
+    {
+        pari_sp av = avma;
+        hc = hcinit(hc, prec);
+        return gerepilecopy(av, hcperiods(hc,prec));
+    }
+    pari_err_TYPE("hcperiods",hc);
+    return NULL;
+}
