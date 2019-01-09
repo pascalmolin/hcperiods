@@ -45,6 +45,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
 /*                                                                   */
 /*********************************************************************/
 
+/*
+ On [a,b], x = m*(u+u0), u<-[-1,1], u0 = (a+b)/(b-a), m=(b-a)/2
+ and f(x) = - m^n.(1-u^2).prod(u-u_i), u_i = (2x_i-b-a)/(b-a)
+ so y(x) = C sqrt(1-u^2) g(u)
+ with C = I * sqrt(m)^n
+ and g(u)= prod sqrt(u-u_i) holomorphic near [-1,1].
+
+ Hence the period 2*int_a^b x^{k-1}dx/y is
+ 2 m^k/C * int_-1^1 (u+u0)^{k-1}/g(u) du/sqrt(1-u^2)
+ */
+
 /* assume -1<= x <= 1,
  * u a t_VEC of complex numbers with increasing real(u_i) */
 GEN
@@ -70,8 +81,10 @@ sqrt_pol_def(GEN u, GEN x, long prec)
 }
 
 /* e = Vecsmall(i,j), a = roots[i], b = roots[j],
- * return [ [ (2x-a-b)/(b-a)...], (b-a)/2, (a+b)/(b-a), cab, fa, fb ]
- * */
+  return [ [ u_i ], m, u0, 2/C, fa, fb ]
+  where u_i = (2x_i-a-b)/(b-a), m = (b-a)/2, u0 = (a+b)/(b-a), C = I*m^n/2, fa, fb ]
+  and fa = C*g(-1), fb = C*g(1).
+ */
 GEN
 ydata_init(GEN roots, GEN e, long prec)
 {
@@ -99,7 +112,7 @@ ydata_init(GEN roots, GEN e, long prec)
     //       swap(gel(u, k--),gel(u, --l));
     u = lexsort(u);
 
-    cab = gpowgs(gsqrt(ba,prec),d-2);
+    cab = gmul(gen_I(),gpowgs(gsqrt(ba,prec),d));
     fa = gmul(cab, sqrt_pol_def(u,gen_m1,prec));
     fb = gmul(cab, sqrt_pol_def(u,gen_1,prec));
     cab = gdivsg(2,cab);
@@ -168,20 +181,17 @@ geom_shift(GEN x, GEN c)
     GEN d = gen_1, y = cgetg(lg(x),t_VEC);
     for (k = 1; k < lg(x); k++)
     {
-        gel(y, k) = gmul(d, gel(x, k));
         d = gmul(d,c);
+        gel(y, k) = gmul(d, gel(x, k));
     }
     return y;
 }
-/* 2*int_a^b d(x^k)/y
- = 2/ba2^(d/2)*ba2^k * int_-1^1 d((u+cab)^k)/y
- */
 GEN
 integral_edge(GEN ydata, long g, GEN gc, long prec)
 {
     long l, n;
     GEN res, u = gel(ydata, 1), ba2 = gel(ydata,2);
-    GEN abba = gel(ydata,3), cab = gel(ydata,4);
+    GEN u0 = gel(ydata,3), cab = gel(ydata,4);
     pari_sp av = avma;
 
     /* 2*n points (0 is not an integration point) */
@@ -203,10 +213,10 @@ integral_edge(GEN ydata, long g, GEN gc, long prec)
     /* multiply by Pi / (2n) * Cab */
     res = gmul(res,gdivgs(gmul(mppi(prec),cab),2*n));
     output(res);
-    /* mul by (-I*ba2)^k and shift by abba */
-    res = binomial_transform(res,abba);
+    /* mul by ba2^k and shift by u0 */
+    res = binomial_transform(res,u0);
     output(res);
-    res = geom_shift(res, gdiv(ba2,gen_I()));
+    res = geom_shift(res, ba2);
     output(res);
     settyp(res, t_COL);
     return gerepilecopy(av, res);
