@@ -28,9 +28,10 @@ for(g=1,20,
 }
 {
 /* periods */
-for(d=2,30,
-  for(i=1,10,
+for(d=2,7,\\30,
+  for(i=1,5,
     my(pol = random(1.*x^d));
     hyperellperiods(pol)
     ));
 }
+/* check lattice */

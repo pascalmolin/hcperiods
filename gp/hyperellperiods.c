@@ -212,12 +212,12 @@ integral_edge(GEN ydata, long g, GEN gc, long prec)
     }
     /* multiply by Pi / (2n) * Cab */
     res = gmul(res,gdivgs(gmul(mppi(prec),cab),2*n));
-    output(res);
+    //output(res);
     /* mul by ba2^k and shift by u0 */
     res = binomial_transform(res,u0);
-    output(res);
-    res = geom_shift(res, ba2);
-    output(res);
+    //output(res);
+    res = geom_shift(res, gdiv(ba2,gen_I()));
+    //output(res);
     settyp(res, t_COL);
     return gerepilecopy(av, res);
 }
@@ -297,7 +297,7 @@ GEN hc_spanning_tree(GEN X, long prec) {
     G = complete_graph(X, n, prec);
     //pari_printf("graph: %Ps\n",G);
     len = lg(G) - 1;
-    nedges = n - 1;
+    nedges = n % 2 ? n - 1 : n - 2;
 
     tree = cgetg(nedges + 1, t_VEC);
     t = const_vecsmall(n, 0);
@@ -647,6 +647,62 @@ hcinit(GEN pol, long prec)
     //outmat(periods);
     hc = mkvec4(pol, X, periods, mkvec3(tree,integrals,ab));
     return gerepilecopy(av, hc);
+}
+
+/* Richelot's algorithm
+   X=[u,u',v,v',w,w']
+   compute int_u^u' [dx,xdx]/sqrt(-(x-u)(x-u')(x-v)(x-v')(x-w)(x-w'))
+*/
+GEN
+richelot(GEN X, long prec)
+{
+  GEN a, ap, b, bp, c, cp, D, den;
+  pari_sp av = avma;
+  long bitprec;
+
+  if (lg(X) != 7)
+      pari_err_TYPE("richelot",X);
+  X = sort(X);
+  
+  a = gel(X,1); ap = gel(X,2);
+  b = gel(X,3); bp = gel(X,4);
+  c = gel(X,5); cp = gel(X,6);
+  D = gen_1;
+  bitprec = prec2nbits(prec);
+#define neqprec(a,ap) (expo(gsub(a,ap)) > -bitprec)
+  while (neqprec(a,ap) || neqprec(b,bp) || neqprec(c,cp))
+  {
+    GEN A, B, C, dba, dcb, dca, aap, bbp, ccp;
+    GEN a1, a1p, b1, b1p, c1, c1p;
+    GEN D1;
+#define mul3(a,b,c) gmul(a,gmul(b,c))
+#define mul4(a,b,c,d) gmul(gmul(a,b),gmul(c,d))
+#define ms4(b,a) mul4(gsub(b,a),gsub(b,ap),gsub(bp,a),gsub(bp,ap))
+    A=gsqrt(ms4(c,b),prec);
+    B=gsqrt(ms4(c,a),prec);
+    C=gsqrt(ms4(b,a),prec);
+#define sa4(b,a) gsub(gadd(b,bp),gadd(a,ap))
+    dba = sa4(b,a);
+    dcb = sa4(c,b);
+    dca = sa4(c,a);
+    aap = gmul(a,ap);
+    bbp = gmul(b,bp);
+    ccp = gmul(c,cp);
+
+    a1  = gdiv(gsub(gsub(ccp,aap),B),dca);
+    a1p = gdiv(gsub(gsub(bbp,aap),C),dba);
+    b1  = gdiv(gadd(gsub(bbp,aap),C),dba);
+    b1p = gdiv(gsub(gsub(ccp,bbp),A),dcb);
+    c1  = gdiv(gadd(gsub(ccp,bbp),A),dcb);
+    c1p = gdiv(gadd(gsub(ccp,aap),B),dca);
+
+    D1  = gadd(gsub(gmul(aap,dcb),gmul(bbp,dca)),gmul(ccp,dba));
+    D1  = gmulsg(4, gdiv(gmul(D,D1), mul3(dba,dcb,dca)));
+    a=a1; ap=a1p; b=b1; bp=b1p; c=c1; cp=c1p; D=D1;
+  } 
+  den = gmul(gsub(a,b),gsub(a,c));
+  D = gdiv(gmul(mppi(prec),gsqrt(D,prec)),den);
+  return gerepilecopy(av,gmul(mkvec2(gen_1,a),D));
 }
 
 GEN
