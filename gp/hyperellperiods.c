@@ -64,7 +64,7 @@ sqrt_pol_def(GEN u, GEN x, long prec)
     long k, r=0;
     GEN y = gen_1;
     pari_sp av = avma;
-    for (k = 1; k < lg(u); k++) 
+    for (k = 1; k < lg(u); k++)
     {
         GEN uk = gel(u,k);
         uk = signe(gel(uk,1)) > 0 ? r++, gsub(uk, x) : gsub(x,uk);
@@ -116,7 +116,7 @@ ydata_init(GEN roots, GEN e, long prec)
     fa = gmul(cab, sqrt_pol_def(u,gen_m1,prec));
     fb = gmul(cab, sqrt_pol_def(u,gen_1,prec));
     cab = gdivsg(2,cab);
-    
+
     return gerepilecopy(av, mkvecn(6, u, ba, gdiv(ab,ba), cab, fa, fb));
 }
 
@@ -205,8 +205,8 @@ integral_edge(GEN ydata, long g, GEN gc, long prec)
         yinv = ginv(sqrt_pol_def(u, xl, prec));
         /* differentials x^k/y */
         res = gadd(res, gpowers0(xl,g-1,yinv));
-        
-        /* same on -x */ 
+
+        /* same on -x */
         yinv = ginv(sqrt_pol_def(u, gneg(xl), prec));
         res = gadd(res, gpowers0(gneg(xl),g-1,yinv));
     }
@@ -242,7 +242,7 @@ integrals_tree(GEN ydata, long g, long prec)
             gc = gc_init(nk, prec);
             n = nk;
         }
-        gel(mat, k) = integral_edge(gmael(ydata,s[k],2),g,gc,prec);
+        gel(mat, s[k]) = integral_edge(gmael(ydata,s[k],2),g,gc,prec);
     }
     return gerepilecopy(av, mat);
 }
@@ -360,7 +360,7 @@ intersections_tree(GEN ydata)
     pari_sp av = avma;
 
     mat = zeromatcopy(n,n);
-    
+
     for (k = 1; k <= n; k++)
     {
         GEN ek,yab,fa,fb;
@@ -651,64 +651,90 @@ hcinit(GEN pol, long prec)
 
 /* Richelot's algorithm
    X=[u,u',v,v',w,w']
-   compute int_u^u' [dx,xdx]/sqrt(-(x-u)(x-u')(x-v)(x-v')(x-w)(x-w'))
+   compute
+   int_u^u' [dx,xdx]/sqrt(-(x-u)(x-u')(x-v)(x-v')(x-w)(x-w'))
 */
 GEN
 richelot(GEN X, long prec)
 {
-  GEN a, ap, b, bp, c, cp, D, den;
+  GEN a, ap, b, bp, c, cp, D, ba, ca, cb, Ia,Ib,Ic;
   pari_sp av = avma;
   long bitprec;
 
   if (lg(X) != 7)
       pari_err_TYPE("richelot",X);
   X = sort(X);
-  
+
   a = gel(X,1); ap = gel(X,2);
   b = gel(X,3); bp = gel(X,4);
   c = gel(X,5); cp = gel(X,6);
   D = gen_1;
-  bitprec = prec2nbits(prec);
-#define neqprec(a,ap) (expo(gsub(a,ap)) > -bitprec)
+  bitprec = prec2nbits(prec)-5;
+
+#define neqprec(a,ap) (gexpo(gsub(a,ap)) > -bitprec)
   while (neqprec(a,ap) || neqprec(b,bp) || neqprec(c,cp))
   {
-    GEN A, B, C, dba, dcb, dca, aap, bbp, ccp;
-    GEN a1, a1p, b1, b1p, c1, c1p;
-    GEN D1;
-#define mul3(a,b,c) gmul(a,gmul(b,c))
+    GEN ba,ca,cb,bpa,cpa,cpb,bap,cap,cbp,bpap,cpap,cpbp;
+    GEN A, B, C, dba, dca, dcb, mba, mca, mcb, aap, bbp, ccp;
+    GEN num, den;
+
+    ba = gsub(b,a); bap = gsub(b,ap); bpa = gsub(bp,a); bpap = gsub(bp,ap);
+    ca = gsub(c,a); cap = gsub(c,ap); cpa = gsub(cp,a); cpap = gsub(cp,ap);
+    cb = gsub(c,b); cbp = gsub(c,bp); cpb = gsub(cp,b); cpbp = gsub(cp,bp);
+
 #define mul4(a,b,c,d) gmul(gmul(a,b),gmul(c,d))
-#define ms4(b,a) mul4(gsub(b,a),gsub(b,ap),gsub(bp,a),gsub(bp,ap))
-    A=gsqrt(ms4(c,b),prec);
-    B=gsqrt(ms4(c,a),prec);
-    C=gsqrt(ms4(b,a),prec);
-#define sa4(b,a) gsub(gadd(b,bp),gadd(a,ap))
-    dba = sa4(b,a);
-    dcb = sa4(c,b);
-    dca = sa4(c,a);
+    A = gsqrt(mul4(cb,cbp,cpb,cpbp),prec);
+    B = gsqrt(mul4(ca,cap,cpa,cpap),prec);
+    C = gsqrt(mul4(ba,bap,bpa,bpap),prec);
+
     aap = gmul(a,ap);
     bbp = gmul(b,bp);
     ccp = gmul(c,cp);
 
-    a1  = gdiv(gsub(gsub(ccp,aap),B),dca);
-    a1p = gdiv(gsub(gsub(bbp,aap),C),dba);
-    b1  = gdiv(gadd(gsub(bbp,aap),C),dba);
-    b1p = gdiv(gsub(gsub(ccp,bbp),A),dcb);
-    c1  = gdiv(gadd(gsub(ccp,bbp),A),dcb);
-    c1p = gdiv(gadd(gsub(ccp,aap),B),dca);
+    dba = gadd(ba,bpap);
+    dca = gadd(ca,cpap);
+    dcb = gadd(cb,cpbp);
 
-    D1  = gadd(gsub(gmul(aap,dcb),gmul(bbp,dca)),gmul(ccp,dba));
-    D1  = gmulsg(4, gdiv(gmul(D,D1), mul3(dba,dcb,dca)));
-    a=a1; ap=a1p; b=b1; bp=b1p; c=c1; cp=c1p; D=D1;
-  } 
-  den = gmul(gsub(a,b),gsub(a,c));
-  D = gdiv(gmul(mppi(prec),gsqrt(D,prec)),den);
-  return gerepilecopy(av,gmul(mkvec2(gen_1,a),D));
+    mba = gsub(bbp,aap);
+    mca = gsub(ccp,aap);
+    mcb = gsub(ccp,bbp);
+
+    a  = gdiv(gsub(mca,B),dca);
+    ap = gdiv(gsub(mba,C),dba);
+
+    b  = gdiv(gadd(mba,C),dba);
+    bp = gdiv(gsub(mcb,A),dcb);
+
+    c  = gdiv(gadd(mcb,A),dcb);
+    cp = gdiv(gadd(mca,B),dca);
+
+    num = gadd(gsub(gmul(aap,dcb), gmul(bbp,dca)), gmul(ccp,dba));
+    den = gmul(dba, gmul(dca, dcb));
+    D  = gmul2n(gdiv(gmul(D,num), den),2);
+
+    gerepileall(av,7,&a,&ap,&b,&bp,&c,&cp,&D);
+  }
+
+  ba = gsub(b,a);
+  ca = gsub(c,a);
+  cb = gsub(c,b);
+  D = gmul(Pi2n(1,prec),gsqrt(D,prec));
+
+  Ia = gdiv(D,gmul(ba,ca));
+  Ib = gdiv(D,gmul(ba,cb));
+  Ic = gdiv(D,gmul(ca,cb));
+
+  Ia = mkcol2(Ia,gmul(a,Ia));
+  Ib = mkcol2(Ib,gmul(b,Ib));
+  Ic = mkcol2(Ic,gmul(c,Ic));
+  return gerepilecopy(av, mkmat3(Ia,Ib,Ic));
 }
 
 GEN
 hyperellperiods(GEN hc, long flag, long prec)
 {
-    if (typ(hc) == t_VEC && lg(hc) == 5 && lg(gel(hc,4)) == 4)
+    if (typ(hc) == t_VEC && lg(hc) == 5
+            && typ(gel(hc,4)) == t_VEC && lg(gel(hc,4)) == 4)
     {
         return flag ? hc_big_periods(hc) : hc_small_periods(hc);
     }
