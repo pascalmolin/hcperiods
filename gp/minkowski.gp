@@ -1,4 +1,5 @@
-/* minkowski.gp: reduction to the fundamental domain of \H_2/\Gamma_2*/
+/* reduction to the fundamental domain of \H_2/\Gamma_2
+ * code by Jean Kieffer */
 
 /* Minkowski-reduce a symmetric real positive definite 2x2 matrix:
    find U, M' s.t. M' = U M tU is Minkowski-reduced. */
@@ -7,13 +8,13 @@ congr(M, U) = U * M * U~;
 minkowski_reduced(M) =
 {
    M[2,2] >= M[1,1] && M[1,1] >= 2 * M[1,2] && M[1,2] >= 0;
-}  
+}
 
 minkowski(M) =
 {
    my(U, t, N);
    t = 1; \\true
-   U = [1, 0; 0, 1];
+   U = matid(2);
    while (t,
 	  if (2 * abs(M[1,2]) <= abs(M[1,1]),
 	      if (abs(M[1,1]) <= abs(M[2,2]),
@@ -37,26 +38,21 @@ minkowski(M) =
 }
 
 /* Handling sp4 matrices */
-id(n) = matrix(n) + 1;
 zero(n) = matrix(n);
-sp4_from_blocks(a, b, c, d) =
-{
-   my(ac, bd);
-   ac = matconcat([a~, c~])~;
-   bd = matconcat([b~, d~])~;
-   matconcat([ac, bd]);
-}
-blocks_from_sp4(gma) = [gma[1..2,1..2], gma[1..2,3..4], gma[3..4,1..2], gma[3..4,3..4]];
+sp4_from_blocks(a, b, c, d) = [a,b;c,d];
+blocks_from_sp4(m) = [m[1,1],m[1,2],m[2,1],m[2,2]];
+/*
 check_in_sp4(gma) =
 {
    my(a, b, c, d);
    [a, b, c, d] = blocks_from_sp4(gma);
    a~ * c == c~ * a && b~ * d == d~ * b && a~ * d - c~ * b == matid(2);
-}
+}*/
 sp4_action(gma, tau) =
 {
    my(a, b, c, d);
-   [a, b, c, d] = blocks_from_sp4(gma);
+   [a, b] = gma[1,];
+   [c, d] = gma[2,];
    /* if (!check_in_sp4(gma),
        error(gma, "is not in Sp_4(ZZ)");
       ); */
@@ -67,12 +63,12 @@ sp4_action(gma, tau) =
 reduce_to_F2(tau) =
 {
    my(gma, U, N, j, a, b, c, d, FORGET);
-   gma = matid(4);
+   gma = matid(2);
    t = 1; \\true
    while (t,
 	  \\Minkowski-reduce imaginary part
 	  [U, FORGET] = minkowski(imag(tau));
-	  N = sp4_from_blocks(U, zero(2), zero(2), (U^(-1))~);
+	  N = [U, 0; 0, (U^(-1))~];
 	  tau = sp4_action(N, tau);
 	  gma = N * gma;
 	  \\reduce real part
@@ -83,7 +79,7 @@ reduce_to_F2(tau) =
 	  \\check condition for the 19 test matrices
 	  for (j=1, 19,
 	       N = F2_test_matrix(j);
-	       [a, b, c, d] = blocks_from_sp4(N);
+	       [c, d] = N[2,];
 	       if (abs(matdet(c * tau + d)) < 1,
 		   t = 1; \\loop again
 		   tau = sp4_action(N, tau);
@@ -99,7 +95,7 @@ reduce_to_F2(tau) =
 reduce_real_part(tau) =
 {
    my(gma);
-   gma = sp4_from_blocks(matid(2), -round(real(tau)), zero(2), matid(2));
+   gma = [1, -round(real(tau)); 0, 1];
    [gma, sp4_action(gma, tau)];
 }
 
@@ -107,27 +103,46 @@ reduce_real_part(tau) =
 F2_test_matrix(j) = globalvar_F2_test_matrices[j];
 globalvar_F2_test_matrices =
 {
-   [sp4_from_blocks(zero(2), -matid(2), matid(2), zero(2)),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [1, 0; 0, 0]),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [-1, 0; 0, 0]),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [0, 0; 0, 1]),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [0, 0; 0, -1]),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), matid(2)),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), -matid(2)),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [-1, 0; 0, 1]),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [1, 0; 0, -1]),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [0, 1; 1, 0]),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [0, -1; -1, 0]),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [1, 1; 1, 0]),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [-1, -1; -1, 0]),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [0, 1; 1, 1]),
-    sp4_from_blocks(zero(2), -matid(2), matid(2), [0, -1; -1, -1]),
-    sp4_from_blocks(matid(2), -matid(2), [1, 0; 0, 0], [0, 0; 0, 1]),
-    sp4_from_blocks(matid(2), -matid(2), [0, 0; 0, 1], [1, 0; 0, 0]),
-    sp4_from_blocks(matid(2), zero(2), [1, -1; -1, 1], id(2)),
-    sp4_from_blocks(-matid(2), zero(2), [1, -1; -1, 1], -id(2))
+   [[  0, -1;            1, 0              ],
+    [  0, -1;            1, [1, 0; 0, 0]   ],
+    [  0, -1;            1, [-1, 0; 0, 0]  ],
+    [  0, -1;            1, [0, 0; 0, 1]   ],
+    [  0, -1;            1, [0, 0; 0, -1]  ],
+    [  0, -1;            1, 1              ],
+    [  0, -1;            1, -1             ],
+    [  0, -1;            1, [-1, 0; 0, 1]  ],
+    [  0, -1;            1, [1, 0; 0, -1]  ],
+    [  0, -1;            1, [0, 1; 1, 0]   ],
+    [  0, -1;            1, [0, -1; -1, 0] ],
+    [  0, -1;            1, [1, 1; 1, 0]   ],
+    [  0, -1;            1, [-1, -1; -1, 0]],
+    [  0, -1;            1, [0, 1; 1, 1]   ],
+    [  0, -1;            1, [0, -1; -1, -1]],
+    [  1, -1; [1, 0; 0, 0], [0, 0; 0, 1]   ],
+    [  1, -1; [0, 0; 0, 1], [1, 0; 0, 0]   ],
+    [  1,  0; [1,-1; -1,1], 1              ],
+    [ -1,  0; [1,-1; -1,1], -1             ]
    ]
 }
+{
+LL=vector(9,k,[(k-1)\3-1,(k-1)%3-1]~);
+LM=vector(19);
+for(k=1,#globalvar_F2_test_matrices,
+   my(M=globalvar_F2_test_matrices[k]);
+   for(j=1,2,
+     if(type(M[2,j])=="t_MAT",
+       M[2,j] = vector(2,l,vecsearch(LL,M[2,j][,l]))
+       ));
+   LM[k] = M);
+}
+     
+
+\\LL=vecsort(Vec(concat(globalvar_F2_test_matrices)),,8);
+\\{
+\\  F2=vector(#globalvar_F2_test_matrices,k,
+\\       M=globalvar_F2_test_matrices[k];
+\\       vector(4,j,vecsearch(LL,M[,j])));
+\\}
 
 F2_reduced(tau) =
 {
@@ -137,7 +152,7 @@ F2_reduced(tau) =
    b_minkowski = minkowski_reduced(imag(tau));
    b_test_matrices = 1;
    for (j=1, 19,
-	[a, b, c, d] = blocks_from_sp4(F2_test_matrix(j));
+	[c, d] = F2_test_matrix(j)[2,];
 	if (abs(matdet(c * tau + d)) < 1,
 	    b_test_matrices = 0;
 	   );
@@ -156,3 +171,14 @@ find_sp4(tau1, tau2) =
    [gma2, FORGET] = reduce_to_F2(tau2);
    gma2^(-1) * gma1;
 }
+
+/* test */
+tau=hyperellperiods(x^5+2*x-1);
+[s,t]=reduce_to_F2(tau); t - sp4_action(s,tau)
+tau=hyperellperiods(random(1.*x^6));
+[s,t]=reduce_to_F2(tau); t - sp4_action(s,tau)
+tau=hyperellperiods(random(1.*x^5));
+[s,t]=reduce_to_F2(tau); t - sp4_action(s,tau)
+
+
+
