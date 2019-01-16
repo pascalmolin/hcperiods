@@ -25,16 +25,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
  - w_j = x^j/y dx is a basis of holomorphic differentials
  - c_i = (a_i,b_i) is a symplectic basis of loops
 
- the basis is expressed on tree integrals
+ periods are combination of tree integrals
+
+ make things dynamic ?
 */
 
-#define hc_get_pol(c)        gel(c,1)
-#define hc_get_roots(c)      gel(c,2)
-#define hc_get_periods(c)    gel(c,3)
-#define hc_get_tree(c)       gmael(c,4,1)
-#define hc_get_integrals(c)  gmael(c,4,2)
-#define hc_get_hombasis(c)   gmael(c,4,3)
-#define hc_get_n(c) poldegree(hc_get_pol(c))
+#define hc_pol(c)        gel(c,1)
+#define hc_roots(c)      gel(c,2)
+#define hc_periods(c)    gel(c,3)
+#define hc_tree(c)       gmael(c,4,1)
+#define hc_integrals(c)  gmael(c,4,2)
+#define hc_hombasis(c)   gmael(c,4,3)
+#define hc_n(c) poldegree(hc_pol(c))
 
 /** everything is dynamic **/
 
@@ -612,13 +614,13 @@ GEN symplectic_homology_basis(GEN mat, long g) {
 /* big period matrix */
 GEN
 hc_big_periods(GEN hc) {
-    return hc_get_periods(hc);
+    return hc_periods(hc);
 }
 /* small period matrix */
 GEN
 hc_small_periods(GEN hc) {
     long g;
-    GEN ab = hc_get_periods(hc);
+    GEN ab = hc_periods(hc);
     pari_sp av = avma;
     if (lg(ab) < 3) return cgetg(1,t_MAT);
     g = nbrows(ab);
@@ -660,6 +662,7 @@ hcinit(GEN pol, long prec)
         timer_printf(&ti,"prepare tree");
     //pari_printf("ydata: %Ps\n",ydata);
     integrals = integrals_tree(ydata, g, prec);
+    integrals = gmul(integrals, gsqrt(pollead(pol,-1),prec));
     if (DEBUGLEVEL)
         timer_printf(&ti,"integrals");
     mat = intersections_tree(ydata);
@@ -770,6 +773,35 @@ hyperellperiods(GEN hc, long flag, long prec)
     }
     pari_err_TYPE("hcperiods",hc);
     return NULL;
+}
+
+/*********************************************************************/
+/*                                                                   */
+/*                           SIEGEL REDUCTION                        */
+/*                                                                   */
+/*********************************************************************/
+
+GEN
+genus2periods(GEN C, long prec)
+{
+    GEN pol, m, Om, Omr, d;
+    long j1, j2, pb = prec2nbits(prec) / 2;
+    pari_sp av = avma;
+    pol = typ(C) == t_POL ? C : gel(genus2red(C,NULL),3);
+    m = greal(hyperellperiods(pol,1,prec));
+    for(j1=1,j2=2;j1<=3;)
+    {
+        Om = mkmat2(gel(m,j1),gel(m,j2));
+        if (gexpo(gabs(det(Om),prec))>-pb)
+            break;
+        if (++j2>4)
+            j1++, j2=j1+1;
+    }
+    Omr = bestappr(gmul(ginv(Om),m),int2n(pb));
+    d = denom_i(Omr);
+    Omr = det(hnf(gmul(Omr, d)));
+    Om = gabs(det(Om),prec);
+    return gerepilecopy(av, gdiv(gmul(Om, Omr),gmul(d,d)));
 }
 
 #if 0
