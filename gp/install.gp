@@ -1,6 +1,8 @@
 install("hcinit","Gp","hcinit","./hyperellperiods.so");
 install("hyperellperiods","GD0,L,p","hyperellperiods","./hyperellperiods.so");
 install("genus2periods","Gp","genus2periods","./hyperellperiods.so");
+install("reduce_to_F2","G","reduce_to_F2","./hyperellperiods.so");
+install("is_F2_reduced","iG","is_F2_reduced","./hyperellperiods.so");
 C1 = hyperellperiods(x^3-x,1)
 C2 = hyperellperiods(x^3-x,1)
 /* periods of elliptic curves */

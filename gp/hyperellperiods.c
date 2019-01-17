@@ -804,20 +804,18 @@ genus2periods(GEN C, long prec)
     return gerepilecopy(av, gdiv(gmul(Om, Omr),gmul(d,d)));
 }
 
-#if 0
 /*********************************************************************/
 /*                                                                   */
 /*                           SIEGEL REDUCTION                        */
 /*                                                                   */
 /*********************************************************************/
-static GEN
-test_matrix(int k)
-{
-    int l = 1;
-    static GEN cols, L;
 
-    if (L)
-        return gel(L, k);
+/* Test matrices */
+static GEN
+init_L19()
+{
+    int k = 1;
+    GEN cols, L;
 
     cols = cgetg(10, t_VEC);
     gel(cols, k++) = mkcol2(gen_m1, gen_m1);
@@ -853,17 +851,9 @@ test_matrix(int k)
     gel(L, k++) = mkmat22( gen_1,  gen_0, matcols(7, 3),         gen_1);
     gel(L, k++) = mkmat22(gen_m1,  gen_0, matcols(7, 3),        gen_m1);
 
-    return gel(L,k);
+    return L;
 }
-static int
-real_less12(GEN x) /* x <= 1/2 ? */
-{ return (gcmp(gmul2n(gabs(greal(x)),1),gen_1) <= 0); }
-static int
-abs2_less(GEN x, GEN y) /* 2*|x| <= |y| ? */
-{ return (gcmp(gmul2n(gabs(x),1),gabs(y)) <= 0); }
-static int
-abs_less(GEN x, GEN y) /* 2*|x| <= |y| ? */
-{ return ((gcmp(gmul2n(gabs(x),1),gabs(y)) <= 0); }
+
 static int
 is_minkowski_reduced(GEN m)
 {
@@ -875,24 +865,37 @@ is_minkowski_reduced(GEN m)
         return 0;
     return 1;
 }
+
 int
 fail_F2_criterion(GEN L19, GEN tau)
 {
    int k;
    for (k = 1; k <= 19; k++)
    {
-       GEN T;
-       T = test_matrix(k);
-       c = gcoeff(tau,2,1);
-       d = gcoeff(tau,2,2);
-       T = gadd(gmul(c,T),d);
-       if (gcmp(gabs(det(T)),gen_1) < 0)
+       GEN c, d, T; //todo
+       T = gel(L19, k);
+       c = gcoeff(T,2,1);
+       d = gcoeff(T,2,2);
+       T = gadd(gmul(c,tau),d);
+       if (gcmp(gnorm(det(T)),gen_1) < 0)
            return k;
    }
    return 0;
 }
+
+//Internal comparison functions
+static int
+real_less12(GEN x) /* x <= 1/2 ? */
+{ return (gcmp(gmul2n(gnorm(greal(x)),2),gen_1) <= 0); }
+static int
+abs2_less(GEN x, GEN y) /* 2*|x| <= |y| ? */
+{ return (gcmp(gmul2n(gnorm(x),2),gnorm(y)) <= 0); }
+static int
+abs_less(GEN x, GEN y) /* |x| <= |y| ? */
+{ return (gcmp(gnorm(x),gnorm(y)) <= 0); }
+
 int
-is_F2_reduced(GEN L19, GEN tau)
+is_F2_reduced(GEN tau)
 {
    if (!real_less12(gcoeff(tau,1,1))
      ||!real_less12(gcoeff(tau,1,2))
@@ -900,18 +903,39 @@ is_F2_reduced(GEN L19, GEN tau)
        return 0;
    if (!is_minkowski_reduced(gimag(tau)))
        return 0;
-   return !fail_F2_criterion(L19, tau);
+   else
+   {
+       int r;
+       pari_sp av = avma;
+       GEN L19 = init_L19();
+       r = !fail_F2_criterion(L19, tau);
+       avma = av;
+       return r;
+   }
 }
-/* Minkowski reduction */
+
+/* Real part reduction (return the transformation matrix) */
+GEN
+reduce_real_part(GEN tau)
+{
+    return mkmat22(gen_1, gneg(ground(greal(tau))), gen_0, gen_1);
+}
+
+
+/* Minkowski reduction (return the transformation matrix) */
 static GEN
 congr(GEN m, GEN u)
 { return gmul(u, gmul(m, gtrans(u))); }
+
 GEN
-minkowski(GEN m)
+minkowski_reduce(GEN m)
 {
-  GEN u;
+  GEN u, n1, n2;
   pari_sp av = avma;
   int flag = 1;
+
+  n1 = mkmat22(gen_1,gen_0,gen_0,gen_m1);
+  n2 = mkmat22(gen_0,gen_1,gen_m1,gen_0);
 
   u = matid(2);
   do
@@ -923,27 +947,26 @@ minkowski(GEN m)
          if (abs_less(gcoeff(m,1,1),gcoeff(m,2,2)))
          {
              if (gsigne(gcoeff(m,1,2)) <= 0)
-             {   
-                 static GEN n = mkmat22(gen_1,gen_0,gen_0,gen_m1);
-                 m = congr(m,n);
-                 u = gmul(n,u);
+             {
+                 m = congr(m,n1);
+                 u = gmul(n1,u);
              }
              flag = 0; //end while loop
          }
          else
-         { 
-   	      static GEN n = mkmat22(gen_0,gen_1,gen_m1,gem_1);
-   	      m = congr(m,n);
-   	      u = gmul(n,u);
+         {
+   	      m = congr(m,n2);
+   	      u = gmul(n2,u);
          }
      }
-     t = gneg(ground(dgiv(gcoeff(m,1,2),gcoeff(m,1,1))));
+     t = gneg(ground(gdiv(gcoeff(m,1,2),gcoeff(m,1,1))));
      n = mkmat22(gen_1, gen_0, t, gen_1);
      m = congr(m,n);
      u = gmul(n,u);
   } while (flag);
-  return gerepileupto(av, mkvec2(u,m));
+  return gerepileupto(av, u);
 }
+
 static GEN
 sp4_action(GEN m, GEN tau)
 {
@@ -956,42 +979,41 @@ sp4_action(GEN m, GEN tau)
     c = gadd(gmul(c,tau),d);
     return gdiv(a,c);
 }
-/* Compute \gamma and \tau' s.t. tau'\in\F_2 and \tau' = \gamma\tau */
-GEN
-reduce_to_F2(tau) =
-{
-   my(gma, U, N, j, a, b, c, d, FORGET);
-   gma = matid(2);
-   t = 1; \\true
-   while (t,
-	  \\Minkowski-reduce imaginary part
-	  [U, FORGET] = minkowski(imag(tau));
-	  N = [U, 0; 0, (U^(-1))~];
-	  tau = sp4_action(N, tau);
-	  gma = N * gma;
-	  \\reduce real part
-	  [N, tau] = reduce_real_part(tau);
-	  gma = N * gma;
-	  \\end loop ?
-	  t = 0;
-	  if(k = fail_F2_criterion(tau))
-      {
-        GEN n = test_matrix(k);
-		tau = sp4_action(n, tau);
-		gma = gmul(n, gma);
-      }
 
-	  \\check condition for the 19 test matrices
-	  for (j=1, 19,
-	       N = F2_test_matrix(j);
-	       [c, d] = N[2,];
-	       if (abs(matdet(c * tau + d)) < 1,
-		   t = 1; \\loop again
-		   tau = sp4_action(N, tau);
-		   gma = N * gma;
-		  );
-	      );
-	 );
-   [gma, tau];
+GEN
+reduce_to_F2(GEN tau)
+{
+    GEN gma, L19;
+    pari_sp av = avma;
+    int k;
+    gma = matid(2);
+    L19 = init_L19();
+
+    while (1)
+    {
+        //Minkowski-reduce imaginary part
+        GEN u, n;
+        pari_printf("next loop %Ps\n", tau);
+        u = minkowski_reduce(gimag(tau));
+        pari_printf("minkowski done %Ps\n", u);
+        n = mkmat22(u, gen_0, gen_0, gtrans(ginv(u)));
+        tau = sp4_action(n, tau);
+        gma = gmul(n, gma);
+        //Reduce real part
+        n = reduce_real_part(tau);
+        pari_printf("reduce real %Ps\n",n);
+        tau = sp4_action(n, tau);
+        gma = gmul(n, gma);
+        //Test matrices
+        if ((k = fail_F2_criterion(L19, tau)))
+        {
+            n = gel(L19, k);
+            tau = sp4_action(n, tau);
+            gma = gmul(n, gma);
+        }
+        else
+            break;
+        //Add garbage collection?
+    }
+    return gerepilecopy(av, mkvec2(gma, tau));
 }
-#endif
