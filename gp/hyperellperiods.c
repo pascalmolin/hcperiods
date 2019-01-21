@@ -113,10 +113,12 @@ ydata_init(GEN roots, GEN e, long prec)
     //       swap(gel(u, k--),gel(u, --l));
     u = lexsort(u);
 
-    cab = gmul(gen_I(),gpowgs(gsqrt(ba,prec),d));
+    cab = gpowgs(gsqrt(ba,prec),d);
+    fa = gmul(gpowgs(gsqrt(gsub(b,a),prec),d), sqrt_pol_def(u,gen_m1,prec));
+    fb = gmul(gpowgs(gsqrt(gsub(b,a),prec),d), sqrt_pol_def(u,gen_1,prec));
     fa = gmul(cab, sqrt_pol_def(u,gen_m1,prec));
     fb = gmul(cab, sqrt_pol_def(u,gen_1,prec));
-    cab = gdivsg(2,cab);
+    cab = gmul(gen_I(),gdivsg(2,cab));
 
     return gerepilecopy(av, mkvecn(6, u, ba, gdiv(ab,ba), cab, fa, fb));
 }
@@ -402,7 +404,7 @@ intersections_tree(GEN ydata)
                 /* case ab.bd */
                 GEN fc = gel(ycd,5);
                 //pari_printf("[ab.bd], ratio %Ps\n", gdiv(fb,fc));
-                gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fb,fc))));
+                gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fc,fb))));
                 gcoeff(mat,l,k) = gneg(gcoeff(mat,k,l));
             }
             else if (ek[1] != el[1] && ek[2] != el[1] && ek[1] != el[2] && ek[2] != el[2])
@@ -624,7 +626,7 @@ hc_small_periods(GEN hc) {
     pari_sp av = avma;
     if (lg(ab) < 3) return cgetg(1,t_MAT);
     g = nbrows(ab);
-    return gerepilecopy(av,gauss(vecslice(ab,g+1,2*g),vecslice(ab,1,g)));
+    return gerepilecopy(av,gauss(vecslice(ab,1,g),vecslice(ab,g+1,2*g)));
 }
 
 /*********************************************************************/
@@ -662,7 +664,8 @@ hcinit(GEN pol, long prec)
         timer_printf(&ti,"prepare tree");
     //pari_printf("ydata: %Ps\n",ydata);
     integrals = integrals_tree(ydata, g, prec);
-    integrals = gmul(integrals, gsqrt(pollead(pol,-1),prec));
+    // could div in ydata
+    //integrals = gdiv(integrals, gsqrt(pollead(pol,-1),prec));
     if (DEBUGLEVEL)
         timer_printf(&ti,"integrals");
     mat = intersections_tree(ydata);
@@ -672,7 +675,8 @@ hcinit(GEN pol, long prec)
     periods = gmul(integrals,ab);
     //pari_printf("periods\n");
     //outmat(periods);
-    hc = mkvec4(pol, X, periods, mkvec3(tree,integrals,ab));
+    //hc = mkvec4(pol, X, periods, mkvec3(tree,integrals,ab));
+    hc = mkvec4(pol, X, periods, mkvec5(tree,ydata,integrals,mat,ab));
     return gerepilecopy(av, hc);
 }
 
@@ -761,7 +765,7 @@ GEN
 hyperellperiods(GEN hc, long flag, long prec)
 {
     if (typ(hc) == t_VEC && lg(hc) == 5
-            && typ(gel(hc,4)) == t_VEC && lg(gel(hc,4)) == 4)
+            && typ(gel(hc,4)) == t_VEC && lg(gel(hc,4)) == 6)
     {
         return flag ? hc_big_periods(hc) : hc_small_periods(hc);
     }
@@ -771,7 +775,7 @@ hyperellperiods(GEN hc, long flag, long prec)
         hc = hcinit(hc, prec);
         return gerepilecopy(av, hyperellperiods(hc,flag,prec));
     }
-    pari_err_TYPE("hcperiods",hc);
+    pari_err_TYPE("hyperellperiods",hc);
     return NULL;
 }
 
@@ -993,15 +997,15 @@ reduce_to_F2(GEN tau)
     {
         //Minkowski-reduce imaginary part
         GEN u, n;
-        pari_printf("next loop %Ps\n", tau);
+        //pari_printf("next loop %Ps\n", tau);
         u = minkowski_reduce(gimag(tau));
-        pari_printf("minkowski done %Ps\n", u);
+        //pari_printf("minkowski done %Ps\n", u);
         n = mkmat22(u, gen_0, gen_0, gtrans(ginv(u)));
         tau = sp4_action(n, tau);
         gma = gmul(n, gma);
         //Reduce real part
         n = reduce_real_part(tau);
-        pari_printf("reduce real %Ps\n",n);
+        //pari_printf("reduce real %Ps\n",n);
         tau = sp4_action(n, tau);
         gma = gmul(n, gma);
         //Test matrices

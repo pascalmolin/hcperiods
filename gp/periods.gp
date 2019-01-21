@@ -115,7 +115,8 @@ iP0               =  16;
 iAJRoots          =  17;
 iReduce           =  18;
 iTau              =  19;
-iMax              =  iTau;
+iIntegrals        =  20;
+iMax              =  iIntegrals;
 
 /**
 
@@ -490,10 +491,13 @@ intersection_abbd(A,ia,ib,ic,id) = {
       endarg = arg(fab/fbd);
       arg1 = -(Pi+tau)/2;
       arg2 = (Pi-tau)/2;
-      if(abs(endarg-arg1)>0.0001&&abs(endarg-arg2)>0.0001,
-        print("intersection_abbd");
+        printf("intersection_abbd %i->%i->%i\n",ia,ib,id);
+        print("  fab=",fab);
+        print("  fbd=",fbd);
         print("  tau=",tau);
         printf("  arg[fab/fbd]=%1.4f should be %1.4f or %1.4f\n",endarg,arg1, arg2);
+        print("   roots ab ", Aprim);
+      if(abs(endarg-arg1)>0.0001&&abs(endarg-arg2)>0.0001,
         printf("tau/2=%1.3f ; 2*tau=%1.3f ; (Pi-tau)/2=%1.3f ; Pi-2*tau=%1.3f ; \n",
           tau/2,2*tau,(Pi-tau)/2,Pi-2*tau);
         );
@@ -519,10 +523,10 @@ intersection_abcb(A,ia,ib,ic,id) = {
       arg1 = if(tau>0,Pi-tau/2,-Pi-tau/2);
       \\arg2 = Pi-tau/2;
       arg2 = -tau/2;
-      if(abs(endarg-arg1)>0.0001&&abs(endarg-arg2)>0.0001,
         print("intersection_abcb");
         print("  tau=",tau);
         printf("  arg[fab/fcb]=%1.4f should be %1.4f or %1.4f\n",endarg,arg1, arg2);
+      if(abs(endarg-arg1)>0.0001&&abs(endarg-arg2)>0.0001,
         printf("tau/2=%1.3f ; 2*tau=%1.3f ; (Pi-tau)/2=%1.3f ; Pi-2*tau=%1.3f ; Pi-tau/2=%1.3f ; Pi+tau/2=%1.3f \n", tau/2,2*tau,(Pi-tau)/2,Pi-2*tau,Pi-tau/2,Pi+tau/2);
         );
     );
@@ -546,10 +550,10 @@ intersection_abad(A,ia,ib,ic,id) = {
       endarg = arg(fab/fad);
       arg1 = -tau/2;
       arg2 = if(tau>0,Pi-tau/2,-Pi-tau/2);
-      if(abs(endarg-arg1)>0.0001&&abs(endarg-arg2)>0.0001,
         print("intersection_abad");
         print("  tau=",tau);
         printf("  arg[fab/fad]=%1.4f should be %1.4f or %1.4f\n",endarg,arg1, arg2);
+      if(abs(endarg-arg1)>0.0001&&abs(endarg-arg2)>0.0001,
         printf("tau/2=%1.3f ; 2*tau=%1.3f ; (Pi-tau)/2=%1.3f ; Pi-2*tau=%1.3f ; Pi-tau/2=%1.3f ; Pi+tau/2=%1.3f \n", tau/2,2*tau,(Pi-tau)/2,Pi-2*tau,Pi-tau/2,Pi+tau/2);
         );
     );
@@ -1243,6 +1247,7 @@ hcInit(A,provenbounds=0) = {
   /* compute big period matrix of periods C_1,..C_2g */
   coh1x_homC = periods_spanning(hcStruct);
   msgtimer("periods");
+  hcStruct[iIntegrals] = coh1x_homC;
   /* intersection matrix of basis C_1,.. C_2g */
   IntC = intersection_spanning(A,tree);
   hcStruct[iIntersection] = IntC;
