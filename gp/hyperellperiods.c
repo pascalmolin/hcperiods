@@ -342,30 +342,6 @@ GEN hc_spanning_tree(GEN X, long prec) {
 /*********************************************************************/
 
 /* intersections */
-#if 0
-int
-shift_number(GEN yab, GEN yad, long prec)
-{
-   angle = gdiv(garg(gmael(yab,2, mppi(prec));
-}
-
-int
-intersection(GEN ab, GEN cd, int sgn)
-{
-    long a=ab[1],b=ab[2],c=cd[1],d=cd[2];
-    if (a==c&&b==d || a==d&&b==c)
-        return 0;
-    else if (a==c)
-        return intersection_abad(X,ab,cd);
-    else if (b==c)
-        return intersection_abbd(X,ab,cd);
-    else if (a==d)
-        return -intersection_abbd(X,cd,ab);
-    else if (b==d)
-}
-#endif
-
-
 GEN
 intersections_tree(GEN ydata)
 {
@@ -395,16 +371,48 @@ intersections_tree(GEN ydata)
             {
                 /* case ab.ad */
                 GEN fc = gel(ycd,5);
+                GEN phi, arg;
+                long z, prec = ndec2prec(34);
+                phi = garg(gdiv(gel(yab,2),gel(ycd,2)),prec);
+                arg = garg(gdiv(fc,fa),prec);
+                arg = gadd(phi, gmul2n(arg,1));
+                arg = gdiv(arg,Pi2n(1,prec));
+                z = itos(ground(arg));
+                pari_printf("[ab.ad], arg=%Ps [phi=%ld] -> %ld\n", arg, signe(phi), z);
+                if (signe(phi) >= 0)
+                    z = (z==1) ? 1 : -1;
+                else
+                    z = (z==0) ? 1 : -1;
+                pari_printf("[ab.ad], arg=%Ps -> %ld\n", arg, z);
                 //pari_printf("[ab.ad], ratio %Ps\n", gdiv(fa,fc));
-                gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fa,fc))));
+                gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fc,fa))));
+                if (itos(gcoeff(mat,k,l)) != z)
+                {
+                    pari_printf("----- coeff %Ps == %ld\n",gcoeff(mat,k,l),z);
+                    pari_err_BUG("hyperellperiods, wrong intersection");
+                }
                 gcoeff(mat,l,k) = gneg(gcoeff(mat,k,l));
             }
             else if(el[1]==ek[2])
             {
                 /* case ab.bd */
                 GEN fc = gel(ycd,5);
+                GEN r;
+                long z, prec = ndec2prec(34);
+                r = garg(gdiv(gel(yab,2),gel(ycd,2)),prec);
+                r = gadd(r, mppi(prec));
+                r = gadd(r, gmul2n(garg(gdiv(fc,fb),prec),1));
+                r = gdiv(r,Pi2n(1,prec));
+                z = itos(ground(r));
+                z = (z==0) ? 1 : -1;
+                pari_printf("[ab.bd], arg %Ps -> %ld\n", r, z);
                 //pari_printf("[ab.bd], ratio %Ps\n", gdiv(fb,fc));
-                gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fc,fb))));
+                gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fb,fc))));
+                if (itos(gcoeff(mat,k,l)) != z)
+                {
+                    pari_printf("----- coeff %Ps == %ld\n",gcoeff(mat,k,l),z);
+                    pari_err_BUG("hyperellperiods, wrong intersection");
+                }
                 gcoeff(mat,l,k) = gneg(gcoeff(mat,k,l));
             }
             else if (ek[1] != el[1] && ek[2] != el[1] && ek[1] != el[2] && ek[2] != el[2])
