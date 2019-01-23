@@ -25,17 +25,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
  - w_j = x^j/y dx is a basis of holomorphic differentials
  - c_i = (a_i,b_i) is a symplectic basis of loops
 
- the basis is expressed on tree integrals
+ periods are combination of tree integrals
+
+ make things dynamic ?
 */
 
-
-#define hc_get_pol(c)        gel(c,1)
-#define hc_get_roots(c)      gel(c,2)
-#define hc_get_periods(c)    gel(c,3)
-#define hc_get_tree(c)       gmael(c,4,1)
-#define hc_get_integrals(c)  gmael(c,4,2)
-#define hc_get_hombasis(c)   gmael(c,4,3)
-#define hc_get_n(c) poldegree(hc_get_pol(c))
+#define hc_pol(c)        gel(c,1)
+#define hc_roots(c)      gel(c,2)
+#define hc_periods(c)    gel(c,3)
+#define hc_tree(c)       gmael(c,4,1)
+#define hc_integrals(c)  gmael(c,4,2)
+#define hc_hombasis(c)   gmael(c,4,3)
+#define hc_n(c) poldegree(hc_pol(c))
 
 /** everything is dynamic **/
 
@@ -112,10 +113,12 @@ ydata_init(GEN roots, GEN e, long prec)
     //       swap(gel(u, k--),gel(u, --l));
     u = lexsort(u);
 
-    cab = gmul(gen_I(),gpowgs(gsqrt(ba,prec),d));
+    cab = gpowgs(gsqrt(ba,prec),d);
+    fa = gmul(gpowgs(gsqrt(gsub(b,a),prec),d), sqrt_pol_def(u,gen_m1,prec));
+    fb = gmul(gpowgs(gsqrt(gsub(b,a),prec),d), sqrt_pol_def(u,gen_1,prec));
     fa = gmul(cab, sqrt_pol_def(u,gen_m1,prec));
     fb = gmul(cab, sqrt_pol_def(u,gen_1,prec));
-    cab = gdivsg(2,cab);
+    cab = gmul(gen_I(),gdivsg(2,cab));
 
     return gerepilecopy(av, mkvecn(6, u, ba, gdiv(ab,ba), cab, fa, fb));
 }
@@ -209,6 +212,8 @@ integral_edge(GEN ydata, long g, GEN gc, long prec)
         /* same on -x */
         yinv = ginv(sqrt_pol_def(u, gneg(xl), prec));
         res = gadd(res, gpowers0(gneg(xl),g-1,yinv));
+        if (gc_needed(av, 3))
+            res = gerepilecopy(av, res);
     }
     /* multiply by Pi / (2n) * Cab */
     res = gmul(res,gdivgs(gmul(mppi(prec),cab),2*n));
@@ -216,7 +221,8 @@ integral_edge(GEN ydata, long g, GEN gc, long prec)
     /* mul by ba2^k and shift by u0 */
     res = binomial_transform(res,u0);
     //output(res);
-    res = geom_shift(res, gdiv(ba2,gen_I()));
+    res = geom_shift(res, ba2);
+    //res = geom_shift(res, gdiv(ba2,gen_I()));
     //output(res);
     settyp(res, t_COL);
     return gerepilecopy(av, res);
@@ -228,14 +234,17 @@ integrals_tree(GEN ydata, long g, long prec)
     GEN gc = NULL, mat, s;
     long n = 0, k, bitprec = prec2nbits(prec);
     pari_sp av = avma;
+    pari_timer ti;
 
     mat = cgetg(lg(ydata), t_MAT);
     /* integrals are sorted hardest first */
     s = vecsort0(ydata,mkvecsmall(1),1);
+    if (DEBUGLEVEL)
+        timer_start(&ti);
     for (k = 1; k < lg(ydata); k++)
     {
         long nk = gc_cost(gmael3(ydata,s[k],1,1), bitprec);
-        pari_printf("%ld->%ld points\n",k,nk);
+
         if (nk > n || n > 1.3 * nk)
         {
             pari_warn(warner,"compute %ld integration points", nk);
@@ -243,6 +252,11 @@ integrals_tree(GEN ydata, long g, long prec)
             n = nk;
         }
         gel(mat, s[k]) = integral_edge(gmael(ydata,s[k],2),g,gc,prec);
+        if (DEBUGLEVEL)
+        {
+            GEN e = gmael3(ydata,s[k],1,2);
+            timer_printf(&ti,"integral [%ld->%ld], %ld points", e[1], e[2], nk);
+        }
     }
     return gerepilecopy(av, mat);
 }
@@ -328,30 +342,6 @@ GEN hc_spanning_tree(GEN X, long prec) {
 /*********************************************************************/
 
 /* intersections */
-#if 0
-int
-shift_number(GEN yab, GEN yad, long prec)
-{
-   angle = gdiv(garg(gmael(yab,2, mppi(prec));
-}
-
-int
-intersection(GEN ab, GEN cd, int sgn)
-{
-    long a=ab[1],b=ab[2],c=cd[1],d=cd[2];
-    if (a==c&&b==d || a==d&&b==c)
-        return 0;
-    else if (a==c)
-        return intersection_abad(X,ab,cd);
-    else if (b==c)
-        return intersection_abbd(X,ab,cd);
-    else if (a==d)
-        return -intersection_abbd(X,cd,ab);
-    else if (b==d)
-}
-#endif
-
-
 GEN
 intersections_tree(GEN ydata)
 {
@@ -381,16 +371,48 @@ intersections_tree(GEN ydata)
             {
                 /* case ab.ad */
                 GEN fc = gel(ycd,5);
+                GEN phi, arg;
+                long z, prec = ndec2prec(34);
+                phi = garg(gdiv(gel(yab,2),gel(ycd,2)),prec);
+                arg = garg(gdiv(fc,fa),prec);
+                arg = gadd(phi, gmul2n(arg,1));
+                arg = gdiv(arg,Pi2n(1,prec));
+                z = itos(ground(arg));
+                pari_printf("[ab.ad], arg=%Ps [phi=%ld] -> %ld\n", arg, signe(phi), z);
+                if (signe(phi) >= 0)
+                    z = (z==1) ? 1 : -1;
+                else
+                    z = (z==0) ? 1 : -1;
+                pari_printf("[ab.ad], arg=%Ps -> %ld\n", arg, z);
                 //pari_printf("[ab.ad], ratio %Ps\n", gdiv(fa,fc));
-                gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fa,fc))));
+                gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fc,fa))));
+                if (itos(gcoeff(mat,k,l)) != z)
+                {
+                    pari_printf("----- coeff %Ps == %ld\n",gcoeff(mat,k,l),z);
+                    pari_err_BUG("hyperellperiods, wrong intersection");
+                }
                 gcoeff(mat,l,k) = gneg(gcoeff(mat,k,l));
             }
             else if(el[1]==ek[2])
             {
                 /* case ab.bd */
                 GEN fc = gel(ycd,5);
+                GEN r;
+                long z, prec = ndec2prec(34);
+                r = garg(gdiv(gel(yab,2),gel(ycd,2)),prec);
+                r = gadd(r, mppi(prec));
+                r = gadd(r, gmul2n(garg(gdiv(fc,fb),prec),1));
+                r = gdiv(r,Pi2n(1,prec));
+                z = itos(ground(r));
+                z = (z==0) ? 1 : -1;
+                pari_printf("[ab.bd], arg %Ps -> %ld\n", r, z);
                 //pari_printf("[ab.bd], ratio %Ps\n", gdiv(fb,fc));
                 gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fb,fc))));
+                if (itos(gcoeff(mat,k,l)) != z)
+                {
+                    pari_printf("----- coeff %Ps == %ld\n",gcoeff(mat,k,l),z);
+                    pari_err_BUG("hyperellperiods, wrong intersection");
+                }
                 gcoeff(mat,l,k) = gneg(gcoeff(mat,k,l));
             }
             else if (ek[1] != el[1] && ek[2] != el[1] && ek[1] != el[2] && ek[2] != el[2])
@@ -602,17 +624,17 @@ GEN symplectic_homology_basis(GEN mat, long g) {
 /* big period matrix */
 GEN
 hc_big_periods(GEN hc) {
-    return hc_get_periods(hc);
+    return hc_periods(hc);
 }
 /* small period matrix */
 GEN
 hc_small_periods(GEN hc) {
     long g;
-    GEN ab = hc_get_periods(hc);
+    GEN ab = hc_periods(hc);
     pari_sp av = avma;
     if (lg(ab) < 3) return cgetg(1,t_MAT);
     g = nbrows(ab);
-    return gerepilecopy(av,gauss(vecslice(ab,g+1,2*g),vecslice(ab,1,g)));
+    return gerepilecopy(av,gauss(vecslice(ab,1,g),vecslice(ab,g+1,2*g)));
 }
 
 /*********************************************************************/
@@ -626,6 +648,8 @@ hcinit(GEN pol, long prec)
 {
     GEN hc, X, tree, ydata, integrals, mat, ab, periods;
     pari_sp av = avma;
+    pari_timer ti;
+    long pr2 = ndec2prec(34);
     long g = (poldegree(pol,-1) - 1) / 2;
     if (g<1)
     {
@@ -633,19 +657,34 @@ hcinit(GEN pol, long prec)
         hc = mkvec4(pol,roots(pol,prec),cgetg(1,t_MAT),zerovec(3));
         return gerepilecopy(av,hc);
     }
+    if (DEBUGLEVEL)
+        timer_start(&ti);
     X = roots(pol, prec);
+    if (DEBUGLEVEL)
+        timer_printf(&ti,"roots");
     //pari_printf("roots: %Ps\n",X);
-    tree = hc_spanning_tree(X, prec);
+    tree = hc_spanning_tree(X, pr2);
+    if (DEBUGLEVEL)
+        timer_printf(&ti,"spanning tree");
     //pari_printf("tree: %Ps\n",tree);
     ydata = ydata_tree(X, tree, prec);
+    if (DEBUGLEVEL)
+        timer_printf(&ti,"prepare tree");
     //pari_printf("ydata: %Ps\n",ydata);
     integrals = integrals_tree(ydata, g, prec);
+    // could div in ydata
+    //integrals = gdiv(integrals, gsqrt(pollead(pol,-1),prec));
+    if (DEBUGLEVEL)
+        timer_printf(&ti,"integrals");
     mat = intersections_tree(ydata);
     ab = symplectic_homology_basis(mat, g);
+    if (DEBUGLEVEL)
+        timer_printf(&ti,"symplectic basis");
     periods = gmul(integrals,ab);
     //pari_printf("periods\n");
     //outmat(periods);
-    hc = mkvec4(pol, X, periods, mkvec3(tree,integrals,ab));
+    //hc = mkvec4(pol, X, periods, mkvec3(tree,integrals,ab));
+    hc = mkvec4(pol, X, periods, mkvec5(tree,ydata,integrals,mat,ab));
     return gerepilecopy(av, hc);
 }
 
@@ -734,7 +773,7 @@ GEN
 hyperellperiods(GEN hc, long flag, long prec)
 {
     if (typ(hc) == t_VEC && lg(hc) == 5
-            && typ(gel(hc,4)) == t_VEC && lg(gel(hc,4)) == 4)
+            && typ(gel(hc,4)) == t_VEC && lg(gel(hc,4)) == 6)
     {
         return flag ? hc_big_periods(hc) : hc_small_periods(hc);
     }
@@ -744,6 +783,249 @@ hyperellperiods(GEN hc, long flag, long prec)
         hc = hcinit(hc, prec);
         return gerepilecopy(av, hyperellperiods(hc,flag,prec));
     }
-    pari_err_TYPE("hcperiods",hc);
+    pari_err_TYPE("hyperellperiods",hc);
     return NULL;
+}
+
+/*********************************************************************/
+/*                                                                   */
+/*                           SIEGEL REDUCTION                        */
+/*                                                                   */
+/*********************************************************************/
+
+GEN
+genus2periods(GEN C, long prec)
+{
+    GEN pol, m, Om, Omr, d;
+    long j1, j2, pb = prec2nbits(prec) / 2;
+    pari_sp av = avma;
+    pol = typ(C) == t_POL ? C : gel(genus2red(C,NULL),3);
+    m = greal(hyperellperiods(pol,1,prec));
+    for(j1=1,j2=2;j1<=3;)
+    {
+        Om = mkmat2(gel(m,j1),gel(m,j2));
+        if (gexpo(gabs(det(Om),prec))>-pb)
+            break;
+        if (++j2>4)
+            j1++, j2=j1+1;
+    }
+    Omr = bestappr(gmul(ginv(Om),m),int2n(pb));
+    d = denom_i(Omr);
+    Omr = det(hnf(gmul(Omr, d)));
+    Om = gabs(det(Om),prec);
+    return gerepilecopy(av, gdiv(gmul(Om, Omr),gmul(d,d)));
+}
+
+/*********************************************************************/
+/*                                                                   */
+/*                           SIEGEL REDUCTION                        */
+/*                                                                   */
+/*********************************************************************/
+
+/* Test matrices */
+static GEN
+init_L19()
+{
+    int k = 1;
+    GEN cols, L;
+
+    cols = cgetg(10, t_VEC);
+    gel(cols, k++) = mkcol2(gen_m1, gen_m1);
+    gel(cols, k++) = mkcol2(gen_m1,  gen_0);
+    gel(cols, k++) = mkcol2(gen_m1,  gen_1);
+    gel(cols, k++) = mkcol2( gen_0, gen_m1);
+    gel(cols, k++) = mkcol2( gen_0,  gen_0);
+    gel(cols, k++) = mkcol2( gen_0,  gen_1);
+    gel(cols, k++) = mkcol2( gen_1, gen_m1);
+    gel(cols, k++) = mkcol2( gen_1,  gen_0);
+    gel(cols, k++) = mkcol2( gen_1,  gen_1);
+
+    L = cgetg(20, t_VEC);
+    k = 1;
+#define matcols(i,j) mkmat2(gel(cols,i),gel(cols,j))
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1,         gen_0);
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(8, 5));
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(2, 5));
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(5, 6));
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(5, 4));
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1,         gen_1);
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1,        gen_m1);
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(2, 6));
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(8, 4));
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(6, 8));
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(4, 2));
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(9, 8));
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(1, 2));
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(6, 9));
+    gel(L, k++) = mkmat22( gen_0, gen_m1,         gen_1, matcols(4, 1));
+    gel(L, k++) = mkmat22( gen_1, gen_m1, matcols(8, 5), matcols(5, 6));
+    gel(L, k++) = mkmat22( gen_1, gen_m1, matcols(5, 6), matcols(8, 5));
+    gel(L, k++) = mkmat22( gen_1,  gen_0, matcols(7, 3),         gen_1);
+    gel(L, k++) = mkmat22(gen_m1,  gen_0, matcols(7, 3),        gen_m1);
+
+    return L;
+}
+
+static int
+is_minkowski_reduced(GEN m)
+{
+    if (gcmp(gcoeff(m,2,2),gcoeff(m,1,1)) < 0)
+        return 0;
+    if (gcmp(gcoeff(m,1,1),gmul2n(gcoeff(m,1,2),1)) < 0)
+        return 0;
+    if (gsigne(gcoeff(m,1,2)) < 0)
+        return 0;
+    return 1;
+}
+
+int
+fail_F2_criterion(GEN L19, GEN tau)
+{
+   int k;
+   for (k = 1; k <= 19; k++)
+   {
+       GEN c, d, T; //todo
+       T = gel(L19, k);
+       c = gcoeff(T,2,1);
+       d = gcoeff(T,2,2);
+       T = gadd(gmul(c,tau),d);
+       if (gcmp(gnorm(det(T)),gen_1) < 0)
+           return k;
+   }
+   return 0;
+}
+
+//Internal comparison functions
+static int
+real_less12(GEN x) /* x <= 1/2 ? */
+{ return (gcmp(gmul2n(gnorm(greal(x)),2),gen_1) <= 0); }
+static int
+abs2_less(GEN x, GEN y) /* 2*|x| <= |y| ? */
+{ return (gcmp(gmul2n(gnorm(x),2),gnorm(y)) <= 0); }
+static int
+abs_less(GEN x, GEN y) /* |x| <= |y| ? */
+{ return (gcmp(gnorm(x),gnorm(y)) <= 0); }
+
+int
+is_F2_reduced(GEN tau)
+{
+   if (!real_less12(gcoeff(tau,1,1))
+     ||!real_less12(gcoeff(tau,1,2))
+     ||!real_less12(gcoeff(tau,2,2)))
+       return 0;
+   if (!is_minkowski_reduced(gimag(tau)))
+       return 0;
+   else
+   {
+       int r;
+       pari_sp av = avma;
+       GEN L19 = init_L19();
+       r = !fail_F2_criterion(L19, tau);
+       avma = av;
+       return r;
+   }
+}
+
+/* Real part reduction (return the transformation matrix) */
+GEN
+reduce_real_part(GEN tau)
+{
+    return mkmat22(gen_1, gneg(ground(greal(tau))), gen_0, gen_1);
+}
+
+
+/* Minkowski reduction (return the transformation matrix) */
+static GEN
+congr(GEN m, GEN u)
+{ return gmul(u, gmul(m, gtrans(u))); }
+
+GEN
+minkowski_reduce(GEN m)
+{
+  GEN u, n1, n2;
+  pari_sp av = avma;
+  int flag = 1;
+
+  n1 = mkmat22(gen_1,gen_0,gen_0,gen_m1);
+  n2 = mkmat22(gen_0,gen_1,gen_m1,gen_0);
+
+  u = matid(2);
+  do
+  {
+     GEN t, n;
+     if (abs2_less(gcoeff(m,1,2),gcoeff(m,1,1)))
+     {
+         /* |m[1,1]| <= |m[2,2]| ? */
+         if (abs_less(gcoeff(m,1,1),gcoeff(m,2,2)))
+         {
+             if (gsigne(gcoeff(m,1,2)) <= 0)
+             {
+                 m = congr(m,n1);
+                 u = gmul(n1,u);
+             }
+             flag = 0; //end while loop
+         }
+         else
+         {
+   	      m = congr(m,n2);
+   	      u = gmul(n2,u);
+         }
+     }
+     t = gneg(ground(gdiv(gcoeff(m,1,2),gcoeff(m,1,1))));
+     n = mkmat22(gen_1, gen_0, t, gen_1);
+     m = congr(m,n);
+     u = gmul(n,u);
+  } while (flag);
+  return gerepileupto(av, u);
+}
+
+static GEN
+sp4_action(GEN m, GEN tau)
+{
+    GEN a, b, c, d;
+    a = gcoeff(m,1,1);
+    b = gcoeff(m,1,2);
+    c = gcoeff(m,2,1);
+    d = gcoeff(m,2,2);
+    a = gadd(gmul(a,tau),b);
+    c = gadd(gmul(c,tau),d);
+    return gdiv(a,c);
+}
+
+GEN
+reduce_to_F2(GEN tau)
+{
+    GEN gma, L19;
+    pari_sp av = avma;
+    int k;
+    gma = matid(2);
+    L19 = init_L19();
+
+    while (1)
+    {
+        //Minkowski-reduce imaginary part
+        GEN u, n;
+        //pari_printf("next loop %Ps\n", tau);
+        u = minkowski_reduce(gimag(tau));
+        //pari_printf("minkowski done %Ps\n", u);
+        n = mkmat22(u, gen_0, gen_0, gtrans(ginv(u)));
+        tau = sp4_action(n, tau);
+        gma = gmul(n, gma);
+        //Reduce real part
+        n = reduce_real_part(tau);
+        //pari_printf("reduce real %Ps\n",n);
+        tau = sp4_action(n, tau);
+        gma = gmul(n, gma);
+        //Test matrices
+        if ((k = fail_F2_criterion(L19, tau)))
+        {
+            n = gel(L19, k);
+            tau = sp4_action(n, tau);
+            gma = gmul(n, gma);
+        }
+        else
+            break;
+        //Add garbage collection?
+    }
+    return gerepilecopy(av, mkvec2(gma, tau));
 }
