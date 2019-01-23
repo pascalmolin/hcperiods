@@ -26,12 +26,66 @@ for(g=1,20,
     if(p~*m*p != jg, error(m));
     ));
 }
+
+/* check lattice */
+/* test if Omega is symetric to current prec */
+Riemann_symmetry(tau) = {
+  my(Sym);
+  Sym = abs(tau - mattranspose(tau));
+  if(exponent(trace(Sym*mattranspose(Sym)))>-90,
+      print("## Riemann_symmetry violated : Omega^t != Omega");
+      return(0),
+      return(1)
+  );
+}
+/* test whether Im(Omega) > 0 */
+/* this is true if and only if
+   IOmega = M^t*M
+   suppose Omega already tested for symmetry
+ */
+Riemann_positivity(tau,n=5) = {
+  my(Itau=imag(tau));
+  g = matsize(Itau)[1];
+  for(i=1,g,if(Itau[i,i]<=0,
+           printf("tau[%i,%i]<=0",i,i);
+   return(0)));
+  for(i=1,g,
+      for(j=i+1,g,
+        if(Itau[i,i]<=abs(Itau[i,j]),
+           printf("tau[%i,%i]<=|tau[%i,%i]|",i,i,i,j);
+           return(0));
+        if(Itau[i,i]+Itau[j,j]<=2*abs(real(Itau[i,j])),
+           printf("tau[%i,%i]+tau[%i,%i]<=2|Re tau[%i,%i]|",
+           i,i,j,j,i,j);
+           return(0));
+        );
+     );
+  /* plus some random tests */
+  X = vector(g,i,tan(3.14*random(1.)-1.55));
+  for(k=1,n,
+      if(X*Itau*X~<0,
+        printf("X*tau*X~<0 for X=%s",X);
+       return(0));
+      for(i=1,g,X[i] = tan(3.14*random(1.)-1.55););
+     );
+  return(1)
+} 
+
+
+test_Riemannrelations(X) = {
+  my(tau);
+  /* test if the small period matrix is symetric */
+  tau = hyperellperiods(X);
+  if(!Riemann_symmetry(tau),error("symmetry : ",X));
+  if(!Riemann_positivity(tau),error("positivity : ",X));
+  return(1);
+}
+
 {
 /* periods */
 for(d=2,7,\\30,
   for(i=1,5,
     my(pol = random(1.*x^d));
-    hyperellperiods(pol)
+    test_Riemannrelations(pol);
     ));
 }
-/* check lattice */
