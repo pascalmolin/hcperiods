@@ -73,9 +73,9 @@ sqrt_pol_def(GEN u, GEN x, long prec)
     }
     switch (r % 4)
     {
-        case 1: y = gmul(y, gen_I()); break;
+        case 1: y = mulcxI(y); break;
         case 2: y = gneg(y); break;
-        case 3: y = gneg(gmul(y,gen_I())); break;
+        case 3: y = mulcxmI(y); break;
         default: break;
     }
     return gerepilecopy(av, y);
@@ -87,9 +87,10 @@ sqrt_pol_def(GEN u, GEN x, long prec)
   and fa = C*g(-1), fb = C*g(1).
  */
 GEN
-ydata_init(GEN roots, GEN e, long prec)
+ydata_init(GEN roots, GEN e, long bitprec)
 {
     long ia = e[1], ib = e[2], k, l, d = lg(roots)-1;
+    long prec = nbits2prec(bitprec);
     GEN a, b, ab, ba, u, cab, fa, fb;
     pari_sp av = avma;
     a = gel(roots, ia);
@@ -118,18 +119,18 @@ ydata_init(GEN roots, GEN e, long prec)
     fb = gmul(gpowgs(gsqrt(gsub(b,a),prec),d), sqrt_pol_def(u,gen_1,prec));
     fa = gmul(cab, sqrt_pol_def(u,gen_m1,prec));
     fb = gmul(cab, sqrt_pol_def(u,gen_1,prec));
-    cab = gmul(gen_I(),gdivsg(2,cab));
+    cab = mulcxI(gdivsg(2,cab));
 
     return gerepilecopy(av, mkvecn(6, u, ba, gdiv(ab,ba), cab, fa, fb));
 }
 
 GEN
-ydata_tree(GEN X, GEN tree, long prec)
+ydata_tree(GEN X, GEN tree, long bitprec)
 {
     long k;
     GEN data = cgetg(lg(tree),t_VEC);
     for (k = 1; k < lg(tree); k++)
-        gel(data, k) = mkvec2(gel(tree,k),ydata_init(X, gmael(tree,k,2), prec));
+        gel(data, k) = mkvec2(gel(tree,k),ydata_init(X, gmael(tree,k,2), bitprec));
     return data;
 }
 
@@ -142,7 +143,7 @@ gc_init(long n, long prec)
     pari_sp av = avma;
     /* force n even? no need */
     //n = (n+1) / 2;
-    z = grootsof1(8*n, prec); // need only 1/4
+    z = grootsof1(8*n, prec); // need only 1/4 of them
     x = cgetg(n + 1, t_VEC);
     //return gerepilecopy(av, vecslice(z, 1, 2 * n));
     for (k = 1; k <= n; k++)
@@ -229,10 +230,10 @@ integral_edge(GEN ydata, long g, GEN gc, long prec)
 }
 
 GEN
-integrals_tree(GEN ydata, long g, long prec)
+integrals_tree(GEN ydata, long g, long bitprec)
 {
     GEN gc = NULL, mat, s;
-    long n = 0, k, bitprec = prec2nbits(prec);
+    long n = 0, k, prec = nbits2prec(bitprec);
     pari_sp av = avma;
     pari_timer ti;
 
@@ -378,12 +379,12 @@ intersections_tree(GEN ydata)
                 arg = gadd(phi, gmul2n(arg,1));
                 arg = gdiv(arg,Pi2n(1,prec));
                 z = itos(ground(arg));
-                pari_printf("[ab.ad], arg=%Ps [phi=%ld] -> %ld\n", arg, signe(phi), z);
+                pari_printf("[ab.ad], arg=%Ps [sign phi = %ld] -> %ld %% 2\n", arg, signe(phi), z);
                 if (signe(phi) >= 0)
                     z = (z==1) ? 1 : -1;
                 else
                     z = (z==0) ? 1 : -1;
-                pari_printf("[ab.ad], arg=%Ps -> %ld\n", arg, z);
+                pari_printf("[ab.ad] -> intersection %ld\n", arg, z);
                 //pari_printf("[ab.ad], ratio %Ps\n", gdiv(fa,fc));
                 gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fc,fa))));
                 if (itos(gcoeff(mat,k,l)) != z)
@@ -405,7 +406,7 @@ intersections_tree(GEN ydata)
                 r = gdiv(r,Pi2n(1,prec));
                 z = itos(ground(r));
                 z = (z==0) ? 1 : -1;
-                pari_printf("[ab.bd], arg %Ps -> %ld\n", r, z);
+                pari_printf("[ab.bd], arg %Ps -> intersection %ld\n", r, z);
                 //pari_printf("[ab.bd], ratio %Ps\n", gdiv(fb,fc));
                 gcoeff(mat,k,l) = stoi(signe(gimag(gdiv(fb,fc))));
                 if (itos(gcoeff(mat,k,l)) != z)
@@ -649,16 +650,18 @@ hcinit(GEN pol, long prec)
     GEN hc, X, tree, ydata, integrals, mat, ab, periods;
     pari_sp av = avma;
     pari_timer ti;
-    long pr2 = ndec2prec(34);
+    long pr2 = ndec2prec(34), bitprec;
     long g = (poldegree(pol,-1) - 1) / 2;
     if (g<1)
     {
         pari_warn(warner,"genus 0 curve, no period.");
-        hc = mkvec4(pol,roots(pol,prec),cgetg(1,t_MAT),zerovec(3));
+        hc = mkvec4(pol,roots(pol,prec),cgetg(1,t_MAT),zerovec(5));
         return gerepilecopy(av,hc);
     }
     if (DEBUGLEVEL)
         timer_start(&ti);
+    bitprec = prec2nbits(prec) + 2*g + 10;
+    prec = nbits2prec(bitprec);
     X = roots(pol, prec);
     if (DEBUGLEVEL)
         timer_printf(&ti,"roots");
@@ -667,11 +670,11 @@ hcinit(GEN pol, long prec)
     if (DEBUGLEVEL)
         timer_printf(&ti,"spanning tree");
     //pari_printf("tree: %Ps\n",tree);
-    ydata = ydata_tree(X, tree, prec);
+    ydata = ydata_tree(X, tree, bitprec);
     if (DEBUGLEVEL)
         timer_printf(&ti,"prepare tree");
     //pari_printf("ydata: %Ps\n",ydata);
-    integrals = integrals_tree(ydata, g, prec);
+    integrals = integrals_tree(ydata, g, bitprec);
     // could div in ydata
     //integrals = gdiv(integrals, gsqrt(pollead(pol,-1),prec));
     if (DEBUGLEVEL)
@@ -686,6 +689,13 @@ hcinit(GEN pol, long prec)
     //hc = mkvec4(pol, X, periods, mkvec3(tree,integrals,ab));
     hc = mkvec4(pol, X, periods, mkvec5(tree,ydata,integrals,mat,ab));
     return gerepilecopy(av, hc);
+}
+
+static int
+is_hcinit(GEN hc)
+{
+    return (typ(hc) == t_VEC && lg(hc) == 5
+        && typ(gel(hc,4)) == t_VEC && lg(gel(hc,4)) == 6);
 }
 
 /* Richelot's algorithm
@@ -772,8 +782,7 @@ richelot(GEN X, long prec)
 GEN
 hyperellperiods(GEN hc, long flag, long prec)
 {
-    if (typ(hc) == t_VEC && lg(hc) == 5
-            && typ(gel(hc,4)) == t_VEC && lg(gel(hc,4)) == 6)
+    if (is_hcinit(hc))
     {
         return flag ? hc_big_periods(hc) : hc_small_periods(hc);
     }
@@ -783,6 +792,7 @@ hyperellperiods(GEN hc, long flag, long prec)
         hc = hcinit(hc, prec);
         return gerepilecopy(av, hyperellperiods(hc,flag,prec));
     }
+    pari_printf("\ngot invalid %Ps\n",hc);
     pari_err_TYPE("hyperellperiods",hc);
     return NULL;
 }
