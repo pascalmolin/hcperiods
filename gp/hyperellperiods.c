@@ -30,14 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. */
  make things dynamic ?
 */
 
-#define hc_pol(c)        gel(c,1)
-#define hc_roots(c)      gel(c,2)
-#define hc_periods(c)    gel(c,3)
-#define hc_tree(c)       gmael(c,4,1)
-#define hc_integrals(c)  gmael(c,4,2)
-#define hc_hombasis(c)   gmael(c,4,3)
-#define hc_n(c) poldegree(hc_pol(c))
-
 /** everything is dynamic **/
 
 /*********************************************************************/
@@ -302,6 +294,14 @@ complete_graph(GEN X, long n, long prec)
             gel(G, k++) = mkvec2(param_edge(X, i, j, prec), mkvecsmall2(i,j));
     return gerepilecopy(av, lexsort(G));
 }
+static GEN
+filter_bad(GEN G, double rmin, double rmax)
+{
+    long k1, k2;
+    for (k1 = 1; k1 < lg(G) && rtodbl(gmael(G,k1,1)) < rmin; k1++);
+    for (k2 = lg(G) - 1; k2 > 0 && rtodbl(gmael(G,k2,1)) > rmax; k2--);
+    return vecslice(G,k1,k2);
+}
 
 /* compute best spanning tree */
 GEN hc_spanning_tree(GEN X, long prec) {
@@ -310,9 +310,10 @@ GEN hc_spanning_tree(GEN X, long prec) {
     pari_sp av = avma;
     n = lg(X) - 1;
     G = complete_graph(X, n, prec);
+    G = filter_bad(G,1.01,100);
     //pari_printf("graph: %Ps\n",G);
     len = lg(G) - 1;
-    nedges = n % 2 ? n - 1 : n - 2;
+    nedges = (n % 2) == 1 ? n - 1 : n - 2;
 
     tree = cgetg(nedges + 1, t_VEC);
     t = const_vecsmall(n, 0);
@@ -320,7 +321,10 @@ GEN hc_spanning_tree(GEN X, long prec) {
     {
         long a, b, i;
         /* consider next edge with exactly one vertex taken (no cycle) */
-        for (i = len; k > 1 && t[gmael(G,i,2)[1]] == t[gmael(G,i,2)[2]]; i--);
+        for (i = len; i && k > 1 && t[gmael(G,i,2)[1]] == t[gmael(G,i,2)[2]]; i--);
+        if (!i) /* too many connecting edges filtered */
+            //output(G);
+            pari_err_IMPL("hyperellperiods: integration for clustered roots");
         /* this is the best edge allowed */
         a = gmael(G,i,2)[1]; b = gmael(G,i,2)[2];
         /* ensure a already in tree, flip edge if needed */
@@ -618,28 +622,6 @@ GEN symplectic_homology_basis(GEN mat, long g) {
 
 /*********************************************************************/
 /*                                                                   */
-/*                        Period matrices                            */
-/*                                                                   */
-/*********************************************************************/
-
-/* big period matrix */
-GEN
-hc_big_periods(GEN hc) {
-    return hc_periods(hc);
-}
-/* small period matrix */
-GEN
-hc_small_periods(GEN hc) {
-    long g;
-    GEN ab = hc_periods(hc);
-    pari_sp av = avma;
-    if (lg(ab) < 3) return cgetg(1,t_MAT);
-    g = nbrows(ab);
-    return gerepilecopy(av,gauss(vecslice(ab,1,g),vecslice(ab,g+1,2*g)));
-}
-
-/*********************************************************************/
-/*                                                                   */
 /*                   Hyperelliptic curve object                      */
 /*                                                                   */
 /*********************************************************************/
@@ -691,12 +673,45 @@ hcinit(GEN pol, long prec)
     return gerepilecopy(av, hc);
 }
 
+#define hc_pol(c)        gel(c,1)
+#define hc_roots(c)      gel(c,2)
+#define hc_periods(c)    gel(c,3)
+#define hc_tree(c)       gmael(c,4,1)
+#define hc_ydata(c)      gmael(c,4,2)
+#define hc_integrals(c)  gmael(c,4,3)
+#define hc_intmat(c)     gmael(c,4,4)
+#define hc_hombasis(c)   gmael(c,4,5)
+#define hc_n(c) poldegree(hc_pol(c))
+
 static int
 is_hcinit(GEN hc)
 {
     return (typ(hc) == t_VEC && lg(hc) == 5
         && typ(gel(hc,4)) == t_VEC && lg(gel(hc,4)) == 6);
 }
+
+/*********************************************************************/
+/*                                                                   */
+/*                        Period matrices                            */
+/*                                                                   */
+/*********************************************************************/
+
+/* big period matrix */
+GEN
+hc_big_periods(GEN hc) {
+    return hc_periods(hc);
+}
+/* small period matrix */
+GEN
+hc_small_periods(GEN hc) {
+    long g;
+    GEN ab = hc_periods(hc);
+    pari_sp av = avma;
+    if (lg(ab) < 3) return cgetg(1,t_MAT);
+    g = nbrows(ab);
+    return gerepilecopy(av,gauss(vecslice(ab,1,g),vecslice(ab,g+1,2*g)));
+}
+
 
 /* Richelot's algorithm
    X=[u,u',v,v',w,w']
