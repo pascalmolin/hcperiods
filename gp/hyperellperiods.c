@@ -878,6 +878,7 @@ is_minkowski_reduced(GEN m)
     return 1;
 }
 
+/* return index of failing transformation */
 int
 fail_F2_criterion(GEN L19, GEN tau)
 {
