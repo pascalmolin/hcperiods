@@ -7,7 +7,7 @@ int main() {
     
     flint_printf("intersection matrix...");
     fflush(stdout);
-    flint_randinit(state);
+    flint_rand_init(state);
 
     for (n = 3; n < 10; n++)
     {
@@ -51,7 +51,7 @@ int main() {
         }
     }
 
-    flint_randclear(state);
+    flint_rand_clear(state);
     flint_cleanup();
     printf("PASS\n");
     return 0;

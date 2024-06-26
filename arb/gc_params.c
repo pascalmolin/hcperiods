@@ -5,6 +5,7 @@
  ******************************************************************************/
 
 #include "abel_jacobi.h"
+#include <math.h>
 
 void
 arb_func_r_gc(arb_t r, const acb_t u, arb_srcptr l, slong prec)

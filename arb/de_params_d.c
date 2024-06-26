@@ -5,6 +5,7 @@
  ******************************************************************************/
 
 #include "abel_jacobi.h"
+#include <math.h>
 
 /* rough estimates using doubles */
 double

@@ -5,6 +5,7 @@
  ******************************************************************************/
 
 #include "abel_jacobi.h"
+#include <ulong_extras.h>
 #define TMP 0
 
 void

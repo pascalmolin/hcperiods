@@ -5,6 +5,8 @@
  ******************************************************************************/
 
 #include "abel_jacobi.h"
+#include <stdlib.h>
+
 void
 acb_branch_points(acb_ptr x, slong n, const fmpz_poly_t pol, slong prec)
 {

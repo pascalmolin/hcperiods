@@ -11,7 +11,7 @@ int main() {
 
     flint_printf("mth_root...");
     fflush(stdout);
-    flint_randinit(state);
+    flint_rand_init(state);
 
     for (prec = 60; prec < 500; prec *= 2)
     {
@@ -85,7 +85,7 @@ int main() {
         }
     }
 
-    flint_randclear(state);
+    flint_rand_clear(state);
     flint_cleanup();
     printf("PASS\n");
     return 0;

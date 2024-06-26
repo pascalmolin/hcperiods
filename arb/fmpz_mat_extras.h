@@ -4,6 +4,7 @@
 
  ******************************************************************************/
 
+#include <fmpz.h>
 #include <fmpz_mat.h>
 
 void row_swap(fmpz_mat_t m, long i1, long i2);

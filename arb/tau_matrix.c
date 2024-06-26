@@ -4,6 +4,8 @@
 
  ******************************************************************************/
 
+#include <perm.h>
+#include <acb_poly.h>
 #include "abel_jacobi.h"
 
 static void

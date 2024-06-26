@@ -1,7 +1,8 @@
 #include <string.h>
 
 #include "flint/arith.h"
-#include "fmpz_poly.h"
+#include <fmpz_poly.h>
+#include <fmpq_poly.h>
 #include "abel_jacobi.h"
 #include "parse.h"
 
@@ -30,7 +31,16 @@ pol_bern(fmpz_poly_t pol, slong n, slong prec)
     fmpz_poly_numer(pol, h);
     fmpq_poly_clear(h);
 }
-
+void
+pol_exp(fmpz_poly_t pol, slong n, slong prec)
+{
+    fmpq_poly_t h;
+    fmpq_poly_init(h);
+    fmpq_poly_set_coeff_si(h, 1, 1);
+    fmpq_poly_exp_series(h, h, n);
+    fmpz_poly_numer(pol, h);
+    fmpq_poly_clear(h);
+}
 int
 usage()
 {
@@ -98,7 +108,11 @@ int main(int argc, char * argv[])
             n = atol(argv[i++]);
             f_pol = &pol_xn1;
         }
-        else if (!strcmp(argv[i], "--bern"))
+        else if (!strcmp(argv[i], "--exp"))
+        {
+            i++, n = atol(argv[i++]), f_pol = &pol_exp;
+        }
+         else if (!strcmp(argv[i], "--bern"))
         {
             i++, n = atol(argv[i++]), f_pol = &pol_bern;
         }

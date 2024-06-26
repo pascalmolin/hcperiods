@@ -10,7 +10,7 @@ int main() {
     
     flint_printf("symplectic_reduction...");
     fflush(stdout);
-    flint_randinit(state);
+    flint_rand_init(state);
 
     for (g = 2; g < 30; g++)
     {       
@@ -76,7 +76,7 @@ int main() {
         fmpz_mat_clear(p);
     }
 
-    flint_randclear(state);
+    flint_rand_clear(state);
     flint_cleanup();
     printf("PASS\n");
     return 0;

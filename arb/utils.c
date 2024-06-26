@@ -55,19 +55,6 @@ acb_vec_set_random(acb_ptr u, slong len, flint_rand_t state, slong prec, slong m
 }
 
 void
-_acb_vec_printd(acb_srcptr u, slong len, slong d, const char * sep)
-{
-    slong k;
-
-    for (k = 0; k < len; k++)
-    {
-        if (k)
-            flint_printf(sep);
-        acb_printd(u + k, d);
-    }
-}
-
-void
 _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep)
 {
     slong k;

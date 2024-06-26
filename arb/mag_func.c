@@ -53,13 +53,13 @@ arb_bound_func_arb(arb_t m, arb_func_t f, void * params, const arb_t b, slong n,
     {
         flint_printf("\nERROR: illegal ball in mag_func ");
         arb_printd(b, 20); flint_printf(" [depth = %d]\n",depth);
-        abort();
+        flint_abort();
     }
     if (!depth)
     {
         flint_printf("\nERROR: limit depth exceeded in mag_func.\n Ball ");
         arb_printd(b, 20); flint_printf("\n");
-        abort();
+        flint_abort();
     }
 
     arb_subdivide(t, step, b, n, prec);
@@ -124,7 +124,7 @@ mag_func_arb(mag_t m, arb_func_t f, void * params, const arb_t b, slong n, slong
     arf_init(step);
 
     if (mag_is_special(arb_radref(b)) || mag_get_d(arb_radref(b)) < .00001)
-        abort();
+        flint_abort();
 
     arb_subdivide(t, step, b, n, prec);
 

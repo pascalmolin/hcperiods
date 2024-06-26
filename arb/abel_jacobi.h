@@ -4,6 +4,8 @@
  
  ******************************************************************************/
 
+#include <stdlib.h>
+#include <fmpq.h>
 #include <arb.h>
 #include <arb_mat.h>
 #include <acb.h>
@@ -277,7 +279,6 @@ void _acb_vec_sort_lex(acb_ptr vec, slong len);
 void arb_vec_set_random_nonzero(arb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);
 void acb_vec_set_random(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits);
 void acb_vec_set_random_u(acb_ptr u, slong len, flint_rand_t state, slong prec, slong mag_bits, double eps);
-void _acb_vec_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void _acb_vec_arf_printd(acb_srcptr u, slong len, slong d, const char * sep);
 void acb_mat_print_gp(const acb_mat_t m, slong digits);
 void acb_mat_print_error(const acb_mat_t m, slong digits);

@@ -1,11 +1,5 @@
 WHO=$(shell whoami)
-ifeq ($(WHO), molin)
-PREFIX=${HOME}/install
-else ifeq ($(WHO), neurohr)
-PREFIX=${HOME}/install
-else
-PREFIX=/usr/local
-endif
+PREFIX?=$(CONDA_PREFIX)
 EXEC=export LD_LIBRARY_PATH=$(CURDIR):${PREFIX}/lib;
 EXEEXT=
 
@@ -15,16 +9,20 @@ else
 LIBRARY   = libajsec.so
 endif
 
-INCS=-I$(CURDIR) -I/usr/include -I${PREFIX}/include -I${PREFIX}/include/flint
-LIBS=-L$(CURDIR) -L/usr/lib -L${PREFIX}/lib -lajsec -larb -lflint -lmpfr -lgmp -lm -lpthread
-LIBS2=-L$(CURDIR) -L/usr/lib -L${PREFIX}/lib -larb -lflint -lmpfr -lgmp -lm -lpthread
+CFLAGS=-ansi -pedantic -Wall -O2 -funroll-loops -g -std=c11
+INCS=-I$(CURDIR) -I${PREFIX}/include -I${PREFIX}/include/flint
+LIBS=-L$(CURDIR) -L${PREFIX}/lib -lajsec -lflint -lmpfr -lgmp -lm -lpthread
+LIBS2=-L$(CURDIR) -L${PREFIX}/lib -lflint -lmpfr -lgmp -lm -lpthread
+EXTRA_SHARED_FLAGS=-Wl,-rpath,${PREFIX}/lib
+export DYLD_FALLBACK_LIBRARY_PATH=$(PREFIX)/lib
+EXEC=export LD_LIBRARY_PATH=$(CURDIR):${PREFIX}/lib;
+EXEEXT=
 
 CC=gcc
 CXX=g++
 AR=ar
 LDCONFIG=true
 
-CFLAGS=-fno-common -ansi -pedantic -Wall -O2 -funroll-loops -g -mpopcnt -std=c99
 ABI_FLAG=
 PIC_FLAG=-fPIC
 EXTRA_SHARED_FLAGS=

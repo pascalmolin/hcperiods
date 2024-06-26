@@ -81,7 +81,7 @@ int main() {
 
     flint_printf("integrals...");
     fflush(stdout);
-    flint_randinit(state);
+    flint_rand_init(state);
 
     for (prec = 60; prec < 150; prec *= 2)
     {
@@ -170,7 +170,7 @@ int main() {
         _acb_vec_clear(ref, nref);
     }
 
-    flint_randclear(state);
+    flint_rand_clear(state);
     flint_cleanup();
     printf("PASS\n");
     return 0;

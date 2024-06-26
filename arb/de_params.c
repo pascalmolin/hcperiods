@@ -5,6 +5,7 @@
  ******************************************************************************/
 
 #include "abel_jacobi.h"
+#include <math.h>
 
 void
 acb_func_r_de(acb_t z, const acb_t u, arb_srcptr l, slong prec)
@@ -314,8 +315,8 @@ de_params(mag_t e, arf_t h, arf_t l, acb_srcptr u, slong len, double r, slong d,
         if (fabs(creal(w[k])) <= 1 && cimag(w[k]) == 0)
         {
             flint_printf("\nERROR: point on edge\n");
-            _acb_vec_printd(u, len, 10, "\n");
-            abort();
+            _acb_vec_printd(u, len, 10);
+            flint_abort();
         }
     }
 
