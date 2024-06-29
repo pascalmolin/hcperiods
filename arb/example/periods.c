@@ -2,44 +2,26 @@
 
 #include "flint/arith.h"
 #include <fmpz_poly.h>
-#include <fmpq_poly.h>
+#include <gr_poly.h>
 #include "abel_jacobi.h"
 #include "parse.h"
 
-void
-fmpz_poly_numer(fmpz_poly_t num, fmpq_poly_t pol)
-{
-    int k, n = fmpq_poly_degree(pol);
-    fmpz * coeffs = fmpq_poly_numref(pol);
-    for (k = 0; k <= n; k++)
-        fmpz_poly_set_coeff_fmpz(num, k, coeffs + k);
-}
-
 /* x^n-1 */
 void
-pol_xn1(fmpz_poly_t poly, slong n, slong prec)
+pol_xn1(gr_poly_t pol, gr_ctx_t ctx, slong n, slong prec)
 {
-    fmpz_poly_set_coeff_si(poly, 0, -1);
-    fmpz_poly_set_coeff_si(poly, n, 1);
+    gr_ctx_init_fmpz(ctx);
+    gr_poly_init2(pol, n + 1, ctx);
+    GR_MUST_SUCCEED(gr_poly_set_coeff_si(pol, 0, -1, ctx));
+    GR_MUST_SUCCEED(gr_poly_set_coeff_si(pol, n, 1, ctx));
 }
 void
-pol_bern(fmpz_poly_t pol, slong n, slong prec)
+pol_exp(gr_poly_t pol, gr_ctx_t ctx, slong n, slong prec)
 {
-    fmpq_poly_t h;
-    fmpq_poly_init(h);
-    arith_bernoulli_polynomial(h, n);
-    fmpz_poly_numer(pol, h);
-    fmpq_poly_clear(h);
-}
-void
-pol_exp(fmpz_poly_t pol, slong n, slong prec)
-{
-    fmpq_poly_t h;
-    fmpq_poly_init(h);
-    fmpq_poly_set_coeff_si(h, 1, 1);
-    fmpq_poly_exp_series(h, h, n);
-    fmpz_poly_numer(pol, h);
-    fmpq_poly_clear(h);
+    gr_ctx_init_fmpq(ctx);
+    gr_poly_init(pol, ctx);
+    GR_MUST_SUCCEED(gr_poly_set_coeff_si(pol, 1, 1, ctx));
+    GR_MUST_SUCCEED(gr_poly_exp_series(pol, pol, n, ctx));
 }
 int
 usage()
@@ -49,10 +31,8 @@ usage()
     flint_printf("Default m = 2, f_n(x) = x^5 + 1, prec = 128.\n");
     flint_printf("Polynomials f_n(x):\n");
     flint_printf("  --xn1 n: x^n - 1\n");
-    flint_printf("  --bern n: Bernoulli polynomial Bn(x)\n");
     flint_printf("  --exp n: exponential polynomial sum x^k/k!\n");
     flint_printf("  --coeffs n cn ... c1 c0 : cn x^n + ... + c1 x + c0\n");
-    flint_printf("  --bernrev n: reverse Bernoulli x^nBn(1/x)\n");
     flint_printf("  --exprev n: reverse exponential sum x^k/(n-k)!\n");
     flint_printf("  --stoll: 82342800*x^6 - 470135160*x^5 + 52485681*x^4 + 2396040466*x^3 + 567207969*x^2 - 985905640*x + 247747600\n");
     flint_printf("  --pol '<string>': polynomial\n");
@@ -71,12 +51,12 @@ int main(int argc, char * argv[])
 {
     int i, print = 1, flag = 0, run = 1, rev = 0;
     slong n = 5, m = 2, prec = 128, digits = 0;
+    gr_poly_t poly;
+    gr_ctx_t ctx;
     void (*f_print) (const acb_mat_t, slong) = &acb_mat_printd;
-    void (*f_pol) (fmpz_poly_t pol, slong n, slong prec) = &pol_xn1;
-    fmpz_poly_t poly;
+    void (*f_pol) (gr_poly_t pol, gr_ctx_t ctx, slong n, slong prec) = &pol_xn1;
     abel_jacobi_t aj;
 
-    fmpz_poly_init(poly);
 
     if (argc < 2)
         return usage();
@@ -104,26 +84,26 @@ int main(int argc, char * argv[])
         /* families */
         else if (!strcmp(argv[i], "--xn1"))
         {
-            i++;
-            n = atol(argv[i++]);
-            f_pol = &pol_xn1;
+            i++, n = atol(argv[i++]), f_pol = &pol_xn1;
         }
         else if (!strcmp(argv[i], "--exp"))
         {
             i++, n = atol(argv[i++]), f_pol = &pol_exp;
         }
-         else if (!strcmp(argv[i], "--bern"))
+        else if (!strcmp(argv[i], "--stdpol"))
         {
-            i++, n = atol(argv[i++]), f_pol = &pol_bern;
-        }
-        else if (!strcmp(argv[i], "--bernrev"))
-        {
-            i++, n = atol(argv[i++]), f_pol = &pol_bern, rev = 1;
+            fmpz_poly_t tmp;
+            fmpz_poly_init(tmp);
+            if (fmpz_poly_read(tmp) < 0)
+                abort();
+            //_gr_vec_set(gr_ptr res, gr_srcptr src, slong len, gr_ctx_t ctx)
+            GR_MUST_SUCCEED(gr_poly_set_fmpz_poly(poly, tmp, ctx));
+            fmpz_poly_clear(tmp);
         }
         else if (!strcmp(argv[i], "--pol"))
         {
             i++;
-            if (!fmpz_poly_parse(poly, argv[i++]))
+            if (!gr_poly_parse(poly, ctx, argv[i++]))
                 abort();
             f_pol = NULL;
         }
@@ -132,20 +112,24 @@ int main(int argc, char * argv[])
             int j;
             i++;
             n = atol(argv[i++]);
+            gr_ctx_init_fmpz(ctx);
+            gr_poly_init(poly, ctx);
             for (j = 0; j <= n && i < argc; j++)
-                fmpz_poly_set_coeff_si(poly, n - j, atol(argv[i++]));
+                GR_MUST_SUCCEED(gr_poly_set_coeff_si(poly, n - j, atol(argv[i++]), ctx));
             f_pol = NULL;
         }
         else if (!strcmp(argv[i], "--stoll"))
         {
             i++;
-            fmpz_poly_set_coeff_si(poly, 6, 82342800);
-            fmpz_poly_set_coeff_si(poly, 5, - 470135160);
-            fmpz_poly_set_coeff_si(poly, 4, + 52485681);
-            fmpz_poly_set_coeff_si(poly, 3, + 2396040466);
-            fmpz_poly_set_coeff_si(poly, 2, + 567207969);
-            fmpz_poly_set_coeff_si(poly, 1, - 985905640);
-            fmpz_poly_set_coeff_si(poly, 0, 247747600);
+            gr_ctx_init_fmpz(ctx);
+            gr_poly_init(poly, ctx);
+            GR_MUST_SUCCEED(gr_poly_set_coeff_si(poly, 6, 82342800, ctx));
+            GR_MUST_SUCCEED(gr_poly_set_coeff_si(poly, 5, - 470135160, ctx));
+            GR_MUST_SUCCEED(gr_poly_set_coeff_si(poly, 4, + 52485681, ctx));
+            GR_MUST_SUCCEED(gr_poly_set_coeff_si(poly, 3, + 2396040466, ctx));
+            GR_MUST_SUCCEED(gr_poly_set_coeff_si(poly, 2, + 567207969, ctx));
+            GR_MUST_SUCCEED(gr_poly_set_coeff_si(poly, 1, - 985905640, ctx));
+            GR_MUST_SUCCEED(gr_poly_set_coeff_si(poly, 0, 247747600, ctx));
             f_pol = NULL;
         }
         /* restrict computations / output */
@@ -181,11 +165,11 @@ int main(int argc, char * argv[])
 
     /* compute pol to actual accuracy */
     if (f_pol)
-        f_pol(poly, n, prec + n + 40);
+        f_pol(poly, ctx, n, prec + n + 40);
     if (rev)
-        fmpz_poly_reverse(poly, poly, n);
+        GR_MUST_SUCCEED(gr_poly_reverse(poly, poly, n, ctx));
 
-    abel_jacobi_init_poly(aj, m, poly);
+    abel_jacobi_init_gr_poly(aj, m, poly, ctx);
 
     for (i = 0; i < run; i++)
         abel_jacobi_compute(aj, flag, prec);
@@ -212,6 +196,7 @@ int main(int argc, char * argv[])
     }
 
     abel_jacobi_clear(aj);
-    fmpz_poly_clear(poly);
+    gr_poly_clear(poly, ctx);
+    gr_ctx_clear(ctx);
     flint_cleanup();
 }

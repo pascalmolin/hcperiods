@@ -1,4 +1,4 @@
 #include <stdlib.h>
-#include <fmpz_poly.h>
+#include <gr_poly.h>
 
-int fmpz_poly_parse(fmpz_poly_t poly, const char* str);
+int gr_poly_parse(gr_poly_t poly, gr_ctx_t ctx, const char* str);

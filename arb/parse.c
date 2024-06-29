@@ -8,7 +8,7 @@ typedef struct {
 } parser_ctx_t;
 
 int
-accept_term(fmpz_poly_t poly, parser_ctx_t * ctx)
+accept_term(gr_poly_t poly, gr_ctx_t poly_ctx, parser_ctx_t * ctx)
 {
     slong c, s = 1, e = 0;
     char * end;
@@ -70,22 +70,24 @@ accept_term(fmpz_poly_t poly, parser_ctx_t * ctx)
         }
     }
 
-    fmpz_poly_set_coeff_si(poly, e, c);
+    GR_MUST_SUCCEED(gr_poly_set_coeff_si(poly, e, c, poly_ctx));
     return 1;
 }
     
 int
-fmpz_poly_parse(fmpz_poly_t poly, const char* str)
+gr_poly_parse(gr_poly_t poly, gr_ctx_t poly_ctx, const char* str)
 {
+    gr_ctx_init_fmpz(poly_ctx);
+    gr_poly_init(poly, poly_ctx);
     parser_ctx_t ctx;
     ctx.str = str;
 
     while (*ctx.str)
     {
-        if (!accept_term(poly, &ctx))
+        if (!accept_term(poly, poly_ctx, &ctx))
             return 0;
 #if PARSE_DBG
-        fmpz_poly_print_pretty(poly, "x");
+        gr_poly_print_pretty(poly, poly_ctx);
         flint_printf(" -> parse %s\n",ctx.str);
 #endif
     }
