@@ -14,7 +14,7 @@ sec_init_poly(sec_t * c, slong m, const gr_poly_t pol, gr_ctx_t ctx)
 {
     sec_init(c, m, gr_poly_length(pol, ctx) - 1);
     GR_MUST_SUCCEED(gr_poly_set(c->pol, pol, ctx)); /* keep a copy */
-    c->ctx = &ctx;
+    c->ctx = ctx;
 }
 
 void
