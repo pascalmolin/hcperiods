@@ -12,10 +12,11 @@ void
 acb_branch_points(acb_ptr x, slong n, const gr_poly_t poly, gr_ctx_t ctx, slong prec)
 {
     int flags = 0;
-    long i;
+    long i, sz;
     gr_ctx_t acb_ctx, ZZ;
     gr_vec_t roots;
-    gr_ctx_init_complex_acb(acb_ctx, prec);
+    gr_ctx_init_complex_acb(acb_ctx, prec + 64);
+    sz = acb_ctx->sizeof_elem;
     gr_ctx_init_fmpz(ZZ);
     gr_vec_t mult;
     gr_vec_init(mult, n, ZZ);
@@ -27,8 +28,7 @@ acb_branch_points(acb_ptr x, slong n, const gr_poly_t poly, gr_ctx_t ctx, slong 
     /* underlying acb */
     for (i = 0; i < n; i++)
         GR_MUST_SUCCEED(gr_set(x + i,
-                    GR_ENTRY(roots, i, acb_ctx->sizeof_elem), acb_ctx));
-
+                    GR_VEC_ENTRY(roots, i, sz), acb_ctx));
     /* and order them */
     _acb_vec_sort_lex(x, n);
     gr_vec_clear(mult, ZZ);
