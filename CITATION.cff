@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Molin
+    given-names: Pascal
+    orcid: https://orcid.org/0000-0003-2462-8751
+  - family-names: Neurohr
+    given-names: Christian
+    orcid: https://orcid.org/0000-0001-8847-5147
+title: "hcperiods: period matrices of superelliptic curves"
+version: 1.0.0
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.1098275
+date-released: 2017-07-01
